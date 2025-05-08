@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Shared</name>
+    </assembly>
+    <members>
+        <member name="M:Shared.Interfaces.RPCServices.IUserService.RegistUserAsync(System.String)">
+            <summary>
+            ユーザー登録処理
+            </summary>
+            <param name="name">ユーザー名</param>
+            <returns>ユーザーID</returns>
+        </member>
+        <member name="M:Shared.Interfaces.RPCServices.IUserService.GetUserInfoAsync(System.Int32)">
+            <summary>
+            指定ユーザー情報取得処理
+            </summary>
+            <param name="userId">ユーザーID</param>
+            <returns>ユーザー情報</returns>
+        </member>
+        <member name="M:Shared.Interfaces.RPCServices.IUserService.GetAllUserInfoAsync">
+            <summary>
+            全ユーザー情報取得処理
+            </summary>
+            <returns>ユーザー情報</returns>
+        </member>
+        <member name="M:Shared.Interfaces.RPCServices.IUserService.UpdateUserInfoAsync(System.Int32,System.String)">
+            <summary>
+            ユーザー名変更処理
+            </summary>
+            <param name="userId">ユーザーID</param>
+            <param name="userName">変更後のユーザー名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Shared.Interfaces.StreamingHubs.IRoomHub.JoinAsync(System.String,System.Int32)">
+            <summary>
+            ユーザー入室関数
+            </summary>
+            <param name="roomName">ルーム名</param>
+            <param name="userId">ユーザーID</param>
+            <returns>入室処理</returns>
+        </member>
+        <member name="M:Shared.Interfaces.StreamingHubs.IRoomHub.JoinLobbyAsync(System.Int32)">
+            <summary>
+            ロビー入室処理
+            </summary>
+            <param name="userId">入室ユーザーID</param>
+            <returns></returns>
+        </member>
+        <member name="M:Shared.Interfaces.StreamingHubs.IRoomHub.LeaveAsync">
+            <summary>
+            ユーザー退出関数
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Shared.Interfaces.StreamingHubs.IRoomHub.MatchAsync(System.String)">
+            <summary>
+            マッチング成立関数
+            </summary>
+            <param name="roomName">ルーム名(4番目に入室したユーザーのID)</param>
+            <returns></returns>
+        </member>
+        <member name="M:Shared.Interfaces.StreamingHubs.IRoomHub.MoveAsync(Shared.Model.Entity.MoveData)">
+            <summary>
+            ユーザー移動関数
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Shared.Interfaces.StreamingHubs.JoinedUser">
+            <summary>
+            参加ユーザークラス
+            </summary>
+        </member>
+        <member name="T:Shared.Model.Entity.MoveData">
+            <summary>
+            移動データクラス
+            </summary>
+        </member>
+        <member name="T:Shared.Model.Entity.User">
+            <summary>
+            ユーザークラス
+            </summary>
+        </member>
+        <member name="T:Shared.Model.Entity.UserState">
+            <summary>
+            ユーザー状態クラス
+            </summary>
+        </member>
+    </members>
+</doc>

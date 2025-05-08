@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <BaseOutputPath>..\SharedOutput\bin</BaseOutputPath>
+	  <IntermediateOutputPath>..\SharedOutput\obj</IntermediateOutputPath>
+	  <TargetFramework>netstandard2.1</TargetFramework>
+	  <Nullable>enable</Nullable>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	  <DocumentationFile>$(OutputPath)</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MagicOnion.Abstractions" Version="6.1.5" />
+    <PackageReference Include="MessagePack.Annotations" Version="2.5.187" />
+    <PackageReference Include="MessagePack.UnityShims" Version="2.5.187" />
+  </ItemGroup>
+
+</Project>
