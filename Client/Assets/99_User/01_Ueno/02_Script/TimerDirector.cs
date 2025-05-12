@@ -1,11 +1,14 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TimerDirector : MonoBehaviour
 {
-    float gameTimer = 20;
+    public float gameTimer = 90;
 
     GameManager gameManager;
+
+    [SerializeField] Text text;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,12 +20,21 @@ public class TimerDirector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // 操作時間更新処理
-        gameTimer -= Time.deltaTime;
-
-        if(gameTimer <= 0 && gameManager.BossFlag == false)
+        if (gameManager.BossFlag == false)
         {
+            // 操作時間更新処理
+            gameTimer -= Time.deltaTime;
+            text.text = "" + Math.Floor(gameTimer);
+        }
+        
+        if (gameTimer <= 0 && gameManager.BossFlag == false)
+        {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
+            // タイマー固定
             gameTimer = 0;
+            text.text = "Boss";
+            // ボス出現
+            gameManager.BossFlag = true;
+
             Debug.Log("ボス出現");
         }
     }

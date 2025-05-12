@@ -18,10 +18,14 @@ public class Enemy : MonoBehaviour {
 	public bool isInvincible = false;
 	private bool isHitted = false;
 
+	GameManager gameManager;
+
 	void Awake () {
 		fallCheck = transform.Find("FallCheck");
 		wallCheck = transform.Find("WallCheck");
 		rb = GetComponent<Rigidbody2D>();
+		gameManager = GameObject.Find("GameManager")
+			.GetComponent<GameManager>();
 	}
 	
 	// Update is called once per frame
@@ -29,7 +33,8 @@ public class Enemy : MonoBehaviour {
 
 		if (life <= 0) {
 			transform.GetComponent<Animator>().SetBool("IsDead", true);
-			StartCoroutine(DestroyEnemy());
+            //gameManager.CrushEnemy();
+            StartCoroutine(DestroyEnemy());
 		}
 
 		isPlat = Physics2D.OverlapCircle(fallCheck.position, .2f, 1 << LayerMask.NameToLayer("Default"));
@@ -105,5 +110,6 @@ public class Enemy : MonoBehaviour {
 		rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 		yield return new WaitForSeconds(3f);
 		Destroy(gameObject);
-	}
+        gameManager.CrushEnemy();
+    }
 }
