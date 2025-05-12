@@ -37,7 +37,7 @@ public class TestCharacter : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {// ジャンプ開始
          // ジャンプ力を計算
-            float jumpPower = 15.0f;
+            float jumpPower = 10.0f;
             // ジャンプ力を適用
             rigidbody2D.linearVelocity = new Vector2(rigidbody2D.linearVelocity.x, jumpPower);
         }
