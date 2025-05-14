@@ -50,6 +50,7 @@ public class PlayerAttack : MonoBehaviour
 		canAttack = true;
 	}
 
+
 	public void DoDashDamage()
 	{
 		dmgValue = Mathf.Abs(dmgValue);
@@ -62,7 +63,8 @@ public class PlayerAttack : MonoBehaviour
 				{
 					dmgValue = -dmgValue;
 				}
-				collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
+                // GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
+                collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
 				cam.GetComponent<MainCameraFollow>().ShakeCamera();
 			}
 		}
