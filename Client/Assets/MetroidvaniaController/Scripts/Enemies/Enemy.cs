@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class Enemy : MonoBehaviour {
 
@@ -20,6 +21,8 @@ public class Enemy : MonoBehaviour {
 
 	GameManager gameManager;
 
+	
+	
 	void Awake () {
 		fallCheck = transform.Find("FallCheck");
 		wallCheck = transform.Find("WallCheck");
@@ -31,10 +34,11 @@ public class Enemy : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		if (life <= 0) {
+		if (life <= 0)
+		{
 			transform.GetComponent<Animator>().SetBool("IsDead", true);
-            //gameManager.CrushEnemy();
-            StartCoroutine(DestroyEnemy());
+			//gameManager.CrushEnemy();
+			StartCoroutine(DestroyEnemy());
 		}
 
 		isPlat = Physics2D.OverlapCircle(fallCheck.position, .2f, 1 << LayerMask.NameToLayer("Default"));
