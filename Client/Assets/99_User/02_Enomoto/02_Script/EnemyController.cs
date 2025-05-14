@@ -1,19 +1,16 @@
+using System.Collections;
 using UnityEngine;
 
-abstract public class Enemy_abs : MonoBehaviour
+abstract public class EnemyController : MonoBehaviour
 {
     #region ステータス
-    int hp;
-    int power;
-    int speed;
-    float viewRadius;
-    float attackRange;
+    int _hp;
+    int _power;
+    int _speed;
 
-    public int HP {  get { return hp; } set { hp = value; } }
-    public int Power { get { return power; } set { power = value; } }
-    public int Speed { get { return speed; } set { speed = value; } }
-    public float ViewRadius { get { return viewRadius; } set { viewRadius = value; } }
-    public float AttackRange { get { return attackRange; } set { attackRange = value; } }
+    public int HP {  get { return _hp; } set { _hp = value; } }
+    public int Power { get { return _power; } set { _power = value; } }
+    public int Speed { get { return _speed; } set { _speed = value; } }
     #endregion
 
     #region コンポーネント
@@ -50,7 +47,7 @@ abstract public class Enemy_abs : MonoBehaviour
     /// ダメージ適応処理
     /// </summary>
     /// <param name="damage"></param>
-    abstract public void ApplyDamage(int damage);
+    abstract public void ApplyDamage(int damage, Transform attacker);
 
     /// <summary>
     /// アニメーション設定処理
@@ -59,5 +56,14 @@ abstract public class Enemy_abs : MonoBehaviour
     public void SetAnimId(int id)
     {
         animator.SetInteger("animation_id", id);
+    }
+
+    /// <summary>
+    /// アニメーションID取得処理
+    /// </summary>
+    /// <returns></returns>
+    public int GetAnimId()
+    {
+        return animator.GetInteger("animation_id");
     }
 }
