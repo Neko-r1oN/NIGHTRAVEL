@@ -14,7 +14,7 @@ public class TitleManager : MonoBehaviour
     {
         if(Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Return))
         {
-            SceneManager.LoadScene("Game Ueno");
+            SceneManager.LoadScene("SampleGameUeno");
         }
     }
 }

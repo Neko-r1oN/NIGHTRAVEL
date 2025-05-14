@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class Enemy : MonoBehaviour {
 
@@ -18,17 +19,25 @@ public class Enemy : MonoBehaviour {
 	public bool isInvincible = false;
 	private bool isHitted = false;
 
+	GameManager gameManager;
+
+	
+	
 	void Awake () {
 		fallCheck = transform.Find("FallCheck");
 		wallCheck = transform.Find("WallCheck");
 		rb = GetComponent<Rigidbody2D>();
+		gameManager = GameObject.Find("GameManager")
+			.GetComponent<GameManager>();
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		if (life <= 0) {
+		if (life <= 0)
+		{
 			transform.GetComponent<Animator>().SetBool("IsDead", true);
+			//gameManager.CrushEnemy();
 			StartCoroutine(DestroyEnemy());
 		}
 
@@ -105,5 +114,6 @@ public class Enemy : MonoBehaviour {
 		rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 		yield return new WaitForSeconds(3f);
 		Destroy(gameObject);
-	}
+        gameManager.CrushEnemy();
+    }
 }
