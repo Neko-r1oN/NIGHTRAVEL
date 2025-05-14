@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public int createCnt;   // 生成間隔
     int spawnCnt;           // スポーン回数
     public int maxSpawnCnt; // マックススポーン回数
-    //Vector3 spawnPos;
+    Vector3 spawnPos;       // ランダムで生成する位置
 
     [SerializeField] GameObject boss;
     [SerializeField] GameObject enemy;
@@ -59,29 +59,39 @@ public class GameManager : MonoBehaviour
             Invoke(nameof(ChengScene), 1.5f);
         }
 
-        /*float distanceOfPlayer =
-            Vector3.Distance(player.transform.position, spawnPos);
+        if (spawnCnt < maxSpawnCnt)
+        {// スポーン回数が限界に達しているか
+            num++;
 
-        Debug.Log("距離:" + Math.Floor(distanceOfPlayer));*/
-
-        num++;
-        //Debug.Log(num);
-
-        if (num % createCnt == 0)
-        {
-            Debug.Log("出てきた");
-            num = 0;
-
-            float x = Random.Range(randRespawnA.position.x, randRespawnB.position.x);
-            float y = Random.Range(randRespawnA.position.y, randRespawnB.position.y);
-            float z = Random.Range(randRespawnA.position.z, randRespawnB.position.z);
-
-            if (spawnCnt <= maxSpawnCnt)
+            if (num % createCnt == 0)
             {
-                spawnCnt++;
-                Debug.Log(spawnCnt);
-                Instantiate(enemy, new Vector3(x, y, z), enemy.transform.rotation);
+                //Debug.Log("出てきた");
+                num = 0;
+
+                // ステージ内から適当な位置を取得
+                float x = Random.Range(randRespawnA.position.x, randRespawnB.position.x);
+                float y = Random.Range(randRespawnA.position.y, randRespawnB.position.y);
+                float z = Random.Range(randRespawnA.position.z, randRespawnB.position.z);
+                // ランダムな位置を生成
+                spawnPos = new Vector3(x, y, z);
+                
+                // プレイヤーの位置とランダム生成の位置との距離
+                float distanceOfPlayer =
+                    Vector3.Distance(player.transform.position, spawnPos);
+
+                if (distanceOfPlayer >= 18)
+                {// 距離が20離れていたら
+                    Debug.Log("距離:" + Math.Floor(distanceOfPlayer));
+                    spawnCnt++;
+                    Debug.Log(spawnCnt);
+                    // 生成
+                    Instantiate(enemy, new Vector3(x, y, z), enemy.transform.rotation);
+                }
             }
+        }
+        else
+        {
+            Debug.Log("生成限界");
         }
     }
 
@@ -93,16 +103,17 @@ public class GameManager : MonoBehaviour
     public void CrushEnemy()
     {
         crushNum++;
+        spawnCnt--;
         AddXp();
 
-        Debug.Log(crushNum);
-        if (crushNum >= 4)
+        //Debug.Log(crushNum);
+        /*if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
             bossFlag = true;
             boss.SetActive(true);
             Debug.Log("ボスでてきた");
             //crushNum = 0;
-        }
+        }*/
     }
 
     public void AddXp()
@@ -111,7 +122,7 @@ public class GameManager : MonoBehaviour
         if (xp >= requiredXp)
         {
             requiredXp += xp;
-            Debug.Log(requiredXp);
+            //Debug.Log(requiredXp);
             UpLevel();
         }
     }
@@ -119,7 +130,7 @@ public class GameManager : MonoBehaviour
     public void UpLevel()
     {
         level++;
-        Debug.Log("レベルアップ:" + level);
+        //Debug.Log("レベルアップ:" + level);
     }
 
     /*public void RespawnEnemy()
