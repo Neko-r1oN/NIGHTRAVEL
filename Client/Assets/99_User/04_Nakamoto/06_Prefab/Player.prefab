@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1673406454141356487}
   - component: {fileID: 2268927884071330932}
-  - component: {fileID: 8753187410218647627}
-  - component: {fileID: 5137311645317731936}
   - component: {fileID: 3631275721480027992}
   - component: {fileID: 1777766018049631909}
   - component: {fileID: 3096875152850034291}
@@ -56,84 +54,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9c9c27149dd97c44b8985f2015d6914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  life: 10
+  runSpeed: 40
+  dmgValue: 4
   m_JumpForce: 850
-  m_MovementSmoothing: 0.05
+  m_DashForce: 25
   m_AirControl: 1
+  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
+  m_MovementSmoothing: 0.05
+  canDoubleJump: 1
+  invincible: 0
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 53
   m_GroundCheck: {fileID: 7055106483786703743}
   m_WallCheck: {fileID: 8949071902289316633}
-  canDoubleJump: 1
-  m_DashForce: 25
-  life: 10
-  invincible: 0
+  attackCheck: {fileID: 7164491747070363327}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
-  OnFallEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5137311645317731936}
-        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
-        m_MethodName: OnFall
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnLandEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5137311645317731936}
-        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
-        m_MethodName: OnLanding
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &8753187410218647627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863394593741772318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e50dc0970ea0d84f92d9e50f877cca7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dmgValue: 4
-  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
-  attackCheck: {fileID: 7164491747070363327}
-  animator: {fileID: 1777766018049631909}
-  canAttack: 1
-  isTimeToCheck: 0
   cam: {fileID: 0}
---- !u!114 &5137311645317731936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863394593741772318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a8616b647edf88458c7a18ad40eafd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 2268927884071330932}
-  animator: {fileID: 1777766018049631909}
-  runSpeed: 40
 --- !u!212 &3631275721480027992
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -199,7 +138,7 @@ Animator:
   m_GameObject: {fileID: 863394593741772318}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: a7e4235a17f98bc44b34c45210e8f8f8, type: 2}
+  m_Controller: {fileID: 9100000, guid: 32e4d6147739f4a4d883cea8b6060638, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5223,7 +5162,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10069,7 +10007,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
