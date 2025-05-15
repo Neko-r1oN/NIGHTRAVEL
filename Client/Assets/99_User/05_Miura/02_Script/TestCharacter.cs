@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UIElements;
 
 public class TestCharacter : MonoBehaviour
 {
@@ -50,34 +51,13 @@ public class TestCharacter : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.CompareTag("Abyss"))
-        {//「Abyss」タグがついたオブジェクトに触れたら
-
-            float HP2 = HP * 0.3f;
-            HP -= HP2;
-
-            Debug.Log("HPが" + HP + "になった");
-            Debug.Log("HP2は" + HP2);
-
-            if(HP<=1)
-            {
-                HP = 1;
-                Debug.Log("HPが" + HP + "になった");
-            }
-        }
-
-        if (collision.gameObject.CompareTag("Short circuit"))
-        {//「Short circuit」タグが付いたオブジェクトに触れたら
-            HP -= 50;
-            Debug.Log("HPが" + HP + "になった");
-
-            if(HP < 0)
-            {
-                HP = 0;
-                Debug.Log("死亡");
-            }
-        }
-    }
+    //public void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Abyss"))
+    //    {
+    //        trap.Damage();
+    //        Debug.Log("ダメージは" + trap.damage);
+    //        Debug.Log("現在のHPは" + HP);
+    //    }
+    //}
 }
