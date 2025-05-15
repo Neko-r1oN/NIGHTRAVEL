@@ -30,7 +30,9 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // ボスを非表示
         boss.SetActive(false);
+        // プレイヤーのオブジェクト検索して取得
         player = GameObject.Find("DrawCharacter");
     }
 
@@ -95,11 +97,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// シーン変更
+    /// </summary>
     private void ChengScene()
     {// シーン変更
         SceneManager.LoadScene("Result ueno");
     }
 
+    /// <summary>
+    ///  敵撃破
+    /// </summary>
     public void CrushEnemy()
     {
         crushNum++;
@@ -116,17 +124,26 @@ public class GameManager : MonoBehaviour
         }*/
     }
 
+    /// <summary>
+    /// 経験値加算
+    /// </summary>
     public void AddXp()
     {
         xp += 100;
         if (xp >= requiredXp)
-        {
+        {// 必要経験値数を超えたら
+
+            // 必要経験値数を増やす
             requiredXp += xp;
             //Debug.Log(requiredXp);
+            // レベルアップ関数を
             UpLevel();
         }
     }
 
+    /// <summary>
+    /// レベルアップ
+    /// </summary>
     public void UpLevel()
     {
         level++;

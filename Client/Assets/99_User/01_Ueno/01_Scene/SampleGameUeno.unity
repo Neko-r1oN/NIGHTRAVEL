@@ -872,12 +872,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createCnt: 0
-  maxSpawnCnt: 0
-  boss: {fileID: 0}
-  enemy: {fileID: 0}
-  randRespawnA: {fileID: 0}
-  randRespawnB: {fileID: 0}
+  createCnt: 500
+  maxSpawnCnt: 50
+  boss: {fileID: 508495620}
+  enemy: {fileID: 908022201}
+  randRespawnA: {fileID: 1014692681}
+  randRespawnB: {fileID: 1741575025}
 --- !u!4 &232256223
 Transform:
   m_ObjectHideFlags: 0
@@ -1915,7 +1915,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &492699192
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3495,6 +3495,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &908022201 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1458107173046890, guid: 061600cc71b08b947a704a7416146101, type: 3}
+  m_PrefabInstance: {fileID: 1399764346}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &921398308
 GameObject:
   m_ObjectHideFlags: 0
@@ -5295,7 +5300,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1409435470
 MonoBehaviour:
   m_ObjectHideFlags: 0
