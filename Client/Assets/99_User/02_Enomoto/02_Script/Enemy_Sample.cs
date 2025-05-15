@@ -1,3 +1,7 @@
+//**************************************************
+//  エネミーのサンプルクラス
+//  Author:r-enomoto
+//**************************************************
 using HardLight2DUtil;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,17 +34,14 @@ public class Enemy_Sample : EnemyController
     }
 
     #region 攻撃方法について
-    [Header("攻撃方法の設定")]
+    [Header("攻撃方法")]
     [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
     [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
     #endregion
 
-    #region ステータス管理
-    [Header("ステータス設定")]
+    #region オリジナルのステータス管理
+    [Header("オリジナルステータス")]
     [SerializeField] int bulletNum = 3;
-    [SerializeField] int hp = 10;
-    [SerializeField] int power = 2;
-    [SerializeField] int speed = 5;
     [SerializeField] float jumpPower = 19;
     [SerializeField] float attackCooldown = 0.5f;
     [SerializeField] float attackDist = 1.5f;
@@ -68,34 +69,27 @@ public class Enemy_Sample : EnemyController
     [SerializeField] LayerMask groundLayerMask;
     #endregion
 
-    #region 視野設定
-    [Header("視野設定")]
-    [SerializeField] LayerMask targetLayerMask; // 検知するLayer
-    [SerializeField] float viewAngleMax = 45;
-    [SerializeField] float viewDistMax = 6f;
-    [SerializeField] float trackingRange = 12f;
-    #endregion
-
-    #region コンポーネント管理
-    [Header("コンポーネント")]
-    [SerializeField] Animator _animatorSelf;
+    #region コンポーネント
     Rigidbody2D m_rb2d;
     SpriteRenderer m_spriteRenderer;
     #endregion
 
-    #region その他
-    // マネージャークラスからPlayerを取得できるのが理想
-    [SerializeField] List<GameObject> players = new List<GameObject>();
+    #region ターゲット
     GameObject target;
     float disToTarget;
+    float disToTargetX;
     #endregion
 
     void Start()
     {
-        AnimatorSelf = _animatorSelf;
         HP = hp;
         Power = power;
         Speed = speed;
+        TargetLayerMask = targetLayerMask;
+        ViewAngleMax = viewAngleMax;
+        ViewDistMax = viewDistMax;
+        TrackingRange = trackingRange;
+
         canAttack = true;
         doOnceDecision = true;
 
@@ -105,12 +99,17 @@ public class Enemy_Sample : EnemyController
 
     private void FixedUpdate()
     {
-        if (target != null) disToTarget = Vector3.Distance(this.transform.position, target.transform.position);
-        else Idle();
-
         // ターゲットの認識・追跡範囲外に行くとターゲットを解除する
-        if (target == null && players.Count > 0) target = IsTargetInView();
+        if (target == null && Players.Count > 0) target = GetTargetInSight();
         else if (target != null && disToTarget > trackingRange) target = null;
+
+        // ターゲットとの距離を取得・ターゲットが存在しない場合はIdle
+        if (target != null)
+        {
+            disToTarget = Vector3.Distance(this.transform.position, target.transform.position);
+            disToTargetX = target.transform.position.x - transform.position.x;
+        }
+        else Idle();
 
         // 以降はターゲットを認識している場合の処理
         if (target == null || !canAttack || isInvincible || hp <= 0 || !doOnceDecision) return;
@@ -124,39 +123,14 @@ public class Enemy_Sample : EnemyController
         if (isObstacle && IsGround()) Jump();
         else if (!IsGround()) AirMovement();
         else if (disToTarget <= attackDist && canAttack && attackType != ATTACK_TYPE_ID.None) Attack();
-        else Run();
-    }
-
-    GameObject IsTargetInView()
-    {
-        GameObject target = null;
-        float minTargetDist = float.MaxValue;
-
-        foreach(GameObject player in players)
-        {
-            Vector2 dirToTarget = player.transform.position - transform.position;
-            Vector2 angleVec = new Vector2(transform.localScale.x, 0);
-            float angle = Vector2.Angle(dirToTarget, angleVec);
-            RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
-
-            if (angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
-            {
-                float distTotarget = Vector3.Distance(this.transform.position, player.transform.position);
-                if (distTotarget < minTargetDist)
-                {
-                    minTargetDist = distTotarget;
-                    target = player;
-                }
-            }
-        }
-
-        return target;
+        else if (Mathf.Abs(disToTargetX) > 0.25f && speed != 0) Run();
+        else Idle();
     }
 
     /// <summary>
     /// アイドル処理
     /// </summary>
-    public override void Idle()
+    void Idle()
     {
         SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
@@ -165,7 +139,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 攻撃処理
     /// </summary>
-    public override void Attack()
+    void Attack()
     {
         doOnceDecision = false;
         canAttack = false;
@@ -179,7 +153,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 近接攻撃処理
     /// </summary>
-    public void MeleeAttack()
+    void MeleeAttack()
     {
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
         for (int i = 0; i < collidersEnemies.Length; i++)
@@ -195,7 +169,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 遠距離攻撃処理
     /// </summary>
-    public IEnumerator RangeAttack()
+    IEnumerator RangeAttack()
     {
         for (int i = 0; i < bulletNum; i++)
         {
@@ -211,7 +185,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 走る処理
     /// </summary>
-    public override void Run()
+    void Run()
     {
         SetAnimId((int)ANIM_ID.Run);
         float distToPlayer = target.transform.position.x - this.transform.position.x;
@@ -221,7 +195,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 空中状態での移動処理
     /// </summary>
-    public void AirMovement()
+    void AirMovement()
     {
         SetAnimId((int)ANIM_ID.Fall);
 
@@ -235,7 +209,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// ジャンプ処理
     /// </summary>
-    public void Jump()
+    void Jump()
     {
         SetAnimId((int)ANIM_ID.Fall);
 
@@ -276,7 +250,7 @@ public class Enemy_Sample : EnemyController
     /// 攻撃時のクールダウン処理
     /// </summary>
     /// <returns></returns>
-    public IEnumerator AttackCooldown(float time)
+    IEnumerator AttackCooldown(float time)
     {
         canAttack = false;
         yield return new WaitForSeconds(time);
@@ -315,7 +289,7 @@ public class Enemy_Sample : EnemyController
     /// 地面判定
     /// </summary>
     /// <returns></returns>
-    private bool IsGround()
+    bool IsGround()
     {
         // 足元に２つの始点と終点を作成する
         Vector3 leftStartPosition = groundCheck.transform.position + Vector3.left * groundCheckRadius.x / 2;
@@ -345,5 +319,27 @@ public class Enemy_Sample : EnemyController
         Vector3 endPosition = groundCheck.transform.position + Vector3.down * groundCheckRadius.y;
         Gizmos.DrawLine(leftStartPosition, endPosition);
         Gizmos.DrawLine(rightStartPosition, endPosition);
+
+        // 視野の描画
+        foreach (GameObject player in Players)
+        {
+            Vector2 dirToTarget = player.transform.position - transform.position;
+            Vector2 angleVec = new Vector2(transform.localScale.x, 0);
+            float angle = Vector2.Angle(dirToTarget, angleVec);
+            RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, ViewDistMax, TargetLayerMask);
+
+            if (angle <= ViewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
+            {
+                Debug.DrawRay(transform.position, dirToTarget, Color.red);
+            }
+            else
+            {
+                Debug.DrawRay(transform.position, dirToTarget, Color.cyan);
+            }
+        }
+
+        // 追跡範囲
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, trackingRange);
     }
 }

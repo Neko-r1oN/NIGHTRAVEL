@@ -62,8 +62,9 @@ public class Attack : MonoBehaviour
 				{
 					dmgValue = -dmgValue;
 				}
-				collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
-				cam.GetComponent<CameraFollow>().ShakeCamera();
+				//collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
+				collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage((int)dmgValue, this.transform);
+                cam.GetComponent<CameraFollow>().ShakeCamera();
 			}
 		}
 	}
