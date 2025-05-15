@@ -10,14 +10,27 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController2D : MonoBehaviour
 {
+    /// <summary>
+    /// アニメーションID
+    /// </summary>
+    public enum ANIM_ID
+    {
+        Idle = 1,
+        Attack,
+        Run,
+        Hit,
+        Fall,
+        Dead,
+    }
+
     [Header("Status")]
     [Space]
-    public float life = 10f;        // プレイヤーの体力
-    [SerializeField] private float m_JumpForce = 400f;  // ジャンプ時の力の強さ
-    [SerializeField] private float m_DashForce = 25f; // ダッシュ時の力の強さ
-    [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f; // どれだけ動きを滑らかにするか
-    public bool canDoubleJump = true;					// ダブルジャンプ制御フラグ
-    [SerializeField] private bool m_AirControl = false; // ジャンプ中にステアリングを切れるかどうか
+    public float life = 10f;
+    [SerializeField] private float m_JumpForce = 400f;
+    [SerializeField] private float m_DashForce = 25f;
+    [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
+    [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;
+    public bool canDoubleJump = true;
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     [Header("Layer Check")]
@@ -27,7 +40,7 @@ public class PlayerController2D : MonoBehaviour
     [SerializeField] private Transform m_WallCheck;		// プレイヤーが壁に触れているかどうかを確認する用
 
     const float k_GroundedRadius = .2f; // 接地確認用の円の半径
-    private bool m_Grounded; // プレイヤーの接地フラグ
+    private bool m_Grounded;			// プレイヤーの接地フラグ
     private Rigidbody2D m_Rigidbody2D;
     private bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
     private Vector3 velocity = Vector3.zero;
@@ -35,8 +48,8 @@ public class PlayerController2D : MonoBehaviour
 
     private bool canMove = true;    // プレイヤーの動作制御フラグ
     private bool canDash = true;	// ダッシュ制御フラグ
+    private bool m_IsWall = false;  // プレイヤーの前に壁があるか
     private bool isDashing = false;	// プレイヤーがダッシュ中かどうか
-    private bool m_IsWall = false;	// プレイヤーの前に壁があるか
     private bool isWallSliding = false;	 //If player is sliding in a wall
     private bool oldWallSlidding = false;//If player is sliding in a wall in the previous frame
     private float prevVelocityX = 0f;
@@ -46,8 +59,8 @@ public class PlayerController2D : MonoBehaviour
 
     [Header("Particle")]
     [Space]
-    public ParticleSystem particleJumpUp;   // ジャンプ時のパーティクル 
-    public ParticleSystem particleJumpDown; // 降下時のパーティクル
+    public ParticleSystem particleJumpUp;
+    public ParticleSystem particleJumpDown;
 
     private float jumpWallStartX = 0;
     private float jumpWallDistX = 0;        // プレイヤーと壁の距離
@@ -62,6 +75,9 @@ public class PlayerController2D : MonoBehaviour
 	[System.Serializable]
 	public class BoolEvent : UnityEvent<bool> { }
 
+	/// <summary>
+	/// Update前処理
+	/// </summary>
 
 	private void Awake()
 	{
@@ -75,8 +91,19 @@ public class PlayerController2D : MonoBehaviour
 			OnLandEvent = new UnityEvent();
 	}
 
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+    private void Update()
+    {
 
-	private void FixedUpdate()
+    }
+
+
+	/// <summary>
+	/// 定期更新処理
+	/// </summary>
+    private void FixedUpdate()
 	{
 		//---------------------------------
 		// 地面判定
@@ -152,7 +179,12 @@ public class PlayerController2D : MonoBehaviour
 		}
 	}
 
-
+	/// <summary>
+	/// 移動処理
+	/// </summary>
+	/// <param name="move">移動量</param>
+	/// <param name="jump">ジャンプ入力</param>
+	/// <param name="dash">ダッシュ入力</param>
 	public void Move(float move, bool jump, bool dash)
 	{
 		if (canMove) {
@@ -315,6 +347,10 @@ public class PlayerController2D : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// ダッシュ(ブリンク)制限処理
+	/// </summary>
+	/// <returns></returns>
 	IEnumerator DashCooldown()
 	{
 		animator.SetBool("IsDashing", true);
@@ -326,32 +362,45 @@ public class PlayerController2D : MonoBehaviour
 		canDash = true;
 	}
 
+	/// <summary>
+	/// ダメージ後硬直処理
+	/// </summary>
 	IEnumerator Stun(float time) 
 	{
 		canMove = false;
 		yield return new WaitForSeconds(time);
 		canMove = true;
 	}
+	/// <summary>
+	/// 無敵時間設定処理
+	/// </summary>
 	IEnumerator MakeInvincible(float time) 
 	{
 		invincible = true;
 		yield return new WaitForSeconds(time);
 		invincible = false;
 	}
+	/// <summary>
+	/// 動作不能処理
+	/// </summary>
 	IEnumerator WaitToMove(float time)
 	{
 		canMove = false;
 		yield return new WaitForSeconds(time);
 		canMove = true;
 	}
-
+	/// <summary>
+	/// 壁スライド中か確認する処理
+	/// </summary>
 	IEnumerator WaitToCheck(float time)
 	{
 		canCheck = false;
 		yield return new WaitForSeconds(time);
 		canCheck = true;
 	}
-
+	/// <summary>
+	/// 壁スライド終了処理
+	/// </summary>
 	IEnumerator WaitToEndSliding()
 	{
 		yield return new WaitForSeconds(0.1f);
@@ -361,7 +410,9 @@ public class PlayerController2D : MonoBehaviour
 		oldWallSlidding = false;
 		m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
 	}
-
+	/// <summary>
+	/// 死亡処理
+	/// </summary>
 	IEnumerator WaitToDead()
 	{
 		animator.SetBool("IsDead", true);

@@ -12,47 +12,35 @@ public class PlayerMove : MonoBehaviour {
 	float horizontalMove = 0f;
 	bool jump = false;
 	bool dash = false;
-
-	//bool dashAxis = false;
 	
-	// Update is called once per frame
 	void Update () {
 
+		// キャラの移動
 		horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-
 		animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
 
 		if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
-		{
+		{	// ジャンプ押下時
 			jump = true;
 		}
 
 		if (Input.GetKeyDown(KeyCode.C ) || Input.GetButtonDown("Blink"))
-		{
+		{	// ブリンク押下時
 			dash = true;
 		}
-
-		/*if (Input.GetAxisRaw("Dash") == 1 || Input.GetAxisRaw("Dash") == -1) //RT in Unity 2017 = -1, RT in Unity 2019 = 1
-		{
-			if (dashAxis == false)
-			{
-				dashAxis = true;
-				dash = true;
-			}
-		}
-		else
-		{
-			dashAxis = false;
-		}
-		*/
-
 	}
 
+	/// <summary>
+	/// 落下処理
+	/// </summary>
 	public void OnFall()
 	{
 		animator.SetBool("IsJumping", true);
 	}
 
+	/// <summary>
+	/// 着地処理
+	/// </summary>
 	public void OnLanding()
 	{
 		animator.SetBool("IsJumping", false);
