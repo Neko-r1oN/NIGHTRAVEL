@@ -2,6 +2,7 @@
 //  [親]エネミーのコントローラークラス
 //  Author:r-enomoto
 //**************************************************
+using HardLight2DUtil;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +12,25 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 abstract public class EnemyController : MonoBehaviour
 {
+    /// <summary>
+    /// アニメーションID
+    /// </summary>
+    public enum ANIM_ID
+    {
+        Idle = 1,
+        Attack,
+        Run,
+        Hit,
+        Fall,
+        Dead,
+    }
+
     #region ステータス
     [Header("基本ステータス")]
     [SerializeField] protected int hp = 10;
     [SerializeField] protected int power = 2;
     [SerializeField] protected int speed = 5;
+    [SerializeField] float hitTime = 0.5f;
 
     public int HP { get { return hp; } set { hp = value; } }
     public int Power { get { return power; } set { power = value; } }
@@ -24,9 +39,10 @@ abstract public class EnemyController : MonoBehaviour
 
     #region 行動パターン
     [Header("行動パターン")]
-    [SerializeField] protected bool isPatrolling;
-    [SerializeField] protected bool isChasingTarget;
-    [SerializeField] protected bool isAttacking;
+    [SerializeField] protected bool canPatrol;          // 常に動き回ることが可能
+    [SerializeField] protected bool canChaseTarget;     // ターゲットを追跡可能
+    [SerializeField] protected bool canAttack;          // 攻撃可能
+    [SerializeField] protected bool canDamageOnContact; // 接触でダメージを与えることが可能
     #endregion
 
     #region 視野設定
@@ -57,6 +73,7 @@ abstract public class EnemyController : MonoBehaviour
 
     protected bool isObstacle;
     protected bool isPlat;
+    protected bool isInvincible;
     #endregion
 
     /// <summary>
@@ -75,12 +92,12 @@ abstract public class EnemyController : MonoBehaviour
     protected virtual void Run()
     {
         Vector2 speedVec = Vector2.zero;
-        if (isChasingTarget && target)
+        if (canChaseTarget && target)
         {
             float distToPlayer = target.transform.position.x - this.transform.position.x;
             speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
         }
-        else if (isPatrolling)
+        else if (canPatrol)
         {
             if(!isPlat || isObstacle) Flip();
             speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
@@ -114,7 +131,21 @@ abstract public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
-    /// 視野範囲内のプレイヤーを取得する
+    /// ターゲットを視認できているかどうか
+    /// </summary>
+    /// <returns></returns>
+    protected bool IsTargetVisible()
+    {
+        if(!target) return false;
+        Vector2 dirToTarget = target.transform.position - transform.position;
+        Vector2 angleVec = new Vector2(transform.localScale.x, 0);
+        float angle = Vector2.Angle(dirToTarget, angleVec);
+        RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
+        return angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player");
+    }
+
+    /// <summary>
+    /// 視野範囲内のプレイヤーの中からターゲットを取得する
     /// </summary>
     /// <returns></returns>
     protected GameObject GetTargetInSight()
@@ -154,5 +185,47 @@ abstract public class EnemyController : MonoBehaviour
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, dist, targetLayerMask);
 
         return hit2D && !hit2D.collider.gameObject.CompareTag("Player");
+    }
+
+    /// <summary>
+    /// ノックバック処理
+    /// </summary>
+    /// <param name="damage"></param>
+    protected void DoKnokBack(float damage)
+    {
+        float direction = damage / Mathf.Abs(damage);
+        transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(0, 0);
+        transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 200f, 100f));
+    }
+
+    /// <summary>
+    /// ダメージ適応時の無敵時間
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator HitTime()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(hitTime);
+        isInvincible = false;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (canDamageOnContact && collision.gameObject.tag == "Player" && hp > 0 && !isInvincible)
+        {
+            if (!target)
+            {
+                // ターゲットを設定し、ターゲットの方向を向く
+                target = collision.gameObject;
+                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0)
+                {
+                    Flip();
+                }
+                SetAnimId((int)ANIM_ID.Hit);
+                StartCoroutine(HitTime());
+            }
+            collision.gameObject.GetComponent<CharacterController2D>().ApplyDamage(2f, transform.position);
+        }
     }
 }

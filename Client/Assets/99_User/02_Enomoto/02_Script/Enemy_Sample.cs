@@ -11,19 +11,6 @@ using UnityEngine;
 public class Enemy_Sample : EnemyController
 {
     /// <summary>
-    /// アニメーションID
-    /// </summary>
-    public enum ANIM_ID
-    {
-        Idle = 1,
-        Attack,
-        Run,
-        Hit,
-        Fall,
-        Dead,
-    }
-
-    /// <summary>
     /// 攻撃方法
     /// </summary>
     public enum ATTACK_TYPE_ID
@@ -45,10 +32,8 @@ public class Enemy_Sample : EnemyController
     [SerializeField] float jumpPower = 19;
     [SerializeField] float attackCooldown = 0.5f;
     [SerializeField] float attackDist = 1.5f;
-    [SerializeField] float hitTime = 0.5f;
-    bool isInvincible;
     bool doOnceDecision;
-    bool canAttack;
+    bool isAttacking;
     bool isDead;
     #endregion
 
@@ -93,7 +78,7 @@ public class Enemy_Sample : EnemyController
         ViewDistMax = viewDistMax;
         TrackingRange = trackingRange;
 
-        canAttack = true;
+        isAttacking = false;
         doOnceDecision = true;
 
         m_rb2d = GetComponent<Rigidbody2D>();
@@ -103,33 +88,34 @@ public class Enemy_Sample : EnemyController
     private void FixedUpdate()
     {
         if (!target && Players.Count > 0) target = GetTargetInSight();
-        else if (target && disToTarget > trackingRange) target = null;
+        else if (canChaseTarget && target && disToTarget > trackingRange
+            || !canChaseTarget && target && !IsTargetVisible()) target = null;
 
         // 障害物、地面があるか取得
         isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, wallLayerMask);
         isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, groundLayerMask);
-        if (!target && isPatrolling) Run();
-        else if (!target && !isPatrolling) Idle();
+        if (!target && canPatrol) Run();
+        else if (!target && !canPatrol) Idle();
 
-        if (!target || !canAttack || isInvincible || hp <= 0 || !doOnceDecision) return;
+        if (!target || isAttacking || isInvincible || hp <= 0 || !doOnceDecision) return;
 
         // ターゲットとの距離
         disToTarget = Vector3.Distance(this.transform.position, target.transform.position);
         disToTargetX = target.transform.position.x - transform.position.x;
 
-        // ターゲットの方向にテクスチャを反転
-        if (isChasingTarget)
+        // ターゲットのいる方向にテクスチャを反転
+        if (canChaseTarget)
         {
             if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
                 || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
         }
 
-        if (isChasingTarget && isObstacle && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin) Jump();
-        else if (isChasingTarget && !IsGround()) AirMovement();
-        else if (isAttacking && !IsObstructed(target) && disToTarget <= attackDist && canAttack && attackType != ATTACK_TYPE_ID.None) Attack();
-        else if (isPatrolling && !isChasingTarget 
-            || isPatrolling && isChasingTarget && Mathf.Abs(disToTargetX) > disToTargetMin 
-            || isChasingTarget && Mathf.Abs(disToTargetX) > disToTargetMin) Run();
+        if (canChaseTarget && isObstacle && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin) Jump();
+        else if (canChaseTarget && !IsGround()) AirMovement();
+        else if (canAttack && !IsObstructed(target) && disToTarget <= attackDist && !isAttacking && attackType != ATTACK_TYPE_ID.None) Attack();
+        else if (canPatrol && !canChaseTarget 
+            || canPatrol && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin 
+            || canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin) Run();
         else Idle();
     }
 
@@ -148,7 +134,7 @@ public class Enemy_Sample : EnemyController
     void Attack()
     {
         doOnceDecision = false;
-        canAttack = false;
+        isAttacking = true;
         SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
 
@@ -235,10 +221,8 @@ public class Enemy_Sample : EnemyController
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
             SetAnimId((int)ANIM_ID.Hit);
-            float direction = damage / Mathf.Abs(damage);
             hp -= Mathf.Abs(damage);
-            transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(0, 0);
-            transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 100f, 100f)); // ノックバック演出
+            DoKnokBack(damage);
 
             if (hp > 0)
             {
@@ -257,22 +241,11 @@ public class Enemy_Sample : EnemyController
     /// <returns></returns>
     IEnumerator AttackCooldown(float time)
     {
-        canAttack = false;
+        isAttacking = true;
         yield return new WaitForSeconds(time);
-        canAttack = true;
+        isAttacking = false;
         doOnceDecision = true;
         Idle();
-    }
-
-    /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator HitTime()
-    {
-        isInvincible = true;
-        yield return new WaitForSeconds(hitTime);
-        isInvincible = false;
     }
 
     /// <summary>
@@ -335,6 +308,10 @@ public class Enemy_Sample : EnemyController
                 float angle = Vector2.Angle(dirToTarget, angleVec);
                 RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, ViewDistMax, TargetLayerMask);
 
+                if (canChaseTarget && target && target == player)
+                {
+                    Debug.DrawRay(transform.position, dirToTarget, Color.red);
+                }
                 if (angle <= ViewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
                 {
                     Debug.DrawRay(transform.position, dirToTarget, Color.red);
