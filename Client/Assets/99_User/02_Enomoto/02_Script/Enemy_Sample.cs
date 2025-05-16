@@ -67,17 +67,20 @@ public class Enemy_Sample : EnemyController
     [SerializeField] Transform groundCheck;
     [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
     [SerializeField] LayerMask groundLayerMask;
+
+    // 落下チェック
+    [SerializeField] Transform fallCheck;
+    [SerializeField] float fallCheckRange = 0.9f;
     #endregion
 
     #region コンポーネント
-    Rigidbody2D m_rb2d;
     SpriteRenderer m_spriteRenderer;
     #endregion
 
     #region ターゲット
-    GameObject target;
     float disToTarget;
     float disToTargetX;
+    readonly float disToTargetMin = 0.25f;
     #endregion
 
     void Start()
@@ -99,31 +102,34 @@ public class Enemy_Sample : EnemyController
 
     private void FixedUpdate()
     {
-        // ターゲットの認識・追跡範囲外に行くとターゲットを解除する
-        if (target == null && Players.Count > 0) target = GetTargetInSight();
-        else if (target != null && disToTarget > trackingRange) target = null;
+        if (!target && Players.Count > 0) target = GetTargetInSight();
+        else if (target && disToTarget > trackingRange) target = null;
 
-        // ターゲットとの距離を取得・ターゲットが存在しない場合はIdle
-        if (target != null)
-        {
-            disToTarget = Vector3.Distance(this.transform.position, target.transform.position);
-            disToTargetX = target.transform.position.x - transform.position.x;
-        }
-        else Idle();
+        // 障害物、地面があるか取得
+        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, wallLayerMask);
+        isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, groundLayerMask);
+        if (!target && isPatrolling) Run();
+        else if (!target && !isPatrolling) Idle();
 
-        // 以降はターゲットを認識している場合の処理
-        if (target == null || !canAttack || isInvincible || hp <= 0 || !doOnceDecision) return;
+        if (!target || !canAttack || isInvincible || hp <= 0 || !doOnceDecision) return;
+
+        // ターゲットとの距離
+        disToTarget = Vector3.Distance(this.transform.position, target.transform.position);
+        disToTargetX = target.transform.position.x - transform.position.x;
 
         // ターゲットの方向にテクスチャを反転
-        if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-            || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        if (isChasingTarget)
+        {
+            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        }
 
-        // 行動パターン
-        bool isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, wallLayerMask);
-        if (isObstacle && IsGround()) Jump();
-        else if (!IsGround()) AirMovement();
-        else if (disToTarget <= attackDist && canAttack && attackType != ATTACK_TYPE_ID.None) Attack();
-        else if (Mathf.Abs(disToTargetX) > 0.25f && speed != 0) Run();
+        if (isChasingTarget && isObstacle && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin) Jump();
+        else if (isChasingTarget && !IsGround()) AirMovement();
+        else if (isAttacking && !IsObstructed(target) && disToTarget <= attackDist && canAttack && attackType != ATTACK_TYPE_ID.None) Attack();
+        else if (isPatrolling && !isChasingTarget 
+            || isPatrolling && isChasingTarget && Mathf.Abs(disToTargetX) > disToTargetMin 
+            || isChasingTarget && Mathf.Abs(disToTargetX) > disToTargetMin) Run();
         else Idle();
     }
 
@@ -185,11 +191,10 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 走る処理
     /// </summary>
-    void Run()
+    protected override void Run()
     {
         SetAnimId((int)ANIM_ID.Run);
-        float distToPlayer = target.transform.position.x - this.transform.position.x;
-        m_rb2d.linearVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
+        base.Run();
     }
 
     /// <summary>
@@ -233,7 +238,7 @@ public class Enemy_Sample : EnemyController
             float direction = damage / Mathf.Abs(damage);
             hp -= Mathf.Abs(damage);
             transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(0, 0);
-            transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 300f, 100f)); // ノックバック演出
+            transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 100f, 100f)); // ノックバック演出
 
             if (hp > 0)
             {
@@ -321,25 +326,32 @@ public class Enemy_Sample : EnemyController
         Gizmos.DrawLine(rightStartPosition, endPosition);
 
         // 視野の描画
-        foreach (GameObject player in Players)
+        if (Players.Count > 0)
         {
-            Vector2 dirToTarget = player.transform.position - transform.position;
-            Vector2 angleVec = new Vector2(transform.localScale.x, 0);
-            float angle = Vector2.Angle(dirToTarget, angleVec);
-            RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, ViewDistMax, TargetLayerMask);
+            foreach (GameObject player in Players)
+            {
+                Vector2 dirToTarget = player.transform.position - transform.position;
+                Vector2 angleVec = new Vector2(transform.localScale.x, 0);
+                float angle = Vector2.Angle(dirToTarget, angleVec);
+                RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, ViewDistMax, TargetLayerMask);
 
-            if (angle <= ViewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
-            {
-                Debug.DrawRay(transform.position, dirToTarget, Color.red);
-            }
-            else
-            {
-                Debug.DrawRay(transform.position, dirToTarget, Color.cyan);
+                if (angle <= ViewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
+                {
+                    Debug.DrawRay(transform.position, dirToTarget, Color.red);
+                }
+                else
+                {
+                    Debug.DrawRay(transform.position, dirToTarget, Color.cyan);
+                }
             }
         }
 
         // 追跡範囲
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, trackingRange);
+
+        // 落下チェック
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
     }
 }

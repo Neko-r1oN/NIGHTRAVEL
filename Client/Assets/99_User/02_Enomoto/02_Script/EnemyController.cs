@@ -22,6 +22,13 @@ abstract public class EnemyController : MonoBehaviour
     public int Speed { get { return speed; } set { speed = value; } }
     #endregion
 
+    #region 行動パターン
+    [Header("行動パターン")]
+    [SerializeField] protected bool isPatrolling;
+    [SerializeField] protected bool isChasingTarget;
+    [SerializeField] protected bool isAttacking;
+    #endregion
+
     #region 視野設定
     [Header("視野")]
     [SerializeField] protected LayerMask targetLayerMask; // 視認するLayer
@@ -45,16 +52,41 @@ abstract public class EnemyController : MonoBehaviour
     // マネージャークラスからPlayerを取得できるのが理想(削除予定)
     [SerializeField] List<GameObject> players = new List<GameObject>();
     public List<GameObject> Players { get { return players; } set { players = value; } }
+    [SerializeField] protected GameObject target;
+    protected Rigidbody2D m_rb2d;
+
+    protected bool isObstacle;
+    protected bool isPlat;
     #endregion
 
     /// <summary>
     /// 方向転換
     /// </summary>
-    public void Flip()
+    protected void Flip()
     {
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    /// <summary>
+    /// 走る処理
+    /// </summary>
+    protected virtual void Run()
+    {
+        Vector2 speedVec = Vector2.zero;
+        if (isChasingTarget && target)
+        {
+            float distToPlayer = target.transform.position.x - this.transform.position.x;
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
+        }
+        else if (isPatrolling)
+        {
+            if(!isPlat || isObstacle) Flip();
+            speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
+        }
+
+        m_rb2d.linearVelocity = speedVec;
     }
 
     /// <summary>
@@ -109,5 +141,18 @@ abstract public class EnemyController : MonoBehaviour
         }
 
         return target;
+    }
+
+    /// <summary>
+    /// ターゲットとの間に障害物があるかどうか
+    /// </summary>
+    /// <returns></returns>
+    protected bool IsObstructed(GameObject target)
+    {
+        Vector2 dirToTarget = target.transform.position - transform.position;
+        float dist = dirToTarget.magnitude;
+        RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, dist, targetLayerMask);
+
+        return hit2D && !hit2D.collider.gameObject.CompareTag("Player");
     }
 }
