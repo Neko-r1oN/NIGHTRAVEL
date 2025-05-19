@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ShortCircuit : Trap
+public class ShortCircuit : MonoBehaviour
 {
-    Trap trap = new Trap();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,5 +14,13 @@ public class ShortCircuit : Trap
     void Update()
     {
         
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("漏電フィールドに当たった");
+        }
     }
 }
