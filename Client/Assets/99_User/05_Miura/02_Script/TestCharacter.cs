@@ -11,17 +11,11 @@ public class TestCharacter : MonoBehaviour
     // オブジェクト・コンポーネント参照
     private Rigidbody2D rigidbody2D; // Rigidbody2Dコンポーネントへの参照
 
-    // 仮で変数定義
-    public float HP; //キャラクターのHP(奈落などのステージギミックでHPを減らす)
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // コンポーネント参照取得
         rigidbody2D = GetComponent<Rigidbody2D>();
-
-        //HP設定
-        HP = 5000.0f;
     }
 
     // Update is called once per frame
@@ -50,14 +44,4 @@ public class TestCharacter : MonoBehaviour
             rigidbody2D.linearVelocity = new Vector2(rigidbody2D.linearVelocity.x, jumpPower);
         }
     }
-
-    //public void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.CompareTag("Abyss"))
-    //    {
-    //        trap.Damage();
-    //        Debug.Log("ダメージは" + trap.damage);
-    //        Debug.Log("現在のHPは" + HP);
-    //    }
-    //}
 }
