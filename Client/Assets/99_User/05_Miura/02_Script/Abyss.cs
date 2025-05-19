@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class Abyss : Trap
+public class Abyss : MonoBehaviour
 {
-    Trap trap = new Trap();
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,13 +14,11 @@ public class Abyss : Trap
 
     }
 
-    //public void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if(collision.gameObject.CompareTag("Player"))
-    //    {
-    //        trap.Damage();
-    //        Debug.Log("É_ÉÅÅ[ÉWÇÕ" + trap.damage);
-    //        Debug.Log("åªç›ÇÃHPÇÕ" + testCharacter.HP);
-    //    }
-    //}
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("ìﬁóéÇ…óéÇøÇΩ");
+        }
+    }
 }
