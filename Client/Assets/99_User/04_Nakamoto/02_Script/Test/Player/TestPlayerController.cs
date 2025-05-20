@@ -1,4 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--------------------------------------------------------------
 // プレイヤーコントローラー [ PlayerController2D.cs ]
 // Author：Kenta Nakamoto
@@ -66,7 +65,6 @@ public class TestPlayerController : MonoBehaviour
     private bool oldWallSlidding = false;//If player is sliding in a wall in the previous frame
     private float prevVelocityX = 0f;
     private bool canCheck = false;  //For check if player is wallsliding
-    private int animID = 0;			// 現在のアニメーションID
 
     private Animator animator;
 
@@ -101,11 +99,8 @@ public class TestPlayerController : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        //animator.Play(428290163, 0);
-
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-        animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
         {   // ジャンプ押下時
@@ -121,7 +116,6 @@ public class TestPlayerController : MonoBehaviour
         {   // 攻撃1
             canAttack = false;
             animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
-            //--animator.SetBool("IsAttacking", true);
             StartCoroutine(AttackCooldown());
         }
 
@@ -140,9 +134,6 @@ public class TestPlayerController : MonoBehaviour
     /// </summary>
     private void FixedUpdate()
     {
-        //var info2 = animator.GetCurrentAnimatorStateInfo(0).nameHash;
-        //Debug.Log(info2);
-
         //---------------------------------
         // 地面判定
 
@@ -159,7 +150,8 @@ public class TestPlayerController : MonoBehaviour
                 m_Grounded = true;
             if (!wasGrounded)
             {   // 前フレームで地面に触れていない時
-                animator.SetBool("IsJumping", false);
+                animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+                
                 if (!m_IsWall && !isDashing)
                     particleJumpDown.Play();
                 canDoubleJump = true;
@@ -168,6 +160,12 @@ public class TestPlayerController : MonoBehaviour
             }
         }
 
+        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+
+        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Run && Mathf.Abs(horizontalMove) < 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+
         //---------------------------------
         // 壁判定
 
@@ -175,7 +173,10 @@ public class TestPlayerController : MonoBehaviour
 
         if (!m_Grounded)
         {   // 空中に居るとき
-            animator.SetBool("IsJumping", true);
+
+            if(animator.GetInteger("animation_id") == (int)ANIM_ID.Idle)
+                animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
+            
             Collider2D[] collidersWall = Physics2D.OverlapCircleAll(m_WallCheck.position, k_GroundedRadius, m_WhatIsGround);
             for (int i = 0; i < collidersWall.Length; i++)
             {
@@ -251,8 +252,10 @@ public class TestPlayerController : MonoBehaviour
                 // 落下速度制限処理
                 if (m_Rigidbody2D.linearVelocity.y < -limitFallSpeed)
                     m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, -limitFallSpeed);
+
                 // キャラの目標移動速度を決定
                 Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.linearVelocity.y);
+
                 // SmoothDampにより、滑らかな移動を実現
                 m_Rigidbody2D.linearVelocity = Vector3.SmoothDamp(m_Rigidbody2D.linearVelocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
@@ -272,8 +275,8 @@ public class TestPlayerController : MonoBehaviour
 
             if (m_Grounded && jump)
             {   // 接地状態 & ジャンプ入力
-                animator.SetBool("IsJumping", true);
-                animator.SetBool("JumpUp", true);
+                animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
+                
                 m_Grounded = false;
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
                 canDoubleJump = true;
@@ -285,7 +288,8 @@ public class TestPlayerController : MonoBehaviour
                 canDoubleJump = false;
                 m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, 0);
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce / 1.2f));
-                animator.SetBool("IsDoubleJumping", true);
+
+                animator.SetInteger("animation_id", (int)ANIM_ID.DBJump);
             }
             else if (m_IsWall && !m_Grounded)
             {   // 壁に触れた && 空中
@@ -296,7 +300,7 @@ public class TestPlayerController : MonoBehaviour
                     Flip();
                     StartCoroutine(WaitToCheck(0.1f));
                     canDoubleJump = true;
-                    animator.SetBool("IsWallSliding", true);
+                    animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
                 }
                 isDashing = false;
 
@@ -309,21 +313,28 @@ public class TestPlayerController : MonoBehaviour
                     else
                     {   // スライド処理
                         oldWallSlidding = true;
+
+                        int id = animator.GetInteger("animation_id");
+
+                        if (id != (int)ANIM_ID.Attack)
+                        {
+                            animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
+                        }
+                        
                         m_Rigidbody2D.linearVelocity = new Vector2(-transform.localScale.x * 2, -5);
                     }
                 }
 
                 if (jump && isWallSliding)
                 {   // スライディング中にジャンプ
-                    animator.SetBool("IsJumping", true);
-                    animator.SetBool("JumpUp", true);
+                    animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
+
                     m_Rigidbody2D.linearVelocity = new Vector2(0f, 0f);
                     m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_JumpForce * 1.2f, m_JumpForce));
                     jumpWallStartX = transform.position.x;
                     limitVelOnWallJump = true;
                     canDoubleJump = true;
                     isWallSliding = false;
-                    animator.SetBool("IsWallSliding", false);
                     oldWallSlidding = false;
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                     canMove = false;
@@ -331,7 +342,6 @@ public class TestPlayerController : MonoBehaviour
                 else if (dash && canDash)
                 {
                     isWallSliding = false;
-                    animator.SetBool("IsWallSliding", false);
                     oldWallSlidding = false;
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                     canDoubleJump = true;
@@ -341,7 +351,6 @@ public class TestPlayerController : MonoBehaviour
             else if (isWallSliding && !m_IsWall && canCheck)
             {   // 壁スライドAnim再生中 && 前に壁が無い && 空中に居るとき
                 isWallSliding = false;
-                animator.SetBool("IsWallSliding", false);
                 oldWallSlidding = false;
                 m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                 canDoubleJump = true;
@@ -395,7 +404,6 @@ public class TestPlayerController : MonoBehaviour
         if (!invincible)
         {
             animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-            //animator.SetBool("Hit", true);
             life -= damage;
             Vector2 damageDir = Vector3.Normalize(transform.position - position) * 40f;
             m_Rigidbody2D.linearVelocity = Vector2.zero;
@@ -419,7 +427,6 @@ public class TestPlayerController : MonoBehaviour
     IEnumerator DashCooldown()
     {
         animator.SetInteger("animation_id", (int)ANIM_ID.Dash);
-        //--animator.SetBool("IsDashing", true);
         isDashing = true;
         canDash = false;
         yield return new WaitForSeconds(0.1f);
@@ -472,7 +479,7 @@ public class TestPlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         canDoubleJump = true;
         isWallSliding = false;
-        animator.SetBool("IsWallSliding", false);
+        animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
         oldWallSlidding = false;
         m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
     }
@@ -482,7 +489,6 @@ public class TestPlayerController : MonoBehaviour
     IEnumerator WaitToDead()
     {
         animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
-        //--animator.SetBool("IsDead", true);
         canMove = false;
         invincible = true;
         canAttack = false;
