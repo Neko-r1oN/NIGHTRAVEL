@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
                 {// 距離が10離れていたら
                     Debug.Log("距離:" + Math.Floor(distanceOfPlayer));
                     spawnCnt++;
-                    
+
                     int listNum = Random.Range(0, 2);
 
                     // 生成
@@ -90,6 +90,8 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("生成限界");
         }
+
+        
     }
 
     /// <summary>
@@ -100,6 +102,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Result ueno");
     }
 
+    [ContextMenu("CrushEnemy")]
     /// <summary>
     ///  敵撃破
     /// </summary>
@@ -110,8 +113,8 @@ public class GameManager : MonoBehaviour
         spawnCnt--;
         AddXp();
 
-        //Debug.Log(crushNum);
-        if (crushNum >= 20)
+        Debug.Log(crushNum);
+        if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
             bossFlag = true;
             boss.SetActive(true);
@@ -131,7 +134,7 @@ public class GameManager : MonoBehaviour
 
             // 必要経験値数を増やす
             requiredXp += xp;
-            //Debug.Log(requiredXp);
+            Debug.Log(requiredXp);
             // レベルアップ関数を
             UpLevel();
         }
@@ -143,7 +146,7 @@ public class GameManager : MonoBehaviour
     public void UpLevel()
     {
         level++;
-        //Debug.Log("レベルアップ:" + level);
+        Debug.Log("レベルアップ:" + level);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
