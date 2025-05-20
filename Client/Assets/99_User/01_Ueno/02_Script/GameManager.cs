@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,12 +19,16 @@ public class GameManager : MonoBehaviour
     public int maxSpawnCnt; // マックススポーン回数
     Vector3 spawnPos;       // ランダムで生成する位置
 
-    [SerializeField] GameObject boss;
-    [SerializeField] GameObject enemy;
-    [SerializeField] Transform randRespawnA;
-    [SerializeField] Transform randRespawnB;
+    
+    public List<GameObject> enemyList;       // エネミーリスト
+    [SerializeField] GameObject boss;        // ボス
+    [SerializeField] Transform randRespawnA; // リスポーン範囲A
+    [SerializeField] Transform randRespawnB; // リスポーン範囲B
 
-    GameObject player;
+    GameObject player;                       // プレイヤーの情報
+    GameObject enemy;                        // エネミーの情報
+
+    public GameObject Enemy {  get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
@@ -39,19 +44,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Return))
-        {
-            // 撃破数加算
-            crushNum++;
-            Debug.Log(crushNum);
-            if(crushNum >= 15)
-            {// 撃破数が15以上になったら(仮)
-                bossFlag = true;
-                //square.SetActive(true);
-                crushNum = 0;
-            }
-        }*/
-
         if (crushNum >= 5 && bossFlag)
         {// ボスを倒した(仮)
             bossFlag = false;
@@ -64,10 +56,8 @@ public class GameManager : MonoBehaviour
         if (spawnCnt < maxSpawnCnt)
         {// スポーン回数が限界に達しているか
             num++;
-
             if (num % createCnt == 0)
             {
-                //Debug.Log("出てきた");
                 num = 0;
 
                 // ステージ内から適当な位置を取得
@@ -76,18 +66,23 @@ public class GameManager : MonoBehaviour
                 float z = Random.Range(randRespawnA.position.z, randRespawnB.position.z);
                 // ランダムな位置を生成
                 spawnPos = new Vector3(x, y, z);
-                
+
                 // プレイヤーの位置とランダム生成の位置との距離
                 float distanceOfPlayer =
                     Vector3.Distance(player.transform.position, spawnPos);
 
-                if (distanceOfPlayer >= 18)
-                {// 距離が20離れていたら
+                if (distanceOfPlayer >= 10)
+                {// 距離が10離れていたら
                     Debug.Log("距離:" + Math.Floor(distanceOfPlayer));
                     spawnCnt++;
-                    Debug.Log(spawnCnt);
+                    
+                    int listNum = Random.Range(0, 2);
+
                     // 生成
-                    Instantiate(enemy, new Vector3(x, y, z), enemy.transform.rotation);
+                    enemy = Instantiate(enemyList[listNum], new Vector3(x, y, z), Quaternion.identity);
+
+                    // 透明化
+                    enemy.GetComponent<SpriteRenderer>().enabled = false;
                 }
             }
         }
@@ -111,17 +106,18 @@ public class GameManager : MonoBehaviour
     public void CrushEnemy()
     {
         crushNum++;
+
         spawnCnt--;
         AddXp();
 
         //Debug.Log(crushNum);
-        /*if (crushNum >= 15)
+        if (crushNum >= 20)
         {// 撃破数が15以上になったら(仮)
             bossFlag = true;
             boss.SetActive(true);
-            Debug.Log("ボスでてきた");
+            //Debug.Log("ボスでてきた");
             //crushNum = 0;
-        }*/
+        }
     }
 
     /// <summary>
@@ -150,8 +146,12 @@ public class GameManager : MonoBehaviour
         //Debug.Log("レベルアップ:" + level);
     }
 
-    /*public void RespawnEnemy()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        Instantiate(enemy);
-    }*/
+        if (collision.gameObject.tag == "ground")
+        {
+            enemy.GetComponent<SpriteRenderer>().enabled = true;
+            enemy.GetComponent<EnemyController>().Players.Add(player);
+        }
+    }
 }

@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour {
 		if (life <= 0)
 		{
 			transform.GetComponent<Animator>().SetBool("IsDead", true);
-			//gameManager.CrushEnemy();
+			gameManager.CrushEnemy();
 			StartCoroutine(DestroyEnemy());
 		}
 
