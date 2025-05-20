@@ -1,3 +1,4 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--------------------------------------------------------------
 // プレイヤーコントローラー [ PlayerController2D.cs ]
 // Author：Kenta Nakamoto
@@ -8,7 +9,7 @@ using UnityEngine.Events;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class PlayerController2D : MonoBehaviour
+public class TestPlayerController : MonoBehaviour
 {
     /// <summary>
     /// アニメーションID
@@ -21,6 +22,7 @@ public class PlayerController2D : MonoBehaviour
         Hit,
         Fall,
         Dead,
+        Dash,
         DBJump,
         WallSlide,
     }
@@ -118,7 +120,8 @@ public class PlayerController2D : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X) && canAttack || Input.GetButtonDown("Attack1") && canAttack)
         {   // 攻撃1
             canAttack = false;
-            animator.SetBool("IsAttacking", true);
+            animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
+            //--animator.SetBool("IsAttacking", true);
             StartCoroutine(AttackCooldown());
         }
 
@@ -391,7 +394,8 @@ public class PlayerController2D : MonoBehaviour
     {
         if (!invincible)
         {
-            animator.SetBool("Hit", true);
+            animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            //animator.SetBool("Hit", true);
             life -= damage;
             Vector2 damageDir = Vector3.Normalize(transform.position - position) * 40f;
             m_Rigidbody2D.linearVelocity = Vector2.zero;
@@ -414,7 +418,8 @@ public class PlayerController2D : MonoBehaviour
     /// <returns></returns>
     IEnumerator DashCooldown()
     {
-        animator.SetBool("IsDashing", true);
+        animator.SetInteger("animation_id", (int)ANIM_ID.Dash);
+        //--animator.SetBool("IsDashing", true);
         isDashing = true;
         canDash = false;
         yield return new WaitForSeconds(0.1f);
@@ -476,7 +481,8 @@ public class PlayerController2D : MonoBehaviour
     /// </summary>
     IEnumerator WaitToDead()
     {
-        animator.SetBool("IsDead", true);
+        animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
+        //--animator.SetBool("IsDead", true);
         canMove = false;
         invincible = true;
         canAttack = false;
