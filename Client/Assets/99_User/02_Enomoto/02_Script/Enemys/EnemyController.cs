@@ -37,11 +37,8 @@ abstract public class EnemyController : MonoBehaviour
     public int Speed { get { return speed; } set { speed = value; } }
     #endregion
 
-    #region 行動パターン
-    [Header("行動パターン")]
-    [SerializeField] protected bool canPatrol;          // 常に動き回ることが可能
-    [SerializeField] protected bool canChaseTarget;     // ターゲットを追跡可能
-    [SerializeField] protected bool canAttack;          // 攻撃可能
+    #region 共通の行動パターン
+    [Header("共通の行動パターン")]
     [SerializeField] protected bool canDamageOnContact; // 接触でダメージを与えることが可能
     #endregion
 
@@ -87,26 +84,6 @@ abstract public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
-    /// 走る処理
-    /// </summary>
-    protected virtual void Run()
-    {
-        Vector2 speedVec = Vector2.zero;
-        if (canChaseTarget && target)
-        {
-            float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
-        }
-        else if (canPatrol)
-        {
-            if(!isPlat || isObstacle) Flip();
-            speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
-        }
-
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
     /// ダメージ適応処理
     /// </summary>
     /// <param name="damage"></param>
@@ -118,7 +95,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <param name="id"></param>
     public void SetAnimId(int id)
     {
-        animator.SetInteger("animation_id", id);
+        //animator.SetInteger("animation_id", id);
     }
 
     /// <summary>
@@ -127,7 +104,8 @@ abstract public class EnemyController : MonoBehaviour
     /// <returns></returns>
     public int GetAnimId()
     {
-        return animator.GetInteger("animation_id");
+        //return animator.GetInteger("animation_id");
+        return 1;
     }
 
     /// <summary>
