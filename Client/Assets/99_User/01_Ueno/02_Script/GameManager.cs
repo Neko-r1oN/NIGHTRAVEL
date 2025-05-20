@@ -111,13 +111,13 @@ public class GameManager : MonoBehaviour
         AddXp();
 
         //Debug.Log(crushNum);
-        /*if (crushNum >= 15)
+        if (crushNum >= 20)
         {// 撃破数が15以上になったら(仮)
             bossFlag = true;
             boss.SetActive(true);
-            Debug.Log("ボスでてきた");
+            //Debug.Log("ボスでてきた");
             //crushNum = 0;
-        }*/
+        }
     }
 
     /// <summary>
