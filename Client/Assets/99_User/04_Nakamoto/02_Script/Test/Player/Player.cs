@@ -8,7 +8,7 @@ using UnityEngine.Events;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class TestPlayerController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     /// <summary>
     /// アニメーションID
@@ -21,7 +21,7 @@ public class TestPlayerController : MonoBehaviour
         Hit,
         Fall,
         Dead,
-        Dash,
+        Blink,
         DBJump,
         WallSlide,
     }
@@ -33,7 +33,7 @@ public class TestPlayerController : MonoBehaviour
     public float dmgValue = 4;		// 攻撃力
     float horizontalMove = 0f;		// 速度値
     [SerializeField] private float m_JumpForce = 400f;
-    [SerializeField] private float m_DashForce = 25f;
+    [SerializeField] private float m_BlinkForce = 25f;
     [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
     [SerializeField] GameObject throwableObject;		// 投擲武器
     [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;
@@ -55,12 +55,12 @@ public class TestPlayerController : MonoBehaviour
     private float limitFallSpeed = 25f; // 落下速度の制限
 
     private bool canMove = true;    // プレイヤーの動作制御フラグ
-    private bool canDash = true;    // ダッシュ制御フラグ
+    private bool canBlink = true;    // ダッシュ制御フラグ
     private bool canAttack = true;	// 攻撃制御フラグ
     private bool m_IsWall = false;  // プレイヤーの前に壁があるか
     private bool isJump = false;	// ジャンプ入力フラグ
-    private bool isDash = false;	// ダッシュ入力フラグ
-    private bool isDashing = false;	// プレイヤーがダッシュ中かどうか
+    private bool isBlink = false;	// ダッシュ入力フラグ
+    private bool isBlinking = false;	// プレイヤーがダッシュ中かどうか
     private bool isWallSliding = false;	 //If player is sliding in a wall
     private bool oldWallSlidding = false;//If player is sliding in a wall in the previous frame
     private float prevVelocityX = 0f;
@@ -107,9 +107,9 @@ public class TestPlayerController : MonoBehaviour
             isJump = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Dash"))
+        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
         {   // ブリンク押下時
-            isDash = true;
+            isBlink = true;
         }
 
         if (Input.GetKeyDown(KeyCode.X) && canAttack || Input.GetButtonDown("Attack1") && canAttack)
@@ -152,7 +152,7 @@ public class TestPlayerController : MonoBehaviour
             {   // 前フレームで地面に触れていない時
                 animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
                 
-                if (!m_IsWall && !isDashing)
+                if (!m_IsWall && !isBlinking)
                     particleJumpDown.Play();
                 canDoubleJump = true;
                 if (m_Rigidbody2D.linearVelocity.y < 0f)
@@ -182,7 +182,7 @@ public class TestPlayerController : MonoBehaviour
             {
                 if (collidersWall[i].gameObject != null)
                 {
-                    isDashing = false;
+                    isBlinking = false;
                     m_IsWall = true;
                 }
             }
@@ -216,9 +216,9 @@ public class TestPlayerController : MonoBehaviour
             }
         }
 
-        Move(horizontalMove * Time.fixedDeltaTime, isJump, isDash);
+        Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
-        isDash = false;
+        isBlink = false;
     }
 
     /// <summary>
@@ -226,8 +226,8 @@ public class TestPlayerController : MonoBehaviour
     /// </summary>
     /// <param name="move">移動量</param>
     /// <param name="jump">ジャンプ入力</param>
-    /// <param name="dash">ダッシュ入力</param>
-    public void Move(float move, bool jump, bool dash)
+    /// <param name="blink">ダッシュ入力</param>
+    public void Move(float move, bool jump, bool blink)
     {
         if (canMove)
         {
@@ -235,16 +235,16 @@ public class TestPlayerController : MonoBehaviour
             // 移動 & ダッシュ
 
             // ダッシュ入力 & ダッシュ可能 & 壁に触れてない
-            if (dash && canDash && !isWallSliding)
+            if (blink && canBlink && !isWallSliding)
             {
                 //m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_DashForce, 0f));
-                StartCoroutine(DashCooldown()); // Dash&クールダウン
+                StartCoroutine(BlinkCooldown()); // ブリンククールダウン
             }
             // If crouching, check to see if the character can stand up
             // ダッシュ中の場合
-            if (isDashing)
+            if (isBlinking)
             {   // クールダウンに入るまで加速
-                m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_DashForce, 0);
+                m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
             }
             // 接地しているか空中制御ONの時
             else if (m_Grounded || m_AirControl)
@@ -293,7 +293,7 @@ public class TestPlayerController : MonoBehaviour
             }
             else if (m_IsWall && !m_Grounded)
             {   // 壁に触れた && 空中
-                if (!oldWallSlidding && m_Rigidbody2D.linearVelocity.y < 0 || isDashing)
+                if (!oldWallSlidding && m_Rigidbody2D.linearVelocity.y < 0 || isBlinking)
                 {   // 前フレームで壁に触れていない && 下に落ちてる or ダッシュ可能
                     isWallSliding = true;
                     m_WallCheck.localPosition = new Vector3(-m_WallCheck.localPosition.x, m_WallCheck.localPosition.y, 0);
@@ -302,7 +302,7 @@ public class TestPlayerController : MonoBehaviour
                     canDoubleJump = true;
                     animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
                 }
-                isDashing = false;
+                isBlinking = false;
 
                 if (isWallSliding)
                 {   // 壁スライド中
@@ -313,14 +313,11 @@ public class TestPlayerController : MonoBehaviour
                     else
                     {   // スライド処理
                         oldWallSlidding = true;
-
                         int id = animator.GetInteger("animation_id");
-
                         if (id != (int)ANIM_ID.Attack)
                         {
                             animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
                         }
-                        
                         m_Rigidbody2D.linearVelocity = new Vector2(-transform.localScale.x * 2, -5);
                     }
                 }
@@ -339,19 +336,20 @@ public class TestPlayerController : MonoBehaviour
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                     canMove = false;
                 }
-                else if (dash && canDash)
-                {
+                else if (blink && canBlink)
+                {   // ダッシュ押下時
                     isWallSliding = false;
                     oldWallSlidding = false;
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                     canDoubleJump = true;
-                    StartCoroutine(DashCooldown());
+                    StartCoroutine(BlinkCooldown());
                 }
             }
             else if (isWallSliding && !m_IsWall && canCheck)
             {   // 壁スライドAnim再生中 && 前に壁が無い && 空中に居るとき
                 isWallSliding = false;
                 oldWallSlidding = false;
+                animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                 canDoubleJump = true;
             }
@@ -363,10 +361,7 @@ public class TestPlayerController : MonoBehaviour
     /// </summary>
     private void Flip()
     {
-        // Switch the way the player is labelled as facing.
         m_FacingRight = !m_FacingRight;
-
-        // Multiply the player's x local scale by -1.
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
@@ -424,15 +419,15 @@ public class TestPlayerController : MonoBehaviour
     /// ダッシュ(ブリンク)制限処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator DashCooldown()
+    IEnumerator BlinkCooldown()
     {
-        animator.SetInteger("animation_id", (int)ANIM_ID.Dash);
-        isDashing = true;
-        canDash = false;
-        yield return new WaitForSeconds(0.1f);
-        isDashing = false;
-        yield return new WaitForSeconds(0.5f);
-        canDash = true;
+        animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
+        isBlinking = true;
+        canBlink = false;
+        yield return new WaitForSeconds(0.1f);  // ブリンク時間
+        isBlinking = false;
+        yield return new WaitForSeconds(0.5f);  // クールダウン時間
+        canBlink = true;
     }
 
     /// <summary>
