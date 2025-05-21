@@ -375,9 +375,11 @@ public class PlayerController2D : MonoBehaviour
                 {
                     dmgValue = -dmgValue;
                 }
-                //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
-                collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
-                cam.GetComponent<MainCameraFollow>().ShakeCamera();
+                //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更 
+                collidersEnemies[i].gameObject.GetComponent<Enemy_Sample>().
+                    ApplyDamage((int)dmgValue,this.gameObject.transform);
+
+                cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
     }

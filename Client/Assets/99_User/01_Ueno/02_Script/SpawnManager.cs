@@ -8,7 +8,7 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        player = GameObject.Find("DrawCharacter");
+        player = GameObject.Find("Player");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
