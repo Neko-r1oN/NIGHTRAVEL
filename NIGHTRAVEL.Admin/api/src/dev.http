@@ -1,0 +1,85 @@
+###　ユーザー情報取得
+GET http://localhost:8000/api/users/1
+Accept: application/json
+
+### ユーザー一覧を取得(Level)
+GET http://localhost:8000/api/users?min_level=3&max_level=9
+Accept: application/json
+
+### アイテムリスト
+GET http://localhost:8000/api/items
+Accept: application/json
+
+### ユーザー所持アイテムリスト
+GET http://localhost:8000/api/usersItem/2
+Accept: application/json
+
+### メールリスト
+GET http://localhost:8000/api/mails
+Accept: application/json
+
+### ユーザー受信メールリスト
+GET http://localhost:8000/api/mails/1
+Accept: application/json
+
+### フォローリスト
+GET http://localhost:8000/api/follows/1
+Accept: application/json
+
+### ユーザー登録
+POST http://localhost:8000/api/users/store
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "jobi5"
+}
+
+### ユーザー更新
+POST http://localhost:8000/api/users/update
+Content-Type: application/json
+Accept: application/json
+
+{
+    "user_id": 104,
+    "level": 2
+}
+
+### メール受け取り
+POST http://localhost:8000/api/mails/open
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer 3|0AnNakITu2ZH7fUHAcXNU7qrrY2jzo4irTpyeiyXa94aa3bb
+
+{
+    "mail_id": 1
+}
+
+### クリエイトステージ一覧取得
+GET http://localhost:8000/api/creates/index
+Accept: application/json
+
+### ステージクリエイト情報登録
+POST http://localhost:8000/api/creates/store
+Content-Type: application/json
+Accept: application/json
+
+{
+    "stage_id": 2,
+    "pos_list": [
+        {
+            "type": 1,
+            "x": 20,
+            "y": 40
+        },
+        {
+            "type": 2,
+            "x": 60,
+            "y": 60
+        }
+    ]
+}
+
+### ステージクリエイト情報取得
+GET http://localhost:8000/api/creates/show/2
+Accept: application/json
