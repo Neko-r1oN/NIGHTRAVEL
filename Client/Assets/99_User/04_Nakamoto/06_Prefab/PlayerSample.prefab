@@ -92,7 +92,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2104721271453235480}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.4, y: -1.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -120,7 +120,7 @@ MonoBehaviour:
   runSpeed: 40
   dmgValue: 4
   m_JumpForce: 850
-  m_DashForce: 25
+  m_BlinkForce: 25
   m_AirControl: 1
   throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
   m_MovementSmoothing: 0.05
@@ -132,6 +132,7 @@ MonoBehaviour:
   m_GroundCheck: {fileID: 8577718980914660200}
   m_WallCheck: {fileID: 7890144716541256212}
   attackCheck: {fileID: 3821735462133043664}
+  playerCollider: {fileID: 5100425850618018956}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
   cam: {fileID: 0}
