@@ -407,7 +407,8 @@ public class SampleChara : Player
                     dmgValue = -dmgValue;
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
-                collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
+                //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
+                collidersEnemies[i].gameObject.GetComponent<EnemySample>().ApplyDamage(dmgValue);
                 cam.GetComponent<MainCameraFollow>().ShakeCamera();
             }
         }
@@ -520,7 +521,6 @@ public class SampleChara : Player
         yield return new WaitForSeconds(1.1f);
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
-
     /// <summary>
     /// 攻撃制限処理
     /// </summary>
