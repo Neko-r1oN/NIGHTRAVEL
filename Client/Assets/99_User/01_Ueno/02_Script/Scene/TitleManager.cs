@@ -12,9 +12,14 @@ public class TitleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Return))
+        /*if(Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Return))
         {
             SceneManager.LoadScene("SampleGameUeno");
-        }
+        }*/
+    }
+
+    public void ButtonPush()
+    {
+        SceneManager.LoadScene("SampleGameUeno");
     }
 }

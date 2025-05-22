@@ -1,3 +1,7 @@
+//----------------------------------------------------
+// ゲームマネージャー(GameManager.cs)
+// Author : Souma Ueno
+//----------------------------------------------------
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,6 +12,8 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    #region 初期設定
+    [Header("初期設定")]
     int crushNum; 　　　　　// 撃破数
     bool bossFlag = false;  // ボスが出たかどうか
     int xp;                 // 経験値
@@ -18,8 +24,10 @@ public class GameManager : MonoBehaviour
     int spawnCnt;           // スポーン回数
     public int maxSpawnCnt; // マックススポーン回数
     Vector3 spawnPos;       // ランダムで生成する位置
+    #endregion
 
-    
+    #region その他
+    [Header("その他")]
     public List<GameObject> enemyList;       // エネミーリスト
     [SerializeField] GameObject boss;        // ボス
     [SerializeField] Transform randRespawnA; // リスポーン範囲A
@@ -31,6 +39,7 @@ public class GameManager : MonoBehaviour
     public GameObject Enemy {  get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
+    #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,13 +47,15 @@ public class GameManager : MonoBehaviour
         // ボスを非表示
         boss.SetActive(false);
         // プレイヤーのオブジェクト検索して取得
-        player = GameObject.Find("DrawCharacter");
+        player = GameObject.Find("Player");
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// 更新処理
+    /// </summary>
     void Update()
     {
-        if (crushNum >= 5 && bossFlag)
+        if (crushNum >= 16 && bossFlag)
         {// ボスを倒した(仮)
             bossFlag = false;
             //boss.SetActive(false);
@@ -71,11 +82,10 @@ public class GameManager : MonoBehaviour
                 float distanceOfPlayer =
                     Vector3.Distance(player.transform.position, spawnPos);
 
-                if (distanceOfPlayer >= 10)
+                if (distanceOfPlayer >= 8 && distanceOfPlayer < 13)
                 {// 距離が10離れていたら
-                    Debug.Log("距離:" + Math.Floor(distanceOfPlayer));
                     spawnCnt++;
-                    
+
                     int listNum = Random.Range(0, 2);
 
                     // 生成
@@ -100,6 +110,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Result ueno");
     }
 
+    [ContextMenu("CrushEnemy")]
     /// <summary>
     ///  敵撃破
     /// </summary>
@@ -110,8 +121,8 @@ public class GameManager : MonoBehaviour
         spawnCnt--;
         AddXp();
 
-        //Debug.Log(crushNum);
-        if (crushNum >= 20)
+        Debug.Log(crushNum);
+        if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
             bossFlag = true;
             boss.SetActive(true);
@@ -131,7 +142,7 @@ public class GameManager : MonoBehaviour
 
             // 必要経験値数を増やす
             requiredXp += xp;
-            //Debug.Log(requiredXp);
+            Debug.Log(requiredXp);
             // レベルアップ関数を
             UpLevel();
         }
@@ -143,15 +154,6 @@ public class GameManager : MonoBehaviour
     public void UpLevel()
     {
         level++;
-        //Debug.Log("レベルアップ:" + level);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "ground")
-        {
-            enemy.GetComponent<SpriteRenderer>().enabled = true;
-            enemy.GetComponent<EnemyController>().Players.Add(player);
-        }
+        Debug.Log("レベルアップ:" + level);
     }
 }
