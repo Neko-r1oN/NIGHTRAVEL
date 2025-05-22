@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         // ボスを非表示
         boss.SetActive(false);
         // プレイヤーのオブジェクト検索して取得
-        player = GameObject.Find("Player");
+        player = GameObject.Find("PlayerSample");
     }
 
     /// <summary>
@@ -86,10 +86,10 @@ public class GameManager : MonoBehaviour
                 {// 距離が10離れていたら
                     spawnCnt++;
 
-                    int listNum = Random.Range(0, 2);
+                    //int listNum = Random.Range(0, 2);
 
                     // 生成
-                    enemy = Instantiate(enemyList[listNum], new Vector3(x, y, z), Quaternion.identity);
+                    enemy = Instantiate(enemyList[0], new Vector3(x, y, z), Quaternion.identity);
 
                     // 透明化
                     enemy.GetComponent<SpriteRenderer>().enabled = false;

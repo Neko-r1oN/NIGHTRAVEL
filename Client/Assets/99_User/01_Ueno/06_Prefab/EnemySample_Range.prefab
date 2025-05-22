@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 3287585608481955684}
   - component: {fileID: 8299407397401171741}
   - component: {fileID: 1970779993309895174}
+  - component: {fileID: -1355953649162149592}
   m_Layer: 6
   m_Name: EnemySample_Range
   m_TagString: Enemy
@@ -55,30 +56,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed139c96459dc264bb81530ec7a90873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  players: []
+  sightChecker: {fileID: -1355953649162149592}
+  chaseAI: {fileID: 0}
   hp: 10
   power: 2
   speed: 5
+  jumpPower: 19
+  bulletNum: 3
+  shotsPerSecond: 0.5
+  attackCoolTime: 0.5
+  attackDist: 1.5
+  trackingRange: 8
   hitTime: 0.5
   canDamageOnContact: 1
-  targetLayerMask:
-    serializedVersion: 2
-    m_Bits: 3
-  viewAngleMax: 45
-  viewDistMax: 6
-  trackingRange: 8
-  animator: {fileID: 3287585608481955684}
-  players: []
-  target: {fileID: 0}
-  attackType: 2
-  throwableObject: {fileID: 5532974359214069763, guid: c928b20c45c6dcd458c1b9a8c6226d54, type: 3}
   canPatrol: 1
   canChaseTarget: 1
   canAttack: 1
   canJump: 1
-  bulletNum: 3
-  jumpPower: 19
-  attackCooldown: 0.5
-  attackDist: 1.5
+  attackType: 2
+  throwableObject: {fileID: 5532974359214069763, guid: c928b20c45c6dcd458c1b9a8c6226d54, type: 3}
   meleeAttackCheck: {fileID: 4346001583479224130}
   meleeAttackRange: 0.9
   wallCheck: {fileID: 1499324645291146663}
@@ -380,6 +377,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b3e72659cc4c14d9ea175873854886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1355953649162149592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5745960050057638796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cfae242b54b19f4389e781fecafcfdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetLayerMask:
+    serializedVersion: 2
+    m_Bits: 3
+  viewAngleMax: 45
+  viewDistMax: 6
 --- !u!1 &5747647447789676668
 GameObject:
   m_ObjectHideFlags: 0
