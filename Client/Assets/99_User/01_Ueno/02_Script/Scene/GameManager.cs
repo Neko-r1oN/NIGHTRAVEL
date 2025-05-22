@@ -82,9 +82,8 @@ public class GameManager : MonoBehaviour
                 float distanceOfPlayer =
                     Vector3.Distance(player.transform.position, spawnPos);
 
-                if (distanceOfPlayer >= 8)
+                if (distanceOfPlayer >= 8 && distanceOfPlayer < 13)
                 {// ‹——£‚ª10—£‚ê‚Ä‚¢‚½‚ç
-                    Debug.Log("‹——£:" + Math.Floor(distanceOfPlayer));
                     spawnCnt++;
 
                     int listNum = Random.Range(0, 2);
