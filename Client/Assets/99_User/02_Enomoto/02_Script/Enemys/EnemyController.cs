@@ -2,85 +2,132 @@
 //  [親]エネミーのコントローラークラス
 //  Author:r-enomoto
 //**************************************************
-using HardLight2DUtil;
-using NUnit.Framework;
+using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 abstract public class EnemyController : MonoBehaviour
 {
-    /// <summary>
-    /// アニメーションID
-    /// </summary>
-    public enum ANIM_ID
-    {
-        Idle = 1,
-        Attack,
-        Run,
-        Hit,
-        Fall,
-        Dead,
-    }
+    //  マネージャークラスからPlayerを取得できるのが理想(変数削除予定、またはSerializeField削除予定)
+    #region プレイヤー・ターゲット
+    [Header("プレイヤー・ターゲット")]
+    protected GameObject target;
+    [SerializeField] List<GameObject> players = new List<GameObject>();
+    public List<GameObject> Players { get { return players; } set { players = value; } }
+    #endregion
+
+    #region コンポーネント
+    [Header("コンポーネント")]
+    [SerializeField] protected EnemySightChecker sightChecker;
+    [SerializeField] protected EnemyChaseAI chaseAI;
+    protected Rigidbody2D m_rb2d;
+    Animator animator;
+    #endregion
 
     #region ステータス
-    [Header("基本ステータス")]
-    [SerializeField] protected int hp = 10;
-    [SerializeField] protected int power = 2;
-    [SerializeField] protected int speed = 5;
-    [SerializeField] float hitTime = 0.5f;
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 100)]
+    protected int hp = 10;
 
-    public int HP { get { return hp; } set { hp = value; } }
-    public int Power { get { return power; } set { power = value; } }
-    public int Speed { get { return speed; } set { speed = value; } }
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 20)] 
+    protected int power = 2;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 20)] 
+    protected int speed = 5;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 30)]
+    protected float jumpPower = 19;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 10)]
+    protected int bulletNum = 3;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 5)]
+    [Tooltip("弾の発射間隔")]
+    protected float shotsPerSecond = 0.5f;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 10)]
+    [Tooltip("攻撃のクールタイム")]
+    protected float attackCoolTime = 0.5f;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 10)]
+    [Tooltip("攻撃を開始する距離")]
+    protected float attackDist = 1.5f;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 20)]
+    [Tooltip("追跡可能範囲")]
+    protected float trackingRange = 12f;
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
+    [Range(0, 5)]
+    float hitTime = 0.5f;
     #endregion
 
     #region 共通の行動パターン
     [Header("共通の行動パターン")]
     [SerializeField] protected bool canDamageOnContact; // 接触でダメージを与えることが可能
+    [SerializeField] protected bool canPatrol;          // 常に動き回ることが可能
+    [SerializeField] protected bool canChaseTarget;     // ターゲットを追跡可能
+    [SerializeField] protected bool canAttack;          // 攻撃可能
+    [SerializeField] protected bool canJump;            // ジャンプ可能
     #endregion
 
-    #region 視野設定
-    [Header("視野")]
-    [SerializeField] protected LayerMask targetLayerMask; // 視認するLayer
-    [SerializeField] protected float viewAngleMax = 45;
-    [SerializeField] protected float viewDistMax = 6f;
-    [SerializeField] protected float trackingRange = 12f;
-
-    public LayerMask TargetLayerMask { get { return targetLayerMask; } set { targetLayerMask = value; } }
-    public float ViewAngleMax { get { return viewAngleMax; } set { viewAngleMax = value; } }
-    public float ViewDistMax { get { return viewDistMax; } set { viewDistMax = value; } }
-    public float TrackingRange { get { return trackingRange; } set { trackingRange = value; } }
-    #endregion
-
-    #region コンポーネント
-    [Header("コンポーネント")]
-    [SerializeField] Animator animator;
-    #endregion
-
-    #region その他
-    [Header("その他")]
-    // マネージャークラスからPlayerを取得できるのが理想(削除予定)
-    [SerializeField] List<GameObject> players = new List<GameObject>();
-    public List<GameObject> Players { get { return players; } set { players = value; } }
-    [SerializeField] protected GameObject target;
-    protected Rigidbody2D m_rb2d;
-
+    #region 状態管理
     protected bool isObstacle;
     protected bool isPlat;
     protected bool isInvincible;
     #endregion
 
-    /// <summary>
-    /// 方向転換
-    /// </summary>
-    protected void Flip()
+    #region アニメーションID
+    protected int hitAnimationId;
+    #endregion
+
+    protected virtual void Start()
     {
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
+        m_rb2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+    }
+
+    /// <summary>
+    /// 触れてきたプレイヤーにダメージを適応させる
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (canDamageOnContact && collision.gameObject.tag == "Player" && hp > 0 && !isInvincible)
+        {
+            if (!target)
+            {
+                // ターゲットを設定し、ターゲットの方向を向く
+                target = collision.gameObject;
+                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0)
+                {
+                    Flip();
+                }
+                SetAnimId(hitAnimationId);
+                StartCoroutine(HitTime());
+            }
+            collision.gameObject.GetComponent<CharacterController2D>().ApplyDamage(2f, transform.position);
+        }
     }
 
     /// <summary>
@@ -109,60 +156,13 @@ abstract public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
-    /// ターゲットを視認できているかどうか
+    /// 方向転換
     /// </summary>
-    /// <returns></returns>
-    protected bool IsTargetVisible()
+    protected void Flip()
     {
-        if(!target) return false;
-        Vector2 dirToTarget = target.transform.position - transform.position;
-        Vector2 angleVec = new Vector2(transform.localScale.x, 0);
-        float angle = Vector2.Angle(dirToTarget, angleVec);
-        RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
-        return angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player");
-    }
-
-    /// <summary>
-    /// 視野範囲内のプレイヤーの中からターゲットを取得する
-    /// </summary>
-    /// <returns></returns>
-    protected GameObject GetTargetInSight()
-    {
-        GameObject target = null;
-        float minTargetDist = float.MaxValue;
-
-        foreach (GameObject player in players)
-        {
-            Vector2 dirToTarget = player.transform.position - transform.position;
-            Vector2 angleVec = new Vector2(transform.localScale.x, 0);
-            float angle = Vector2.Angle(dirToTarget, angleVec);
-            RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
-
-            if (angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
-            {
-                float distTotarget = Vector3.Distance(this.transform.position, player.transform.position);
-                if (distTotarget < minTargetDist)
-                {
-                    minTargetDist = distTotarget;
-                    target = player;
-                }
-            }
-        }
-
-        return target;
-    }
-
-    /// <summary>
-    /// ターゲットとの間に障害物があるかどうか
-    /// </summary>
-    /// <returns></returns>
-    protected bool IsObstructed(GameObject target)
-    {
-        Vector2 dirToTarget = target.transform.position - transform.position;
-        float dist = dirToTarget.magnitude;
-        RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, dist, targetLayerMask);
-
-        return hit2D && !hit2D.collider.gameObject.CompareTag("Player");
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
     }
 
     /// <summary>
@@ -187,23 +187,8 @@ abstract public class EnemyController : MonoBehaviour
         isInvincible = false;
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnDrawGizmos()
     {
-        if (canDamageOnContact && collision.gameObject.tag == "Player" && hp > 0 && !isInvincible)
-        {
-            if (!target)
-            {
-                // ターゲットを設定し、ターゲットの方向を向く
-                target = collision.gameObject;
-                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0)
-                {
-                    Flip();
-                }
-                SetAnimId((int)ANIM_ID.Hit);
-                StartCoroutine(HitTime());
-            }
-            collision.gameObject.GetComponent<CharacterController2D>().ApplyDamage(2f, transform.position);
-        }
+        sightChecker.DrawSightLine(players, target, canChaseTarget);
     }
 }
