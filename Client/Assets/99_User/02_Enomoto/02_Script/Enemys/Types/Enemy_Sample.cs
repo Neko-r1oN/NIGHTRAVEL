@@ -45,15 +45,12 @@ public class Enemy_Sample : EnemyController
     [SerializeField] Transform meleeAttackCheck;
     [SerializeField] float meleeAttackRange = 0.9f;
 
-    // 壁チェック
+    // 壁・地面チェック
     [SerializeField] Transform wallCheck;
     [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] LayerMask wallLayerMask;
-
-    // 地面チェック
     [SerializeField] Transform groundCheck;
     [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
-    [SerializeField] LayerMask groundLayerMask;
+    [SerializeField] LayerMask terrainLayerMask;
 
     // 落下チェック
     [SerializeField] Transform fallCheck;
@@ -87,8 +84,8 @@ public class Enemy_Sample : EnemyController
             || !canChaseTarget && target && !sightChecker.IsTargetVisible(target)) target = null;
 
         // 障害物、地面があるか取得
-        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, wallLayerMask);
-        isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, groundLayerMask);
+        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+        isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
         if (!target && canPatrol) Run();
         else if (!target && !canPatrol) Idle();
 
@@ -166,7 +163,7 @@ public class Enemy_Sample : EnemyController
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<CharacterController2D>().ApplyDamage(power, transform.position);
+                collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(power, transform.position);
             }
         }
         StartCoroutine(AttackCooldown(attackCoolTime));
@@ -301,8 +298,8 @@ public class Enemy_Sample : EnemyController
         Vector3 rightStartPosition = groundCheck.transform.position + Vector3.right * groundCheckRadius.x / 2;
         Vector3 endPosition = groundCheck.transform.position + Vector3.down * groundCheckRadius.y;
 
-        return Physics2D.Linecast(leftStartPosition, endPosition, groundLayerMask)
-            || Physics2D.Linecast(rightStartPosition, endPosition, groundLayerMask);
+        return Physics2D.Linecast(leftStartPosition, endPosition, terrainLayerMask)
+            || Physics2D.Linecast(rightStartPosition, endPosition, terrainLayerMask);
     }
 
     /// <summary>

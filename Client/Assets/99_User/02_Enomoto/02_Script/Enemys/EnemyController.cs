@@ -18,9 +18,8 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region コンポーネント
-    [Header("コンポーネント")]
-    [SerializeField] protected EnemySightChecker sightChecker;
-    [SerializeField] protected EnemyChaseAI chaseAI;
+    protected EnemySightChecker sightChecker;
+    protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
     Animator animator;
     #endregion
@@ -28,66 +27,69 @@ abstract public class EnemyController : MonoBehaviour
     #region ステータス
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 100)]
     protected int hp = 10;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 20)] 
     protected int power = 2;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 20)] 
     protected int speed = 5;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 30)]
     protected float jumpPower = 19;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 10)]
     protected int bulletNum = 3;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 5)]
     [Tooltip("弾の発射間隔")]
     protected float shotsPerSecond = 0.5f;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 10)]
     [Tooltip("攻撃のクールタイム")]
     protected float attackCoolTime = 0.5f;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 10)]
     [Tooltip("攻撃を開始する距離")]
     protected float attackDist = 1.5f;
 
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 20)]
     [Tooltip("追跡可能範囲")]
     protected float trackingRange = 12f;
-
+    
     [Foldout("基本ステータス")]
     [SerializeField]
-    [Range(0, 5)]
-    float hitTime = 0.5f;
+    protected float hitTime = 0.5f;
     #endregion
 
     #region 共通の行動パターン
-    [Header("共通の行動パターン")]
-    [SerializeField] protected bool canDamageOnContact; // 接触でダメージを与えることが可能
-    [SerializeField] protected bool canPatrol;          // 常に動き回ることが可能
-    [SerializeField] protected bool canChaseTarget;     // ターゲットを追跡可能
-    [SerializeField] protected bool canAttack;          // 攻撃可能
-    [SerializeField] protected bool canJump;            // ジャンプ可能
+    [Foldout("共通の行動パターン")]
+    [SerializeField] 
+    protected bool canDamageOnContact;      // 接触でダメージを与えることが可能
+
+    [Foldout("共通の行動パターン")]
+    [SerializeField] 
+    protected bool canPatrol;               // 常に動き回ることが可能
+
+    [Foldout("共通の行動パターン")]
+    [SerializeField] 
+    protected bool canChaseTarget;          // ターゲットを追跡可能
+    
+    [Foldout("共通の行動パターン")]
+    [SerializeField]
+    protected bool canAttack;               // 攻撃可能
+    
+    [Foldout("共通の行動パターン")]
+    [SerializeField] 
+    protected bool canJump;                 // ジャンプ可能
     #endregion
 
     #region 状態管理
@@ -104,6 +106,8 @@ abstract public class EnemyController : MonoBehaviour
     {
         m_rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        sightChecker = GetComponent<EnemySightChecker>();
+        chaseAI = GetComponent<EnemyChaseAI>();
     }
 
     /// <summary>
@@ -126,7 +130,7 @@ abstract public class EnemyController : MonoBehaviour
                 SetAnimId(hitAnimationId);
                 StartCoroutine(HitTime());
             }
-            collision.gameObject.GetComponent<CharacterController2D>().ApplyDamage(2f, transform.position);
+            collision.gameObject.GetComponent<Player>().ApplyDamage(2f, transform.position);
         }
     }
 
@@ -142,7 +146,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <param name="id"></param>
     public void SetAnimId(int id)
     {
-        //animator.SetInteger("animation_id", id);
+        if(animator != null) animator.SetInteger("animation_id", id);
     }
 
     /// <summary>
@@ -151,8 +155,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <returns></returns>
     public int GetAnimId()
     {
-        //return animator.GetInteger("animation_id");
-        return 1;
+        return animator != null ? animator.GetInteger("animation_id") : 0;
     }
 
     /// <summary>

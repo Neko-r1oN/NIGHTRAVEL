@@ -45,15 +45,12 @@ public class Enemy_Sample_Flyng : EnemyController
     [SerializeField] Transform meleeAttackCheck;
     [SerializeField] float meleeAttackRange = 0.9f;
 
-    // 壁チェック
+    // 壁と地面チェック
     [SerializeField] Transform wallCheck;
     [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] LayerMask wallLayerMask;
-
-    // 地面チェック
     [SerializeField] Transform platCheck;
     [SerializeField] Vector2 platCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] LayerMask platLayerMask;
+    [SerializeField] LayerMask terrainLayerMask;
     #endregion
 
     #region 状態管理
@@ -83,8 +80,8 @@ public class Enemy_Sample_Flyng : EnemyController
             || !canChaseTarget && target && !sightChecker.IsTargetVisible(target)) target = null;
 
         // 障害物、地面があるか取得
-        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, wallLayerMask);
-        isPlat = Physics2D.OverlapBox(platCheck.position, platCheckRadius, 0f, platLayerMask);
+        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+        isPlat = Physics2D.OverlapBox(platCheck.position, platCheckRadius, 0f, terrainLayerMask);
         if (!target && canPatrol) Run();
         else if (!target && !canPatrol) Idle();
 
@@ -120,7 +117,7 @@ public class Enemy_Sample_Flyng : EnemyController
     /// </summary>
     void Idle()
     {
-        SetAnimId((int)ANIM_ID.Idle);
+        //SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
@@ -131,7 +128,7 @@ public class Enemy_Sample_Flyng : EnemyController
     {
         doOnceDecision = false;
         isAttacking = true;
-        SetAnimId((int)ANIM_ID.Attack);
+        //SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
 
         if (attackType == ATTACK_TYPE_ID.MeleeType) MeleeAttack();
@@ -148,7 +145,7 @@ public class Enemy_Sample_Flyng : EnemyController
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<CharacterController2D>().ApplyDamage(power, transform.position);
+                collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(power, transform.position);
             }
         }
         StartCoroutine(AttackCooldown(attackCoolTime));
@@ -175,15 +172,13 @@ public class Enemy_Sample_Flyng : EnemyController
     /// </summary>
     void Run()
     {
-        SetAnimId((int)ANIM_ID.Run);
+        //SetAnimId((int)ANIM_ID.Run);
         Vector2 speedVec = Vector2.zero;
         if (canChaseTarget && target)
         {
-            Vector2 direction = target.transform.position - transform.position + new Vector3(disToTargetMin, disToTargetMin);
-            speedVec = new Vector2(direction.x / Mathf.Abs(direction.x), direction.y / Mathf.Abs(direction.y)) * speed;
-
-            if (isObstacle) speedVec = new Vector2(0f, speedVec.y);
-            else if (isPlat) speedVec = new Vector2(speedVec.x, 0);
+            //Vector2 direction = target.transform.position - transform.position + new Vector3(disToTargetMin, disToTargetMin);
+            //speedVec = new Vector2(direction.x / Mathf.Abs(direction.x), direction.y / Mathf.Abs(direction.y)) * speed;
+            chaseAI.DoChase(target);
         }
         else if (canPatrol)
         {
@@ -206,7 +201,7 @@ public class Enemy_Sample_Flyng : EnemyController
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
-            SetAnimId((int)ANIM_ID.Hit);
+            //SetAnimId((int)ANIM_ID.Hit);
             hp -= Mathf.Abs(damage);
             DoKnokBack(damage);
 
@@ -241,7 +236,7 @@ public class Enemy_Sample_Flyng : EnemyController
     IEnumerator DestroyEnemy()
     {
         isDead = true;
-        SetAnimId((int)ANIM_ID.Dead);
+        //SetAnimId((int)ANIM_ID.Dead);
         yield return new WaitForSeconds(0.25f);
         GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
         m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);

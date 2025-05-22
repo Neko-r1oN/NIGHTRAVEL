@@ -1,3 +1,7 @@
+//**************************************************
+//  エネミーの視野範囲確認クラス
+//  Author:r-enomoto
+//**************************************************
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
