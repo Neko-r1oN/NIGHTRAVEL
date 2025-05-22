@@ -11,6 +11,19 @@ using UnityEngine;
 public class Enemy_Sample_Flyng : EnemyController
 {
     /// <summary>
+    /// アニメーションID
+    /// </summary>
+    public enum ANIM_ID
+    {
+        Idle = 1,
+        Attack,
+        Run,
+        Hit,
+        Fall,
+        Dead,
+    }
+
+    /// <summary>
     /// 攻撃方法
     /// </summary>
     public enum ATTACK_TYPE_ID
@@ -24,24 +37,6 @@ public class Enemy_Sample_Flyng : EnemyController
     [Header("攻撃方法")]
     [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
     [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
-    #endregion
-
-    #region オリジナルの行動パターンについて
-    [Header("オリジナルの行動パターン")]
-    [SerializeField] bool canPatrol;          // 常に動き回ることが可能
-    [SerializeField] bool canChaseTarget;     // ターゲットを追跡可能
-    [SerializeField] bool canAttack;          // 攻撃可能
-    #endregion
-
-    #region オリジナルのステータス管理
-    [Header("オリジナルステータス")]
-    [SerializeField] int bulletNum = 3;
-    [SerializeField] float shotsPerSecond = 0.5f;
-    [SerializeField] float attackCooldown = 0.5f;
-    [SerializeField] float attackDist = 1.5f;
-    bool doOnceDecision;
-    bool isAttacking;
-    bool isDead;
     #endregion
 
     #region チェック判定
@@ -61,40 +56,31 @@ public class Enemy_Sample_Flyng : EnemyController
     [SerializeField] LayerMask platLayerMask;
     #endregion
 
-    #region コンポーネント
-    SpriteRenderer m_spriteRenderer;
+    #region 状態管理
+    bool doOnceDecision;
+    bool isAttacking;
+    bool isDead;
     #endregion
 
-    #region ターゲット
+    #region ターゲットとの距離
     float disToTarget;
     float disToTargetX;
     [SerializeField] float disToTargetMin = 0.25f;
     #endregion
 
-    void Start()
+    protected override void Start()
     {
-        HP = hp;
-        Power = power;
-        Speed = speed;
-        TargetLayerMask = targetLayerMask;
-        ViewAngleMax = viewAngleMax;
-        ViewDistMax = viewDistMax;
-        TrackingRange = trackingRange;
-
-        //disToTargetMin = attackDist * 0.25f;
-
+        base.Start();
         isAttacking = false;
         doOnceDecision = true;
-
-        m_rb2d = GetComponent<Rigidbody2D>();
-        m_spriteRenderer = GetComponent<SpriteRenderer>();
+        hitAnimationId = (int)ANIM_ID.Hit;
     }
 
     private void FixedUpdate()
     {
-        if (!target && Players.Count > 0) target = GetTargetInSight();
+        if (!target && Players.Count > 0) target = sightChecker.GetTargetInSight(Players);
         else if (canChaseTarget && target && disToTarget > trackingRange
-            || !canChaseTarget && target && !IsTargetVisible()) target = null;
+            || !canChaseTarget && target && !sightChecker.IsTargetVisible(target)) target = null;
 
         // 障害物、地面があるか取得
         isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, wallLayerMask);
@@ -115,7 +101,7 @@ public class Enemy_Sample_Flyng : EnemyController
                 || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
         }
 
-        if (canAttack && !IsObstructed(target) && disToTarget <= attackDist && disToTarget > disToTargetMin
+        if (canAttack && !sightChecker.IsObstructed(target) && disToTarget <= attackDist && disToTarget > disToTargetMin
             && !isAttacking && attackType != ATTACK_TYPE_ID.None)
         {
             Attack();
@@ -165,7 +151,7 @@ public class Enemy_Sample_Flyng : EnemyController
                 collidersEnemies[i].gameObject.GetComponent<CharacterController2D>().ApplyDamage(power, transform.position);
             }
         }
-        StartCoroutine(AttackCooldown(attackCooldown));
+        StartCoroutine(AttackCooldown(attackCoolTime));
     }
 
     /// <summary>
@@ -181,7 +167,7 @@ public class Enemy_Sample_Flyng : EnemyController
             throwableProj.GetComponent<Projectile>().Initialize(direction, gameObject);
             yield return new WaitForSeconds(shotsPerSecond);
         }
-        StartCoroutine(AttackCooldown(attackCooldown));
+        StartCoroutine(AttackCooldown(attackCoolTime));
     }
 
     /// <summary>
@@ -285,31 +271,6 @@ public class Enemy_Sample_Flyng : EnemyController
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(platCheck.transform.position, platCheckRadius);
-        }
-
-        // 視野の描画
-        if (Players.Count > 0)
-        {
-            foreach (GameObject player in Players)
-            {
-                Vector2 dirToTarget = player.transform.position - transform.position;
-                Vector2 angleVec = new Vector2(transform.localScale.x, 0);
-                float angle = Vector2.Angle(dirToTarget, angleVec);
-                RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, ViewDistMax, TargetLayerMask);
-
-                if (canChaseTarget && target && target == player)
-                {
-                    Debug.DrawRay(transform.position, dirToTarget, Color.red);
-                }
-                if (angle <= ViewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
-                {
-                    Debug.DrawRay(transform.position, dirToTarget, Color.red);
-                }
-                else
-                {
-                    Debug.DrawRay(transform.position, dirToTarget, Color.cyan);
-                }
-            }
         }
 
         // 追跡範囲
