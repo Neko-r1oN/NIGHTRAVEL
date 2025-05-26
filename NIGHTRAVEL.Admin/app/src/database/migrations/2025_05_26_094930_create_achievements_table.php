@@ -1,0 +1,39 @@
+<?php
+/**
+ * アチーブメントテーブル
+ */
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('achievements', function (Blueprint $table) {
+            $table->id();
+            $table->string('condition',40);         //条件
+            $table->integer('progress');                  //進行度
+            $table->timestamps();
+
+            //ユニーク
+            $table->unique('id');
+            $table->unique('condition');
+
+            //インデックス
+            $table->index('progress');
+            $table->index('timestamps');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('achivements');
+    }
+};
