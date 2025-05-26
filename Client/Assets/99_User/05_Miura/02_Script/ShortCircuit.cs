@@ -19,7 +19,11 @@ public class ShortCircuit : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("漏電フィールドに当たった");
+            Debug.Log("プレイヤーが漏電フィールドに当たった");
+        }
+        if(collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("敵が漏電フィールドに当たった");
         }
     }
 }
