@@ -58,14 +58,10 @@ public class Enemy_Sample : EnemyController
     #endregion
 
     #region 状態管理
-    //bool doOnceDecision;
-    //bool isAttacking;
     bool isDead;
     #endregion
 
     #region ターゲットとの距離
-    //float disToTarget;
-    //float disToTargetX;
     readonly float disToTargetMin = 0.25f;
     #endregion
 
@@ -81,12 +77,8 @@ public class Enemy_Sample : EnemyController
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 障害物、地面があるか取得
-        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
-        isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
-
         // 行動パターン
-        if (canChaseTarget && isObstacle && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
+        if (canChaseTarget && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
         {
             Jump();
         }
@@ -102,7 +94,7 @@ public class Enemy_Sample : EnemyController
             || canPatrol && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin
             || canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
-            if (canChaseTarget && isObstacle && !canJump)
+            if (canChaseTarget && IsWall() && !canJump)
             {
                 Idle();
             }
@@ -184,7 +176,7 @@ public class Enemy_Sample : EnemyController
         }
         else if (canPatrol)
         {
-            if (!isPlat || isObstacle) Flip();
+            if (IsFall() || IsWall()) Flip();
             speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
         }
 
@@ -279,6 +271,24 @@ public class Enemy_Sample : EnemyController
         m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// 壁があるかどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsWall()
+    {
+       return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+    }
+
+    /// <summary>
+    /// 落下中かどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsFall()
+    {
+        return !Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
     }
 
     /// <summary>

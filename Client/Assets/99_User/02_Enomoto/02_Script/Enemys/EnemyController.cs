@@ -99,8 +99,6 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region èÛë‘ä«óù
-    protected bool isObstacle;
-    protected bool isPlat;
     protected bool isInvincible;
     protected bool doOnceDecision;
     protected bool isAttacking;

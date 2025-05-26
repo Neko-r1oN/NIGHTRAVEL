@@ -49,14 +49,10 @@ public class Enemy_Sample_Flyng : EnemyController
     #endregion
 
     #region 状態管理
-    //bool doOnceDecision;
-    //bool isAttacking;
     bool isDead;
     #endregion
 
     #region ターゲットとの距離
-    //float disToTarget;
-    //float disToTargetX;
     float disToTargetMin = 2.5f;
     #endregion
 
@@ -72,10 +68,6 @@ public class Enemy_Sample_Flyng : EnemyController
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 障害物、地面があるか取得
-        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
-        isPlat = Physics2D.OverlapBox(platCheck.position, platCheckRadius, 0f, terrainLayerMask);
-
         // 行動パターン
         if (canAttack && !sightChecker.IsObstructed(target) && disToTarget <= attackDist && disToTarget > disToTargetMin
             && !isAttacking && attackType != ATTACK_TYPE_ID.None)
@@ -142,13 +134,11 @@ public class Enemy_Sample_Flyng : EnemyController
         Vector2 speedVec = Vector2.zero;
         if (canChaseTarget && target)
         {
-            //Vector2 direction = target.transform.position - transform.position + new Vector3(disToTargetMin, disToTargetMin);
-            //speedVec = new Vector2(direction.x / Mathf.Abs(direction.x), direction.y / Mathf.Abs(direction.y)) * speed;
             chaseAI.DoChase(target);
         }
         else if (canPatrol)
         {
-            if (!isPlat || isObstacle) Flip();
+            if (IsWall()) Flip();
             speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
         }
 
@@ -183,6 +173,26 @@ public class Enemy_Sample_Flyng : EnemyController
     }
 
     /// <summary>
+    /// ダメージ適応時の無敵時間
+    /// </summary>
+    /// <returns></returns>
+    protected override IEnumerator HitTime()
+    {
+        //SetAnimId((int)ANIM_ID.Hit);
+        yield return null;
+        base.HitTime();
+    }
+
+    /// <summary>
+    /// 壁があるかどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsWall()
+    {
+        return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+    }
+
+    /// <summary>
     /// 攻撃時のクールダウン処理
     /// </summary>
     /// <returns></returns>
@@ -193,17 +203,6 @@ public class Enemy_Sample_Flyng : EnemyController
         isAttacking = false;
         doOnceDecision = true;
         Idle();
-    }
-
-    /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    protected override IEnumerator HitTime()
-    {
-        //SetAnimId((int)ANIM_ID.Hit);
-        yield return null;
-        base.HitTime();
     }
 
     /// <summary>

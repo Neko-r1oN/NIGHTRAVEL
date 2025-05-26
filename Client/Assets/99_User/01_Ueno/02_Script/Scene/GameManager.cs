@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Grpc.Core.Metadata;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
     #region その他
     [Header("その他")]
     public List<GameObject> enemyList;       // エネミーリスト
-    [SerializeField] GameObject boss;        // ボス
+    //[SerializeField] GameObject boss;        // ボス
     [SerializeField] Transform randRespawnA; // リスポーン範囲A
     [SerializeField] Transform randRespawnB; // リスポーン範囲B
 
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // ボスを非表示
-        boss.SetActive(false);
+        //boss.SetActive(false);
         // プレイヤーのオブジェクト検索して取得
         player = GameObject.Find("PlayerSample");
     }
@@ -86,13 +87,20 @@ public class GameManager : MonoBehaviour
                 {// 距離が10離れていたら
                     spawnCnt++;
 
-                    //int listNum = Random.Range(0, 2);
+                    int listNum = Random.Range(0, enemyList.Count);
 
                     // 生成
-                    enemy = Instantiate(enemyList[0], new Vector3(x, y, z), Quaternion.identity);
+                    enemy = Instantiate(enemyList[listNum], new Vector3(x, y, z), Quaternion.identity);
+                    
+                    enemy.GetComponent<EnemyController>().Players.Add(player);
 
-                    // 透明化
-                    enemy.GetComponent<SpriteRenderer>().enabled = false;
+                    if (listNum != 0)
+                    {
+                        enemy.GetComponent<EnemyController>().enabled = false;
+
+                        // 透明化
+                        enemy.GetComponent<SpriteRenderer>().enabled = false;
+                    }
                 }
             }
         }
@@ -125,7 +133,7 @@ public class GameManager : MonoBehaviour
         if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
             bossFlag = true;
-            boss.SetActive(true);
+            //boss.SetActive(true);
             //Debug.Log("ボスでてきた");
             //crushNum = 0;
         }
