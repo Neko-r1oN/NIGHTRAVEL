@@ -475,7 +475,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!82 &51820854
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1340,37 +1340,6 @@ Transform:
   - {fileID: 930250071}
   - {fileID: 1725632022}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &363840551
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 363840552}
-  m_Layer: 9
-  m_Name: AttackCheck
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &363840552
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 363840551}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6, y: -0.2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1777829787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &365893150
 GameObject:
@@ -2871,7 +2840,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!82 &1777829781
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3123,7 +3092,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   players:
-  - {fileID: 0}
+  - {fileID: 1596758638}
   hp: 10
   power: 2
   speed: 5
@@ -3131,7 +3100,7 @@ MonoBehaviour:
   bulletNum: 3
   shotsPerSecond: 0.5
   attackCoolTime: 0.5
-  attackDist: 1.5
+  attackDist: 4
   trackingRange: 8
   hitTime: 0.5
   canDamageOnContact: 1
@@ -3141,8 +3110,8 @@ MonoBehaviour:
   canJump: 0
   attackType: 2
   throwableObject: {fileID: 5532974359214069763, guid: c928b20c45c6dcd458c1b9a8c6226d54, type: 3}
-  meleeAttackCheck: {fileID: 363840552}
-  meleeAttackRange: 0.9
+  meleeAttackCheck: {fileID: 0}
+  meleeAttackRange: 3
   wallCheck: {fileID: 1076965523}
   wallCheckRadius: {x: 0, y: 1.14}
   groundCheck: {fileID: 1980372167}
@@ -3161,12 +3130,11 @@ Transform:
   m_GameObject: {fileID: 1777829780}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.79, y: 1.49, z: 0}
+  m_LocalPosition: {x: 30.51, y: 3.82, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1076965523}
-  - {fileID: 363840552}
   - {fileID: 1980372167}
   - {fileID: 673268601}
   m_Father: {fileID: 139255990}
@@ -3431,7 +3399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1887248244
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3593,8 +3561,8 @@ Transform:
   m_GameObject: {fileID: 1887248243}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.06, y: 1.76, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 15.8, y: 1.94, z: 0}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1350255204}
@@ -3624,7 +3592,7 @@ MonoBehaviour:
   shotsPerSecond: 0.25
   attackCoolTime: 0.5
   attackDist: 6
-  trackingRange: 10
+  trackingRange: 12
   hitTime: 0.5
   canDamageOnContact: 1
   canPatrol: 0
@@ -3633,8 +3601,6 @@ MonoBehaviour:
   canJump: 0
   attackType: 2
   throwableObject: {fileID: 1636419708026085755, guid: 6897dad47fd74c84ca441708d59003c3, type: 3}
-  meleeAttackCheck: {fileID: 1350255204}
-  meleeAttackRange: 6
   wallCheck: {fileID: 1214597788}
   wallCheckRadius: {x: 0, y: 0.7}
   platCheck: {fileID: 1244695078}
@@ -3642,7 +3608,6 @@ MonoBehaviour:
   terrainLayerMask:
     serializedVersion: 2
     m_Bits: 1
-  disToTargetMin: 2.5
 --- !u!195 &1887248253
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -3752,7 +3717,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 6
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 73035f974857c94489896440d1e2b9e8, type: 2}
@@ -3778,6 +3743,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf173a75a117f94bb5dda9d4b09546b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetObj: {fileID: 0}
   distance: 0
 --- !u!114 &1887248258
 MonoBehaviour:

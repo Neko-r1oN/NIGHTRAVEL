@@ -89,7 +89,7 @@ public class EnemySightChecker : MonoBehaviour
                 {
                     Debug.DrawRay(transform.position, dirToTarget, Color.red);
                 }
-                if (angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
+                else if (angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player"))
                 {
                     Debug.DrawRay(transform.position, dirToTarget, Color.red);
                 }
