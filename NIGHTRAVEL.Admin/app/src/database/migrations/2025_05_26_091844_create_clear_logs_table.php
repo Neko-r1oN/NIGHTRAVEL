@@ -28,7 +28,7 @@ return new class extends Migration
             $table->index('score');
             $table->index('level');
             $table->index('player_id');
-            $table->index('timestamps');
+            $table->index('created_at');
         });
     }
 

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->index('name');
             $table->index('stage_clear');
             $table->index('challenge_level');
-            $table->index('timestamps');
+            $table->index('created_at');
         });
     }
 

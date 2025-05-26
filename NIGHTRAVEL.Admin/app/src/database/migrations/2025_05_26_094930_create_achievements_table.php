@@ -25,7 +25,7 @@ return new class extends Migration
 
             //インデックス
             $table->index('progress');
-            $table->index('timestamps');
+            $table->index('created_at');
         });
     }
 
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('achivements');
+        Schema::dropIfExists('achievements');
     }
 };

@@ -25,7 +25,7 @@ return new class extends Migration
 
             //インデックス
             $table->index('quantity');
-            $table->index('timestamps');
+            $table->index('created_at');
         });
     }
 

@@ -26,7 +26,7 @@ return new class extends Migration
             //インデックス
             $table->index('player_id');
             $table->index('achievement_id');
-            $table->index('timestamps');
+            $table->index('created_at');
         });
     }
 

@@ -29,7 +29,7 @@ return new class extends Migration
             //インデックス
             $table->index('stage_id');
             $table->index('name');
-            $table->index('timestamps');
+            $table->index('created_at');
 
         });
     }

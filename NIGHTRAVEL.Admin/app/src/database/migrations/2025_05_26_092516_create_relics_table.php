@@ -27,7 +27,7 @@ return new class extends Migration
 
             //インデックス
             $table->unique('rarity');
-            $table->unique('timestamps');
+            $table->unique('created_at');
         });
     }
 

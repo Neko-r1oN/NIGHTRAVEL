@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\FollowResource;
 use App\Models\Account;
+use App\Models\Achievement;
+use App\Models\Character;
+use App\Models\Enemy;
 use App\Models\FollowLists;
 use App\Models\HaveItem;
 use App\Models\Item;
 use App\Models\Mail;
+use App\Models\Relic;
+use App\Models\Stage;
 use App\Models\User;
 use App\Models\UserMail;
 use Barryvdh\Debugbar\Facades\Debugbar;
@@ -18,43 +23,16 @@ use function Laravel\Prompts\password;
 
 class AccountController extends Controller
 {
-    //アカウント一覧を表示する
+    //ユーザー一覧を表示する
     public function index(Request $request)
     {
         if (isset($request['name_index'])) {
             //nameが指定されていたら
-            $accounts = Account::where('name', '=', $request['name_index'])->get();
+            $accounts = User::where('name', '=', $request['name_index'])->get();
         } else {
             //テーブルの全てのレコードを表示
-            $accounts = Account::All();
+            $accounts = User::All();
         }
-
-        //デバッグ
-
-        //AccountControllerのindex関数に指定したIDを渡せる。※dd関数はデバッグ用表示
-        //dd($request->account_id);
-
-        //DebugBar::info('てりやきマックうまかった');
-        //DebugBar::error('チキチー食べたい');
-
-        //セッションに指定のキーで値を保存
-        //$request->session()->put('key', 5);
-        //$request->session()->put('key2', 8);
-
-        //セッションから指定のキーの値を取得
-        //$value = $request->session()->get('key');
-
-        //DebugBar::info($value);
-
-        //指定したデータをセッションから削除
-        //$request->session()->forget('key');
-        //$value = $request->session()->get('key');
-        //DebugBar::info($value);
-
-        //セッションの全てのデータを削除
-        //$request->session()->flush();
-        //$value = $request->session()->get('key2');
-        //DebugBar::info($value);
 
         //セッションに指定したキーが存在するか
         if ($request->session()->exists('login')) {
@@ -79,7 +57,7 @@ class AccountController extends Controller
         ]);
 
         //条件を指定して取得
-        $account = Account::where('name', '=', $request['name'])->get();
+        $account = User::where('name', '=', $request['name'])->get();
 
         if (Hash::check($request['pass'], $account[0]->password)) {
             //成功した時
@@ -100,36 +78,86 @@ class AccountController extends Controller
         return redirect()->route('login');
     }
 
-    //プレイヤーリスト
-    public function userList(Request $request)
+    //キャラクターリスト
+    public function characterList(Request $request)
     {
-        $users = User::All();
+        $character = Character::All();
         //ページャー
-        $users = User::paginate(10);
+        $character = Character::paginate(10);
 
         //セッションに指定したキーが存在するか
         if ($request->session()->exists('login')) {
-            return view('accounts/user', ['users' => $users]);             //ビューに変数を渡す
+            return view('accounts/user', ['characters' => $character]);             //ビューに変数を渡す
         } else {
             return view('accounts/login');
         }
     }
 
-    //アイテムリスト
-    public function itemList(Request $request)
+    //敵キャラクターリスト
+    public function enemyList(Request $request)
     {
-        $items = Item::All();
+        $enemy = Enemy::All();
+        //ページャー
+        $enemy = Enemy::paginate(10);
 
         //セッションに指定したキーが存在するか
         if ($request->session()->exists('login')) {
-            return view('accounts/item', ['items' => $items]);             //ビューに変数を渡す
+            return view('accounts/user', ['users' => $enemy]);             //ビューに変数を渡す
         } else {
             return view('accounts/login');
         }
     }
 
-    //プレイヤー所持アイテムリスト
-    public function have_ItemList(Request $request)
+
+    //ステージリスト
+    public function stageList(Request $request)
+    {
+        $stages = Stage::All();
+
+        //セッションに指定したキーが存在するか
+        if ($request->session()->exists('login')) {
+            return view('accounts/item', ['stages' => $stages]);             //ビューに変数を渡す
+        } else {
+            return view('accounts/login');
+        }
+    }
+
+    //レリックリスト
+    public function relicList(Request $request)
+    {
+        $relics = Relic::All();
+
+        //セッションに指定したキーが存在するか
+        if ($request->session()->exists('login')) {
+            return view('accounts/item', ['relics' => $relics]);             //ビューに変数を渡す
+        } else {
+            return view('accounts/login');
+        }
+    }
+
+    //プレイヤー所持レリックリスト
+    public function have_RelicList(Request $request)
+    {
+        $user = User::find($request['id_find']);
+        //関連モデルからデータ取得
+        return view('accounts.have_item', ['user' => $user ?? null]);
+    }
+
+    //実績リスト
+    public function achievementList(Request $request)
+    {
+        $achievements = Achievement::All();
+
+        //セッションに指定したキーが存在するか
+        if ($request->session()->exists('login')) {
+            return view('accounts/item', ['achievements' => $achievements]);             //ビューに変数を渡す
+        } else {
+            return view('accounts/login');
+        }
+    }
+
+    //プレイヤー所持実績リスト
+    public function have_AchievementList(Request $request)
     {
         $user = User::find($request['id_find']);
         //関連モデルからデータ取得

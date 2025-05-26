@@ -30,7 +30,7 @@ return new class extends Migration
 
             //インデックス
             $table->index('role_id');
-            $table->index('timestamps');
+            $table->index('created_at');
         });
     }
 

@@ -25,6 +25,14 @@ return new class extends Migration
             $table->integer('rarity');
             $table->string('explanation',40);
             $table->timestamps();
+
+            //ユニーク
+            $table->unique('id');
+
+            //インデックス
+            $table->index('user_id');
+            $table->index('name');
+            $table->index('created_at');
         });
     }
 

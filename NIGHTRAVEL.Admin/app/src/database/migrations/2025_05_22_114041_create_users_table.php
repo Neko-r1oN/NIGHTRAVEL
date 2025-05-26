@@ -21,6 +21,9 @@ return new class extends Migration
             //ユニーク
             $table->unique('id');
             $table->unique('name');
+
+            //インデックス
+            $table->index('created_at');
         });
     }
 
