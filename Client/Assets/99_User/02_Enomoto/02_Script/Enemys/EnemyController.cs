@@ -5,6 +5,7 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 abstract public class EnemyController : MonoBehaviour
@@ -72,34 +73,42 @@ abstract public class EnemyController : MonoBehaviour
 
     #region 共通の行動パターン
     [Foldout("共通の行動パターン")]
+    [Tooltip("接触でダメージを与えることが可能")]
     [SerializeField] 
-    protected bool canDamageOnContact;      // 接触でダメージを与えることが可能
+    protected bool canDamageOnContact;
 
     [Foldout("共通の行動パターン")]
+    [Tooltip("常に動き回ることが可能")]
     [SerializeField] 
-    protected bool canPatrol;               // 常に動き回ることが可能
+    protected bool canPatrol;
 
     [Foldout("共通の行動パターン")]
+    [Tooltip("ターゲットを追跡可能")]
     [SerializeField] 
-    protected bool canChaseTarget;          // ターゲットを追跡可能
+    protected bool canChaseTarget;
     
     [Foldout("共通の行動パターン")]
+    [Tooltip("攻撃可能")]
     [SerializeField]
-    protected bool canAttack;               // 攻撃可能
+    protected bool canAttack;
     
     [Foldout("共通の行動パターン")]
+    [Tooltip("ジャンプ可能")]
     [SerializeField] 
-    protected bool canJump;                 // ジャンプ可能
+    protected bool canJump;
     #endregion
 
     #region 状態管理
     protected bool isObstacle;
     protected bool isPlat;
     protected bool isInvincible;
+    protected bool doOnceDecision;
+    protected bool isAttacking;
     #endregion
 
-    #region アニメーションID
-    protected int hitAnimationId;
+    #region ターゲットとの距離
+    protected float disToTarget;
+    protected float disToTargetX;
     #endregion
 
     protected virtual void Start()
@@ -108,6 +117,35 @@ abstract public class EnemyController : MonoBehaviour
         animator = GetComponent<Animator>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
+    }
+
+    private void FixedUpdate()
+    {
+        // ターゲットを探す
+        if (!target && Players.Count > 0) target = sightChecker.GetTargetInSight(Players);
+        else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible(target))
+        {// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
+            target = null;
+            if(chaseAI) chaseAI.StopChase();
+        }
+
+        if (!target && canPatrol) Run();
+        else if (!target && !canPatrol) Idle();
+
+        if (!target || isAttacking || isInvincible || hp <= 0 || !doOnceDecision) return;
+
+        // ターゲットとの距離を取得する
+        disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
+        disToTargetX = target.transform.position.x - transform.position.x;
+
+        // ターゲットのいる方向にテクスチャを反転
+        if (canChaseTarget)
+        {
+            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        }
+
+        DecideBehavior();
     }
 
     /// <summary>
@@ -127,12 +165,26 @@ abstract public class EnemyController : MonoBehaviour
                 {
                     Flip();
                 }
-                SetAnimId(hitAnimationId);
                 StartCoroutine(HitTime());
             }
             collision.gameObject.GetComponent<Player>().ApplyDamage(2f, transform.position);
         }
     }
+
+    /// <summary>
+    /// 次の行動パターンを決める処理
+    /// </summary>
+    abstract protected void DecideBehavior();
+
+    /// <summary>
+    /// アイドル処理
+    /// </summary>
+    abstract protected void Idle();
+
+    /// <summary>
+    /// 走る処理
+    /// </summary>
+    abstract protected void Run();
 
     /// <summary>
     /// ダメージ適応処理
@@ -172,9 +224,9 @@ abstract public class EnemyController : MonoBehaviour
     /// ノックバック処理
     /// </summary>
     /// <param name="damage"></param>
-    protected void DoKnokBack(float damage)
+    protected void DoKnokBack(int damage)
     {
-        float direction = damage / Mathf.Abs(damage);
+        int direction = damage / Mathf.Abs(damage);
         transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(0, 0);
         transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 200f, 100f));
     }
@@ -183,15 +235,26 @@ abstract public class EnemyController : MonoBehaviour
     /// ダメージ適応時の無敵時間
     /// </summary>
     /// <returns></returns>
-    protected IEnumerator HitTime()
+    protected virtual IEnumerator HitTime()
     {
         isInvincible = true;
         yield return new WaitForSeconds(hitTime);
         isInvincible = false;
     }
 
-    private void OnDrawGizmos()
-    {
-        sightChecker.DrawSightLine(players, target, canChaseTarget);
+    /// <summary>
+    /// [ デバック用 ] Gizmosを使用して検出範囲を描画
+    /// </summary>
+    protected virtual void OnDrawGizmos()
+    {   
+        // 追跡範囲
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, trackingRange);
+
+        // 視線描画
+        if(sightChecker != null) 
+        { 
+            sightChecker.DrawSightLine(players, target, canChaseTarget);
+        }
     }
 }

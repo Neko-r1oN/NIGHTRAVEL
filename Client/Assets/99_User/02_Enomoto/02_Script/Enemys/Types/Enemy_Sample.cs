@@ -58,14 +58,14 @@ public class Enemy_Sample : EnemyController
     #endregion
 
     #region 状態管理
-    bool doOnceDecision;
-    bool isAttacking;
+    //bool doOnceDecision;
+    //bool isAttacking;
     bool isDead;
     #endregion
 
     #region ターゲットとの距離
-    float disToTarget;
-    float disToTargetX;
+    //float disToTarget;
+    //float disToTargetX;
     readonly float disToTargetMin = 0.25f;
     #endregion
 
@@ -74,34 +74,18 @@ public class Enemy_Sample : EnemyController
         base.Start();
         isAttacking = false;
         doOnceDecision = true;
-        hitAnimationId = (int)ANIM_ID.Hit;
     }
 
-    private void FixedUpdate()
+    /// <summary>
+    /// 行動パターンを決める処理
+    /// </summary>
+    protected override void DecideBehavior()
     {
-        if (!target && Players.Count > 0) target = sightChecker.GetTargetInSight(Players);
-        else if (canChaseTarget && target && disToTarget > trackingRange
-            || !canChaseTarget && target && !sightChecker.IsTargetVisible(target)) target = null;
-
         // 障害物、地面があるか取得
         isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
         isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
-        if (!target && canPatrol) Run();
-        else if (!target && !canPatrol) Idle();
 
-        if (!target || isAttacking || isInvincible || hp <= 0 || !doOnceDecision) return;
-
-        // ターゲットとの距離
-        disToTarget = Vector3.Distance(this.transform.position, target.transform.position);
-        disToTargetX = target.transform.position.x - transform.position.x;
-
-        // ターゲットのいる方向にテクスチャを反転
-        if (canChaseTarget)
-        {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-        }
-
+        // 行動パターン
         if (canChaseTarget && isObstacle && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
         {
             Jump();
@@ -133,7 +117,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// アイドル処理
     /// </summary>
-    void Idle()
+    protected override void Idle()
     {
         SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
@@ -189,7 +173,7 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// 走る処理
     /// </summary>
-    void Run()
+    protected override void Run()
     {
         SetAnimId((int)ANIM_ID.Run);
         Vector2 speedVec = Vector2.zero;
@@ -244,7 +228,6 @@ public class Enemy_Sample : EnemyController
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
-            SetAnimId((int)ANIM_ID.Hit);
             hp -= Mathf.Abs(damage);
             DoKnokBack(damage);
 
@@ -270,6 +253,17 @@ public class Enemy_Sample : EnemyController
         isAttacking = false;
         doOnceDecision = true;
         Idle();
+    }
+
+    /// <summary>
+    /// ダメージ適応時の無敵時間
+    /// </summary>
+    /// <returns></returns>
+    protected override IEnumerator HitTime()
+    {
+        SetAnimId((int)ANIM_ID.Hit);
+        yield return null;
+        base.HitTime();
     }
 
     /// <summary>
@@ -305,8 +299,14 @@ public class Enemy_Sample : EnemyController
     /// <summary>
     /// [ デバック用 ] Gizmosを使用して検出範囲を描画
     /// </summary>
-    void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
+        base.OnDrawGizmos();
+
+        // 攻撃開始距離
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, attackDist);
+
         // 攻撃範囲
         if (meleeAttackCheck)
         {
@@ -330,10 +330,6 @@ public class Enemy_Sample : EnemyController
             Gizmos.DrawLine(leftStartPosition, endPosition);
             Gizmos.DrawLine(rightStartPosition, endPosition);
         }
-
-        // 追跡範囲
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position, trackingRange);
 
         // 落下チェック
         if (fallCheck)
