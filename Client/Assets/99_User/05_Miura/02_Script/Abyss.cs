@@ -18,7 +18,12 @@ public class Abyss : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("“Ş—‚É—‚¿‚½");
+            Debug.Log("ƒvƒŒƒCƒ„[‚ª“Ş—‚É—‚¿‚½");
+        }
+        if(collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("“G‚ª“Ş—‚É—‚¿‚½");
         }
     }
+
 }
