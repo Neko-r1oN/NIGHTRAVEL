@@ -37,7 +37,7 @@ public class SampleChara : Player
     public float runSpeed = 40f;    // 速度係数
 
     [Foldout("ステータス")]
-    public float dmgValue = 4;      // 攻撃力
+    public int dmgValue = 4;      // 攻撃力
 
     [Foldout("ステータス")]
     private float horizontalMove = 0f;      // 速度値
@@ -64,20 +64,23 @@ public class SampleChara : Player
     public bool invincible = false; // プレイヤーの死亡制御フラグ
     #endregion
 
-    #region レイヤー関連
-    [Foldout("レイヤー関連")]
+    #region レイヤー・位置関連
+    [Foldout("レイヤー・位置関連")]
     [SerializeField] private LayerMask m_WhatIsGround;	// どのレイヤーを地面と認識させるか
 
-    [Foldout("レイヤー関連")]
+    [Foldout("レイヤー・位置関連")]
     [SerializeField] private Transform m_GroundCheck;	// プレイヤーが接地しているかどうかを確認する用
 
-    [Foldout("レイヤー関連")]
+    [Foldout("レイヤー・位置関連")]
     [SerializeField] private Transform m_WallCheck;     // プレイヤーが壁に触れているかどうかを確認する用
 
-    [Foldout("レイヤー関連")]
+    [Foldout("レイヤー・位置関連")]
     [SerializeField] private Transform attackCheck;		// 攻撃時の当たり判定
 
-    [Foldout("レイヤー関連")]
+    [Foldout("レイヤー・位置関連")]
+    [SerializeField] private Transform playerPos;		// プレイヤー位置情報
+
+    [Foldout("レイヤー・位置関連")]
     [SerializeField] private CapsuleCollider2D playerCollider;
     #endregion
 
@@ -388,7 +391,7 @@ public class SampleChara : Player
                     isWallSliding = false;
                     oldWallSlidding = false;
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
-                    canMove = false;
+                    //canMove = false;  壁近でバグったので一旦除去。動作不良起きたら再考
                 }
                 else if (blink && canBlink)
                 {   // ダッシュ押下時
@@ -447,7 +450,7 @@ public class SampleChara : Player
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemySample>().ApplyDamage(dmgValue);
+                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(dmgValue,playerPos);
                 cam.GetComponent<MainCameraFollow>().ShakeCamera();
             }
         }
@@ -458,7 +461,7 @@ public class SampleChara : Player
     /// </summary>
     /// <param name="damage">ダメージ量</param>
     /// <param name="position">攻撃したオブジェの位置</param>
-    override public void ApplyDamage(float damage, Vector3 position)
+    override public void ApplyDamage(int damage, Vector3 position)
     {
         if (!invincible)
         {

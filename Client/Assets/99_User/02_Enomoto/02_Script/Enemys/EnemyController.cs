@@ -130,7 +130,7 @@ abstract public class EnemyController : MonoBehaviour
                 SetAnimId(hitAnimationId);
                 StartCoroutine(HitTime());
             }
-            collision.gameObject.GetComponent<Player>().ApplyDamage(2f, transform.position);
+            collision.gameObject.GetComponent<Player>().ApplyDamage(2, transform.position);
         }
     }
 
