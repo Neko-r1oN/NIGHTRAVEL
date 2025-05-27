@@ -120,6 +120,7 @@ public class SampleChara : Player
     private bool canAttack = true;  // 攻撃制御フラグ
     private bool m_Grounded;	    // プレイヤーの接地フラグ
     private bool m_IsWall = false;  // プレイヤーの前に壁があるか
+    private bool m_IsLadder = false;// 梯子動作フラグ
     private bool isJump = false;	// ジャンプ入力フラグ
     private bool isBlink = false;	// ダッシュ入力フラグ
     private bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
@@ -162,6 +163,7 @@ public class SampleChara : Player
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
+        Ladder();
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
         {   // ジャンプ押下時
@@ -286,7 +288,18 @@ public class SampleChara : Player
             }
         }
 
+        //------------------------------
+        // 梯子処理
+
         if (Ladder())
+        {
+            if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            {
+                m_IsLadder = true;
+            }
+        }
+
+        if(m_IsLadder)
         {
             m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, verticalMove * ladderSpeed);
             m_Rigidbody2D.gravityScale = 0f;
@@ -296,6 +309,7 @@ public class SampleChara : Player
             m_Rigidbody2D.gravityScale = gravity;
         }
 
+        // 
         Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
         isBlink = false;
@@ -469,6 +483,7 @@ public class SampleChara : Player
         if (hit.collider != null)
             return true;
         else
+            m_IsLadder = false;
             return false;
     }
 
