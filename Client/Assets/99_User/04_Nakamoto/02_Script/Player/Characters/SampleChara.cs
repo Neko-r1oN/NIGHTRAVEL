@@ -560,6 +560,7 @@ public class SampleChara : Player
     /// </summary>
     IEnumerator Stun(float time)
     {
+        Debug.Log("スタン！：" + time);
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
