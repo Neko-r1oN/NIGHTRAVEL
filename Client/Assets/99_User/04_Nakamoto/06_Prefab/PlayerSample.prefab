@@ -119,6 +119,7 @@ MonoBehaviour:
   life: 10
   runSpeed: 40
   dmgValue: 4
+  ladderSpeed: 0.45
   m_JumpForce: 850
   m_BlinkForce: 25
   m_AirControl: 1
@@ -129,9 +130,13 @@ MonoBehaviour:
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 53
+  ladderLayer:
+    serializedVersion: 2
+    m_Bits: 4194304
   m_GroundCheck: {fileID: 8577718980914660200}
   m_WallCheck: {fileID: 7890144716541256212}
   attackCheck: {fileID: 3821735462133043664}
+  playerPos: {fileID: 8868349504368053428}
   playerCollider: {fileID: 5100425850618018956}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
