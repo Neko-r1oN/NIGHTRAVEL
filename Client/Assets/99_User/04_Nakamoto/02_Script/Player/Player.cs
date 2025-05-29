@@ -19,4 +19,10 @@ abstract public class Player : MonoBehaviour
     /// <param name="damage">ダメージ量</param>
     /// <param name="position">攻撃したオブジェの位置</param>
     abstract public void ApplyDamage(int damage, Vector3 position);
+
+    /// <summary>
+    /// 経験値獲得処理
+    /// </summary>
+    /// <param name="exp">獲得経験値</param>
+    abstract public void GetExp(int exp);
 }

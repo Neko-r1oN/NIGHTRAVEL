@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using Pixeye.Unity;
+using System;
 
 public class SampleChara : Player
 {
@@ -68,6 +69,18 @@ public class SampleChara : Player
 
     [Foldout("ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
+
+    [Foldout("ステータス")]
+    [SerializeField] int testExp = 10;       // デバッグ用獲得経験値
+
+    [Foldout("ステータス")]
+    private int nowLv = 0;          // 現在レベル
+
+    [Foldout("ステータス")]
+    private int nowExp = 0;         // 現在の獲得経験値
+
+    [Foldout("ステータス")]
+    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
     #endregion
 
     #region レイヤー・位置関連
@@ -140,9 +153,6 @@ public class SampleChara : Player
     private float jumpWallDistX = 0;        // プレイヤーと壁の距離
     private bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
 
-    //[System.Serializable]
-    //public class BoolEvent : UnityEvent<bool> { }
-
     /// <summary>
     /// Update前処理
     /// </summary>
@@ -189,6 +199,15 @@ public class SampleChara : Player
             Vector2 direction = new Vector2(transform.localScale.x, 0);
             throwableWeapon.GetComponent<ThrowableWeapon>().direction = direction;
             throwableWeapon.name = "ThrowableWeapon";
+        }
+
+        //-----------------------------
+        // デバッグ
+
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            GetExp(testExp);
+            Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
         }
     }
 
@@ -488,6 +507,20 @@ public class SampleChara : Player
     }
 
     /// <summary>
+    /// レベルアップ処理
+    /// </summary>
+    private void LevelUp()
+    {
+        nowLv++;
+        nowExp = nowExp - nextLvExp;
+        int nextLv = nowLv + 1;
+        nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
+    }
+
+    //-------------------------------------------
+    // 抽象関数継承処理
+
+    /// <summary>
     /// ダメージを与える処理
     /// </summary>
     override public void DoDashDamage()
@@ -538,6 +571,23 @@ public class SampleChara : Player
             }
         }
     }
+
+    /// <summary>
+    /// 経験値獲得
+    /// </summary>
+    /// <param name="exp">経験値量</param>
+    public override void GetExp(int exp)
+    {
+        nowExp += exp;
+
+        if(nextLvExp <= nowExp)
+        {   // レベルアップ処理
+            LevelUp();
+        }
+    }
+
+    //----------------------------------
+    // 非同期処理
 
     /// <summary>
     /// ダッシュ(ブリンク)制限処理
