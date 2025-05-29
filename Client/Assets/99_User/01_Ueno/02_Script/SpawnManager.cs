@@ -9,6 +9,7 @@ public class SpawnManager : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         player = GameObject.Find("PlayerSample");
+        this.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

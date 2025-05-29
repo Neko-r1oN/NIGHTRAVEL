@@ -24,8 +24,6 @@ public class GameManager : MonoBehaviour
     public int createCnt;   // 生成間隔
     int spawnCnt;           // スポーン回数
     public int maxSpawnCnt; // マックススポーン回数
-    Vector3 spawnPos;       // ランダムで生成する位置
-    [SerializeField] int bossCount;
     bool isBossDead;
     bool isSpawnBoss;
     #endregion
@@ -38,10 +36,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform randRespawnB; // リスポーン範囲B
     [SerializeField] Transform minCameraPos;
     [SerializeField] Transform maxCameraPos;
-    [SerializeField] Transform xRadius;
-    [SerializeField] Transform yRadius;
+    [SerializeField] float xRadius;
+    [SerializeField] float yRadius;
+    [SerializeField] float distMinSpawnPos;
 
-    GameObject player;                       // プレイヤーの情報
+    [SerializeField] GameObject player;      // プレイヤーの情報
     GameObject enemy;                        // エネミーの情報
 
     public GameObject Enemy {  get { return enemy; } }
@@ -68,55 +67,15 @@ public class GameManager : MonoBehaviour
     {
         if (!isSpawnBoss && bossFlag)
         {
-            for (int i = 0; i < bossCount; i++)
-            {
-                float minX, maxX;
-                float minY, maxY;
+            // ボスの生成範囲の判定
+            var spawnPostions = CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
 
-                if (minCameraPos.position.y < randRespawnA.position.y)
-                {
-                    minY = randRespawnA.position.y;
-                }
-                else
-                {
-                    minY = minCameraPos.position.y;
-                }
+            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange,spawnPostions.maxRange);
 
-                if (maxCameraPos.position.y > randRespawnB.position.y)
-                {
-                    maxY = randRespawnB.position.y;
-                }
-                else
-                {
-                    maxY = maxCameraPos.position.y;
-                }
 
-                if (minCameraPos.position.x < randRespawnA.position.x)
-                {
-                    minX = randRespawnA.position.x;
-                }
-                else
-                {
-                    minX = minCameraPos.position.x;
-                }
-
-                if (maxCameraPos.position.x > randRespawnB.position.x)
-                {
-                    maxX = randRespawnB.position.x;
-                }
-                else
-                {
-                    maxX = maxCameraPos.position.x;
-                }
-
-                // ステージ内から適当な位置を取得
-                float x = Random.Range(minX, maxX);
-                float y = Random.Range(minY, maxY);
-
-                // ランダムな位置を生成
-                spawnPos = new Vector3(x, y);
-
-                Instantiate(boss, new Vector3(x, y), Quaternion.identity);
+            if (spawnPos != null)
+            {// 返り値がnullじゃないとき
+                Instantiate(boss, (Vector3)spawnPos, Quaternion.identity);
             }
 
             isSpawnBoss = true;
@@ -140,32 +99,28 @@ public class GameManager : MonoBehaviour
             {
                 num = 0;
 
-                // ステージ内から適当な位置を取得
-                float x = Random.Range(randRespawnA.position.x, randRespawnB.position.x);
-                float y = Random.Range(randRespawnA.position.y, randRespawnB.position.y);
-                float z = Random.Range(randRespawnA.position.z, randRespawnB.position.z);
+                Vector2 minPlayer =
+                    new Vector2(player.transform.position.x - xRadius, player.transform.position.y - yRadius);
+
+                Vector2 maxPlayer =
+                    new Vector2(player.transform.position.x + xRadius, player.transform.position.y + yRadius);
+
                 // ランダムな位置を生成
-                spawnPos = new Vector3(x, y, z);
+                var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
 
-                float minX,minY,maxX,maxY;
+                // ランダムな位置を生成
+                //Vector3 spawnPos = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
+                Vector3 ? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange,spawnPostions.maxRange);
 
-
-
-
-                // プレイヤーの位置とランダム生成の位置との距離
-                float distanceOfPlayer =
-                    Vector3.Distance(player.transform.position, spawnPos);
-
-                if (distanceOfPlayer >= 8 && distanceOfPlayer < 13)
-                {// 距離が10離れていたら
+                if (spawnPos != null)
+                {
                     spawnCnt++;
-
                     int listNum = Random.Range(0, enemyList.Count);
 
                     // 生成
-                    enemy = Instantiate(enemyList[listNum], new Vector3(x, y, z), Quaternion.identity);
-                    
+                    enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+
                     enemy.GetComponent<EnemyController>().Players.Add(player);
 
                     if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
@@ -244,20 +199,84 @@ public class GameManager : MonoBehaviour
     [ContextMenu("DeathBoss")]
     public void DeathBoss()
     {
-        // ボスのカウントを減らす
-        bossCount--;
-
-        // 呼び出されたときボスカウントが0以下なら
-        if(bossCount <= 0)
-        {
-            // ボスフラグを変更
-            bossFlag = false;
-            // 死んだ判定にする
-            isBossDead = true;
-        }
-
-        Debug.Log("死んだよん");
+        // ボスフラグを変更
+        bossFlag = false;
+        // 死んだ判定にする
+        isBossDead = true;
     }
 
+    private void OnDrawGizmos()
+    {
+        if (player != null)
+        {
+            Gizmos.DrawWireCube(player.transform.position, new Vector3(distMinSpawnPos * 2,yRadius * 2));
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(player.transform.position, new Vector3(xRadius * 2, yRadius * 2));
+        }
+    }
 
+    private (Vector3 minRange,Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint,Vector3 maxPoint)
+    {
+        Vector3 minRange = minPoint, maxRange = maxPoint;
+        if (minPoint.y < randRespawnA.position.y)
+        {
+            minRange.y = randRespawnA.position.y;
+        }
+        else
+        {
+            minRange.y = minPoint.y;
+        }
+
+        if (minPoint.x < randRespawnA.position.x)
+        {
+            minRange.x = randRespawnA.position.x;
+        }
+        else
+        {
+            minRange.x = minPoint.x;
+        }
+
+        if (maxPoint.y > randRespawnB.position.y)
+        {
+            maxRange.y = randRespawnB.position.y;
+        }
+        else
+        {
+            maxRange.y = maxPoint.y;
+        }
+
+        if (maxPoint.x > randRespawnB.position.x)
+        {
+            maxRange.x = randRespawnB.position.x;
+        }
+        else
+        {
+            minRange.x = minPoint.x;
+        }
+
+        return (minRange, maxRange);
+    }
+
+    private Vector3? GenerateEnemySpawnPosition(Vector3 minRange,Vector3 maxRange)
+    {
+        // 試行回数
+        int loopMax = 10;
+
+        for (int i = 0; i < loopMax; i++)
+        {
+           Vector3 spawnPos = new Vector3
+                (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
+
+            Vector3 distToPlayer =
+                player.transform.position - spawnPos;
+
+            if (Mathf.Abs(distToPlayer.x) > distMinSpawnPos 
+                && Mathf.Abs(distToPlayer.y) > distMinSpawnPos)
+            {
+                return spawnPos;
+            }
+        }
+
+        return null;
+    }
 }

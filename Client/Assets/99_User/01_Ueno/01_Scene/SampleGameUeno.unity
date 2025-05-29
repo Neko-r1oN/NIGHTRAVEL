@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createCnt: 450
+  createCnt: 150
   maxSpawnCnt: 50
   bossCount: 10
   enemyList:
@@ -878,8 +878,10 @@ MonoBehaviour:
   randRespawnB: {fileID: 1741575025}
   minCameraPos: {fileID: 1108713591}
   maxCameraPos: {fileID: 447553743}
-  xRadius: 6
-  yRadius: 4
+  xRadius: 18
+  yRadius: 13
+  distMinSpawnPos: 5
+  player: {fileID: 586869249}
 --- !u!4 &232256223
 Transform:
   m_ObjectHideFlags: 0
@@ -2007,6 +2009,11 @@ MonoBehaviour:
   m_Area: 1
   m_IgnoreFromBuild: 0
   m_AffectedAgents: ffffffff
+--- !u!1 &586869249 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2104721271453235480, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
+  m_PrefabInstance: {fileID: 1183703202}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &706914972
 GameObject:
   m_ObjectHideFlags: 0
@@ -5035,7 +5042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4752b5daaea8544c9589f357e2b20eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTimer: 4.79
+  gameTimer: 60
   text: {fileID: 492699193}
 --- !u!4 &1409435471
 Transform:
