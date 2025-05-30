@@ -868,7 +868,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createCnt: 150
   maxSpawnCnt: 50
-  bossCount: 10
   enemyList:
   - {fileID: 3092200576175100882, guid: 6641530271e12c7469d2dbd882c7aeec, type: 3}
   - {fileID: 896993559303105593, guid: 52ce14a4dd914354b863cf44388ca0f1, type: 3}
@@ -878,9 +877,9 @@ MonoBehaviour:
   randRespawnB: {fileID: 1741575025}
   minCameraPos: {fileID: 1108713591}
   maxCameraPos: {fileID: 447553743}
-  xRadius: 18
-  yRadius: 13
-  distMinSpawnPos: 5
+  xRadius: 10
+  yRadius: 8
+  distMinSpawnPos: 3
   player: {fileID: 586869249}
 --- !u!4 &232256223
 Transform:
@@ -3929,11 +3928,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8868349504368053428, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.4
+      value: 6.45
       objectReference: {fileID: 0}
     - target: {fileID: 8868349504368053428, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.4
+      value: -1.29
       objectReference: {fileID: 0}
     - target: {fileID: 8868349504368053428, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5042,7 +5041,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4752b5daaea8544c9589f357e2b20eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTimer: 60
+  gameTimer: 5
   text: {fileID: 492699193}
 --- !u!4 &1409435471
 Transform:
