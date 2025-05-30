@@ -14,6 +14,7 @@ public class EnemyChaseAI : MonoBehaviour
     //------------------
     [SerializeField] GameObject targetObj;
     [SerializeField] float distance = 0;
+    Vector3 previousDestination;
 
     void Start()
     {
@@ -27,21 +28,22 @@ public class EnemyChaseAI : MonoBehaviour
         //DoChase(targetObj,distance)
     }
 
+    /// <summary>
+    /// 追跡開始
+    /// </summary>
+    /// <param name="target"></param>
     public void DoChase(GameObject target)
     {
-        float now = Vector2.Distance(transform.position, target.transform.position);
-        if (distance < now)
-        {
-
-        }
-
+        previousDestination = agent.destination;
         agent.destination = target.transform.position;
+    }
 
-        // 次の目的地への方向ベクトル？
-        //Vector2? vector = new Vector2(
-        //    agent.destination.x - transform.position.x,
-        //    agent.destination.y - transform.position.y
-        //);
+    /// <summary>
+    /// 前回の地点に引き返す処理(保留中)
+    /// </summary>
+    public void ReturnToPreviousDestination()
+    {
+        //agent.destination = previousDestination;
     }
 
     /// <summary>

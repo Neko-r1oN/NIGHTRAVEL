@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using Pixeye.Unity;
+using System;
 
 public class SampleChara : Player
 {
@@ -37,10 +38,16 @@ public class SampleChara : Player
     public float runSpeed = 40f;    // 速度係数
 
     [Foldout("ステータス")]
-    public int dmgValue = 4;      // 攻撃力
+    public int dmgValue = 4;        // 攻撃力
 
     [Foldout("ステータス")]
     private float horizontalMove = 0f;      // 速度値
+
+    [Foldout("ステータス")]
+    private float gravity;  // 重力
+
+    [Foldout("ステータス")]
+    [SerializeField] float ladderSpeed = 1f;   // 梯子移動速度
 
     [Foldout("ステータス")]
     [SerializeField] private float m_JumpForce = 400f;
@@ -62,11 +69,26 @@ public class SampleChara : Player
 
     [Foldout("ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
+
+    [Foldout("ステータス")]
+    [SerializeField] int testExp = 10;       // デバッグ用獲得経験値
+
+    [Foldout("ステータス")]
+    private int nowLv = 0;          // 現在レベル
+
+    [Foldout("ステータス")]
+    private int nowExp = 0;         // 現在の獲得経験値
+
+    [Foldout("ステータス")]
+    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
     #endregion
 
     #region レイヤー・位置関連
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private LayerMask m_WhatIsGround;	// どのレイヤーを地面と認識させるか
+    [SerializeField] private LayerMask m_WhatIsGround;  // どのレイヤーを地面と認識させるか
+
+    [Foldout("レイヤー・位置関連")]
+    [SerializeField] private LayerMask ladderLayer;     // 梯子レイヤー
 
     [Foldout("レイヤー・位置関連")]
     [SerializeField] private Transform m_GroundCheck;	// プレイヤーが接地しているかどうかを確認する用
@@ -85,19 +107,11 @@ public class SampleChara : Player
     #endregion
 
     #region プレイヤー情報取得変数
-    [Foldout("プレイヤー情報取得変数")]
     private Rigidbody2D m_Rigidbody2D;
-
-    [Foldout("プレイヤー情報取得変数")]
     private Animator animator;
-
-    [Foldout("プレイヤー情報取得変数")]
     private Vector3 velocity = Vector3.zero;
-
-    [Foldout("プレイヤー情報取得変数")]
     private bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
-
-    [Foldout("プレイヤー情報取得変数")]
+    private bool m_FallFlag = false;
     private float limitFallSpeed = 25f; // 落下速度の制限
     #endregion
 
@@ -110,7 +124,7 @@ public class SampleChara : Player
     #endregion
 
     #region カメラ
-    public GameObject cam;
+    private GameObject cam;
     #endregion
 
     #region 動作フラグ関連
@@ -119,6 +133,7 @@ public class SampleChara : Player
     private bool canAttack = true;  // 攻撃制御フラグ
     private bool m_Grounded;	    // プレイヤーの接地フラグ
     private bool m_IsWall = false;  // プレイヤーの前に壁があるか
+    private bool m_IsLadder = false;// 梯子動作フラグ
     private bool isJump = false;	// ジャンプ入力フラグ
     private bool isBlink = false;	// ダッシュ入力フラグ
     private bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
@@ -126,6 +141,7 @@ public class SampleChara : Player
     private bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
     private float prevVelocityX = 0f;
     private bool canCheck = false;          // For check if player is wallsliding
+    private float verticalMove = 0f;        
     #endregion
 
     #region 動作フラグ関連
@@ -137,9 +153,6 @@ public class SampleChara : Player
     private float jumpWallDistX = 0;        // プレイヤーと壁の距離
     private bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
 
-    [System.Serializable]
-    public class BoolEvent : UnityEvent<bool> { }
-
     /// <summary>
     /// Update前処理
     /// </summary>
@@ -147,7 +160,9 @@ public class SampleChara : Player
     private void Awake()
     {
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
+        gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
+        cam = Camera.main.gameObject;
     }
 
     /// <summary>
@@ -157,6 +172,8 @@ public class SampleChara : Player
     {
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+        verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
+        Ladder();
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
         {   // ジャンプ押下時
@@ -183,6 +200,15 @@ public class SampleChara : Player
             throwableWeapon.GetComponent<ThrowableWeapon>().direction = direction;
             throwableWeapon.name = "ThrowableWeapon";
         }
+
+        //-----------------------------
+        // デバッグ
+
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            GetExp(testExp);
+            Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
+        }
     }
 
 
@@ -205,10 +231,18 @@ public class SampleChara : Player
             // gameObject→プレイヤーオブジェクトのこと？
             if (colliders[i].gameObject != gameObject)
                 m_Grounded = true;
+
+            if (m_Grounded && m_FallFlag)
+            {   // 高所から着地時にスタン
+                m_FallFlag = false;
+                m_Rigidbody2D.linearVelocity = Vector2.zero;
+                StartCoroutine(Stun(1f));
+            }
+
             if (!wasGrounded)
             {   // 前フレームで地面に触れていない時
                 animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
-                
+
                 if (!m_IsWall && !isBlinking)
                     particleJumpDown.Play();
                 canDoubleJump = true;
@@ -273,6 +307,28 @@ public class SampleChara : Player
             }
         }
 
+        //------------------------------
+        // 梯子処理
+
+        if (Ladder())
+        {
+            if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            {
+                m_IsLadder = true;
+            }
+        }
+
+        if(m_IsLadder)
+        {
+            m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, verticalMove * ladderSpeed);
+            m_Rigidbody2D.gravityScale = 0f;
+        }
+        else
+        {
+            m_Rigidbody2D.gravityScale = gravity;
+        }
+
+        // 
         Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
         isBlink = false;
@@ -308,7 +364,10 @@ public class SampleChara : Player
             {
                 // 落下速度制限処理
                 if (m_Rigidbody2D.linearVelocity.y < -limitFallSpeed)
+                {
+                    m_FallFlag = true;
                     m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, -limitFallSpeed);
+                }
 
                 // キャラの目標移動速度を決定
                 Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.linearVelocity.y);
@@ -434,6 +493,34 @@ public class SampleChara : Player
     }
 
     /// <summary>
+    /// 梯子判定処理
+    /// </summary>
+    /// <returns></returns>
+    private bool Ladder()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, ladderLayer);
+        if (hit.collider != null)
+            return true;
+        else
+            m_IsLadder = false;
+            return false;
+    }
+
+    /// <summary>
+    /// レベルアップ処理
+    /// </summary>
+    private void LevelUp()
+    {
+        nowLv++;
+        nowExp = nowExp - nextLvExp;
+        int nextLv = nowLv + 1;
+        nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
+    }
+
+    //-------------------------------------------
+    // 抽象関数継承処理
+
+    /// <summary>
     /// ダメージを与える処理
     /// </summary>
     override public void DoDashDamage()
@@ -451,7 +538,7 @@ public class SampleChara : Player
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
                 collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(dmgValue,playerPos);
-                cam.GetComponent<MainCameraFollow>().ShakeCamera();
+                cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
     }
@@ -486,6 +573,23 @@ public class SampleChara : Player
     }
 
     /// <summary>
+    /// 経験値獲得
+    /// </summary>
+    /// <param name="exp">経験値量</param>
+    public override void GetExp(int exp)
+    {
+        nowExp += exp;
+
+        if(nextLvExp <= nowExp)
+        {   // レベルアップ処理
+            LevelUp();
+        }
+    }
+
+    //----------------------------------
+    // 非同期処理
+
+    /// <summary>
     /// ダッシュ(ブリンク)制限処理
     /// </summary>
     /// <returns></returns>
@@ -506,6 +610,7 @@ public class SampleChara : Player
     /// </summary>
     IEnumerator Stun(float time)
     {
+        Debug.Log("スタン！：" + time);
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
