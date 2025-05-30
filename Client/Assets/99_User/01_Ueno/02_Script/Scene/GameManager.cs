@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
         if (isBossDead)
         {// ボスを倒した(仮)
             //bossFlag = false;
-            boss.SetActive(false);
+            //boss.SetActive(false);
 
             // 遅れて呼び出し
             Invoke(nameof(ChengScene), 1.5f);
@@ -158,11 +158,17 @@ public class GameManager : MonoBehaviour
         spawnCnt--;
         AddXp();
 
-        Debug.Log(crushNum);
-        if (crushNum >= 15)
+        EnemyController enemy = GetComponent<EnemyController>();
+
+        //Debug.Log(crushNum);
+        if(enemy.name == "boss")
+        {
+            DeathBoss();
+        }
+        else if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
 
-            BossFlag = true;
+            bossFlag = true;
 
             //boss.SetActive(true);
             //Debug.Log("ボスでてきた");
@@ -257,20 +263,20 @@ public class GameManager : MonoBehaviour
         return (minRange, maxRange);
     }
 
-    private Vector3? GenerateEnemySpawnPosition(Vector3 minRange,Vector3 maxRange)
+    private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange)
     {
         // 試行回数
         int loopMax = 10;
 
         for (int i = 0; i < loopMax; i++)
         {
-           Vector3 spawnPos = new Vector3
-                (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
+            Vector3 spawnPos = new Vector3
+                 (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
 
             Vector3 distToPlayer =
                 player.transform.position - spawnPos;
 
-            if (Mathf.Abs(distToPlayer.x) > distMinSpawnPos 
+            if (Mathf.Abs(distToPlayer.x) > distMinSpawnPos
                 && Mathf.Abs(distToPlayer.y) > distMinSpawnPos)
             {
                 return spawnPos;
