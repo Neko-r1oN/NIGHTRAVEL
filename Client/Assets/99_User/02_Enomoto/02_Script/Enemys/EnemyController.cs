@@ -30,6 +30,11 @@ abstract public class EnemyController : MonoBehaviour
     #region ステータス
     [Foldout("基本ステータス")]
     [SerializeField]
+    protected bool isBoss = false;
+    public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
+
+    [Foldout("基本ステータス")]
+    [SerializeField]
     protected int life = 10;
 
     [Foldout("基本ステータス")]
@@ -211,6 +216,25 @@ abstract public class EnemyController : MonoBehaviour
     /// 他の検知範囲の描画処理
     /// </summary>
     abstract protected void DrawDetectionGizmos();
+
+    /// <summary>
+    /// 死亡処理
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator DestroyEnemy()
+    {
+        PlayDeadAnim();
+        yield return new WaitForSeconds(0.25f);
+        GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
+        m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// 死亡アニメーションを再生
+    /// </summary>
+    abstract protected void PlayDeadAnim();
 
     /// <summary>
     /// アニメーション設定処理

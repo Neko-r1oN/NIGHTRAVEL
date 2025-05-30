@@ -268,18 +268,13 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
-    /// 死亡処理
+    /// 死亡アニメーション
     /// </summary>
     /// <returns></returns>
-    IEnumerator DestroyEnemy()
+    protected override void PlayDeadAnim()
     {
         isDead = true;
         SetAnimId((int)ANIM_ID.Dead);
-        yield return new WaitForSeconds(0.25f);
-        GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
-        m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
-        yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
     }
 
     /// <summary>
