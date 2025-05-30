@@ -13,7 +13,9 @@ abstract public class EnemyController : MonoBehaviour
     //  マネージャークラスからPlayerを取得できるのが理想(変数削除予定、またはSerializeField削除予定)
     #region プレイヤー・ターゲット
     [Header("プレイヤー・ターゲット")]
-    protected GameObject target;
+    [SerializeField] protected GameObject target;   // SerializeFieldはDebug用
+    public GameObject Target { get { return target; } set { target = value; } }
+
     [SerializeField] List<GameObject> players = new List<GameObject>();
     public List<GameObject> Players { get { return players; } set { players = value; } }
     #endregion
@@ -28,7 +30,7 @@ abstract public class EnemyController : MonoBehaviour
     #region ステータス
     [Foldout("基本ステータス")]
     [SerializeField]
-    protected int hp = 10;
+    protected int life = 10;
 
     [Foldout("基本ステータス")]
     [SerializeField]
@@ -60,6 +62,7 @@ abstract public class EnemyController : MonoBehaviour
     [SerializeField]
     [Tooltip("攻撃を開始する距離")]
     protected float attackDist = 1.5f;
+    public float AttackDist { get { return attackDist; } }
 
     [Foldout("基本ステータス")]
     [SerializeField]
@@ -99,8 +102,6 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region 状態管理
-    protected bool isObstacle;
-    protected bool isPlat;
     protected bool isInvincible;
     protected bool doOnceDecision;
     protected bool isAttacking;
@@ -109,6 +110,13 @@ abstract public class EnemyController : MonoBehaviour
     #region ターゲットとの距離
     protected float disToTarget;
     protected float disToTargetX;
+    #endregion
+
+    #region その他
+    [Foldout("デバック用")]
+    [Tooltip("判定を描画するかどうか")]
+    [SerializeField]
+    protected bool canDrawRay = false;
     #endregion
 
     protected virtual void Start()
@@ -121,18 +129,25 @@ abstract public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // ターゲットを探す
-        if (!target && Players.Count > 0) target = sightChecker.GetTargetInSight(Players);
-        else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible(target))
+        if (isAttacking || isInvincible || life <= 0 || !doOnceDecision || !sightChecker) return;
+
+        if (!target && Players.Count > 0)
+        {
+            // ターゲットを探す
+            target = sightChecker.GetTargetInSight();
+        }
+        else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())
         {// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
             target = null;
-            if(chaseAI) chaseAI.StopChase();
+            if (chaseAI) chaseAI.StopChase();
         }
 
-        if (!target && canPatrol) Run();
-        else if (!target && !canPatrol) Idle();
-
-        if (!target || isAttacking || isInvincible || hp <= 0 || !doOnceDecision) return;
+        if (!target)
+        {
+            if (canPatrol) Run();
+            else Idle();
+            return;
+        }
 
         // ターゲットとの距離を取得する
         disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
@@ -154,7 +169,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (canDamageOnContact && collision.gameObject.tag == "Player" && hp > 0 && !isInvincible)
+        if (canDamageOnContact && collision.gameObject.tag == "Player" && life > 0 && !isInvincible)
         {
             if (!target)
             {
@@ -191,6 +206,11 @@ abstract public class EnemyController : MonoBehaviour
     /// </summary>
     /// <param name="damage"></param>
     abstract public void ApplyDamage(int damage, Transform attacker);
+
+    /// <summary>
+    /// 他の検知範囲の描画処理
+    /// </summary>
+    abstract protected void DrawDetectionGizmos();
 
     /// <summary>
     /// アニメーション設定処理
@@ -245,8 +265,10 @@ abstract public class EnemyController : MonoBehaviour
     /// <summary>
     /// [ デバック用 ] Gizmosを使用して検出範囲を描画
     /// </summary>
-    protected virtual void OnDrawGizmos()
+    private void OnDrawGizmos()
     {   
+        if (!canDrawRay) return;
+
         // 追跡範囲
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, trackingRange);
@@ -254,7 +276,9 @@ abstract public class EnemyController : MonoBehaviour
         // 視線描画
         if(sightChecker != null) 
         { 
-            sightChecker.DrawSightLine(players, target, canChaseTarget);
+            sightChecker.DrawSightLine(canChaseTarget);
         }
+
+        DrawDetectionGizmos();
     }
 }
