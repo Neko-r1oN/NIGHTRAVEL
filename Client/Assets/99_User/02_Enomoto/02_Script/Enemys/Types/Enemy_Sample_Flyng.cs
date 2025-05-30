@@ -43,21 +43,15 @@ public class Enemy_Sample_Flyng : EnemyController
     // 壁と地面チェック
     [SerializeField] Transform wallCheck;
     [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] Transform platCheck;
-    [SerializeField] Vector2 platCheckRadius = new Vector2(0, 1.5f);
     [SerializeField] LayerMask terrainLayerMask;
     #endregion
 
     #region 状態管理
-    //bool doOnceDecision;
-    //bool isAttacking;
     bool isDead;
     #endregion
 
     #region ターゲットとの距離
-    //float disToTarget;
-    //float disToTargetX;
-    float disToTargetMin = 2.5f;
+    [SerializeField] float disToTargetMin = 2.5f;
     #endregion
 
     protected override void Start()
@@ -72,20 +66,17 @@ public class Enemy_Sample_Flyng : EnemyController
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 障害物、地面があるか取得
-        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
-        isPlat = Physics2D.OverlapBox(platCheck.position, platCheckRadius, 0f, terrainLayerMask);
-
         // 行動パターン
-        if (canAttack && !sightChecker.IsObstructed(target) && disToTarget <= attackDist && disToTarget > disToTargetMin
-            && !isAttacking && attackType != ATTACK_TYPE_ID.None)
+        //if (speed > 0 && canChaseTarget && disToTarget < disToTargetMin)
+        //{
+        //    Run();
+        //}
+        if (canAttack && sightChecker.CanFireProjectile(throwableObject, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
         {
             chaseAI.StopChase();
             Attack();
         }
-        else if (canPatrol && !canChaseTarget
-            || canPatrol && canChaseTarget
-            || canChaseTarget)
+        else if (speed > 0 && canPatrol || speed > 0 && canChaseTarget)
         {
             Run();
         }
@@ -140,15 +131,17 @@ public class Enemy_Sample_Flyng : EnemyController
     {
         //SetAnimId((int)ANIM_ID.Run);
         Vector2 speedVec = Vector2.zero;
+        //if (canChaseTarget && target && disToTarget < disToTargetMin)
+        //{
+        //    chaseAI.ReturnToPreviousDestination();
+        //}
         if (canChaseTarget && target)
         {
-            //Vector2 direction = target.transform.position - transform.position + new Vector3(disToTargetMin, disToTargetMin);
-            //speedVec = new Vector2(direction.x / Mathf.Abs(direction.x), direction.y / Mathf.Abs(direction.y)) * speed;
             chaseAI.DoChase(target);
         }
         else if (canPatrol)
         {
-            if (!isPlat || isObstacle) Flip();
+            if (IsWall()) Flip();
             speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
         }
 
@@ -168,10 +161,10 @@ public class Enemy_Sample_Flyng : EnemyController
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
             //SetAnimId((int)ANIM_ID.Hit);
-            hp -= Mathf.Abs(damage);
+            life -= Mathf.Abs(damage);
             DoKnokBack(damage);
 
-            if (hp > 0)
+            if (life > 0)
             {
                 StartCoroutine(HitTime());
             }
@@ -180,6 +173,26 @@ public class Enemy_Sample_Flyng : EnemyController
                 StartCoroutine(DestroyEnemy());
             }
         }
+    }
+
+    /// <summary>
+    /// ダメージ適応時の無敵時間
+    /// </summary>
+    /// <returns></returns>
+    protected override IEnumerator HitTime()
+    {
+        //SetAnimId((int)ANIM_ID.Hit);
+        yield return null;
+        base.HitTime();
+    }
+
+    /// <summary>
+    /// 壁があるかどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsWall()
+    {
+        return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
     }
 
     /// <summary>
@@ -193,17 +206,6 @@ public class Enemy_Sample_Flyng : EnemyController
         isAttacking = false;
         doOnceDecision = true;
         Idle();
-    }
-
-    /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    protected override IEnumerator HitTime()
-    {
-        //SetAnimId((int)ANIM_ID.Hit);
-        yield return null;
-        base.HitTime();
     }
 
     /// <summary>
@@ -222,26 +224,25 @@ public class Enemy_Sample_Flyng : EnemyController
     }
 
     /// <summary>
-    /// [ デバック用 ] Gizmosを使用して検出範囲を描画
+    /// 検出範囲の描画処理
     /// </summary>
-    protected override void OnDrawGizmos()
+    protected override void DrawDetectionGizmos()
     {
-        base.OnDrawGizmos();
-
         // 攻撃開始距離
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, attackDist);
+
+        // 射線
+        if (sightChecker != null)
+        {
+            sightChecker.DrawProjectileRayGizmo(throwableObject, true);
+        }
 
         // 壁の判定
         if (wallCheck)
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(wallCheck.transform.position, wallCheckRadius);
-        }
-        if (platCheck)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireCube(platCheck.transform.position, platCheckRadius);
         }
     }
 }

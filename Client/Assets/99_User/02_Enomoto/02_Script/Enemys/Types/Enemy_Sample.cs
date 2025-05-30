@@ -58,14 +58,10 @@ public class Enemy_Sample : EnemyController
     #endregion
 
     #region 状態管理
-    //bool doOnceDecision;
-    //bool isAttacking;
     bool isDead;
     #endregion
 
     #region ターゲットとの距離
-    //float disToTarget;
-    //float disToTargetX;
     readonly float disToTargetMin = 0.25f;
     #endregion
 
@@ -81,12 +77,8 @@ public class Enemy_Sample : EnemyController
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 障害物、地面があるか取得
-        isObstacle = Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
-        isPlat = Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
-
         // 行動パターン
-        if (canChaseTarget && isObstacle && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
+        if (canChaseTarget && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
         {
             Jump();
         }
@@ -94,15 +86,18 @@ public class Enemy_Sample : EnemyController
         {
             AirMovement();
         }
-        else if (canAttack && !sightChecker.IsObstructed(target) && disToTarget <= attackDist && !isAttacking && attackType != ATTACK_TYPE_ID.None)
+        else if (attackType == ATTACK_TYPE_ID.MeleeType && canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
         {
             Attack();
         }
-        else if (canPatrol && !canChaseTarget
-            || canPatrol && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin
-            || canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        else if (attackType == ATTACK_TYPE_ID.RangeType && canAttack && sightChecker.CanFireProjectile(throwableObject, 270f))
         {
-            if (canChaseTarget && isObstacle && !canJump)
+            Attack();
+        }
+        else if (speed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin 
+            || speed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        {
+            if (canChaseTarget && IsWall() && !canJump)
             {
                 Idle();
             }
@@ -133,8 +128,14 @@ public class Enemy_Sample : EnemyController
         SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
 
-        if (attackType == ATTACK_TYPE_ID.MeleeType) MeleeAttack();
-        else if (attackType == ATTACK_TYPE_ID.RangeType) StartCoroutine(RangeAttack());
+        if (attackType == ATTACK_TYPE_ID.MeleeType)
+        {
+            MeleeAttack();
+        }
+        else if (attackType == ATTACK_TYPE_ID.RangeType)
+        {
+            StartCoroutine(RangeAttack());
+        }
     }
 
     /// <summary>
@@ -184,7 +185,7 @@ public class Enemy_Sample : EnemyController
         }
         else if (canPatrol)
         {
-            if (!isPlat || isObstacle) Flip();
+            if (IsFall() || IsWall()) Flip();
             speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
         }
 
@@ -228,10 +229,10 @@ public class Enemy_Sample : EnemyController
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
-            hp -= Mathf.Abs(damage);
+            life -= Mathf.Abs(damage);
             DoKnokBack(damage);
 
-            if (hp > 0)
+            if (life > 0)
             {
                 StartCoroutine(HitTime());
             }
@@ -282,6 +283,24 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
+    /// 壁があるかどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsWall()
+    {
+       return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+    }
+
+    /// <summary>
+    /// 落下中かどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsFall()
+    {
+        return !Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
+    }
+
+    /// <summary>
     /// 地面判定
     /// </summary>
     /// <returns></returns>
@@ -297,12 +316,10 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
-    /// [ デバック用 ] Gizmosを使用して検出範囲を描画
+    /// 検出範囲の描画処理
     /// </summary>
-    protected override void OnDrawGizmos()
+    protected override void DrawDetectionGizmos()
     {
-        base.OnDrawGizmos();
-
         // 攻撃開始距離
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, attackDist);
@@ -312,6 +329,12 @@ public class Enemy_Sample : EnemyController
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(meleeAttackCheck.transform.position, meleeAttackRange);
+        }
+
+        // 遠距離攻撃の射線
+        if (attackType == ATTACK_TYPE_ID.RangeType && sightChecker)
+        {
+            sightChecker.DrawProjectileRayGizmo(throwableObject, 270f);
         }
 
         // 壁の判定
