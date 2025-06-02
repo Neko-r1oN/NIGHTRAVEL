@@ -266,6 +266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   players: []
+  isBoss: 0
   life: 10
   power: 2
   speed: 5
@@ -278,7 +279,7 @@ MonoBehaviour:
   hitTime: 0.5
   canDamageOnContact: 0
   canPatrol: 0
-  canChaseTarget: 0
+  canChaseTarget: 1
   canAttack: 1
   canJump: 0
   canDrawRay: 1

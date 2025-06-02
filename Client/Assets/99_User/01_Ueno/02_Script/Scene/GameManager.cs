@@ -259,36 +259,20 @@ public class GameManager : MonoBehaviour
         {
             minRange.y = randRespawnA.position.y;
         }
-        else
-        {
-            minRange.y = minPoint.y;
-        }
 
         if (minPoint.x < randRespawnA.position.x)
         {
             minRange.x = randRespawnA.position.x;
-        }
-        else
-        {
-            minRange.x = minPoint.x;
         }
 
         if (maxPoint.y > randRespawnB.position.y)
         {
             maxRange.y = randRespawnB.position.y;
         }
-        else
-        {
-            maxRange.y = maxPoint.y;
-        }
 
         if (maxPoint.x > randRespawnB.position.x)
         {
             maxRange.x = randRespawnB.position.x;
-        }
-        else
-        {
-            minRange.x = minPoint.x;
         }
 
         return (minRange, maxRange);
