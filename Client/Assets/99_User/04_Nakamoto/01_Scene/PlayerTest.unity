@@ -12573,9 +12573,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed139c96459dc264bb81530ec7a90873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   players:
   - {fileID: 564027649}
-  hp: 10
+  isBoss: 0
+  life: 10
   power: 2
   speed: 0
   jumpPower: 19
@@ -12590,6 +12592,7 @@ MonoBehaviour:
   canChaseTarget: 0
   canAttack: 0
   canJump: 0
+  canDrawRay: 0
   attackType: 2
   throwableObject: {fileID: 5532974359214069763, guid: c928b20c45c6dcd458c1b9a8c6226d54, type: 3}
   meleeAttackCheck: {fileID: 0}
@@ -12620,6 +12623,9 @@ MonoBehaviour:
     m_Bits: 3
   viewAngleMax: 45
   viewDistMax: 6
+  aimTransform: {fileID: 0}
+  leftFireRayPoint: {fileID: 0}
+  rightFireRayPoint: {fileID: 0}
 --- !u!4 &1468740890
 Transform:
   m_ObjectHideFlags: 0
@@ -19304,14 +19310,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 692358278986550653, guid: a865f01f3f303a246bac6fa72fcf6d6d, type: 3}
-      propertyPath: testExp
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 692358278986550653, guid: a865f01f3f303a246bac6fa72fcf6d6d, type: 3}
-      propertyPath: runSpeed
-      value: 40
-      objectReference: {fileID: 0}
     - target: {fileID: 2104721271453235480, guid: a865f01f3f303a246bac6fa72fcf6d6d, type: 3}
       propertyPath: m_Name
       value: PlayerSample

@@ -25,4 +25,11 @@ abstract public class Player : MonoBehaviour
     /// </summary>
     /// <param name="exp">獲得経験値</param>
     abstract public void GetExp(int exp);
+
+    /// <summary>
+    /// ステータス変動処理
+    /// </summary>
+    /// <param name="statusID">増減させるステータスID</param>
+    /// <param name="value">増減値</param>
+    abstract public void ChangeStatus(int statusID, int value);
 }
