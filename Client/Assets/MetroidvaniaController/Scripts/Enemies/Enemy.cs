@@ -37,7 +37,6 @@ public class Enemy : MonoBehaviour {
 		if (life <= 0)
 		{
 			transform.GetComponent<Animator>().SetBool("IsDead", true);
-			gameManager.CrushEnemy();
 			StartCoroutine(DestroyEnemy());
 		}
 
@@ -114,6 +113,5 @@ public class Enemy : MonoBehaviour {
 		rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 		yield return new WaitForSeconds(3f);
 		Destroy(gameObject);
-        gameManager.CrushEnemy();
     }
 }

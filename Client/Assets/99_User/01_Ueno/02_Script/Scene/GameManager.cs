@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     #region その他
     [Header("その他")]
     public List<GameObject> enemyList;       // エネミーリスト
-    [SerializeField] GameObject boss;        // ボス
+    [SerializeField] GameObject bossPrefab;        // ボス
     [SerializeField] Transform randRespawnA; // リスポーン範囲A
     [SerializeField] Transform randRespawnB; // リスポーン範囲B
     [SerializeField] Transform minCameraPos;
@@ -46,6 +46,31 @@ public class GameManager : MonoBehaviour
     public GameObject Enemy {  get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
+
+    public GameObject Player { get { return player; } }
+
+    private static GameManager instance;
+
+    public static GameManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
+            Destroy(gameObject);
+        }
+    }
 
     //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
     #endregion
@@ -72,10 +97,13 @@ public class GameManager : MonoBehaviour
 
             Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange,spawnPostions.maxRange);
 
-
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
-                Instantiate(boss, (Vector3)spawnPos, Quaternion.identity);
+                GameObject boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
+                boss.GetComponent<EnemyController>().IsBoss = true;
+
+                boss.GetComponent<EnemyController>().Players.Add(player);
+                boss.GetComponent<EnemyController>().Target = player;
             }
 
             isSpawnBoss = true;
@@ -130,6 +158,11 @@ public class GameManager : MonoBehaviour
                         // 透明化
                         enemy.GetComponent<SpriteRenderer>().enabled = false;
                     }
+                    else
+                    {
+                        // 空飛ぶ敵のターゲットにプレイヤーを追加
+                        enemy.GetComponent<EnemyController>().Target = player;
+                    }
                 }
             }
         }
@@ -151,17 +184,15 @@ public class GameManager : MonoBehaviour
     /// <summary>
     ///  敵撃破
     /// </summary>
-    public void CrushEnemy()
+    public void CrushEnemy(EnemyController enemy)
     {
         crushNum++;
 
         spawnCnt--;
         AddXp();
 
-        EnemyController enemy = GetComponent<EnemyController>();
-
         //Debug.Log(crushNum);
-        if(enemy.name == "boss")
+        if(enemy.IsBoss)
         {
             DeathBoss();
         }

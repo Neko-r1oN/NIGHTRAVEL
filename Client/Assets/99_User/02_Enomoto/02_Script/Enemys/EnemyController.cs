@@ -223,6 +223,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <returns></returns>
     protected IEnumerator DestroyEnemy()
     {
+        GameManager.Instance.CrushEnemy(this);
         PlayDeadAnim();
         yield return new WaitForSeconds(0.25f);
         GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;

@@ -249,6 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   players: []
+  isBoss: 0
   life: 10
   power: 2
   speed: 5
@@ -257,7 +258,7 @@ MonoBehaviour:
   shotsPerSecond: 0.25
   attackCoolTime: 0.5
   attackDist: 6
-  trackingRange: 12
+  trackingRange: 15
   hitTime: 0.5
   canDamageOnContact: 0
   canPatrol: 0

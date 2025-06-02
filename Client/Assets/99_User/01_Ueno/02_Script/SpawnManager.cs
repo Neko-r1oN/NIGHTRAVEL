@@ -2,13 +2,8 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    GameManager gameManager;
-    GameObject player;
-
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        player = GameObject.Find("PlayerSample");
         this.GetComponent<SpriteRenderer>().enabled = false;
     }
 
