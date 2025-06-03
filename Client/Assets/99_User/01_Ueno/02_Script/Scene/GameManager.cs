@@ -24,21 +24,21 @@ public class GameManager : MonoBehaviour
     public int createCnt;   // 生成間隔
     int spawnCnt;           // スポーン回数
     public int maxSpawnCnt; // マックススポーン回数
-    bool isBossDead;
-    bool isSpawnBoss;
+    bool isBossDead;        // ボスが死んだかどうか
+    bool isSpawnBoss;       // ボスが生成されたかどうか
     #endregion
 
     #region その他
     [Header("その他")]
     public List<GameObject> enemyList;       // エネミーリスト
-    [SerializeField] GameObject bossPrefab;        // ボス
+    [SerializeField] GameObject bossPrefab;  // ボス
     [SerializeField] Transform randRespawnA; // リスポーン範囲A
     [SerializeField] Transform randRespawnB; // リスポーン範囲B
-    [SerializeField] Transform minCameraPos;
-    [SerializeField] Transform maxCameraPos;
-    [SerializeField] float xRadius;
-    [SerializeField] float yRadius;
-    [SerializeField] float distMinSpawnPos;
+    [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
+    [SerializeField] Transform maxCameraPos; // カメラ範囲の最大値
+    [SerializeField] float xRadius;          // 生成範囲のx半径
+    [SerializeField] float yRadius;          // 生成範囲のy半径
+    [SerializeField] float distMinSpawnPos;  // 生成しない範囲
 
     [SerializeField] GameObject player;      // プレイヤーの情報
     GameObject enemy;                        // エネミーの情報
@@ -49,7 +49,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject Player { get { return player; } }
 
+    public int CreateCnt { get { return createCnt; }set { createCnt = value; } }
+
     private static GameManager instance;
+
+    //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
+    #endregion
 
     public static GameManager Instance
     {
@@ -71,9 +76,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
-    #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -189,14 +191,14 @@ public class GameManager : MonoBehaviour
         crushNum++;
 
         spawnCnt--;
-        AddXp();
+        //AddXp();
 
-        //Debug.Log(crushNum);
+        Debug.Log(crushNum);
         if(enemy.IsBoss)
         {
             DeathBoss();
         }
-        else if (crushNum >= 15)
+        else if (crushNum >= 30)
         {// 撃破数が15以上になったら(仮)
 
             bossFlag = true;

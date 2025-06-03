@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createCnt: 450
+  createCnt: 1000
   maxSpawnCnt: 50
   enemyList:
   - {fileID: 6721685239486625041, guid: 6641530271e12c7469d2dbd882c7aeec, type: 3}
@@ -3884,7 +3884,11 @@ PrefabInstance:
       objectReference: {fileID: 1259183289}
     - target: {fileID: 692358278986550653, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
       propertyPath: life
-      value: 10000
+      value: 100000
+      objectReference: {fileID: 0}
+    - target: {fileID: 692358278986550653, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
+      propertyPath: dmgValue
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 692358278986550653, guid: 6fb81c85a6ec401458bd9e4555d99c82, type: 3}
       propertyPath: playerPos

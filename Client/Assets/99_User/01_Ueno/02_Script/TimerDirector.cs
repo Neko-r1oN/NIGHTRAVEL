@@ -23,12 +23,11 @@ public class TimerDirector : MonoBehaviour
     {
         if (GameManager.Instance.BossFlag == false)
         {
-            // 操作時間更新処理
+            // 時間更新処理
             //gameTimer -= Time.deltaTime;
             
             second -= Time.deltaTime;
             var span = new TimeSpan(0,0,(int)second);
-            //Debug.Log(span.ToString(@"mm\:ss"));
             timer.text = span.ToString(@"mm\:ss");
 
             if (minute >= 0)
@@ -36,6 +35,7 @@ public class TimerDirector : MonoBehaviour
                 if (second <= 0)
                 {
                     minute--;
+                    GameManager.Instance.CreateCnt -= 150;
                     timer.text = minute + ":" + second;
                     second = 60;
                 }
