@@ -251,7 +251,7 @@ public class SampleChara : Player
             }
         }
 
-        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f)
+        if (m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Run);
 
         if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Run && Mathf.Abs(horizontalMove) < 0.1f)
@@ -657,7 +657,7 @@ public class SampleChara : Player
     /// </summary>
     IEnumerator WaitToEndSliding()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.05f);
         canDoubleJump = true;
         isWallSliding = false;
         animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
