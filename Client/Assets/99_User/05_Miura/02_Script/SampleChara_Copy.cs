@@ -586,6 +586,16 @@ public class SampleChara_Copy : Player
         }
     }
 
+    /// <summary>
+    /// ステータス変動処理
+    /// </summary>
+    /// <param name="statusID">増減させるステータスID</param>
+    /// <param name="value">増減値</param>
+    public override void ChangeStatus(int statusID, int value)
+    {
+
+    }
+
     //----------------------------------
     // 非同期処理
 
