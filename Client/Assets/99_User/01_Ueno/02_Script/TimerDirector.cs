@@ -23,23 +23,9 @@ public class TimerDirector : MonoBehaviour
     {
         if (GameManager.Instance.BossFlag == false)
         {
-            // ŽžŠÔXVˆ—
-            //gameTimer -= Time.deltaTime;
-            
             second -= Time.deltaTime;
             var span = new TimeSpan(0,0,(int)second);
             timer.text = span.ToString(@"mm\:ss");
-
-            if (minute >= 0)
-            {
-                if (second <= 0)
-                {
-                    minute--;
-                    GameManager.Instance.CreateCnt -= 150;
-                    timer.text = minute + ":" + second;
-                    second = 60;
-                }
-            }
         }
 
         if (minute <= 0 && GameManager.Instance.BossFlag == false)
