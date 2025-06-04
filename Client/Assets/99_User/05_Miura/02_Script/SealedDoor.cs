@@ -1,23 +1,27 @@
+using System.ComponentModel;
 using UnityEngine;
 
 public class SealedDoor : MonoBehaviour
 {
+    [SerializeField] GameObject ExplosionEffect;
     public bool isDoor;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        isDoor = true;
+        isDoor = false;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //ƒhƒA‚ÉG‚ê‚½‚ç&&YƒL[(‰¼)‚ð‰Ÿ‚µ‚½‚ç
-        if (isDoor == false && Input.GetKeyDown(KeyCode.X))
+        //ãƒ‰ã‚¢ã«è§¦ã‚Œã¦ã„ã¦ã€æ”»æ’ƒã—ãŸã‚‰
+        if (isDoor == true && Input.GetKeyDown(KeyCode.X))
         {
-            //ƒhƒA”j‰ó
+            //ãƒ‰ã‚¢ã‚’å£Šã™
             this.gameObject.SetActive(false);
+            Instantiate(ExplosionEffect, this.transform.position,this.transform.rotation);
         }
     }
 
@@ -25,8 +29,7 @@ public class SealedDoor : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("ƒhƒA‚ÉG‚ê‚é");
-            isDoor = false;
+            isDoor = true;
         }
     }
 }
