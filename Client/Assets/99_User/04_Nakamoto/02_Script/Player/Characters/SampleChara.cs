@@ -94,12 +94,12 @@ public class SampleChara : Player
     /// <summary>
     /// 現レベル
     /// </summary>
-    public int NowLv { get { return NowLv; } }
+    public int NowLv { get { return nowLv; } }
 
     /// <summary>
     /// 現獲得経験値
     /// </summary>
-    public int NowExp { get { return NowExp; } }
+    public int NowExp { get { return nowExp; } }
 
     /// <summary>
     /// 次レベルまでの必要経験値

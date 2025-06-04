@@ -3,6 +3,7 @@
 // Author : Souma Ueno
 //----------------------------------------------------
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,7 +22,7 @@ public class GameManager : MonoBehaviour
     int requiredXp = 100;   // 必要経験値
     int level;              // レベル
     int num;                // 生成までのカウント
-    public int createCnt;   // 生成間隔
+    public int spawnInterval;   // 生成間隔
     int spawnCnt;           // スポーン回数
     public int maxSpawnCnt; // マックススポーン回数
     bool isBossDead;        // ボスが死んだかどうか
@@ -43,13 +44,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject player;      // プレイヤーの情報
     GameObject enemy;                        // エネミーの情報
 
+    float elapsedTime;
+
     public GameObject Enemy {  get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
     public GameObject Player { get { return player; } }
 
-    public int CreateCnt { get { return createCnt; }set { createCnt = value; } }
+    public int SpawnInterval { get { return spawnInterval; }set { spawnInterval = value; } }
 
     private static GameManager instance;
 
@@ -124,10 +127,10 @@ public class GameManager : MonoBehaviour
 
         if (spawnCnt < maxSpawnCnt)
         {// スポーン回数が限界に達しているか
-            num++;
-            if (num % createCnt == 0)
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime > spawnInterval)
             {
-                num = 0;
+                elapsedTime = 0;
 
                 Vector2 minPlayer =
                     new Vector2(player.transform.position.x - xRadius, player.transform.position.y - yRadius);
@@ -145,21 +148,50 @@ public class GameManager : MonoBehaviour
 
                 if (spawnPos != null)
                 {
-                    spawnCnt++;
-                    int listNum = Random.Range(0, enemyList.Count);
-
-                    // 生成
-                    enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
-
-                    enemy.GetComponent<EnemyController>().Players.Add(player);
-                    enemy.GetComponent<EnemyController>().SetNearTarget();
-
-                    if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
+                    if (spawnCnt < 50)
                     {
-                        enemy.GetComponent<EnemyController>().enabled = false;
+                        for (int i = 0; i < 5; i++)
+                        {
+                            spawnCnt++;
+                            Debug.Log(spawnCnt);
 
-                        // 透明化
-                        enemy.GetComponent<SpriteRenderer>().enabled = false;
+                            int listNum = Random.Range(0, enemyList.Count);
+
+                            // 生成
+                            enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+
+                            enemy.GetComponent<EnemyController>().Players.Add(player);
+                            enemy.GetComponent<EnemyController>().SetNearTarget();
+
+                            if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
+                            {
+                                enemy.GetComponent<EnemyController>().enabled = false;
+
+                                // 透明化
+                                enemy.GetComponent<SpriteRenderer>().enabled = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        spawnCnt++;
+                        Debug.Log(spawnCnt);
+
+                        int listNum = Random.Range(0, enemyList.Count);
+
+                        // 生成
+                        enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+
+                        enemy.GetComponent<EnemyController>().Players.Add(player);
+                        enemy.GetComponent<EnemyController>().SetNearTarget();
+
+                        if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
+                        {
+                            enemy.GetComponent<EnemyController>().enabled = false;
+
+                            // 透明化
+                            enemy.GetComponent<SpriteRenderer>().enabled = false;
+                        }
                     }
                 }
             }
@@ -186,6 +218,8 @@ public class GameManager : MonoBehaviour
     {
         crushNum++;
 
+        Debug.Log(crushNum);
+
         spawnCnt--;
         //AddXp();
 
@@ -194,7 +228,7 @@ public class GameManager : MonoBehaviour
         {
             DeathBoss();
         }
-        else if (crushNum >= 30)
+        else if (crushNum >= 150)
         {// 撃破数が15以上になったら(仮)
 
             bossFlag = true;
@@ -297,5 +331,10 @@ public class GameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void DecreaseGeneratInterval()
+    {
+        spawnInterval -= 1;
     }
 }
