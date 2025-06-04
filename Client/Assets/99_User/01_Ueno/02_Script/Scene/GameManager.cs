@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
                 boss.GetComponent<EnemyController>().IsBoss = true;
 
                 boss.GetComponent<EnemyController>().Players.Add(player);
-                boss.GetComponent<EnemyController>().Target = player;
+                boss.GetComponent<EnemyController>().SetNearTarget();
             }
 
             isSpawnBoss = true;
@@ -152,6 +152,7 @@ public class GameManager : MonoBehaviour
                     enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
 
                     enemy.GetComponent<EnemyController>().Players.Add(player);
+                    enemy.GetComponent<EnemyController>().SetNearTarget();
 
                     if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
                     {
@@ -159,11 +160,6 @@ public class GameManager : MonoBehaviour
 
                         // 透明化
                         enemy.GetComponent<SpriteRenderer>().enabled = false;
-                    }
-                    else
-                    {
-                        // 空飛ぶ敵のターゲットにプレイヤーを追加
-                        enemy.GetComponent<EnemyController>().Target = player;
                     }
                 }
             }
