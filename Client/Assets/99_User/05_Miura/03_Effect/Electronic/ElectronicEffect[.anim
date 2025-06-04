@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ExploaionAnimation
+  m_Name: ElectronicEffect[
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,17 +21,15 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: f9b441e78119a344fa8915b6e64d7711, type: 3}
+      value: {fileID: 21300000, guid: 72494f6b766ed114e91923bd6ad5b426, type: 3}
     - time: 0.083333336
-      value: {fileID: 21300000, guid: 530773fbf7e43fb4cb2d4b21ceebdd68, type: 3}
+      value: {fileID: 21300000, guid: 14945388c4744f34c93ac8bd8529e4dc, type: 3}
     - time: 0.16666667
-      value: {fileID: 21300000, guid: 6bd24bcb157225a4386b008b3e2caecf, type: 3}
+      value: {fileID: 21300000, guid: 76488c0631b1f594e8a23b410935c8c6, type: 3}
     - time: 0.25
-      value: {fileID: 21300000, guid: 3f7c23bd826c29c43ab274241d27001f, type: 3}
+      value: {fileID: 21300000, guid: 0a305d4901689584aa6310a9967ef51c, type: 3}
     - time: 0.33333334
-      value: {fileID: 21300000, guid: d11bd75983645b448bdd6e4f505ff73d, type: 3}
-    - time: 0.41666666
-      value: {fileID: 21300000, guid: 03bf903daeac2504fb7e4c137b311295, type: 3}
+      value: {fileID: 21300000, guid: 3de3d97ca5762f7459768394ec018d23, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -54,18 +52,17 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: f9b441e78119a344fa8915b6e64d7711, type: 3}
-    - {fileID: 21300000, guid: 530773fbf7e43fb4cb2d4b21ceebdd68, type: 3}
-    - {fileID: 21300000, guid: 6bd24bcb157225a4386b008b3e2caecf, type: 3}
-    - {fileID: 21300000, guid: 3f7c23bd826c29c43ab274241d27001f, type: 3}
-    - {fileID: 21300000, guid: d11bd75983645b448bdd6e4f505ff73d, type: 3}
-    - {fileID: 21300000, guid: 03bf903daeac2504fb7e4c137b311295, type: 3}
+    - {fileID: 21300000, guid: 72494f6b766ed114e91923bd6ad5b426, type: 3}
+    - {fileID: 21300000, guid: 14945388c4744f34c93ac8bd8529e4dc, type: 3}
+    - {fileID: 21300000, guid: 76488c0631b1f594e8a23b410935c8c6, type: 3}
+    - {fileID: 21300000, guid: 0a305d4901689584aa6310a9967ef51c, type: 3}
+    - {fileID: 21300000, guid: 3de3d97ca5762f7459768394ec018d23, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5
+    m_StopTime: 0.4166667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -85,8 +82,8 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.5
-    functionName: OnCompleteEffect
+  - time: 0.41666666
+    functionName: OnCompleteElectronicEffect
     data: 
     objectReferenceParameter: {fileID: 11500000, guid: ff60132f2c664f548b0e7e10b8201ce5, type: 3}
     floatParameter: 0
