@@ -74,13 +74,13 @@ public class SampleChara : Player
     [SerializeField] int testExp = 10;       // デバッグ用獲得経験値
 
     [Foldout("ステータス")]
-    private int nowLv = 0;          // 現在レベル
+    public int nowLv = 0;          // 現在レベル
 
     [Foldout("ステータス")]
-    private int nowExp = 0;         // 現在の獲得経験値
+    public int nowExp = 0;         // 現在の獲得経験値
 
     [Foldout("ステータス")]
-    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
+    public int nextLvExp = 0;      // 次のレベルまでに必要な経験値
     #endregion
 
     #region レイヤー・位置関連
