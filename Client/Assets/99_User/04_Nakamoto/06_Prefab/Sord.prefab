@@ -9871,7 +9871,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8712946285843664370}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.43, y: 0.55, z: 0}
   m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_ConstrainProportionsScale: 1
@@ -9900,12 +9900,13 @@ MonoBehaviour:
   dmgValue: 4
   ladderSpeed: 0.3
   m_JumpForce: 850
-  m_BlinkForce: 25
+  m_BlinkForce: 60
   m_AirControl: 1
   throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
   m_MovementSmoothing: 0.05
   canDoubleJump: 1
   invincible: 0
+  wallJumpPower: 2
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2
