@@ -25,5 +25,4 @@ public class Abyss : MonoBehaviour
             Debug.Log("“G‚ª“Þ—Ž‚É—Ž‚¿‚½");
         }
     }
-
 }
