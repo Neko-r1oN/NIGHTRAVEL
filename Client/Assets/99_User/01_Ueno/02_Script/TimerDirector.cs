@@ -6,9 +6,8 @@ using UnityEngine.UI;
 
 public class TimerDirector : MonoBehaviour
 {
-    public float gameTimer = 300;
-    public float minute = 5;
-    public float second;
+    [SerializeField] float minute = 5;
+    float second;
 
     [SerializeField] Text timer;
     [SerializeField] Text bossText;
