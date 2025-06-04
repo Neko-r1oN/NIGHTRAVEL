@@ -32,7 +32,7 @@ public class SampleChara : Player
 
     #region ステータス関連
     [Foldout("ステータス")]
-    public float life = 10f;
+    [SerializeField] private int life = 10;
 
     [Foldout("ステータス")]
     public float runSpeed = 40f;    // 速度係数
@@ -71,16 +71,41 @@ public class SampleChara : Player
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     [Foldout("ステータス")]
-    [SerializeField] int testExp = 10;       // デバッグ用獲得経験値
+    [SerializeField] private int testExp = 10;       // デバッグ用獲得経験値
 
     [Foldout("ステータス")]
-    private int nowLv = 0;          // 現在レベル
+    private int nowLv = 1;          // 現在レベル
 
     [Foldout("ステータス")]
     private int nowExp = 0;         // 現在の獲得経験値
 
     [Foldout("ステータス")]
     private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
+
+    #endregion
+
+    #region ステータス外部参照用プロパティ
+
+    /// <summary>
+    /// 体力
+    /// </summary>
+    public int Life { get { return life; } }
+
+    /// <summary>
+    /// 現レベル
+    /// </summary>
+    public int NowLv { get { return NowLv; } }
+
+    /// <summary>
+    /// 現獲得経験値
+    /// </summary>
+    public int NowExp { get { return NowExp; } }
+
+    /// <summary>
+    /// 次レベルまでの必要経験値
+    /// </summary>
+    public int NextLvExp { get { return nextLvExp; } }
+
     #endregion
 
     #region レイヤー・位置関連
@@ -141,17 +166,16 @@ public class SampleChara : Player
     private bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
     private float prevVelocityX = 0f;
     private bool canCheck = false;          // For check if player is wallsliding
-    private float verticalMove = 0f;        
-    #endregion
-
-    #region 動作フラグ関連
-    private const float k_GroundedRadius = .2f; // 接地確認用の円の半径
-    private const float k_AttackRadius = .9f;   // 攻撃判定の円の半径
-    #endregion
-
+    private float verticalMove = 0f;
     private float jumpWallStartX = 0;
     private float jumpWallDistX = 0;        // プレイヤーと壁の距離
     private bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
+    #endregion
+
+    #region 判定係数
+    private const float k_GroundedRadius = .2f; // 接地確認用の円の半径
+    private const float k_AttackRadius = .9f;   // 攻撃判定の円の半径
+    #endregion
 
     /// <summary>
     /// Update前処理
