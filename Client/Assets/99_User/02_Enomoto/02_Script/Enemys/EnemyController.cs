@@ -72,7 +72,7 @@ abstract public class EnemyController : MonoBehaviour
     [Foldout("基本ステータス")]
     [SerializeField]
     [Tooltip("追跡可能範囲")]
-    protected float trackingRange = 12f;
+    protected float trackingRange = 20f;
     
     [Foldout("基本ステータス")]
     [SerializeField]
@@ -110,6 +110,7 @@ abstract public class EnemyController : MonoBehaviour
     protected bool isInvincible;
     protected bool doOnceDecision;
     protected bool isAttacking;
+    protected bool isDead;
     #endregion
 
     #region ターゲットとの距離
@@ -218,21 +219,6 @@ abstract public class EnemyController : MonoBehaviour
     abstract protected void DrawDetectionGizmos();
 
     /// <summary>
-    /// 死亡処理
-    /// </summary>
-    /// <returns></returns>
-    protected IEnumerator DestroyEnemy()
-    {
-        GameManager.Instance.CrushEnemy(this);
-        PlayDeadAnim();
-        yield return new WaitForSeconds(0.25f);
-        GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
-        m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
-        yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
-    }
-
-    /// <summary>
     /// 死亡アニメーションを再生
     /// </summary>
     abstract protected void PlayDeadAnim();
@@ -243,7 +229,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <param name="id"></param>
     public void SetAnimId(int id)
     {
-        if(animator != null) animator.SetInteger("animation_id", id);
+        if (animator != null) animator.SetInteger("animation_id", id);
     }
 
     /// <summary>
@@ -253,6 +239,51 @@ abstract public class EnemyController : MonoBehaviour
     public int GetAnimId()
     {
         return animator != null ? animator.GetInteger("animation_id") : 0;
+    }
+
+    /// <summary>
+    /// 一番近いプレイヤーをターゲットに設定する
+    /// </summary>
+    public void SetNearTarget()
+    {
+        GameObject target = null;
+        float dist = float.MaxValue;
+        foreach (GameObject player in Players)
+        {
+            if (player != null)
+            {
+                float distToPlayer = Vector2.Distance(transform.position, player.transform.position);
+                if (Mathf.Abs(distToPlayer) < dist)
+                {
+                    target = player;
+                    dist = distToPlayer;
+                }
+            }
+        }
+
+        if (target != null)
+        {
+            this.target = target;
+        }
+    }
+
+    /// <summary>
+    /// 死亡処理
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator DestroyEnemy()
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            PlayDeadAnim();
+            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
+            yield return new WaitForSeconds(0.25f);
+            m_rb2d.excludeLayers = LayerMask.GetMask("TransparentFX");
+            m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
+            yield return new WaitForSeconds(1f);
+            Destroy(gameObject);
+        }
     }
 
     /// <summary>

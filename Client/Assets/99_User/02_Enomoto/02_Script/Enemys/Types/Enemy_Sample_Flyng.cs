@@ -46,10 +46,6 @@ public class Enemy_Sample_Flyng : EnemyController
     [SerializeField] LayerMask terrainLayerMask;
     #endregion
 
-    #region 状態管理
-    bool isDead;
-    #endregion
-
     #region ターゲットとの距離
     [SerializeField] float disToTargetMin = 2.5f;
     #endregion
@@ -168,7 +164,7 @@ public class Enemy_Sample_Flyng : EnemyController
             {
                 StartCoroutine(HitTime());
             }
-            else
+            else if (!isDead)
             {
                 StartCoroutine(DestroyEnemy());
             }
@@ -214,7 +210,6 @@ public class Enemy_Sample_Flyng : EnemyController
     /// <returns></returns>
     protected override void PlayDeadAnim()
     {
-        isDead = true;
         //SetAnimId((int)ANIM_ID.Dead);
     }
 

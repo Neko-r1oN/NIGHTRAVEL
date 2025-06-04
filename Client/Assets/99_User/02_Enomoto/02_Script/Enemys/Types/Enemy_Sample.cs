@@ -57,10 +57,6 @@ public class Enemy_Sample : EnemyController
     [SerializeField] float fallCheckRange = 0.9f;
     #endregion
 
-    #region 状態管理
-    bool isDead;
-    #endregion
-
     #region ターゲットとの距離
     readonly float disToTargetMin = 0.25f;
     #endregion
@@ -236,7 +232,7 @@ public class Enemy_Sample : EnemyController
             {
                 StartCoroutine(HitTime());
             }
-            else
+            else if (!isDead)
             {
                 StartCoroutine(DestroyEnemy());
             }
@@ -273,7 +269,6 @@ public class Enemy_Sample : EnemyController
     /// <returns></returns>
     protected override void PlayDeadAnim()
     {
-        isDead = true;
         SetAnimId((int)ANIM_ID.Dead);
     }
 
