@@ -10,15 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        //テーブルのカラム構成を指定
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->integer('level');
-            $table->integer('experience_point');
-            $table->integer('life');
-            $table->timestamps();
+            $table->id();                                      //idカラム
+            $table->timestamps();                              //created_atとupdated_at
 
-            $table->unique('name');
+            //$table->index('name');                     //nameにインデックス設定
+            $table->unique('id');                    //idにユニーク制約設定
         });
     }
 

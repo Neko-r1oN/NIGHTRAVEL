@@ -10,16 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        //ターブルのカラム構成を指定
-        Schema::create('accounts', function (Blueprint $table) {
+        //テーブルのカラム構成を指定
+        Schema::create('weapons', function (Blueprint $table) {
             $table->id();                                      //idカラム
-            $table->string('account_name', 20);          //nameカラム（20文字）
-            $table->string('password');                 //パスワード
+            $table->string('name', 20);                                      //nameカラム
             $table->timestamps();                              //created_atとupdated_at
 
             //$table->index('name');                     //nameにインデックス設定
             $table->unique('id');                    //idにユニーク制約設定
-            $table->unique('account_name');                    //nameにユニーク制約設定
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('weapons');
     }
 };

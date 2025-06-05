@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Item extends Model
+class Weapon extends Model
 {
     use HasFactory;
 
-    protected $guarded = [
+    //更新しないカラムを指定する
+    protected $guarded = [                  //idはauto_incrementの為、指定しておく
         'id',
     ];
 }

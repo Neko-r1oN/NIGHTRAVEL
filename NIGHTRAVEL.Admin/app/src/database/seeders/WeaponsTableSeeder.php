@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\CreateStage;
+use App\Models\Weapon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CreateStagesTableSeeder extends Seeder
+class WeaponsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        CreateStage::create([
-            'stage_id' => 2
+        Weapon::create([                   //シーダーを使った初期データの登録
+            'name' => 'Blade'
         ]);
     }
 }

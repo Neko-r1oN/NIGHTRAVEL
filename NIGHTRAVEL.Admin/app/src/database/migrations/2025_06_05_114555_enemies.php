@@ -10,14 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('have_items', function (Blueprint $table) {
-            $table->id();
-            $table->integer('user_id');
-            $table->integer('item_id');
-            $table->string('possession');
-            $table->timestamps();
-
-            $table->unique(['user_id', 'item_id']);
+        //テーブルのカラム構成を指定
+        Schema::create('enemies', function (Blueprint $table) {
+            $table->id();                                        //idカラム
+            $table->timestamps();                               //created_atとupdated_at
         });
     }
 
@@ -26,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('have_items');
+        Schema::dropIfExists('enemies');
     }
 };
