@@ -28,17 +28,36 @@ public class SampleChara : Player
         DBJump,
         WallSlide,
     }
+
+    /// <summary>
+    /// ステータスID
+    /// </summary>
+    public enum STATUS_ID
+    {
+        HP =1,          // 体力
+        Power,          // 攻撃力
+        Defense,        // 防御力
+        MoveSpeed,      // 移動速度
+        AttackSpeed,    // 攻撃速度
+        DmgMitigation,  // ダメージ軽減
+    }
     #endregion
 
     #region ステータス関連
     [Foldout("ステータス")]
-    [SerializeField] private int life = 10;
+    [SerializeField] private int maxHp = 200;   // 最大体力
+
+    [Foldout("ステータス")]
+    [SerializeField] private int hp = 200;      // 現体力
+
+    [Foldout("ステータス")]
+    private int startHp = 0;        // 初期体力
+
+    [Foldout("ステータス")]
+    public int dmgValue = 20;       // 攻撃力
 
     [Foldout("ステータス")]
     public float runSpeed = 40f;    // 速度係数
-
-    [Foldout("ステータス")]
-    public int dmgValue = 4;        // 攻撃力
 
     [Foldout("ステータス")]
     private float horizontalMove = 0f;      // 速度値
@@ -53,7 +72,7 @@ public class SampleChara : Player
     [SerializeField] private float m_JumpForce = 400f;
 
     [Foldout("ステータス")]
-    [SerializeField] private float m_BlinkForce = 25f;
+    [SerializeField] private float m_BlinkForce = 45f;
 
     [Foldout("ステータス")]
     [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
@@ -69,6 +88,9 @@ public class SampleChara : Player
 
     [Foldout("ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
+
+    [Foldout("ステータス")]
+    [SerializeField] private float wallJumpPower = 2f;
 
     [Foldout("ステータス")]
     [SerializeField] private int testExp = 10;       // デバッグ用獲得経験値
@@ -87,19 +109,24 @@ public class SampleChara : Player
     #region ステータス外部参照用プロパティ
 
     /// <summary>
+    /// 最大体力
+    /// </summary>
+    public int MaxHP { get { return maxHp; } }
+
+    /// <summary>
     /// 体力
     /// </summary>
-    public int Life { get { return life; } }
+    public int HP { get { return hp; } }
 
     /// <summary>
     /// 現レベル
     /// </summary>
-    public int NowLv { get { return NowLv; } }
+    public int NowLv { get { return nowLv; } }
 
     /// <summary>
     /// 現獲得経験値
     /// </summary>
-    public int NowExp { get { return NowExp; } }
+    public int NowExp { get { return nowExp; } }
 
     /// <summary>
     /// 次レベルまでの必要経験値
@@ -163,6 +190,7 @@ public class SampleChara : Player
     private bool isBlink = false;	// ダッシュ入力フラグ
     private bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
     private bool isWallSliding = false;     // If player is sliding in a wall
+    private bool isWallJump = false;        // 壁ジャンプ中かどうか
     private bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
     private float prevVelocityX = 0f;
     private bool canCheck = false;          // For check if player is wallsliding
@@ -187,6 +215,7 @@ public class SampleChara : Player
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
+        startHp = maxHp;
     }
 
     /// <summary>
@@ -226,7 +255,7 @@ public class SampleChara : Player
         }
 
         //-----------------------------
-        // デバッグ
+        // デバッグ用
 
         if(Input.GetKeyDown(KeyCode.L))
         {
@@ -256,11 +285,13 @@ public class SampleChara : Player
             if (colliders[i].gameObject != gameObject)
                 m_Grounded = true;
 
+            isWallJump = false;
+
             if (m_Grounded && m_FallFlag)
             {   // 高所から着地時にスタン
                 m_FallFlag = false;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                StartCoroutine(Stun(1f));
+                //StartCoroutine(Stun(1f)); // スタン処理
             }
 
             if (!wasGrounded)
@@ -289,7 +320,7 @@ public class SampleChara : Player
         if (!m_Grounded)
         {   // 空中に居るとき
 
-            if(animator.GetInteger("animation_id") == (int)ANIM_ID.Idle)
+            if(animator.GetInteger("animation_id") == (int)ANIM_ID.Idle || animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
             
             Collider2D[] collidersWall = Physics2D.OverlapCircleAll(m_WallCheck.position, k_GroundedRadius, m_WhatIsGround);
@@ -366,6 +397,8 @@ public class SampleChara : Player
     /// <param name="blink">ダッシュ入力</param>
     private void Move(float move, bool jump, bool blink)
     {
+        //Debug.Log(isWallJump);
+
         if (canMove)
         {
             //--------------------
@@ -383,6 +416,10 @@ public class SampleChara : Player
             {   // クールダウンに入るまで加速
                 m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
             }
+            else if (isWallJump)
+            {   // 壁ジャンプ中
+                m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * 12, 12);
+            }
             // 接地しているか空中制御ONの時
             else if (m_Grounded || m_AirControl)
             {
@@ -394,7 +431,15 @@ public class SampleChara : Player
                 }
 
                 // キャラの目標移動速度を決定
-                Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.linearVelocity.y);
+                Vector3 targetVelocity = new Vector2();
+                if (animator.GetInteger("animation_id") == (int)ANIM_ID.Attack)
+                {
+                    targetVelocity = new Vector2(move * 2f, m_Rigidbody2D.linearVelocity.y);
+                }
+                else
+                {
+                    targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.linearVelocity.y);
+                }
 
                 // SmoothDampにより、滑らかな移動を実現
                 m_Rigidbody2D.linearVelocity = Vector3.SmoothDamp(m_Rigidbody2D.linearVelocity, targetVelocity, ref velocity, m_MovementSmoothing);
@@ -440,6 +485,9 @@ public class SampleChara : Player
                     Flip();
                     StartCoroutine(WaitToCheck(0.1f));
                     canDoubleJump = true;
+
+                    isWallJump = false;
+
                     animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
                 }
                 isBlinking = false;
@@ -467,12 +515,16 @@ public class SampleChara : Player
                     animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
 
                     m_Rigidbody2D.linearVelocity = new Vector2(0f, 0f);
-                    m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_JumpForce * 1.2f, m_JumpForce));
+                    m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_JumpForce * wallJumpPower, m_JumpForce));
                     jumpWallStartX = transform.position.x;
                     limitVelOnWallJump = true;
                     canDoubleJump = true;
                     isWallSliding = false;
                     oldWallSlidding = false;
+
+                    // 壁ジャンコルーチン
+                    StartCoroutine(WallJump());
+
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                     //canMove = false;  壁近でバグったので一旦除去。動作不良起きたら再考
                 }
@@ -489,6 +541,7 @@ public class SampleChara : Player
             {   // 壁スライドAnim再生中 && 前に壁が無い
                 isWallSliding = false;
                 oldWallSlidding = false;
+                isWallJump = false;
 
                 if (m_Grounded)
                 {
@@ -535,10 +588,18 @@ public class SampleChara : Player
     /// </summary>
     private void LevelUp()
     {
+        // レベルアップ処理
         nowLv++;
         nowExp = nowExp - nextLvExp;
         int nextLv = nowLv + 1;
         nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
+
+        // HP増加処理
+        float hpRatio = (float)hp / (float)maxHp;
+        maxHp = startHp + (int)Math.Pow(nowLv, 2);
+        hp = (int)(maxHp * hpRatio);
+
+        Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
     }
 
     //-------------------------------------------
@@ -577,14 +638,14 @@ public class SampleChara : Player
         if (!invincible)
         {
             animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-            life -= damage;
+            hp -= damage;
 
             // ノックバック処理
             Vector2 damageDir = Vector3.Normalize(transform.position - position) * 40f;
             m_Rigidbody2D.linearVelocity = Vector2.zero;
             m_Rigidbody2D.AddForce(damageDir * 10);
 
-            if (life <= 0)
+            if (hp <= 0)
             {   // 死亡処理
                 StartCoroutine(WaitToDead());
             }
@@ -632,11 +693,22 @@ public class SampleChara : Player
         animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
         isBlinking = true;
         canBlink = false;
-        yield return new WaitForSeconds(0.1f);  // ブリンク時間
+        yield return new WaitForSeconds(0.04f);  // ブリンク時間
         gameObject.layer = 20;
         isBlinking = false;
         yield return new WaitForSeconds(0.5f);  // クールダウン時間
         canBlink = true;
+    }
+
+    /// <summary>
+    /// 壁ジャンプ制限処理
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator WallJump()
+    {
+        isWallJump = true;
+        yield return new WaitForSeconds(0.2f);  // ブリンク時間
+        isWallJump = false;
     }
 
     /// <summary>

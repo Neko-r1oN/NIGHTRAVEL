@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     {
         player = GameManager.Instance.Player.GetComponent<SampleChara>();
         
-        hpBar.maxValue = player.Life;
+        hpBar.maxValue = player.HP;
         sliderText.text = "" + hpBar.maxValue;
         expBar.maxValue = player.NextLvExp;
         levelText.text = "" + player.NowExp;
@@ -26,8 +26,8 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        hpBar.value = player.Life;
-        sliderText.text = player.Life + "/" + hpBar.maxValue;
+        hpBar.value = player.HP;
+        sliderText.text = player.HP + "/" + hpBar.maxValue;
 
         expBar.maxValue = player.NextLvExp;
         levelText.text = "LV." + player.NowLv;
