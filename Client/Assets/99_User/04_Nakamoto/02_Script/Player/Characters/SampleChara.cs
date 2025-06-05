@@ -28,17 +28,36 @@ public class SampleChara : Player
         DBJump,
         WallSlide,
     }
+
+    /// <summary>
+    /// ステータスID
+    /// </summary>
+    public enum STATUS_ID
+    {
+        HP =1,          // 体力
+        Power,          // 攻撃力
+        Defense,        // 防御力
+        MoveSpeed,      // 移動速度
+        AttackSpeed,    // 攻撃速度
+        DmgMitigation,  // ダメージ軽減
+    }
     #endregion
 
     #region ステータス関連
     [Foldout("ステータス")]
-    [SerializeField] private int life = 10;
+    [SerializeField] private int maxHp = 200;   // 最大体力
+
+    [Foldout("ステータス")]
+    [SerializeField] private int hp = 200;      // 現体力
+
+    [Foldout("ステータス")]
+    private int startHp = 0;        // 初期体力
+
+    [Foldout("ステータス")]
+    public int dmgValue = 20;       // 攻撃力
 
     [Foldout("ステータス")]
     public float runSpeed = 40f;    // 速度係数
-
-    [Foldout("ステータス")]
-    public int dmgValue = 4;        // 攻撃力
 
     [Foldout("ステータス")]
     private float horizontalMove = 0f;      // 速度値
@@ -90,9 +109,14 @@ public class SampleChara : Player
     #region ステータス外部参照用プロパティ
 
     /// <summary>
+    /// 最大体力
+    /// </summary>
+    public int MaxHP { get { return maxHp; } }
+
+    /// <summary>
     /// 体力
     /// </summary>
-    public int Life { get { return life; } }
+    public int HP { get { return hp; } }
 
     /// <summary>
     /// 現レベル
@@ -191,6 +215,7 @@ public class SampleChara : Player
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
+        startHp = maxHp;
     }
 
     /// <summary>
@@ -230,7 +255,7 @@ public class SampleChara : Player
         }
 
         //-----------------------------
-        // デバッグ
+        // デバッグ用
 
         if(Input.GetKeyDown(KeyCode.L))
         {
@@ -372,7 +397,7 @@ public class SampleChara : Player
     /// <param name="blink">ダッシュ入力</param>
     private void Move(float move, bool jump, bool blink)
     {
-        Debug.Log(isWallJump);
+        //Debug.Log(isWallJump);
 
         if (canMove)
         {
@@ -563,10 +588,18 @@ public class SampleChara : Player
     /// </summary>
     private void LevelUp()
     {
+        // レベルアップ処理
         nowLv++;
         nowExp = nowExp - nextLvExp;
         int nextLv = nowLv + 1;
         nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
+
+        // HP増加処理
+        float hpRatio = (float)hp / (float)maxHp;
+        maxHp = startHp + (int)Math.Pow(nowLv, 2);
+        hp = (int)(maxHp * hpRatio);
+
+        Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
     }
 
     //-------------------------------------------
@@ -605,14 +638,14 @@ public class SampleChara : Player
         if (!invincible)
         {
             animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-            life -= damage;
+            hp -= damage;
 
             // ノックバック処理
             Vector2 damageDir = Vector3.Normalize(transform.position - position) * 40f;
             m_Rigidbody2D.linearVelocity = Vector2.zero;
             m_Rigidbody2D.AddForce(damageDir * 10);
 
-            if (life <= 0)
+            if (hp <= 0)
             {   // 死亡処理
                 StartCoroutine(WaitToDead());
             }
