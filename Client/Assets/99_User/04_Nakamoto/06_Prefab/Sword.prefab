@@ -9857,7 +9857,7 @@ GameObject:
   - component: {fileID: 4503244493098367853}
   - component: {fileID: 2075652945065087293}
   m_Layer: 1
-  m_Name: Sord
+  m_Name: Sword
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9895,12 +9895,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 10
-  runSpeed: 40
+  maxHp: 200
+  hp: 200
   dmgValue: 4
+  runSpeed: 40
   ladderSpeed: 0.3
   m_JumpForce: 850
-  m_BlinkForce: 60
+  m_BlinkForce: 50
+  blinkTime: 0.08
+  blinkCoolDown: 1
   m_AirControl: 1
   throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
   m_MovementSmoothing: 0.05

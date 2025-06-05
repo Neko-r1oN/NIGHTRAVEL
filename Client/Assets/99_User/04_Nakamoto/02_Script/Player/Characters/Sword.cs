@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
 
-public class SampleChara : Player
+public class Sword : Player
 {
     #region アニメーションID
     /// <summary>
@@ -57,7 +57,7 @@ public class SampleChara : Player
     public int dmgValue = 20;       // 攻撃力
 
     [Foldout("ステータス")]
-    public float runSpeed = 40f;    // 速度係数
+    public float runSpeed = 40f;    // 走る速度係数
 
     [Foldout("ステータス")]
     private float horizontalMove = 0f;      // 速度値
@@ -69,10 +69,16 @@ public class SampleChara : Player
     [SerializeField] float ladderSpeed = 1f;   // 梯子移動速度
 
     [Foldout("ステータス")]
-    [SerializeField] private float m_JumpForce = 400f;
+    [SerializeField] private float m_JumpForce = 400f;  // ジャンプ力
 
     [Foldout("ステータス")]
-    [SerializeField] private float m_BlinkForce = 45f;
+    [SerializeField] private float m_BlinkForce = 45f;  // ブリンク力
+
+    [Foldout("ステータス")]
+    [SerializeField] private float blinkTime = 0.2f;    // ブリンク時間
+
+    [Foldout("ステータス")]
+    [SerializeField] private float blinkCoolDown = 1f;  // ブリンククールダウン
 
     [Foldout("ステータス")]
     [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
@@ -693,10 +699,10 @@ public class SampleChara : Player
         animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
         isBlinking = true;
         canBlink = false;
-        yield return new WaitForSeconds(0.04f);  // ブリンク時間
+        yield return new WaitForSeconds(blinkTime);  // ブリンク時間
         gameObject.layer = 20;
         isBlinking = false;
-        yield return new WaitForSeconds(0.5f);  // クールダウン時間
+        yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
         canBlink = true;
     }
 
@@ -707,7 +713,7 @@ public class SampleChara : Player
     IEnumerator WallJump()
     {
         isWallJump = true;
-        yield return new WaitForSeconds(0.2f);  // ブリンク時間
+        yield return new WaitForSeconds(0.2f);  // ジャンプ時間
         isWallJump = false;
     }
 

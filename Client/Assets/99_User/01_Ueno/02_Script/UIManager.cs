@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    SampleChara player;
+    Sword player;
 
     [SerializeField] Slider hpBar;    // HPバー
     [SerializeField] Slider expBar;   // 経験値バー
@@ -14,7 +14,7 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = GameManager.Instance.Player.GetComponent<SampleChara>();
+        player = GameManager.Instance.Player.GetComponent<Sword>();
         
         hpBar.maxValue = player.HP;
         sliderText.text = "" + hpBar.maxValue;
