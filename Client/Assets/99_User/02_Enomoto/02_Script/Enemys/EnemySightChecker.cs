@@ -8,14 +8,8 @@ using UnityEngine;
 public class EnemySightChecker : MonoBehaviour
 {
     [SerializeField] LayerMask targetLayerMask; // 視認するLayer [プレイヤー、地面、壁]
-    [SerializeField] float viewAngleMax = 45;
+    [SerializeField] float viewAngleMax = 65;
     [SerializeField] float viewDistMax = 6f;
-
-    #region 射出ポイント関係
-    [SerializeField] Transform aimTransform;
-    [SerializeField] Transform leftFireRayPoint;
-    [SerializeField] Transform rightFireRayPoint;
-    #endregion
 
     /// <summary>
     /// ターゲットを視認できているかどうか
@@ -44,7 +38,6 @@ public class EnemySightChecker : MonoBehaviour
         float dist = dirToTarget.magnitude;
         float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, dist, targetLayerMask);
-        //RaycastHit2D hit2D = Physics2D.BoxCast(transform.position, new Vector2(dist, size.y), angle, dirToTarget, targetLayerMask);
 
         return hit2D && !hit2D.collider.gameObject.CompareTag("Player");
     }
@@ -110,130 +103,5 @@ public class EnemySightChecker : MonoBehaviour
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// 発射物のRaycastHit2Dを生成する
-    /// </summary>
-    /// <returns></returns>
-    (RaycastHit2D canterHit2D, RaycastHit2D leftHit2D, RaycastHit2D rightHit2D) GetProjectileRaycastHit(Transform target, GameObject projectile, bool followTargetRotation, float? angle)
-    {
-        float attackDist = GetComponent<EnemyController>().AttackDist;
-        float projectileHeight = projectile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
-
-        if (followTargetRotation)
-        {
-            // ターゲットのいる方向に向きを追従する
-            Vector2 direction = target.transform.position - aimTransform.position;
-            aimTransform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
-        }
-        else if (angle != null)
-        {
-            // 指定された角度に設定する
-            aimTransform.localRotation = Quaternion.Euler(0, 0, (float)angle);
-        }
-        Vector2 rayDirection = aimTransform.up; // aimTransformが向いている方向
-
-        // 発射物の幅に合わせて、各Rayの始点を調整する
-        leftFireRayPoint.localPosition = Vector2.left * projectileHeight;
-        rightFireRayPoint.localPosition = Vector2.right * projectileHeight;
-
-        // RaycastHit2Dをターゲットのいる方向に伸ばす
-        RaycastHit2D canterHit2D = Physics2D.Raycast(aimTransform.position, rayDirection, attackDist, targetLayerMask);
-        RaycastHit2D leftHit2D = Physics2D.Raycast(leftFireRayPoint.position, rayDirection, attackDist, targetLayerMask);
-        RaycastHit2D rightHit2D = Physics2D.Raycast(rightFireRayPoint.position, rayDirection, attackDist, targetLayerMask);
-        return (canterHit2D, leftHit2D, rightHit2D);
-    }
-
-    /// <summary>
-    /// [角度の追従] 発射物を飛ばすことができるかどうか
-    /// </summary>
-    /// <param name="projectile"></param>
-    /// <returns></returns>
-    public bool CanFireProjectile(GameObject projectile, bool followTargetRotation = false)
-    {
-        return IsProjectileFireable(projectile, followTargetRotation);
-    }
-
-    /// <summary>
-    /// [角度の指定] 発射物を飛ばすことができるかどうか
-    /// </summary>
-    /// <param name="projectile"></param>
-    /// <returns></returns>
-    public bool CanFireProjectile(GameObject projectile, float? angle = null)
-    {
-        return IsProjectileFireable(projectile, angle: angle);
-    }
-
-    /// <summary>
-    /// 発射物を飛ばすことができるか評価
-    /// </summary>
-    /// <param name="projectile"></param>
-    /// <param name="followTargetRotation"></param>
-    /// <param name="angle"></param>
-    /// <returns></returns>
-    bool IsProjectileFireable(GameObject projectile, bool followTargetRotation = false, float? angle = null)
-    {
-        GameObject target = GetComponent<EnemyController>().Target;
-        if (!target || !projectile) return false;
-
-        var projectileRays = GetProjectileRaycastHit(target.transform, projectile, followTargetRotation, angle);
-
-        // プレイヤーにRayが当たっているか、何も検知ができなかった場合はtrue
-        bool resultCenter = projectileRays.canterHit2D && projectileRays.canterHit2D.collider.gameObject.CompareTag("Player");
-        bool resultLeft = projectileRays.leftHit2D && projectileRays.leftHit2D.collider.gameObject.CompareTag("Player") || !projectileRays.leftHit2D;
-        bool resultRight = projectileRays.rightHit2D && projectileRays.rightHit2D.collider.gameObject.CompareTag("Player") || !projectileRays.rightHit2D;
-        return resultCenter && resultLeft && resultRight;
-    }
-
-    /// <summary>
-    /// [デバック用:角度の追従] 発射物の射線を描画する
-    /// </summary>
-    /// <param name="projectile"></param>
-    public void DrawProjectileRayGizmo(GameObject projectile, bool followTargetRotation = false)
-    {
-        DrawProjectileRay(projectile, followTargetRotation);
-    }
-
-    /// <summary>
-    /// [デバック用:角度の指定] 発射物の射線を描画する
-    /// </summary>
-    /// <param name="projectile"></param>
-    public void DrawProjectileRayGizmo(GameObject projectile, float? angle = null)
-    {
-        DrawProjectileRay(projectile, angle:  angle);
-    }
-
-    /// <summary>
-    /// 発射物の射線を描画する
-    /// </summary>
-    /// <param name="projectile"></param>
-    /// <param name="followTargetRotation"></param>
-    /// <param name="angle"></param>
-    void DrawProjectileRay(GameObject projectile, bool followTargetRotation = false, float? angle = null)
-    {
-        float projectileHeight = projectile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
-        GameObject target = GetComponent<EnemyController>().Target;
-        if (!target) return;
-
-        var projectileRays = GetProjectileRaycastHit(target.transform, projectile, followTargetRotation, angle);
-
-        // デバック用
-        Color rayUpColor = Color.red;
-        Color rayDownColor = Color.red;
-        if (projectileRays.leftHit2D && !projectileRays.leftHit2D.collider.gameObject.CompareTag("Player"))
-        {
-            rayUpColor = Color.gray;
-        }
-        if (projectileRays.rightHit2D && !projectileRays.rightHit2D.collider.gameObject.CompareTag("Player"))
-        {
-            rayDownColor = Color.gray;
-        }
-
-        Vector3 rayDirection = aimTransform.up;
-        float attackDist = GetComponent<EnemyController>().AttackDist;
-        Debug.DrawRay(aimTransform.position, rayDirection * attackDist, rayUpColor);
-        Debug.DrawRay(leftFireRayPoint.position, rayDirection * attackDist, rayUpColor);
-        Debug.DrawRay(rightFireRayPoint.position, rayDirection * attackDist, rayDownColor);
     }
 }

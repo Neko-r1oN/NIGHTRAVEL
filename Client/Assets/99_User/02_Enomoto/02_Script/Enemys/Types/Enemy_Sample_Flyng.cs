@@ -2,10 +2,11 @@
 //  エネミーのサンプルクラス(飛行型)
 //  Author:r-enomoto
 //**************************************************
+using DG.Tweening;
 using HardLight2DUtil;
+using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy_Sample_Flyng : EnemyController
@@ -32,10 +33,17 @@ public class Enemy_Sample_Flyng : EnemyController
         RangeType,
     }
 
+    #region オリジナルステータス
+    [Foldout("ステータス")]
+    [SerializeField]
+    float tweenMoveRange = 10f;
+    #endregion
+
     #region 攻撃方法について
     [Header("攻撃方法")]
     [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
     [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
+    [SerializeField] Transform aimTransform;        // 遠距離攻撃の弾の生成位置
     #endregion
 
     #region チェック判定
@@ -50,6 +58,9 @@ public class Enemy_Sample_Flyng : EnemyController
     [SerializeField] float disToTargetMin = 2.5f;
     #endregion
 
+    Vector2? startPatorolPoint = null;
+    float randomDecision;
+
     protected override void Start()
     {
         base.Start();
@@ -58,23 +69,23 @@ public class Enemy_Sample_Flyng : EnemyController
     }
 
     /// <summary>
-    /// 行動パターンを決める処理
+    /// 行動パターン実行処理
     /// </summary>
     protected override void DecideBehavior()
     {
         // 行動パターン
-        //if (speed > 0 && canChaseTarget && disToTarget < disToTargetMin)
-        //{
-        //    Run();
-        //}
-        if (canAttack && sightChecker.CanFireProjectile(throwableObject, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
+        if (canAttack && projectileChecker.CanFireProjectile(throwableObject, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
         {
             chaseAI.StopChase();
             Attack();
         }
-        else if (speed > 0 && canPatrol || speed > 0 && canChaseTarget)
+        else if (speed > 0 && canChaseTarget && target)
         {
-            Run();
+            Tracking();
+        }
+        else if (speed > 0 && canPatrol && !isPatrolPaused)
+        {
+            StartCoroutine(Patorol());
         }
         else
         {
@@ -101,6 +112,7 @@ public class Enemy_Sample_Flyng : EnemyController
         isAttacking = true;
         //SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
+        chaseAI.StopChase();
         StartCoroutine(RangeAttack());
     }
 
@@ -109,10 +121,12 @@ public class Enemy_Sample_Flyng : EnemyController
     /// </summary>
     IEnumerator RangeAttack()
     {
+        yield return new WaitForSeconds(0.5f);  // 攻撃開始を遅延
+
         GameObject target = this.target;
         for (int i = 0; i < bulletNum; i++)
         {
-            GameObject throwableProj = Instantiate(throwableObject, transform.position, Quaternion.identity);
+            GameObject throwableProj = Instantiate(throwableObject, aimTransform.position, Quaternion.identity);
             Vector3 direction = target.transform.position - transform.position;
             throwableProj.GetComponent<Projectile>().Initialize(direction, gameObject);
             yield return new WaitForSeconds(shotsPerSecond);
@@ -121,27 +135,61 @@ public class Enemy_Sample_Flyng : EnemyController
     }
 
     /// <summary>
-    /// 走る処理
+    /// 追跡する処理
     /// </summary>
-    protected override void Run()
+    protected override void Tracking()
     {
-        //SetAnimId((int)ANIM_ID.Run);
-        Vector2 speedVec = Vector2.zero;
-        //if (canChaseTarget && target && disToTarget < disToTargetMin)
-        //{
-        //    chaseAI.ReturnToPreviousDestination();
-        //}
-        if (canChaseTarget && target)
+        StopPatorol();
+        chaseAI.DoChase(target);
+    }
+
+    /// <summary>
+    /// 巡回する処理
+    /// </summary>
+    protected override IEnumerator Patorol()
+    {
+        float pauseTime = 3f;
+        if (startPatorolPoint == null)
         {
-            chaseAI.DoChase(target);
-        }
-        else if (canPatrol)
-        {
-            if (IsWall()) Flip();
-            speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
+            startPatorolPoint = transform.position;
         }
 
+        if (IsWall()) Flip();
+
+        if (transform.localScale.x > 0)
+        {
+            if (transform.position.x >= startPatorolPoint.Value.x + tweenMoveRange)
+            {
+                isPatrolPaused = true;
+                Idle();
+                yield return new WaitForSeconds(pauseTime);
+                isPatrolPaused = false;
+                Flip();
+            }
+        }
+        else if (transform.localScale.x < 0)
+        {
+            if (transform.position.x <= startPatorolPoint.Value.x - tweenMoveRange)
+            {
+                isPatrolPaused = true;
+                Idle();
+                yield return new WaitForSeconds(pauseTime);
+                isPatrolPaused = false;
+                Flip();
+            }
+        }
+
+        Vector2 speedVec = Vector2.zero;
+        speedVec = new Vector2(transform.localScale.x * speed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
+    }
+
+    /// <summary>
+    /// 巡回処理を停止する
+    /// </summary>
+    void StopPatorol()
+    {
+        startPatorolPoint = null;
     }
 
     /// <summary>
@@ -166,7 +214,7 @@ public class Enemy_Sample_Flyng : EnemyController
             }
             else if (!isDead)
             {
-                StartCoroutine(DestroyEnemy());
+                StartCoroutine(DestroyEnemy(attacker.gameObject.GetComponent<Player>()));
             }
         }
     }
@@ -225,7 +273,7 @@ public class Enemy_Sample_Flyng : EnemyController
         // 射線
         if (sightChecker != null)
         {
-            sightChecker.DrawProjectileRayGizmo(throwableObject, true);
+            projectileChecker.DrawProjectileRayGizmo(throwableObject, true);
         }
 
         // 壁の判定
