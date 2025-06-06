@@ -7,7 +7,9 @@ using UnityEngine.AI;
 
 public class EnemyChaseAI : MonoBehaviour
 {
+    EnemySightChecker sightChecker;
     NavMeshAgent agent;
+    [SerializeField] Vector2 offset;
 
     //------------------
     // 試験用
@@ -18,6 +20,7 @@ public class EnemyChaseAI : MonoBehaviour
 
     void Start()
     {
+        sightChecker = GetComponent<EnemySightChecker>();
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -34,8 +37,18 @@ public class EnemyChaseAI : MonoBehaviour
     /// <param name="target"></param>
     public void DoChase(GameObject target)
     {
+        // テクスチャが反転した際に、オフセットも反転させる
+        float directionMultiplier = Mathf.Clamp(transform.localScale.x, -1, 1);
+
+        // ターゲットを視認できている場合、オフセットを有効にする
+        Vector3 destinationOffset = Vector3.zero;
+        if (sightChecker.IsTargetVisible())
+        {
+            destinationOffset = new Vector3((float)offset.x * directionMultiplier, (float)offset.y);
+        }
+
         previousDestination = agent.destination;
-        agent.destination = target.transform.position;
+        agent.destination = target.transform.position + destinationOffset;
     }
 
     /// <summary>

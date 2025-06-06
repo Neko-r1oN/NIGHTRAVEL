@@ -155,7 +155,7 @@ public class HeroKnight : MonoBehaviour {
             m_groundSensor.Disable(0.2f);
         }
 
-        //Run
+        //Tracking
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
         {
             // Reset timer

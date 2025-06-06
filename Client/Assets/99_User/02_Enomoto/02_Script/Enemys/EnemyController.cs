@@ -13,7 +13,7 @@ abstract public class EnemyController : MonoBehaviour
     //  マネージャークラスからPlayerを取得できるのが理想(変数削除予定、またはSerializeField削除予定)
     #region プレイヤー・ターゲット
     [Header("プレイヤー・ターゲット")]
-    [SerializeField] protected GameObject target;   // SerializeFieldはDebug用
+    protected GameObject target;   // SerializeFieldはDebug用
     public GameObject Target { get { return target; } set { target = value; } }
 
     [SerializeField] List<GameObject> players = new List<GameObject>();
@@ -21,6 +21,7 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region コンポーネント
+    protected EnemyProjectileChecker projectileChecker;
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
@@ -28,53 +29,53 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region ステータス
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected bool isBoss = false;
     public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected int life = 10;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected int power = 2;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected int speed = 5;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected float jumpPower = 19;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected int bulletNum = 3;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     [Tooltip("弾の発射間隔")]
     protected float shotsPerSecond = 0.5f;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     [Tooltip("攻撃のクールタイム")]
     protected float attackCoolTime = 0.5f;
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     [Tooltip("攻撃を開始する距離")]
     protected float attackDist = 1.5f;
     public float AttackDist { get { return attackDist; } }
 
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     [Tooltip("追跡可能範囲")]
     protected float trackingRange = 20f;
     
-    [Foldout("基本ステータス")]
+    [Foldout("ステータス")]
     [SerializeField]
     protected float hitTime = 0.5f;
     #endregion
@@ -111,6 +112,7 @@ abstract public class EnemyController : MonoBehaviour
     protected bool doOnceDecision;
     protected bool isAttacking;
     protected bool isDead;
+    protected bool isPatrolPaused;
     #endregion
 
     #region ターゲットとの距離
@@ -119,16 +121,21 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region その他
-    [Foldout("デバック用")]
+    [Foldout("その他")]
     [Tooltip("判定を描画するかどうか")]
     [SerializeField]
     protected bool canDrawRay = false;
+
+    [Foldout("その他")]
+    [SerializeField]
+    protected int exp = 100;
     #endregion
 
     protected virtual void Start()
     {
         m_rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
     }
@@ -141,6 +148,13 @@ abstract public class EnemyController : MonoBehaviour
         {
             // ターゲットを探す
             target = sightChecker.GetTargetInSight();
+            
+            // ターゲットを発見した場合、１秒間その場に待機する
+            if (target)
+            {
+                StartCoroutine(Waiting(1f));
+                return;
+            }
         }
         else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())
         {// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
@@ -150,7 +164,7 @@ abstract public class EnemyController : MonoBehaviour
 
         if (!target)
         {
-            if (canPatrol) Run();
+            if (canPatrol && !isPatrolPaused) StartCoroutine(Patorol());
             else Idle();
             return;
         }
@@ -193,7 +207,7 @@ abstract public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
-    /// 次の行動パターンを決める処理
+    /// 行動パターン実行処理
     /// </summary>
     abstract protected void DecideBehavior();
 
@@ -203,9 +217,17 @@ abstract public class EnemyController : MonoBehaviour
     abstract protected void Idle();
 
     /// <summary>
-    /// 走る処理
+    /// 追跡する処理
     /// </summary>
-    abstract protected void Run();
+    abstract protected void Tracking();
+
+    /// <summary>
+    /// 巡回する処理
+    /// </summary>
+    protected virtual IEnumerator Patorol()
+    {
+        yield return null;
+    }
 
     /// <summary>
     /// ダメージ適応処理
@@ -268,14 +290,28 @@ abstract public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
+    /// その場に待機する処理
+    /// </summary>
+    /// <param name="waitingTime"></param>
+    /// <returns></returns>
+    protected IEnumerator Waiting(float waitingTime)
+    {
+        doOnceDecision = false;
+        Idle();
+        yield return new WaitForSeconds(waitingTime);
+        doOnceDecision = true;
+    }
+
+    /// <summary>
     /// 死亡処理
     /// </summary>
     /// <returns></returns>
-    protected IEnumerator DestroyEnemy()
+    protected IEnumerator DestroyEnemy(Player player)
     {
         if (!isDead)
         {
             isDead = true;
+            player.GetExp(exp);
             PlayDeadAnim();
             if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             yield return new WaitForSeconds(0.25f);
