@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(WeaponsTableSeeder::class);
         $this->call(EnemiesTableSeeder::class);
+        $this->call(StagesTableSeeder::class);
 
     }
 }
