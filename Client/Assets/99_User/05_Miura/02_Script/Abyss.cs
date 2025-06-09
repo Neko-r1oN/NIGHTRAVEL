@@ -1,15 +1,14 @@
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
 public class Abyss : MonoBehaviour
 {
-    SampleChara_Copy sampleChara_Copy = new SampleChara_Copy();
-    //float characterHP;
-    //int damage
+    SampleChara_Copy sample;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       
+        sample = GameObject.Find("PlayerSample").GetComponent<SampleChara_Copy>();
     }
 
     // Update is called once per frame
@@ -18,16 +17,11 @@ public class Abyss : MonoBehaviour
 
     }
 
-    public void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("ƒvƒŒƒCƒ„[‚ª“Ş—‚É—‚¿‚½");
-            //sampleChara_Copy.ApplyDamage(damage,this.transform.position);
-        }
-        if(collision.gameObject.CompareTag("Enemy"))
-        {
-            Debug.Log("“G‚ª“Ş—‚É—‚¿‚½");
+
         }
     }
 }
