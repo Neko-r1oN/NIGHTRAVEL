@@ -34,81 +34,75 @@ public class Sword : Player
     /// </summary>
     public enum STATUS_ID
     {
-        HP =1,          // 体力
+        HP = 1,         // 体力
         Power,          // 攻撃力
         Defense,        // 防御力
         MoveSpeed,      // 移動速度
         AttackSpeed,    // 攻撃速度
         DmgMitigation,  // ダメージ軽減
+
+        HPMag = 20,     // 体力倍率
+        PowMag,         // 攻撃力倍率
+        DefMag,         // 防御力倍率
+        MSMag,          // 移動速度倍率
+        ASMag,          // 攻撃速度倍率
     }
     #endregion
 
     #region ステータス関連
     [Foldout("ステータス")]
-    [SerializeField] private int maxHp = 200;   // 最大体力
+    private int nowLv = 1;          // 現在レベル
+    [Foldout("ステータス")]
+    private int nowExp = 0;         // 現在の獲得経験値
+    [Foldout("ステータス")]
+    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
 
+    [Foldout("ステータス")]
+    [SerializeField] private int maxHp = 200;   // 最大体力
     [Foldout("ステータス")]
     [SerializeField] private int hp = 200;      // 現体力
-
     [Foldout("ステータス")]
-    private int startHp = 0;        // 初期体力
+    private int startHp = 0;                    // 初期体力
 
     [Foldout("ステータス")]
     public int dmgValue = 20;       // 攻撃力
 
     [Foldout("ステータス")]
-    public float runSpeed = 40f;    // 走る速度係数
+    public float runSpeed = 40f;    // 走る速度
 
     [Foldout("ステータス")]
-    private float horizontalMove = 0f;      // 速度値
+    [SerializeField] private float m_JumpForce = 400f;  // ジャンプ力
+    [Foldout("ステータス")]
+    [SerializeField] private float wallJumpPower = 2f;  // 壁ジャンプ力
+    [Foldout("ステータス")]
+    [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
+    [Foldout("ステータス")]
+    public bool canDoubleJump = true;                   // ダブルジャンプ使用フラグ
 
     [Foldout("ステータス")]
-    private float gravity;  // 重力
+    [SerializeField] private float m_BlinkForce = 45f;  // ブリンク力
+    [Foldout("ステータス")]
+    [SerializeField] private float blinkTime = 0.2f;    // ブリンク時間
+    [Foldout("ステータス")]
+    [SerializeField] private float blinkCoolDown = 1f;  // ブリンククールダウン
 
     [Foldout("ステータス")]
     [SerializeField] float ladderSpeed = 1f;   // 梯子移動速度
 
     [Foldout("ステータス")]
-    [SerializeField] private float m_JumpForce = 400f;  // ジャンプ力
-
-    [Foldout("ステータス")]
-    [SerializeField] private float m_BlinkForce = 45f;  // ブリンク力
-
-    [Foldout("ステータス")]
-    [SerializeField] private float blinkTime = 0.2f;    // ブリンク時間
-
-    [Foldout("ステータス")]
-    [SerializeField] private float blinkCoolDown = 1f;  // ブリンククールダウン
-
-    [Foldout("ステータス")]
-    [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
-
-    [Foldout("ステータス")]
-    [SerializeField] GameObject throwableObject;        // 投擲武器
-
-    [Foldout("ステータス")]
     [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;
-    
-    [Foldout("ステータス")]
-    public bool canDoubleJump = true;
 
     [Foldout("ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     [Foldout("ステータス")]
-    [SerializeField] private float wallJumpPower = 2f;
+    [SerializeField] GameObject throwableObject;    // 投擲武器
 
     [Foldout("ステータス")]
-    [SerializeField] private int testExp = 10;       // デバッグ用獲得経験値
+    [SerializeField] private int testExp = 10;      // デバッグ用獲得経験値
 
-    [Foldout("ステータス")]
-    private int nowLv = 1;          // 現在レベル
-
-    [Foldout("ステータス")]
-    private int nowExp = 0;         // 現在の獲得経験値
-
-    [Foldout("ステータス")]
-    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
+    private float horizontalMove = 0f;      // 速度用変数
+    private float gravity;  // 重力
 
     #endregion
 
