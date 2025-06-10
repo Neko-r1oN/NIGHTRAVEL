@@ -34,18 +34,13 @@ public class Sword : Player
     /// </summary>
     public enum STATUS_ID
     {
-        HP = 1,         // 体力
+        Lv = 1,         // レベル
+        HP,             // 体力
         Power,          // 攻撃力
         Defense,        // 防御力
         MoveSpeed,      // 移動速度
         AttackSpeed,    // 攻撃速度
         DmgMitigation,  // ダメージ軽減
-
-        HPMag = 20,     // 体力倍率
-        PowMag,         // 攻撃力倍率
-        DefMag,         // 防御力倍率
-        MSMag,          // 移動速度倍率
-        ASMag,          // 攻撃速度倍率
     }
     #endregion
 
@@ -65,10 +60,10 @@ public class Sword : Player
     private int startHp = 0;                    // 初期体力
 
     [Foldout("ステータス")]
-    public int dmgValue = 20;       // 攻撃力
+    [SerializeField] private int power = 20;        // 攻撃力
 
     [Foldout("ステータス")]
-    public float runSpeed = 40f;    // 走る速度
+    public float moveSpeed = 40f;   // 走る速度
 
     [Foldout("ステータス")]
     [SerializeField] private float m_JumpForce = 400f;  // ジャンプ力
@@ -224,8 +219,8 @@ public class Sword : Player
     private void Update()
     {
         // キャラの移動
-        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-        verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
+        verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
         Ladder();
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
@@ -594,9 +589,17 @@ public class Sword : Player
         int nextLv = nowLv + 1;
         nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
 
-        // HP増加処理
+        // HP反映処理
+        CalcHP();
+    }
+
+    /// <summary>
+    /// HP計算処理
+    /// </summary>
+    private void CalcHP()
+    {
         float hpRatio = (float)hp / (float)maxHp;
-        maxHp = startHp + (int)Math.Pow(nowLv, 2);
+        maxHp = (int)(startHp + (int)Math.Pow(nowLv, 2));
         hp = (int)(maxHp * hpRatio);
 
         Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
@@ -610,7 +613,7 @@ public class Sword : Player
     /// </summary>
     override public void DoDashDamage()
     {
-        dmgValue = Mathf.Abs(dmgValue);
+        power = Mathf.Abs(power);
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
@@ -618,11 +621,11 @@ public class Sword : Player
             {
                 if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
                 {
-                    dmgValue = -dmgValue;
+                    power = -power;
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(dmgValue,playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(power,playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
@@ -677,7 +680,7 @@ public class Sword : Player
     /// <param name="statusID">増減させるステータスID</param>
     /// <param name="value">増減値</param>
     public override void ChangeStatus(int statusID, int value)
-    {
+    {   //引数はステータス全部を含んだ通信用パッケージを作って適用
 
     }
 
