@@ -9,6 +9,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
+using UnityEditor.PackageManager.UI;
 
 public class SampleChara_Copy : Player
 {
@@ -32,7 +33,8 @@ public class SampleChara_Copy : Player
 
     #region ステータス関連
     [Foldout("ステータス")]
-    public float life = 10f;
+    public float life = 100f;
+    public float maxLife=0;
 
     [Foldout("ステータス")]
     public float runSpeed = 40f;    // 速度係数
@@ -163,6 +165,11 @@ public class SampleChara_Copy : Player
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
+    }
+
+    private void Start()
+    {
+        maxLife = life;
     }
 
     /// <summary>
@@ -569,6 +576,25 @@ public class SampleChara_Copy : Player
                 StartCoroutine(Stun(0.25f));
                 StartCoroutine(MakeInvincible(1f));
             }
+        }
+    }
+
+    public void DealDamage(GameObject dealer,int damage,Vector2 pos)
+    {
+        switch (dealer.gameObject.tag)
+        {
+            case "Short circuit":
+                life -= damage;
+                animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+
+                if (life <= 0)
+                {   // 死亡処理
+                    StartCoroutine(WaitToDead());
+                }
+                break;
+            default:
+                ApplyDamage(damage, pos);
+                break;
         }
     }
 
