@@ -7,7 +7,7 @@ public class UIManager : MonoBehaviour
     EnemyController boss;
 
     [SerializeField] Slider playerHpBar;       // プレイヤーのHPバー
-    //[SerializeField] Slider bossHpBar;         // ボスのHPバー
+    [SerializeField] Slider bossHpBar;         // ボスのHPバー
     [SerializeField] Slider expBar;            // 経験値バー
     [SerializeField] Text playerSliderText;    // プレイヤーの最大HPテキスト
     //[SerializeField] Text bossSliderText;      // ボスの最大HPテキスト
@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
         player = GameManager.Instance.Player.GetComponent<SampleChara>();
         boss = GameManager.Instance.Boss.GetComponent<EnemyController>();
         
-        playerHpBar.maxValue = player.Life;
+        playerHpBar.maxValue = player.MaxHP;
         playerSliderText.text = "" + playerHpBar.maxValue;
         expBar.maxValue = player.NextLvExp;
         levelText.text = "" + player.NowExp;
@@ -35,8 +35,8 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playerHpBar.value = player.Life;
-        playerSliderText.text = player.Life + "/" + playerHpBar.maxValue;
+        playerHpBar.value = player.HP;
+        playerSliderText.text = player.HP + "/" + playerHpBar.maxValue;
 
         expBar.maxValue = player.NextLvExp;
         levelText.text = "LV." + player.NowLv;
