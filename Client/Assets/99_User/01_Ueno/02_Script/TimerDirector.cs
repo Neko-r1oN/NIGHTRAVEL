@@ -25,6 +25,7 @@ public class TimerDirector : MonoBehaviour
         {
             second -= Time.deltaTime;
             var span = new TimeSpan(0,0,(int)second);
+            minute = span.Minutes;
             timer.text = span.ToString(@"mm\:ss");
         }
 
@@ -36,6 +37,13 @@ public class TimerDirector : MonoBehaviour
             timer.gameObject.SetActive(false);
             // É{ÉXèoåª
             GameManager.Instance.BossFlag = true;
+        }
+        else if(GameManager.Instance.IsSpawnBoss == true)
+        {
+            timer.gameObject.SetActive(false);
+
+            bossText.text = "BOSS";
+            bossText.gameObject.SetActive(true);
         }
     }
 }

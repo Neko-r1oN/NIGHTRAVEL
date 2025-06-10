@@ -46,13 +46,15 @@ public class GameManager : MonoBehaviour
 
     float elapsedTime;
 
-    public GameObject Enemy {  get { return enemy; } }
+    public GameObject Enemy { get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
     public GameObject Player { get { return player; } }
 
-    public int SpawnInterval { get { return spawnInterval; }set { spawnInterval = value; } }
+    public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
+
+    public bool IsSpawnBoss { get { return isSpawnBoss; } }
 
     private static GameManager instance;
 
@@ -86,7 +88,7 @@ public class GameManager : MonoBehaviour
         // ボスを非表示
         //boss.SetActive(false);
         // プレイヤーのオブジェクト検索して取得
-        player = GameObject.Find("PlayerSample");
+        //player = GameObject.Find("PlayerSample");
         isBossDead = false;
     }
 
@@ -100,7 +102,7 @@ public class GameManager : MonoBehaviour
             // ボスの生成範囲の判定
             var spawnPostions = CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
 
-            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange,spawnPostions.maxRange);
+            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange);
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
@@ -132,67 +134,17 @@ public class GameManager : MonoBehaviour
             {
                 elapsedTime = 0;
 
-                Vector2 minPlayer =
-                    new Vector2(player.transform.position.x - xRadius, player.transform.position.y - yRadius);
-
-                Vector2 maxPlayer =
-                    new Vector2(player.transform.position.x + xRadius, player.transform.position.y + yRadius);
-
-                // ランダムな位置を生成
-                var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
-
-                // ランダムな位置を生成
-                //Vector3 spawnPos = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY));
-
-                Vector3 ? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange,spawnPostions.maxRange);
-
-                if (spawnPos != null)
+                if (spawnCnt < 50)
                 {
-                    if (spawnCnt < 50)
+                    for (int i = 0; i < 5; i++)
                     {
-                        for (int i = 0; i < 5; i++)
-                        {
-                            spawnCnt++;
-                            Debug.Log(spawnCnt);
-
-                            int listNum = Random.Range(0, enemyList.Count);
-
-                            // 生成
-                            enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
-
-                            enemy.GetComponent<EnemyController>().Players.Add(player);
-                            enemy.GetComponent<EnemyController>().SetNearTarget();
-
-                            if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
-                            {
-                                enemy.GetComponent<EnemyController>().enabled = false;
-
-                                // 透明化
-                                enemy.GetComponent<SpriteRenderer>().enabled = false;
-                            }
-                        }
+                        // 敵生成処理
+                        GenerateEnemy();
                     }
-                    else
-                    {
-                        spawnCnt++;
-                        Debug.Log(spawnCnt);
-
-                        int listNum = Random.Range(0, enemyList.Count);
-
-                        // 生成
-                        enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
-
-                        enemy.GetComponent<EnemyController>().Players.Add(player);
-                        enemy.GetComponent<EnemyController>().SetNearTarget();
-
-                        if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
-                        {
-                            enemy.GetComponent<EnemyController>().enabled = false;
-
-                            // 透明化
-                            enemy.GetComponent<SpriteRenderer>().enabled = false;
-                        }
-                    }
+                }
+                else
+                {
+                    GenerateEnemy();
                 }
             }
         }
@@ -218,13 +170,13 @@ public class GameManager : MonoBehaviour
     {
         crushNum++;
 
-        Debug.Log(crushNum);
+        Debug.Log("倒した数：" + crushNum);
 
         spawnCnt--;
         //AddXp();
 
         Debug.Log(crushNum);
-        if(enemy.IsBoss)
+        if (enemy.IsBoss)
         {
             DeathBoss();
         }
@@ -232,6 +184,7 @@ public class GameManager : MonoBehaviour
         {// 撃破数が15以上になったら(仮)
 
             bossFlag = true;
+            Debug.Log("倒した数：" + crushNum + "ボス");
 
             //boss.SetActive(true);
             //Debug.Log("ボスでてきた");
@@ -278,13 +231,13 @@ public class GameManager : MonoBehaviour
     {
         if (player != null)
         {
-            Gizmos.DrawWireCube(player.transform.position, new Vector3(distMinSpawnPos * 2,yRadius * 2));
+            Gizmos.DrawWireCube(player.transform.position, new Vector3(distMinSpawnPos * 2, yRadius * 2));
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(player.transform.position, new Vector3(xRadius * 2, yRadius * 2));
         }
     }
 
-    private (Vector3 minRange,Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint,Vector3 maxPoint)
+    private (Vector3 minRange, Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint, Vector3 maxPoint)
     {
         Vector3 minRange = minPoint, maxRange = maxPoint;
         if (minPoint.y < randRespawnA.position.y)
@@ -336,5 +289,40 @@ public class GameManager : MonoBehaviour
     public void DecreaseGeneratInterval()
     {
         spawnInterval -= 1;
+    }
+
+    public void GenerateEnemy()
+    {
+        Vector2 minPlayer =
+                    new Vector2(player.transform.position.x - xRadius, player.transform.position.y - yRadius);
+
+        Vector2 maxPlayer =
+            new Vector2(player.transform.position.x + xRadius, player.transform.position.y + yRadius);
+
+        // ランダムな位置を生成
+        var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
+
+        Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange);
+
+        if (spawnPos != null)
+        {
+            spawnCnt++;
+
+            int listNum = Random.Range(0, enemyList.Count);
+
+            // 生成
+            enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+
+            enemy.GetComponent<EnemyController>().Players.Add(player);
+            enemy.GetComponent<EnemyController>().SetNearTarget();
+
+            if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
+            {
+                enemy.GetComponent<EnemyController>().enabled = false;
+
+                // 透明化
+                enemy.GetComponent<SpriteRenderer>().enabled = false;
+            }
+        }
     }
 }
