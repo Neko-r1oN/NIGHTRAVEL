@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
 
-public class SampleChara : Player
+public class Sword : Player
 {
     #region アニメーションID
     /// <summary>
@@ -34,7 +34,8 @@ public class SampleChara : Player
     /// </summary>
     public enum STATUS_ID
     {
-        HP =1,          // 体力
+        Lv = 1,         // レベル
+        HP,             // 体力
         Power,          // 攻撃力
         Defense,        // 防御力
         MoveSpeed,      // 移動速度
@@ -45,64 +46,58 @@ public class SampleChara : Player
 
     #region ステータス関連
     [Foldout("ステータス")]
-    [SerializeField] private int maxHp = 200;   // 最大体力
+    private int nowLv = 1;          // 現在レベル
+    [Foldout("ステータス")]
+    private int nowExp = 0;         // 現在の獲得経験値
+    [Foldout("ステータス")]
+    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
 
+    [Foldout("ステータス")]
+    [SerializeField] private int maxHp = 200;   // 最大体力
     [Foldout("ステータス")]
     [SerializeField] private int hp = 200;      // 現体力
+    [Foldout("ステータス")]
+    private int startHp = 0;                    // 初期体力
 
     [Foldout("ステータス")]
-    private int startHp = 0;        // 初期体力
+    [SerializeField] private int power = 20;        // 攻撃力
 
     [Foldout("ステータス")]
-    public int dmgValue = 20;       // 攻撃力
+    public float moveSpeed = 40f;   // 走る速度
 
     [Foldout("ステータス")]
-    public float runSpeed = 40f;    // 速度係数
+    [SerializeField] private float m_JumpForce = 400f;  // ジャンプ力
+    [Foldout("ステータス")]
+    [SerializeField] private float wallJumpPower = 2f;  // 壁ジャンプ力
+    [Foldout("ステータス")]
+    [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
+    [Foldout("ステータス")]
+    public bool canDoubleJump = true;                   // ダブルジャンプ使用フラグ
 
     [Foldout("ステータス")]
-    private float horizontalMove = 0f;      // 速度値
-
+    [SerializeField] private float m_BlinkForce = 45f;  // ブリンク力
     [Foldout("ステータス")]
-    private float gravity;  // 重力
+    [SerializeField] private float blinkTime = 0.2f;    // ブリンク時間
+    [Foldout("ステータス")]
+    [SerializeField] private float blinkCoolDown = 1f;  // ブリンククールダウン
 
     [Foldout("ステータス")]
     [SerializeField] float ladderSpeed = 1f;   // 梯子移動速度
 
     [Foldout("ステータス")]
-    [SerializeField] private float m_JumpForce = 400f;
-
-    [Foldout("ステータス")]
-    [SerializeField] private float m_BlinkForce = 45f;
-
-    [Foldout("ステータス")]
-    [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
-
-    [Foldout("ステータス")]
-    [SerializeField] GameObject throwableObject;        // 投擲武器
-
-    [Foldout("ステータス")]
     [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;
-    
-    [Foldout("ステータス")]
-    public bool canDoubleJump = true;
 
     [Foldout("ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     [Foldout("ステータス")]
-    [SerializeField] private float wallJumpPower = 2f;
+    [SerializeField] GameObject throwableObject;    // 投擲武器
 
     [Foldout("ステータス")]
-    [SerializeField] private int testExp = 10;       // デバッグ用獲得経験値
+    [SerializeField] private int testExp = 10;      // デバッグ用獲得経験値
 
-    [Foldout("ステータス")]
-    private int nowLv = 1;          // 現在レベル
-
-    [Foldout("ステータス")]
-    private int nowExp = 0;         // 現在の獲得経験値
-
-    [Foldout("ステータス")]
-    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
+    private float horizontalMove = 0f;      // 速度用変数
+    private float gravity;  // 重力
 
     #endregion
 
@@ -224,8 +219,8 @@ public class SampleChara : Player
     private void Update()
     {
         // キャラの移動
-        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-        verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
+        verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
         Ladder();
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
@@ -594,9 +589,17 @@ public class SampleChara : Player
         int nextLv = nowLv + 1;
         nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
 
-        // HP増加処理
+        // HP反映処理
+        CalcHP();
+    }
+
+    /// <summary>
+    /// HP計算処理
+    /// </summary>
+    private void CalcHP()
+    {
         float hpRatio = (float)hp / (float)maxHp;
-        maxHp = startHp + (int)Math.Pow(nowLv, 2);
+        maxHp = (int)(startHp + (int)Math.Pow(nowLv, 2));
         hp = (int)(maxHp * hpRatio);
 
         Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
@@ -610,7 +613,7 @@ public class SampleChara : Player
     /// </summary>
     override public void DoDashDamage()
     {
-        dmgValue = Mathf.Abs(dmgValue);
+        power = Mathf.Abs(power);
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
@@ -618,11 +621,11 @@ public class SampleChara : Player
             {
                 if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
                 {
-                    dmgValue = -dmgValue;
+                    power = -power;
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(dmgValue,playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(power,playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
@@ -677,7 +680,7 @@ public class SampleChara : Player
     /// <param name="statusID">増減させるステータスID</param>
     /// <param name="value">増減値</param>
     public override void ChangeStatus(int statusID, int value)
-    {
+    {   //引数はステータス全部を含んだ通信用パッケージを作って適用
 
     }
 
@@ -693,10 +696,10 @@ public class SampleChara : Player
         animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
         isBlinking = true;
         canBlink = false;
-        yield return new WaitForSeconds(0.04f);  // ブリンク時間
+        yield return new WaitForSeconds(blinkTime);  // ブリンク時間
         gameObject.layer = 20;
         isBlinking = false;
-        yield return new WaitForSeconds(0.5f);  // クールダウン時間
+        yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
         canBlink = true;
     }
 
@@ -707,7 +710,7 @@ public class SampleChara : Player
     IEnumerator WallJump()
     {
         isWallJump = true;
-        yield return new WaitForSeconds(0.2f);  // ブリンク時間
+        yield return new WaitForSeconds(0.2f);  // ジャンプ時間
         isWallJump = false;
     }
 

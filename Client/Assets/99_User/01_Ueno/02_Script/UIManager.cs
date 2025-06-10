@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    SampleChara player;
+    Sword player;
     EnemyController boss;
 
     [SerializeField] Slider playerHpBar;       // プレイヤーのHPバー
@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = GameManager.Instance.Player.GetComponent<SampleChara>();
+        player = GameManager.Instance.Player.GetComponent<Sword>();
         boss = GameManager.Instance.Boss.GetComponent<EnemyController>();
         
         playerHpBar.maxValue = player.MaxHP;
