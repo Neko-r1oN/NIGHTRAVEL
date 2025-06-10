@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
         $this->call(EnemiesTableSeeder::class);
         $this->call(StagesTableSeeder::class);
         $this->call(ResultsTableSeeder::class);
+        $this->call(RelicsTableSeeder::class);
+        $this->call(UserRelicsTableSeeder::class);
+        $this->call(AchievementsTableSeeder::class);
 
     }
 }
