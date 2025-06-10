@@ -33,7 +33,7 @@ public class Enemy_Sample : EnemyController
         RangeType,
     }
 
-    #region 攻撃方法について
+    #region 攻撃について
     [Header("攻撃方法")]
     [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
     [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
@@ -50,7 +50,6 @@ public class Enemy_Sample : EnemyController
     [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     [SerializeField] Transform groundCheck;
     [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
-    [SerializeField] LayerMask terrainLayerMask;
 
     // 落下チェック
     [SerializeField] Transform fallCheck;
@@ -115,23 +114,32 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
-    /// 攻撃処理
+    /// 攻撃開始処理
     /// </summary>
-    public void Attack()
+    void Attack()
     {
         doOnceDecision = false;
         isAttacking = true;
-        SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
-        if(chaseAI) chaseAI.StopChase();
+        SetAnimId((int)ANIM_ID.Attack);
+        if (chaseAI) chaseAI.StopChase();
 
+        // デバック用
+        OnAttackEvent();
+    }
+
+    /// <summary>
+    /// 攻撃実行処理（基本的にアニメーションイベントから呼ばれる）
+    /// </summary>
+    public void OnAttackEvent()
+    {
         if (attackType == ATTACK_TYPE_ID.MeleeType)
         {
             MeleeAttack();
         }
         else if (attackType == ATTACK_TYPE_ID.RangeType)
         {
-            StartCoroutine(RangeAttack());
+            attackCoroutine = StartCoroutine(RangeAttack());
         }
     }
 
@@ -163,7 +171,7 @@ public class Enemy_Sample : EnemyController
             throwableProj.GetComponent<ThrowableProjectile>().owner = gameObject;
             Vector2 direction = new Vector2(transform.localScale.x, 0f);
             throwableProj.GetComponent<ThrowableProjectile>().direction = direction;
-            yield return new WaitForSeconds(attackCoolTime / bulletNum);
+            yield return new WaitForSeconds(shotsPerSecond);
         }
         StartCoroutine(AttackCooldown(attackCoolTime));
     }
@@ -215,29 +223,12 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
-    /// ダメージ適応処理
+    /// ダメージを受けたときの処理
     /// </summary>
-    /// <param name="damage"></param>
-    public override void ApplyDamage(int damage, Transform attacker)
+    protected override void OnHit()
     {
-        if (!isInvincible)
-        {
-            // ターゲットの方向にテクスチャを反転
-            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
-            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-
-            life -= Mathf.Abs(damage);
-            DoKnokBack(damage);
-
-            if (life > 0)
-            {
-                StartCoroutine(HitTime());
-            }
-            else if (!isDead)
-            {
-                StartCoroutine(DestroyEnemy(attacker.gameObject.GetComponent<Player>()));
-            }
-        }
+        base.OnHit();
+        SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -259,17 +250,6 @@ public class Enemy_Sample : EnemyController
         isAttacking = false;
         doOnceDecision = true;
         Idle();
-    }
-
-    /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    protected override IEnumerator HitTime()
-    {
-        SetAnimId((int)ANIM_ID.Hit);
-        yield return null;
-        base.HitTime();
     }
 
     /// <summary>
@@ -339,7 +319,7 @@ public class Enemy_Sample : EnemyController
         // 壁の判定
         if (wallCheck)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(wallCheck.transform.position, wallCheckRadius);
         }
 
@@ -356,7 +336,7 @@ public class Enemy_Sample : EnemyController
         // 落下チェック
         if (fallCheck)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
         }
     }

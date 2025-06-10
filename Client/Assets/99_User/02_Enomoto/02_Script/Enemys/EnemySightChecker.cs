@@ -7,9 +7,15 @@ using UnityEngine;
 
 public class EnemySightChecker : MonoBehaviour
 {
-    [SerializeField] LayerMask targetLayerMask; // 視認するLayer [プレイヤー、地面、壁]
     [SerializeField] float viewAngleMax = 65;
     [SerializeField] float viewDistMax = 6f;
+    LayerMask targetLayerMask;
+
+    private void Start()
+    {
+        // 視認するLayer [プレイヤー、地面・壁]
+        targetLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("TransparentFX") | LayerMask.GetMask("Player");
+    }
 
     /// <summary>
     /// ターゲットを視認できているかどうか

@@ -31,7 +31,6 @@ public class EnemyMelee : EnemyController
     [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     [SerializeField] Transform groundCheck;
     [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
-    [SerializeField] LayerMask terrainLayerMask;
 
     // 落下チェック
     [SerializeField] Transform fallCheck;
@@ -129,6 +128,11 @@ public class EnemyMelee : EnemyController
             float distToPlayer = target.transform.position.x - this.transform.position.x;
             speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
         }
+        else if (canPatrol)
+        {
+            if (IsFall() || IsWall()) Flip();
+            speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
+        }
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -147,29 +151,12 @@ public class EnemyMelee : EnemyController
     }
 
     /// <summary>
-    /// ダメージ適応処理
+    /// ダメージを受けたときの処理
     /// </summary>
-    /// <param name="damage"></param>
-    public override void ApplyDamage(int damage, Transform attacker)
+    protected override void OnHit()
     {
-        if (!isInvincible)
-        {
-            // ターゲットの方向にテクスチャを反転
-            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
-            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-
-            life -= Mathf.Abs(damage);
-            DoKnokBack(damage);
-
-            if (life > 0)
-            {
-                StartCoroutine(HitTime());
-            }
-            else if (!isDead)
-            {
-                StartCoroutine(DestroyEnemy(attacker.gameObject.GetComponent<Player>()));
-            }
-        }
+        base.OnHit();
+        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -183,17 +170,6 @@ public class EnemyMelee : EnemyController
         isAttacking = false;
         doOnceDecision = true;
         Idle();
-    }
-
-    /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    protected override IEnumerator HitTime()
-    {
-        SetAnimId((int)ANIM_ID.Hit);
-        yield return null;
-        base.HitTime();
     }
 
     /// <summary>
@@ -257,7 +233,7 @@ public class EnemyMelee : EnemyController
         // 壁の判定
         if (wallCheck)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(wallCheck.transform.position, wallCheckRadius);
         }
 
@@ -274,7 +250,7 @@ public class EnemyMelee : EnemyController
         // 落下チェック
         if (fallCheck)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
         }
     }
