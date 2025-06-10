@@ -51,7 +51,6 @@ public class Enemy_Sample_Flyng : EnemyController
     // 壁と地面チェック
     [SerializeField] Transform wallCheck;
     [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] LayerMask terrainLayerMask;
     #endregion
 
     #region ターゲットとの距離
@@ -193,41 +192,12 @@ public class Enemy_Sample_Flyng : EnemyController
     }
 
     /// <summary>
-    /// ダメージ適応処理
+    /// ダメージを受けたときの処理
     /// </summary>
-    /// <param name="damage"></param>
-    public override void ApplyDamage(int damage, Transform attacker)
+    protected override void OnHit()
     {
-        if (!isInvincible)
-        {
-            // ターゲットの方向にテクスチャを反転
-            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
-            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-
-            //SetAnimId((int)ANIM_ID.Hit);
-            life -= Mathf.Abs(damage);
-            DoKnokBack(damage);
-
-            if (life > 0)
-            {
-                StartCoroutine(HitTime());
-            }
-            else if (!isDead)
-            {
-                StartCoroutine(DestroyEnemy(attacker.gameObject.GetComponent<Player>()));
-            }
-        }
-    }
-
-    /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    protected override IEnumerator HitTime()
-    {
+        base.OnHit();
         //SetAnimId((int)ANIM_ID.Hit);
-        yield return null;
-        base.HitTime();
     }
 
     /// <summary>
@@ -279,7 +249,7 @@ public class Enemy_Sample_Flyng : EnemyController
         // 壁の判定
         if (wallCheck)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(wallCheck.transform.position, wallCheckRadius);
         }
     }

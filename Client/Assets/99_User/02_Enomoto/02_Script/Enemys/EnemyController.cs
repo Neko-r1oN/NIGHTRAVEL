@@ -5,7 +5,6 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 abstract public class EnemyController : MonoBehaviour
@@ -25,30 +24,44 @@ abstract public class EnemyController : MonoBehaviour
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
+    protected Coroutine attackCoroutine;
     Animator animator;
+    #endregion
+
+    #region チェック判定
+    protected LayerMask terrainLayerMask; // 壁と地面のレイヤー
+    #endregion
+
+    #region 基本ステータス
+    // 最大HP
+    public int maxLife { get; private set; }
     #endregion
 
     #region ステータス
     [Foldout("ステータス")]
     [SerializeField]
-    protected bool isBoss = false;
-    public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
+    protected int life = 10;
+    public int Life { get { return life; } set { life = value; } }
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected int life = 10;
+    protected int defence = 0;
+    public int Defence { get { return defence; } set { defence = value; } }
 
     [Foldout("ステータス")]
     [SerializeField]
     protected int power = 2;
+    public int Power { get { return power; } set { power = value; } }
 
     [Foldout("ステータス")]
     [SerializeField]
     protected int speed = 5;
+    public int Speed { get { return speed; } set { speed = value; } }
 
     [Foldout("ステータス")]
     [SerializeField]
     protected float jumpPower = 19;
+    public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
 
     [Foldout("ステータス")]
     [SerializeField]
@@ -80,31 +93,41 @@ abstract public class EnemyController : MonoBehaviour
     protected float hitTime = 0.5f;
     #endregion
 
-    #region 共通の行動パターン
-    [Foldout("共通の行動パターン")]
+    #region オプション
+    [Foldout("オプション")]
+    [SerializeField]
+    protected bool isBoss = false;
+    public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
+
+    [Foldout("オプション")]
     [Tooltip("接触でダメージを与えることが可能")]
     [SerializeField] 
     protected bool canDamageOnContact;
 
-    [Foldout("共通の行動パターン")]
+    [Foldout("オプション")]
     [Tooltip("常に動き回ることが可能")]
     [SerializeField] 
     protected bool canPatrol;
 
-    [Foldout("共通の行動パターン")]
+    [Foldout("オプション")]
     [Tooltip("ターゲットを追跡可能")]
     [SerializeField] 
     protected bool canChaseTarget;
     
-    [Foldout("共通の行動パターン")]
+    [Foldout("オプション")]
     [Tooltip("攻撃可能")]
     [SerializeField]
     protected bool canAttack;
     
-    [Foldout("共通の行動パターン")]
+    [Foldout("オプション")]
     [Tooltip("ジャンプ可能")]
     [SerializeField] 
     protected bool canJump;
+
+    [Foldout("オプション")]
+    [Tooltip("攻撃中にヒットした場合、攻撃をキャンセル可能")]
+    [SerializeField]
+    protected bool canCancelAttackOnHit = true;
     #endregion
 
     #region 状態管理
@@ -133,11 +156,14 @@ abstract public class EnemyController : MonoBehaviour
 
     protected virtual void Start()
     {
+        terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
+
+        maxLife = life;
     }
 
     private void FixedUpdate()
@@ -148,13 +174,6 @@ abstract public class EnemyController : MonoBehaviour
         {
             // ターゲットを探す
             target = sightChecker.GetTargetInSight();
-            
-            // ターゲットを発見した場合、１秒間その場に待機する
-            if (target)
-            {
-                StartCoroutine(Waiting(1f));
-                return;
-            }
         }
         else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())
         {// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
@@ -233,7 +252,31 @@ abstract public class EnemyController : MonoBehaviour
     /// ダメージ適応処理
     /// </summary>
     /// <param name="damage"></param>
-    abstract public void ApplyDamage(int damage, Transform attacker);
+    public void ApplyDamage(int damage, Transform attacker = null)
+    {
+        if (!isInvincible)
+        {
+            life -= Mathf.Abs(damage);
+
+            // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
+            if (attacker)
+            {
+                if (attacker.position.x < transform.position.x && transform.localScale.x > 0
+                || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+                DoKnokBack(damage);
+            }
+
+            if (life > 0)
+            {
+                StartCoroutine(HitTime());
+            }
+            else if (!isDead)
+            {
+                Player player = attacker ? attacker.gameObject.GetComponent<Player>() : null;
+                StartCoroutine(DestroyEnemy(player));
+            }
+        }
+    }
 
     /// <summary>
     /// 他の検知範囲の描画処理
@@ -244,6 +287,19 @@ abstract public class EnemyController : MonoBehaviour
     /// 死亡アニメーションを再生
     /// </summary>
     abstract protected void PlayDeadAnim();
+
+    /// <summary>
+    /// ダメージを受けたときの処理
+    /// </summary>
+    virtual protected void OnHit()
+    {
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine); // 攻撃処理を中断する
+        }
+        isAttacking = false;
+        doOnceDecision = true;
+    }
 
     /// <summary>
     /// アニメーション設定処理
@@ -311,11 +367,11 @@ abstract public class EnemyController : MonoBehaviour
         if (!isDead)
         {
             isDead = true;
-            player.GetExp(exp);
+            if(player) player.GetExp(exp);
             PlayDeadAnim();
             if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             yield return new WaitForSeconds(0.25f);
-            m_rb2d.excludeLayers = LayerMask.GetMask("TransparentFX");
+            m_rb2d.excludeLayers = LayerMask.GetMask("TransparentFX") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
             yield return new WaitForSeconds(1f);
             Destroy(gameObject);
@@ -347,11 +403,15 @@ abstract public class EnemyController : MonoBehaviour
     /// ダメージ適応時の無敵時間
     /// </summary>
     /// <returns></returns>
-    protected virtual IEnumerator HitTime()
+    protected IEnumerator HitTime()
     {
-        isInvincible = true;
-        yield return new WaitForSeconds(hitTime);
-        isInvincible = false;
+        if (canCancelAttackOnHit)
+        {
+            isInvincible = true;
+            OnHit();
+            yield return new WaitForSeconds(hitTime);
+            isInvincible = false;
+        }
     }
 
     /// <summary>

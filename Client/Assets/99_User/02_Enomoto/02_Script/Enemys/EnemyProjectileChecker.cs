@@ -9,10 +9,10 @@ using UnityEngine;
 
 public class EnemyProjectileChecker : MonoBehaviour
 {
-    [SerializeField] LayerMask targetLayerMask;     // 視認するLayer [プレイヤー、地面、壁]
     [SerializeField] Transform aimTransform;
     [SerializeField] Transform leftFireRayPoint;
     [SerializeField] Transform rightFireRayPoint;
+    LayerMask targetLayerMask;
 
     [Range(0f, 180f)]
     [SerializeField] float maxAddAngleLeft;    // 回転角度の可動域(左回り)
@@ -23,6 +23,8 @@ public class EnemyProjectileChecker : MonoBehaviour
 
     private void Start()
     {
+        // 視認するLayer [プレイヤー、地面・壁]
+        targetLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("TransparentFX") | LayerMask.GetMask("Player");
         aimTransform.eulerAngles = new Vector3(0, 0, initialAngle);
     }
 
