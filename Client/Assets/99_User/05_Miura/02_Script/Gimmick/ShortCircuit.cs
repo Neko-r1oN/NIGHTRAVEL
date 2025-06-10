@@ -32,8 +32,8 @@ public class ShortCircuit : MonoBehaviour
         int maxLife= (int)sample.maxLife;
 
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
-        sample.DealDamage(this.gameObject,damage,Vector2.zero);
-        //enemyController.ApplyDamage(damage,)
+        sample.DealDamage(this.gameObject,damage,Vector2.zero);//
+        //enemyController.ApplyDamage(damage,) //敵が当たった時のダメージ
         Debug.Log(damage);
         Debug.Log(sample.life);
 
@@ -47,13 +47,18 @@ public class ShortCircuit : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            Debug.Log("敵が漏電フィールドに当たった");
+            //Debug.Log("敵が漏電フィールドに当たった");
+            InvokeRepeating("HitDamage", 0.1f, 0.5f);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
+        {
+            CancelInvoke();
+        }
+        if(collision.gameObject.CompareTag("Enemy"))
         {
             CancelInvoke();
         }
