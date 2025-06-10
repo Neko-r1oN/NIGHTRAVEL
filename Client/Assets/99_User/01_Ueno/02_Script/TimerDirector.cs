@@ -9,8 +9,8 @@ public class TimerDirector : MonoBehaviour
     [SerializeField] float minute = 5;
     float second;
 
-    [SerializeField] Text timer;
-    [SerializeField] Text bossText;
+    [SerializeField] GameObject timerObj; // タイマーテキストの親
+    [SerializeField] Text timer;          // タイマーテキスト
 
     private void Start()
     {
@@ -31,19 +31,13 @@ public class TimerDirector : MonoBehaviour
 
         if (minute <= 0 && GameManager.Instance.BossFlag == false)
         {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
-            bossText.text = "BOSS";
-            bossText.gameObject.SetActive(true);
-
-            timer.gameObject.SetActive(false);
+            timerObj.SetActive(false);
             // ボス出現
             GameManager.Instance.BossFlag = true;
         }
         else if(GameManager.Instance.IsSpawnBoss == true)
         {
-            timer.gameObject.SetActive(false);
-
-            bossText.text = "BOSS";
-            bossText.gameObject.SetActive(true);
+            timerObj.SetActive(false);
         }
     }
 }

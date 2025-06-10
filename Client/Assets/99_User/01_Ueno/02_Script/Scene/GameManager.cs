@@ -16,17 +16,17 @@ public class GameManager : MonoBehaviour
 {
     #region 初期設定
     [Header("初期設定")]
-    int crushNum; 　　　　　// 撃破数
-    bool bossFlag = false;  // ボスが出たかどうか
-    int xp;                 // 経験値
-    int requiredXp = 100;   // 必要経験値
-    int level;              // レベル
-    int num;                // 生成までのカウント
+    int crushNum; 　　　　　    // 撃破数
+    bool bossFlag = false;      // ボスが出たかどうか
+    int xp;                     // 経験値
+    int requiredXp = 100;       // 必要経験値
+    int level;                  // レベル
+    int num;                    // 生成までのカウント
     public int spawnInterval;   // 生成間隔
-    int spawnCnt;           // スポーン回数
-    public int maxSpawnCnt; // マックススポーン回数
-    bool isBossDead;        // ボスが死んだかどうか
-    bool isSpawnBoss;       // ボスが生成されたかどうか
+    int spawnCnt;               // スポーン回数
+    public int maxSpawnCnt;     // マックススポーン回数
+    bool isBossDead;            // ボスが死んだかどうか
+    bool isSpawnBoss;           // ボスが生成されたかどうか
     #endregion
 
     #region その他
@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
     public GameObject Player { get { return player; } }
+
+    public GameObject Boss {  get { return bossPrefab; } }
 
     public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
 
@@ -85,10 +87,6 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // ボスを非表示
-        //boss.SetActive(false);
-        // プレイヤーのオブジェクト検索して取得
-        //player = GameObject.Find("PlayerSample");
         isBossDead = false;
     }
 
