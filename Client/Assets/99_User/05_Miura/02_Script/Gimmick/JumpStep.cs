@@ -1,16 +1,23 @@
+//===================
+//ジャンプ台のスクリプト
+//Author:y-miura
+//===================
+
 using UnityEngine;
 
 public class JumpStep : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    SampleChara_Copy sample;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        sample=GetComponent<SampleChara_Copy>();
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+
+        }
     }
 }
