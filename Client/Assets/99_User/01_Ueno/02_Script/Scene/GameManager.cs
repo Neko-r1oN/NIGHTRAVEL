@@ -27,12 +27,14 @@ public class GameManager : MonoBehaviour
     public int maxSpawnCnt;     // マックススポーン回数
     bool isBossDead;            // ボスが死んだかどうか
     bool isSpawnBoss;           // ボスが生成されたかどうか
+    GameObject boss;            // ボス
+
     #endregion
 
     #region その他
     [Header("その他")]
     public List<GameObject> enemyList;       // エネミーリスト
-    [SerializeField] GameObject bossPrefab;  // ボス
+    [SerializeField] GameObject bossPrefab;  // ボスプレハブ
     [SerializeField] Transform randRespawnA; // リスポーン範囲A
     [SerializeField] Transform randRespawnB; // リスポーン範囲B
     [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
@@ -52,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject Player { get { return player; } }
 
-    public GameObject Boss {  get { return bossPrefab; } }
+    public GameObject Boss {  get { return boss; } }
 
     public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
 
@@ -104,7 +106,7 @@ public class GameManager : MonoBehaviour
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
-                GameObject boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
+                boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
                 boss.GetComponent<EnemyController>().IsBoss = true;
 
                 boss.GetComponent<EnemyController>().Players.Add(player);
@@ -132,7 +134,7 @@ public class GameManager : MonoBehaviour
             {
                 elapsedTime = 0;
 
-                if (spawnCnt < 50)
+                if (spawnCnt < 100)
                 {
                     for (int i = 0; i < 5; i++)
                     {
@@ -145,10 +147,6 @@ public class GameManager : MonoBehaviour
                     GenerateEnemy();
                 }
             }
-        }
-        else
-        {
-            Debug.Log("生成限界");
         }
     }
 
@@ -178,7 +176,7 @@ public class GameManager : MonoBehaviour
         {
             DeathBoss();
         }
-        else if (crushNum >= 150)
+        else if (crushNum >= 200)
         {// 撃破数が15以上になったら(仮)
 
             bossFlag = true;
