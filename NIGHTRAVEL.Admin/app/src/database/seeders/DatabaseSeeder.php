@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Have;
+use App\Models\StatusEnhancement;
 use App\Models\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,6 +26,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RelicsTableSeeder::class);
         $this->call(UserRelicsTableSeeder::class);
         $this->call(AchievementsTableSeeder::class);
+        $this->call(AchievementStatusTableSeeder::class);
+        $this->call(StatusEnhancementTableSeeder::class);
 
     }
 }
