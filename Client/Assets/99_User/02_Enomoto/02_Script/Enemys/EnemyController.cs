@@ -34,14 +34,14 @@ abstract public class EnemyController : MonoBehaviour
 
     #region 基本ステータス
     // 最大HP
-    public int maxLife { get; private set; }
+    public int maxHP { get; private set; }
     #endregion
 
     #region ステータス
     [Foldout("ステータス")]
     [SerializeField]
-    protected int life = 10;
-    public int Life { get { return life; } set { life = value; } }
+    protected int hp = 10;
+    public int HP { get { return hp; } set { hp = value; } }
 
     [Foldout("ステータス")]
     [SerializeField]
@@ -163,12 +163,12 @@ abstract public class EnemyController : MonoBehaviour
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
 
-        maxLife = life;
+        maxHP = hp;
     }
 
     private void FixedUpdate()
     {
-        if (isAttacking || isInvincible || life <= 0 || !doOnceDecision || !sightChecker) return;
+        if (isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
 
         if (!target && Players.Count > 0)
         {
@@ -208,7 +208,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (canDamageOnContact && collision.gameObject.tag == "Player" && life > 0 && !isInvincible)
+        if (canDamageOnContact && collision.gameObject.tag == "Player" && hp > 0 && !isInvincible)
         {
             if (!target)
             {
@@ -256,7 +256,7 @@ abstract public class EnemyController : MonoBehaviour
     {
         if (!isInvincible)
         {
-            life -= Mathf.Abs(damage);
+            hp -= Mathf.Abs(damage);
 
             // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
             if (attacker)
@@ -266,7 +266,7 @@ abstract public class EnemyController : MonoBehaviour
                 DoKnokBack(damage);
             }
 
-            if (life > 0)
+            if (hp > 0)
             {
                 StartCoroutine(HitTime());
             }
