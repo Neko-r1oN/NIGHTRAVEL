@@ -1,7 +1,15 @@
+////////////////////////////////////////////////////////////////
+///
+/// リアルタイム通信テスト用スクリプト
+/// 
+/// Aughter:高宮祐翔
+///
+////////////////////////////////////////////////////////////////
+
 using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Shared;
-using NIGHTRAVEL.Shared.Unity;
+using NIGHTRAVEL.Shared.Services;
 using UnityEngine;
 
 namespace NIGHTRAVEL.Server.Services;
