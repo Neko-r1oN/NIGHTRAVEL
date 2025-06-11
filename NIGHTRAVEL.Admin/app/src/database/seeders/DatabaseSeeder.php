@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AchievementStatusTableSeeder::class);
         $this->call(StatusEnhancementTableSeeder::class);
         $this->call(DifficultyTableSeeder::class);
-        $this->call(AwardTableSeeder::class);
+        $this->call(ContributionTableSeeder::class);
 
     }
 }

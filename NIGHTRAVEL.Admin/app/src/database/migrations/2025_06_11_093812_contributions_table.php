@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         //テーブルのカラム構成を指定
-        Schema::create('awards', function (Blueprint $table) {
+        Schema::create('contributions', function (Blueprint $table) {
             $table->id();                                        //idカラム
             $table->string('name');//nameカラム
             $table->string('explanation');//explanationカラム
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('awards');
+        Schema::dropIfExists('contributions');
     }
 };
