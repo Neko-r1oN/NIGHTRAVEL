@@ -226,6 +226,7 @@ public class Sword : Player
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
         {   // ƒWƒƒƒ“ƒv‰Ÿ‰ºŽž
+            if(animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
             isJump = true;
         }
 
@@ -382,7 +383,6 @@ public class Sword : Player
             m_Rigidbody2D.gravityScale = gravity;
         }
 
-        // 
         Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
         isBlink = false;
