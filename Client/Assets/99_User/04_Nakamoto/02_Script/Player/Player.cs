@@ -14,11 +14,18 @@ abstract public class Player : MonoBehaviour
     abstract public void DoDashDamage();
 
     /// <summary>
-    /// 被ダメ処理
+    /// 被ダメ処理(ノックバック有)
     /// </summary>
     /// <param name="damage">ダメージ量</param>
     /// <param name="position">攻撃したオブジェの位置</param>
     abstract public void ApplyDamage(int damage, Vector3 position);
+
+    /// <summary>
+    /// 被ダメ処理(ノックバック無)
+    /// </summary>
+    /// <param name="dealer"></param>
+    /// <param name="damage"></param>
+    abstract public void DealDamage(GameObject dealer, int damage);
 
     /// <summary>
     /// 経験値獲得処理
