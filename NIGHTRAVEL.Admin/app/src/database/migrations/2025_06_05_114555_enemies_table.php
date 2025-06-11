@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('name', 20);             //nameカラム
             $table->float('hp');                        //hpカラム
             $table->float('attack');                     //attackカラム
+            $table->float('defence');                     //defenceカラム
             $table->float('move_speed');                     //move_speedカラム
             $table->integer('stage_id');                     //stage_idカラム
             $table->timestamps();                               //created_atとupdated_at

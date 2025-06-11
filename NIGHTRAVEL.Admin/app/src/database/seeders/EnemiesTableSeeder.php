@@ -18,6 +18,7 @@ class EnemiesTableSeeder extends Seeder
             'stage_id' => 1,
             'hp' => 10.0,
             'attack' => 5.0,
+            'defence' => 1.0,
             'move_speed' => 20.0
         ]);
     }
