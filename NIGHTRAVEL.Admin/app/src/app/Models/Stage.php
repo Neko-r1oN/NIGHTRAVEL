@@ -12,4 +12,15 @@ class Stage extends Model
     protected $guarded = [
         'id',
     ];
+
+    //リレーショナル（1対多）
+    public function enemies()
+    {
+        return $this->hasMany(Enemy::class);
+    }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class);
+    }
 }

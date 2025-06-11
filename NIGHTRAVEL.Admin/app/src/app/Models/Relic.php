@@ -12,4 +12,11 @@ class Relic extends Model
     protected $guarded = [
         'id',
     ];
+
+    //リレーショナル（1対多）
+    public function user_relics()
+    {
+        return $this->hasMany(UserRelic::class);
+    }
+
 }

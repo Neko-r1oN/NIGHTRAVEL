@@ -12,4 +12,11 @@ class Achievement extends Model
     protected $guarded = [
         'id',
     ];
+
+    //リレーショナル（1対多）
+    public function achievement_statuses()
+    {
+        return $this->hasMany(AchievementStatus::class);
+    }
+    
 }
