@@ -138,6 +138,7 @@ abstract public class EnemyBase : CharacterBase
 
     protected override void Start()
     {
+        base.Start();
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();

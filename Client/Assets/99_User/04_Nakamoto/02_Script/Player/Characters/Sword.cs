@@ -642,7 +642,7 @@ public class Sword : Player
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(power,playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power,playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }

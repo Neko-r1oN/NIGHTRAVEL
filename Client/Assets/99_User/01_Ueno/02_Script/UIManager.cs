@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     Sword player;
-    EnemyController boss;
+    EnemyBase boss;
 
     [SerializeField] Slider playerHpBar;       // プレイヤーのHPバー
     [SerializeField] Slider bossHpBar;         // ボスのHPバー
@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         player = GameManager.Instance.Player.GetComponent<Sword>();
-        boss = GameManager.Instance.Boss.GetComponent<EnemyController>();
+        boss = GameManager.Instance.Boss.GetComponent<EnemyBase>();
         
         playerHpBar.maxValue = player.MaxHP;
         playerSliderText.text = "" + playerHpBar.maxValue;
