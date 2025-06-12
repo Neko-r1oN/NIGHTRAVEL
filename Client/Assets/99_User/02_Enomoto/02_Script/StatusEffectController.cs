@@ -42,12 +42,12 @@ public class StatusEffectController : MonoBehaviour
     #endregion
 
     // 各状態異常を適用させたときの効果値
-    Player player;
+    PlayerBase player;
     EnemyBase enemy;
 
     private void Start()
     {
-        if (this.gameObject.tag == "Player") player = GetComponent<Player>();
+        if (this.gameObject.tag == "Player") player = GetComponent<PlayerBase>();
         else if (this.gameObject.tag == "EnemyBase") enemy = GetComponent<EnemyBase>();
 
 

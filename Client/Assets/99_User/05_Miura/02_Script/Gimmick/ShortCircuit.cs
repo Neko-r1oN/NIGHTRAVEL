@@ -7,14 +7,14 @@ public class ShortCircuit : MonoBehaviour
 
     //[SerializeField] GameObject ElectronicEffect;
     PlayerBase sample;
-    EnemyController enemyController;
+    EnemyBase enemyBase;
     Vector2 pos = Vector2.zero;
     //int count = 0;
 
     void Start()
     {
         sample=GameObject.Find("PlayerSample").GetComponent<PlayerBase>();
-        enemyController=GameObject.FindWithTag("Enemy").GetComponent<EnemyController>();
+        enemyBase=GameObject.FindWithTag("Enemy").GetComponent<EnemyBase>();
     }
 
     // Update is called once per frame

@@ -8,7 +8,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-abstract public class PlayerBase : MonoBehaviour
+abstract public class PlayerBase : CharacterBase
 {
     //--------------------
     // フィールド
@@ -715,7 +715,7 @@ abstract public class PlayerBase : MonoBehaviour
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(power, playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
