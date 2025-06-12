@@ -22,21 +22,19 @@ public class ShortCircuit : MonoBehaviour
 
     void PlayerHitDamage()
     {
-        //int maxLife = (int)player.HP; //プレイヤーの最大HP
+        //int maxLife = (int)player.maxHP; //プレイヤーの最大HP
 
         ////プレイヤーのダメージ計算
-        //int damage = Mathf.FloorToInt(maxLife * 0.05f); //プダメージ量をfloatからintに変換
+        //int damage = Mathf.FloorToInt(maxLife * 0.05f); //ダメージ量をfloatからintに変換
         //player.DealDamage(this.gameObject, damage, Vector2.zero); //トラップごとに対応したダメージ対応処理を呼び出し
     }
 
     void EnemyHitDamage()
     {
-        int HP = enemyController.maxHP; //敵の最大HP
+        int maxHP = enemyController.maxHP; //敵の最大HP
 
-        //==========
-        //ダメージ計算
-        //==========
-        int damage = Mathf.FloorToInt(HP * 0.05f); //ダメージ量を
+        //敵のダメージ計算
+        int damage = Mathf.FloorToInt(maxHP * 0.05f);
         enemyController.ApplyDamage(damage); //敵のダメージ対応関数を呼び出し
     }
 
@@ -48,9 +46,12 @@ public class ShortCircuit : MonoBehaviour
             InvokeRepeating("PlayerHitDamage", 0.1f, 0.5f); //「PlayerHitDamage」を、0.1秒間、0.5秒ごとに繰り返す
         }
         if (collision.gameObject.CompareTag("Enemy"))
-        {
+        {//敵が漏電フィールドに当たったら
             enemyController = collision.GetComponent<EnemyController>(); //enemyControllerに、当たったものを代入
-            InvokeRepeating("EnemyHitDamage", 0.1f, 0.5f); //「EnemyHitDamage」を、0.1秒間、0.5秒ごとに繰り返す
+            int HP = enemyController.HP;
+
+            InvokeRepeating("EnemyHitDamage", 0.1f, 0.5f); //「EnemyHitDamage」を、0.1秒後に、0.5秒ごとに繰り返す
+            Debug.Log(HP);
         }
     }
 
