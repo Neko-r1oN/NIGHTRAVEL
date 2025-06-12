@@ -32,7 +32,7 @@ public class ShortCircuit : MonoBehaviour
         int maxLife= (int)sample.MaxHP;
 
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
-        sample.DealDamage(this.gameObject,damage);
+        sample.ApplyDamage(damage);
         //enemyController.ApplyDamage(damage,) //“G‚ª“–‚½‚Á‚½‚Ìƒ_ƒ[ƒW
         Debug.Log(damage);
     }

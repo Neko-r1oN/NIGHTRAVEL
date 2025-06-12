@@ -9895,10 +9895,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHp: 200
-  hp: 200
-  power: 20
-  moveSpeed: 40
+  baseHp: 10
+  baseDefence: 10
+  basePower: 10
+  baseMoveSpeed: 60
+  baseAttackSpeed: 10
+  baseJumpPower: 10
   m_JumpForce: 850
   wallJumpPower: 2
   m_AirControl: 1
@@ -9909,7 +9911,6 @@ MonoBehaviour:
   ladderSpeed: 0.3
   m_MovementSmoothing: 0.05
   invincible: 0
-  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2

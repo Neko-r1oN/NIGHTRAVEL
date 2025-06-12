@@ -12308,13 +12308,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed139c96459dc264bb81530ec7a90873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHp: 10
+  baseDefence: 10
+  basePower: 10
+  baseMoveSpeed: 10
+  baseAttackSpeed: 10
+  baseJumpPower: 10
   players:
   - {fileID: 1036503036}
-  hp: 10
-  defence: 0
-  power: 2
-  speed: 0
-  jumpPower: 19
   bulletNum: 3
   shotsPerSecond: 0.5
   attackCoolTime: 0.5
@@ -12322,6 +12323,7 @@ MonoBehaviour:
   trackingRange: 8
   hitTime: 0.5
   isBoss: 0
+  isElite: 0
   canDamageOnContact: 0
   canPatrol: 0
   canChaseTarget: 0
