@@ -7,14 +7,14 @@ public class ShortCircuit : MonoBehaviour
 
     //[SerializeField] GameObject ElectronicEffect;
     SampleChara_Copy sample;
-    EnemyController enemyController;
+    EnemyBase enemyController;
     Vector2 pos = Vector2.zero;
     //int count = 0;
 
     void Start()
     {
         sample=GameObject.Find("PlayerSample").GetComponent<SampleChara_Copy>();
-        enemyController=GameObject.FindWithTag("Enemy").GetComponent<EnemyController>();
+        enemyController=GameObject.FindWithTag("EnemyBase").GetComponent<EnemyBase>();
     }
 
     // Update is called once per frame
@@ -45,7 +45,7 @@ public class ShortCircuit : MonoBehaviour
         {
             InvokeRepeating("HitDamage",0.1f,0.5f);
         }
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("EnemyBase"))
         {
             //Debug.Log("敵が漏電フィールドに当たった");
             InvokeRepeating("HitDamage", 0.1f, 0.5f);
@@ -58,7 +58,7 @@ public class ShortCircuit : MonoBehaviour
         {
             CancelInvoke();
         }
-        if(collision.gameObject.CompareTag("Enemy"))
+        if(collision.gameObject.CompareTag("EnemyBase"))
         {
             CancelInvoke();
         }

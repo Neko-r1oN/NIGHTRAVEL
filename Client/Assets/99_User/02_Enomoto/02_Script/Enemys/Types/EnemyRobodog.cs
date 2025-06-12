@@ -1,14 +1,11 @@
 //**************************************************
-//  エネミーのサンプルクラス
+//  近接タイプの敵クラス
 //  Author:r-enomoto
 //**************************************************
-using HardLight2DUtil;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Enemy_Sample : EnemyBase
+public class EnemyRobodog : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -22,22 +19,6 @@ public class Enemy_Sample : EnemyBase
         Fall,
         Dead,
     }
-
-    /// <summary>
-    /// 攻撃方法
-    /// </summary>
-    public enum ATTACK_TYPE_ID
-    {
-        None,
-        MeleeType,
-        RangeType,
-    }
-
-    #region 攻撃について
-    [Header("攻撃方法")]
-    [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
-    [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
-    #endregion
 
     #region チェック判定
     [Header("チェック判定")]
@@ -56,7 +37,7 @@ public class Enemy_Sample : EnemyBase
     [SerializeField] float fallCheckRange = 0.9f;
     #endregion
 
-    #region ターゲットとの距離
+    #region ターゲットと離す距離
     readonly float disToTargetMin = 0.25f;
     #endregion
 
@@ -73,23 +54,15 @@ public class Enemy_Sample : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if (canChaseTarget && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
-        {
-            Jump();
-        }
-        else if (canChaseTarget && !IsGround())
+        if (canChaseTarget && !IsGround())
         {
             AirMovement();
         }
-        else if (attackType == ATTACK_TYPE_ID.MeleeType && canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
+        else if (canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
         {
             Attack();
         }
-        else if (attackType == ATTACK_TYPE_ID.RangeType && canAttack && projectileChecker.CanFireProjectile(throwableObject, 270f))
-        {
-            Attack();
-        }
-        else if (runSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin 
+        else if (runSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
             || runSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
             if (canChaseTarget && IsWall() && !canJump)
@@ -99,10 +72,6 @@ public class Enemy_Sample : EnemyBase
             else if (canChaseTarget && target)
             {
                 Tracking();
-            }
-            else if (canPatrol)
-            {
-                Patorol();
             }
         }
         else Idle();
@@ -118,33 +87,17 @@ public class Enemy_Sample : EnemyBase
     }
 
     /// <summary>
-    /// 攻撃開始処理
+    /// 攻撃処理
     /// </summary>
-    void Attack()
+    public void Attack()
     {
         doOnceDecision = false;
         isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack);
+        m_rb2d.linearVelocity = Vector2.zero;
         if (chaseAI) chaseAI.StopChase();
 
-        // デバック用
-        OnAttackEvent();
-    }
-
-    /// <summary>
-    /// 攻撃実行処理（基本的にアニメーションイベントから呼ばれる）
-    /// </summary>
-    public void OnAttackEvent()
-    {
-        if (attackType == ATTACK_TYPE_ID.MeleeType)
-        {
-            MeleeAttack();
-        }
-        else if (attackType == ATTACK_TYPE_ID.RangeType)
-        {
-            attackCoroutine = StartCoroutine(RangeAttack());
-        }
+        MeleeAttack();
     }
 
     /// <summary>
@@ -164,41 +117,24 @@ public class Enemy_Sample : EnemyBase
     }
 
     /// <summary>
-    /// 遠距離攻撃処理
-    /// </summary>
-    IEnumerator RangeAttack()
-    {
-        GameObject target = this.target;
-        for (int i = 0; i < bulletNum; i++)
-        {
-            GameObject throwableProj = Instantiate(throwableObject, transform.position + new Vector3(TransformHelper.GetFacingDirection(transform) * 0.5f, -0.2f), Quaternion.identity);
-            throwableProj.GetComponent<ThrowableProjectile>().owner = gameObject;
-            Vector2 direction = new Vector2(TransformHelper.GetFacingDirection(transform), 0f);
-            throwableProj.GetComponent<ThrowableProjectile>().direction = direction;
-            yield return new WaitForSeconds(shotsPerSecond);
-        }
-        StartCoroutine(AttackCooldown(attackCoolTime));
-    }
-
-    /// <summary>
     /// 追跡する処理
     /// </summary>
     protected override void Tracking()
     {
         SetAnimId((int)ANIM_ID.Run);
-        float distToPlayer = target.transform.position.x - this.transform.position.x;
-        Vector2 speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * runSpeed, m_rb2d.linearVelocity.y);
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
-    /// 巡回する処理
-    /// </summary>
-    protected override void Patorol()
-    {
-        SetAnimId((int)ANIM_ID.Run);
-        if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * runSpeed, m_rb2d.linearVelocity.y);
+        Vector2 speedVec = Vector2.zero;
+        if (canChaseTarget && target)
+        {
+            if (IsFall() || IsWall())
+            {
+                speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
+            }
+            else
+            {
+                float distToPlayer = target.transform.position.x - this.transform.position.x;
+                speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * runSpeed, m_rb2d.linearVelocity.y);
+            }
+        }
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -217,23 +153,12 @@ public class Enemy_Sample : EnemyBase
     }
 
     /// <summary>
-    /// ジャンプ処理
-    /// </summary>
-    void Jump()
-    {
-        SetAnimId((int)ANIM_ID.Fall);
-
-        transform.position += Vector3.up * groundCheckRadius.y;
-        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-    }
-
-    /// <summary>
     /// ダメージを受けたときの処理
     /// </summary>
     protected override void OnHit()
     {
         base.OnHit();
-        SetAnimId((int)ANIM_ID.Hit);
+        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -255,7 +180,7 @@ public class Enemy_Sample : EnemyBase
     /// <returns></returns>
     protected override void PlayDeadAnim()
     {
-        SetAnimId((int)ANIM_ID.Dead);
+        //SetAnimId((int)ANIM_ID.Dead);
     }
 
     /// <summary>
@@ -264,7 +189,7 @@ public class Enemy_Sample : EnemyBase
     /// <returns></returns>
     protected override void PlayHitAnim()
     {
-        SetAnimId((int)ANIM_ID.Hit);
+        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -273,7 +198,7 @@ public class Enemy_Sample : EnemyBase
     /// <returns></returns>
     bool IsWall()
     {
-       return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+        return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
     }
 
     /// <summary>
@@ -314,12 +239,6 @@ public class Enemy_Sample : EnemyBase
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(meleeAttackCheck.transform.position, meleeAttackRange);
-        }
-
-        // 遠距離攻撃の射線
-        if (attackType == ATTACK_TYPE_ID.RangeType && sightChecker)
-        {
-            projectileChecker.DrawProjectileRayGizmo(throwableObject, 270f);
         }
 
         // 壁の判定

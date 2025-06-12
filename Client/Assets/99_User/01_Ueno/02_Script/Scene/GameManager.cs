@@ -105,10 +105,10 @@ public class GameManager : MonoBehaviour
             if (spawnPos != null)
             {// ï‘ÇËílÇ™nullÇ∂Ç·Ç»Ç¢Ç∆Ç´
                 GameObject boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
-                boss.GetComponent<EnemyController>().IsBoss = true;
+                boss.GetComponent<EnemyBase>().IsBoss = true;
 
-                boss.GetComponent<EnemyController>().Players.Add(player);
-                boss.GetComponent<EnemyController>().SetNearTarget();
+                boss.GetComponent<EnemyBase>().Players.Add(player);
+                boss.GetComponent<EnemyBase>().SetNearTarget();
             }
 
             isSpawnBoss = true;
@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     ///  ìGåÇîj
     /// </summary>
-    public void CrushEnemy(EnemyController enemy)
+    public void CrushEnemy(EnemyBase enemy)
     {
         crushNum++;
 
@@ -311,12 +311,12 @@ public class GameManager : MonoBehaviour
             // ê∂ê¨
             enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
 
-            enemy.GetComponent<EnemyController>().Players.Add(player);
-            enemy.GetComponent<EnemyController>().SetNearTarget();
+            enemy.GetComponent<EnemyBase>().Players.Add(player);
+            enemy.GetComponent<EnemyBase>().SetNearTarget();
 
             if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
             {
-                enemy.GetComponent<EnemyController>().enabled = false;
+                enemy.GetComponent<EnemyBase>().enabled = false;
 
                 // ìßñæâª
                 enemy.GetComponent<SpriteRenderer>().enabled = false;

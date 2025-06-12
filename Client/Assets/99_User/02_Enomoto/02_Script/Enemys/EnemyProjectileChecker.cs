@@ -37,7 +37,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     float ClampAngleToTarget(float initialAngle, Vector3 direction)
     {
         // テクスチャが反転していたら、角度も反転させる
-        float directionMultiplier = Mathf.Clamp(transform.localScale.x, -1, 1);
+        float directionMultiplier = TransformHelper.GetFacingDirection(transform);
         float maxAddAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
         float maxAddAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
         initialAngle *= directionMultiplier;
@@ -59,7 +59,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <returns></returns>
     (RaycastHit2D canterHit2D, RaycastHit2D leftHit2D, RaycastHit2D rightHit2D) GetProjectileRaycastHit(Transform target, GameObject projectile, bool followTargetRotation, float? angle)
     {
-        float attackDist = GetComponent<EnemyController>().AttackDist;
+        float attackDist = GetComponent<EnemyBase>().AttackDist;
         float projectileHeight = projectile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
 
         if (followTargetRotation)
@@ -115,7 +115,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <returns></returns>
     bool IsProjectileFireable(GameObject projectile, bool followTargetRotation = false, float? angle = null)
     {
-        GameObject target = GetComponent<EnemyController>().Target;
+        GameObject target = GetComponent<EnemyBase>().Target;
         if (!target || !projectile) return false;
 
         var projectileRays = GetProjectileRaycastHit(target.transform, projectile, followTargetRotation, angle);
@@ -154,7 +154,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     void DrawProjectileRay(GameObject projectile, bool followTargetRotation = false, float? angle = null)
     {
         float projectileHeight = projectile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
-        GameObject target = GetComponent<EnemyController>().Target;
+        GameObject target = GetComponent<EnemyBase>().Target;
         if (!target) return;
 
         var projectileRays = GetProjectileRaycastHit(target.transform, projectile, followTargetRotation, angle);
@@ -172,7 +172,7 @@ public class EnemyProjectileChecker : MonoBehaviour
         }
 
         Vector3 rayDirection = aimTransform.up;
-        float attackDist = GetComponent<EnemyController>().AttackDist;
+        float attackDist = GetComponent<EnemyBase>().AttackDist;
         Debug.DrawRay(aimTransform.position, rayDirection * attackDist, rayUpColor);
         Debug.DrawRay(leftFireRayPoint.position, rayDirection * attackDist, rayUpColor);
         Debug.DrawRay(rightFireRayPoint.position, rayDirection * attackDist, rayDownColor);
@@ -195,12 +195,12 @@ public class EnemyProjectileChecker : MonoBehaviour
         initialAngle = this.initialAngle;
 
         // テクスチャが反転していたら、角度も反転させる
-        float directionMultiplier = Mathf.Clamp(transform.localScale.x, -1, 1);
+        float directionMultiplier = TransformHelper.GetFacingDirection(transform);
         float maxAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
         float maxAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
         initialAngle *= directionMultiplier;
 
-        float attackDist = GetComponent<EnemyController>().AttackDist;
+        float attackDist = GetComponent<EnemyBase>().AttackDist;
         Debug.DrawRay(aimTransform.position, GetDirection(initialAngle, -maxAngleLeft).normalized * attackDist, Color.red);
         Debug.DrawRay(aimTransform.position, GetDirection(initialAngle, maxAngleRight).normalized * attackDist, Color.red);
     }
