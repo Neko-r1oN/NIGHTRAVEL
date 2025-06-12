@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class StatusEffectController : MonoBehaviour
 {
@@ -42,16 +43,16 @@ public class StatusEffectController : MonoBehaviour
     #endregion
 
     // 各状態異常を適用させたときの効果値
-    PlayerBase player;
-    EnemyBase enemy;
+    CharacterBase characterBase;
+    PlayerBase playerBase;
+    EnemyBase enemyBase;
 
     private void Start()
     {
-        if (this.gameObject.tag == "Player") player = GetComponent<PlayerBase>();
-        else if (this.gameObject.tag == "EnemyBase") enemy = GetComponent<EnemyBase>();
-
-
-        Invoke("ApplyStatusEffect", 2f);
+        if (this.gameObject.tag == "Player") playerBase = GetComponent<PlayerBase>();
+        else if (this.gameObject.tag == "EnemyBase") enemyBase = GetComponent<EnemyBase>();
+        characterBase = GetComponent<CharacterBase>();
+        //Invoke("ApplyStatusEffect", 2f);
     }
 
     private void FixedUpdate()
@@ -78,9 +79,8 @@ public class StatusEffectController : MonoBehaviour
     /// 状態異常を付与する処理
     /// </summary>
     /// <param name="effectType"></param>
-    public void ApplyStatusEffect()
+    public void ApplyStatusEffect(EFFECT_TYPE effectType)
     {
-        EFFECT_TYPE effectType = EFFECT_TYPE.Shock;
         float effectDuration = effectType switch
         {
             EFFECT_TYPE.Burn => maxBurnDuration,
@@ -158,5 +158,8 @@ public class StatusEffectController : MonoBehaviour
     {
         // 最大HPの5%のダメージを与える
         Debug.Log("炎上効果発動中");
+        int dmgValue = Mathf.FloorToInt(characterBase.MaxHP * 0.05f);
+        if (this.gameObject.tag == "Player") playerBase.ApplyDamage(dmgValue, Vector3.zero);
+        else if (this.gameObject.tag == "EnemyBase") enemyBase.ApplyDamage(dmgValue);
     }
 }
