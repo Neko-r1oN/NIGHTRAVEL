@@ -32,7 +32,7 @@ public class Projectile : MonoBehaviour
             collision.gameObject.GetComponent<Player>().ApplyDamage(2, transform.position);
             Destroy(gameObject);
         }
-        else if (collision.gameObject.tag != "Enemy" && collision.gameObject.tag != "Player" && collision.gameObject != owner)
+        else if (collision.gameObject.tag != "EnemyBase" && collision.gameObject.tag != "Player" && collision.gameObject != owner)
         {
             Destroy(gameObject);
         }

@@ -23,10 +23,10 @@ public class ThrowableWeapon : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.gameObject.tag == "Enemy")
+		if (collision.gameObject.tag == "EnemyBase")
 		{
             //collision.gameObject.SendMessage("ApplyDamage", Mathf.Sign(direction.x) * 2f);
-            collision.gameObject.GetComponent<EnemyController>().ApplyDamage((int)(Mathf.Sign(direction.x) * 2f), this.transform);
+            collision.gameObject.GetComponent<EnemyBase>().ApplyDamage((int)(Mathf.Sign(direction.x) * 2f), this.transform);
             Destroy(gameObject);
 		}
 		else if (collision.gameObject.tag != "Player")

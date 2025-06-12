@@ -535,7 +535,7 @@ public class SampleChara_Copy : Player
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
-            if (collidersEnemies[i].gameObject.tag == "Enemy")
+            if (collidersEnemies[i].gameObject.tag == "EnemyBase")
             {
                 if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
                 {
@@ -543,7 +543,7 @@ public class SampleChara_Copy : Player
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(dmgValue,playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(dmgValue,playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }

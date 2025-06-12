@@ -14,8 +14,8 @@ public class EnemyChaseAI : MonoBehaviour
     //------------------
     // ŽŽŒ±—p
     //------------------
-    [SerializeField] GameObject targetObj;
-    [SerializeField] float distance = 0;
+    //[SerializeField] GameObject targetObj;
+    //[SerializeField] float distance = 0;
     Vector3 previousDestination;
 
     void Start()

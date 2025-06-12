@@ -166,7 +166,7 @@ public class Ally : MonoBehaviour
 		Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, 0.9f);
 		for (int i = 0; i < collidersEnemies.Length; i++)
 		{
-			if (collidersEnemies[i].gameObject.tag == "Enemy" && collidersEnemies[i].gameObject != gameObject )
+			if (collidersEnemies[i].gameObject.tag == "EnemyBase" && collidersEnemies[i].gameObject != gameObject )
 			{
 				if (transform.localScale.x < 1)
 				{

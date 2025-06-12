@@ -1,5 +1,5 @@
 //**************************************************
-//  [親]エネミーのコントローラークラス
+//  エネミーの抽象クラス
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class EnemyController : MonoBehaviour
+abstract public class EnemyBase : CharacterBase
 {
     //  マネージャークラスからPlayerを取得できるのが理想(変数削除予定、またはSerializeField削除予定)
     #region プレイヤー・ターゲット
@@ -32,37 +32,7 @@ abstract public class EnemyController : MonoBehaviour
     protected LayerMask terrainLayerMask; // 壁と地面のレイヤー
     #endregion
 
-    #region 基本ステータス
-    // 最大HP
-    public int maxHP { get; private set; }
-    #endregion
-
     #region ステータス
-    [Foldout("ステータス")]
-    [SerializeField]
-    protected int hp = 10;
-    public int HP { get { return hp; } set { hp = value; } }
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    protected int defence = 0;
-    public int Defence { get { return defence; } set { defence = value; } }
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    protected int power = 2;
-    public int Power { get { return power; } set { power = value; } }
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    protected int speed = 5;
-    public int Speed { get { return speed; } set { speed = value; } }
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    protected float jumpPower = 19;
-    public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
-
     [Foldout("ステータス")]
     [SerializeField]
     protected int bulletNum = 3;
@@ -81,7 +51,6 @@ abstract public class EnemyController : MonoBehaviour
     [SerializeField]
     [Tooltip("攻撃を開始する距離")]
     protected float attackDist = 1.5f;
-    public float AttackDist { get { return attackDist; } }
 
     [Foldout("ステータス")]
     [SerializeField]
@@ -91,14 +60,26 @@ abstract public class EnemyController : MonoBehaviour
     [Foldout("ステータス")]
     [SerializeField]
     protected float hitTime = 0.5f;
-    #endregion
 
-    #region オプション
     [Foldout("オプション")]
     [SerializeField]
     protected bool isBoss = false;
+
+    [Foldout("オプション")]
+    [SerializeField]
+    protected bool isElite = false;
+    #endregion
+
+    #region ステータス外部参照用プロパティ
+
+    public float AttackDist { get { return attackDist; } }
+
     public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
 
+    public bool IsElite { get { return isElite; } set { isElite = value; } }
+    #endregion
+
+    #region オプション
     [Foldout("オプション")]
     [Tooltip("接触でダメージを与えることが可能")]
     [SerializeField] 
@@ -131,6 +112,7 @@ abstract public class EnemyController : MonoBehaviour
     #endregion
 
     #region 状態管理
+    protected bool isStun;
     protected bool isInvincible;
     protected bool doOnceDecision;
     protected bool isAttacking;
@@ -154,7 +136,7 @@ abstract public class EnemyController : MonoBehaviour
     protected int exp = 100;
     #endregion
 
-    protected virtual void Start()
+    protected override void Start()
     {
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
@@ -162,13 +144,11 @@ abstract public class EnemyController : MonoBehaviour
         projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
-
-        maxHP = hp;
     }
 
     private void FixedUpdate()
     {
-        if (isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
+        if (isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
 
         if (!target && Players.Count > 0)
         {
@@ -183,7 +163,7 @@ abstract public class EnemyController : MonoBehaviour
 
         if (!target)
         {
-            if (canPatrol && !isPatrolPaused) StartCoroutine(Patorol());
+            if (canPatrol && !isPatrolPaused) Patorol();
             else Idle();
             return;
         }
@@ -243,10 +223,7 @@ abstract public class EnemyController : MonoBehaviour
     /// <summary>
     /// 巡回する処理
     /// </summary>
-    protected virtual IEnumerator Patorol()
-    {
-        yield return null;
-    }
+    protected virtual void Patorol() { }
 
     /// <summary>
     /// ダメージ適応処理
@@ -289,10 +266,16 @@ abstract public class EnemyController : MonoBehaviour
     abstract protected void PlayDeadAnim();
 
     /// <summary>
+    /// ヒットアニメーションを再生
+    /// </summary>
+    abstract protected void PlayHitAnim();
+
+    /// <summary>
     /// ダメージを受けたときの処理
     /// </summary>
     virtual protected void OnHit()
     {
+        PlayHitAnim();
         if (attackCoroutine != null)
         {
             StopCoroutine(attackCoroutine); // 攻撃処理を中断する
@@ -400,6 +383,18 @@ abstract public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
+    /// スタン処理
+    /// </summary>
+    /// <param name="time"></param>
+    public void ApplyStun(float time)
+    {
+        if (!isStun)
+        {
+            StartCoroutine(StunTime(time));
+        }
+    }
+
+    /// <summary>
     /// ダメージ適応時の無敵時間
     /// </summary>
     /// <returns></returns>
@@ -412,6 +407,18 @@ abstract public class EnemyController : MonoBehaviour
             yield return new WaitForSeconds(hitTime);
             isInvincible = false;
         }
+    }
+
+    /// <summary>
+    /// 一定時間スタンさせる処理
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator StunTime(float stunTime)
+    {
+        isStun = true;
+        OnHit();
+        yield return new WaitForSeconds(stunTime);
+        isStun = false;
     }
 
     /// <summary>
