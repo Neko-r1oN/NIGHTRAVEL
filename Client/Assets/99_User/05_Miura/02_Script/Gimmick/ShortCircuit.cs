@@ -5,16 +5,13 @@ public class ShortCircuit : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    //[SerializeField] GameObject ElectronicEffect;
-    PlayerBase sample;
+    PlayerBase playerBase;
     EnemyBase enemyBase;
     Vector2 pos = Vector2.zero;
-    //int count = 0;
 
     void Start()
     {
-        sample=GameObject.Find("PlayerSample").GetComponent<PlayerBase>();
-        enemyBase=GameObject.FindWithTag("Enemy").GetComponent<EnemyBase>();
+
     }
 
     // Update is called once per frame
@@ -25,15 +22,11 @@ public class ShortCircuit : MonoBehaviour
 
     void HitDamage()
     {
-        //count++;
-        //Debug.Log("プレイヤーが漏電フィールドに当たった" + count);
-
         //SampleChara_CopyのmaxLifeをintに変換
-        int maxLife= (int)sample.MaxHP;
+        int maxLife= (int)playerBase.MaxHP;
 
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
-        sample.DealDamage(this.gameObject,damage);
-        //enemyController.ApplyDamage(damage,) //敵が当たった時のダメージ
+        playerBase.DealDamage(this.gameObject,damage);
         Debug.Log(damage);
     }
 
@@ -41,11 +34,13 @@ public class ShortCircuit : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            playerBase = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
             InvokeRepeating("HitDamage",0.1f,0.5f);
         }
         if (collision.gameObject.CompareTag("Enemy"))
         {
             //Debug.Log("敵が漏電フィールドに当たった");
+            enemyBase = GameObject.FindWithTag("Enemy").GetComponent<EnemyBase>();
             InvokeRepeating("HitDamage", 0.1f, 0.5f);
         }
     }
