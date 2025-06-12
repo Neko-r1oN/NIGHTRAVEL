@@ -40,17 +40,7 @@ abstract public class PlayerBase : CharacterBase
     protected int nextLvExp = 0;      // 次のレベルまでに必要な経験値
 
     [Foldout("共通ステータス")]
-    [SerializeField] protected int maxHp = 200;   // 最大体力
-    [Foldout("共通ステータス")]
-    [SerializeField] protected int hp = 200;      // 現体力
-    [Foldout("共通ステータス")]
     protected int startHp = 0;                    // 初期体力
-
-    [Foldout("共通ステータス")]
-    [SerializeField] protected int power = 20;        // 攻撃力
-
-    [Foldout("共通ステータス")]
-    public float moveSpeed = 40f;   // 走る速度
 
     [Foldout("共通ステータス")]
     [SerializeField] protected float m_JumpForce = 400f;    // ジャンプ力
@@ -86,16 +76,6 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region ステータス外部参照用プロパティ
-    /// <summary>
-    /// 最大体力
-    /// </summary>
-    public int MaxHP { get { return maxHp; } }
-
-    /// <summary>
-    /// 体力
-    /// </summary>
-    public int HP { get { return hp; } }
-
     /// <summary>
     /// 現レベル
     /// </summary>
@@ -147,10 +127,10 @@ abstract public class PlayerBase : CharacterBase
 
     #region パーティクル
     [Foldout("動作フラグ関連")]
-    protected ParticleSystem particleJumpUp;
+    [SerializeField] protected ParticleSystem particleJumpUp;
 
     [Foldout("動作フラグ関連")]
-    protected ParticleSystem particleJumpDown;
+    [SerializeField] protected ParticleSystem particleJumpDown;
     #endregion
 
     #region カメラ
@@ -201,50 +181,6 @@ abstract public class PlayerBase : CharacterBase
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
         startHp = maxHp;
-    }
-
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    private void Update()
-    {
-        // キャラの移動
-        horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
-        verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
-        Ladder();
-
-        if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
-        {   // ジャンプ押下時
-            if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
-                isJump = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
-        {   // ブリンク押下時
-            isBlink = true;
-            gameObject.layer = 21;
-        }
-
-        if (Input.GetKeyDown(KeyCode.X) && canAttack || Input.GetButtonDown("Attack1") && canAttack)
-        {   // 攻撃1
-            canAttack = false;
-            animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
-            StartCoroutine(AttackCooldown());
-        }
-
-        if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
-        {   // 攻撃2
-
-        }
-
-        //-----------------------------
-        // デバッグ用
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            GetExp(testExp);
-            Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
-        }
     }
 
     /// <summary>
@@ -722,29 +658,9 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 被ダメ処理(ノックバック無)
-    /// </summary>
-    public void DealDamage(GameObject dealer, int damage)
-    {
-        switch (dealer.gameObject.tag)
-        {
-            case "Short circuit":
-                hp -= damage;
-                animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-                if (hp <= 0)
-                {   // 死亡処理
-                    StartCoroutine(WaitToDead());
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    /// <summary>
     /// 被ダメ処理(ノックバック有)
     /// </summary>
-    public void ApplyDamage(int damage, Vector3 position)
+    public void ApplyDamage(int damage, Vector3? position = null)
     {
         if (!invincible)
         {
@@ -752,9 +668,12 @@ abstract public class PlayerBase : CharacterBase
             hp -= damage;
 
             // ノックバック処理
-            Vector2 damageDir = Vector3.Normalize(transform.position - position) * 40f;
-            m_Rigidbody2D.linearVelocity = Vector2.zero;
-            m_Rigidbody2D.AddForce(damageDir * 10);
+            if(position != null)
+            {
+                Vector2 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
+                m_Rigidbody2D.linearVelocity = Vector2.zero;
+                m_Rigidbody2D.AddForce(damageDir * 10);
+            }
 
             if (hp <= 0)
             {   // 死亡処理
@@ -762,7 +681,8 @@ abstract public class PlayerBase : CharacterBase
             }
             else
             {   // 被ダメ硬直
-                StartCoroutine(Stun(0.25f));
+                if(position != null) StartCoroutine(Stun(0.25f));
+
                 StartCoroutine(MakeInvincible(1f));
             }
         }
