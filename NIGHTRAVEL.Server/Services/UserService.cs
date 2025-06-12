@@ -1,6 +1,6 @@
 ﻿////////////////////////////////////////////////////////////////
 ///
-/// ユーザーの通信を管理するスクリプト
+/// ユーザー関連の通信を管理するスクリプト
 /// 
 /// Aughter:木田晃輔
 ///
@@ -15,19 +15,50 @@ using System.Linq.Expressions;
 
 namespace NIGHTRAVEL.Server.Services
 {
+   /// <summary>
+   /// ユーザーのApiを追加
+   /// </summary>
     public class UserService:ServiceBase<IUserService>,IUserService
     {
-        public async UnaryResult<int> RegistUserAsync(string name)
+        //ユーザーの登録
+        public async UnaryResult<int> RegistUserAsync()
         {
+            //データベースを取得
             using var context = new GameDbContext();
 
             //テーブルにレコードを追加
-            User user = new User();
-            user.Created_at = DateTime.Now;
-            user.Updated_at = DateTime.Now;
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-            return user.id;
+            User user = new User();             //Userデータ
+            user.Created_at = DateTime.Now;     //生成日時
+            user.Updated_at = DateTime.Now;     //更新日時
+            context.Users.Add(user);            //データベースに格納
+            await context.SaveChangesAsync();   //データベースを保存する
+            return user.id;                     //ユーザーのidを返す
+        }
+
+        //全ユーザーの取得
+        public async UnaryResult<User[]> GetAllUsersAsync()
+        {
+            //データベースを取得
+            using var context = new GameDbContext();
+
+            //テーブルからレコードをすべて取得
+            User[] users = context.Users.ToArray();
+            
+            //ユーザーのデータを返す
+            return users;
+        }
+
+        //ユーザーをidを指定して取得
+        public async UnaryResult<User> GetUserAsync(int id)
+        {
+            //DBを取得
+            using var context = new GameDbContext();
+
+            //テーブルからレコードをidを指定して取得
+            User user = context.Users.Where(user=>user.id==id).First();
+
+            //ユーザーのデータを返す
+            return user;
         }
 
     }

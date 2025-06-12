@@ -5,13 +5,16 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
+using System;
+
 namespace NIGHTRAVEL.Server.Model.Entity
 {
     public class User
     {
-        public int id { get; set; }
-        public DateTime Created_at { get; set; }
-        public DateTime Updated_at { get; set; }
+        public int id { get; set; }                         //ユーザーのid
+        public DateTime Created_at { get; set; }            //生成日時
+        public DateTime Updated_at { get; set; }            //更新日時
 
     }
 }
