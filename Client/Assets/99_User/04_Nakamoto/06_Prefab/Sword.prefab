@@ -9897,19 +9897,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHp: 200
   hp: 200
-  dmgValue: 4
-  runSpeed: 40
-  ladderSpeed: 0.3
+  power: 20
+  moveSpeed: 40
   m_JumpForce: 850
-  m_BlinkForce: 50
-  blinkTime: 0.08
-  blinkCoolDown: 1
-  m_AirControl: 1
-  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
-  m_MovementSmoothing: 0.05
-  canDoubleJump: 1
-  invincible: 0
   wallJumpPower: 2
+  m_AirControl: 1
+  canDoubleJump: 1
+  m_BlinkForce: 40
+  blinkTime: 0.12
+  blinkCoolDown: 1
+  ladderSpeed: 0.3
+  m_MovementSmoothing: 0.05
+  invincible: 0
+  throwableObject: {fileID: 5532974359214069763, guid: 340067e8e5a097546ad175f1d00a6ece, type: 3}
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2

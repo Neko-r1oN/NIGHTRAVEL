@@ -9,7 +9,6 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
-using UnityEditor.PackageManager.UI;
 
 public class SampleChara_Copy : Player
 {
@@ -33,8 +32,8 @@ public class SampleChara_Copy : Player
 
     #region ステータス関連
     [Foldout("ステータス")]
-    public float life = 100f;
-    public float maxLife=0;
+    public float hp = 100f;
+    public float maxHp = 0;
 
     [Foldout("ステータス")]
     public float runSpeed = 40f;    // 速度係数
@@ -169,7 +168,7 @@ public class SampleChara_Copy : Player
 
     private void Start()
     {
-        maxLife = life;
+        maxHp = hp;
     }
 
     /// <summary>
@@ -551,6 +550,26 @@ public class SampleChara_Copy : Player
     }
 
     /// <summary>
+    /// 被ダメ処理(ノックバック無)
+    /// </summary>
+    public override void DealDamage(GameObject dealer, int damage)
+    {
+        switch (dealer.gameObject.tag)
+        {
+            case "Short circuit":
+                hp -= damage;
+                animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+                if (hp <= 0)
+                {   // 死亡処理
+                    StartCoroutine(WaitToDead());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
     /// ダメージ受ける処理
     /// </summary>
     /// <param name="damage">ダメージ量</param>
@@ -560,14 +579,14 @@ public class SampleChara_Copy : Player
         if (!invincible)
         {
             animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-            life -= damage;
+            hp -= damage;
 
             // ノックバック処理
             Vector2 damageDir = Vector3.Normalize(transform.position - position) * 40f;
             m_Rigidbody2D.linearVelocity = Vector2.zero;
             m_Rigidbody2D.AddForce(damageDir * 10);
 
-            if (life <= 0)
+            if (hp <= 0)
             {   // 死亡処理
                 StartCoroutine(WaitToDead());
             }
@@ -584,10 +603,10 @@ public class SampleChara_Copy : Player
         switch (dealer.gameObject.tag)
         {
             case "Short circuit":
-                life -= damage;
+                hp -= damage;
                 animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
-                if (life <= 0)
+                if (hp <= 0)
                 {   // 死亡処理
                     StartCoroutine(WaitToDead());
                 }

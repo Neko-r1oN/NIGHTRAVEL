@@ -29,13 +29,13 @@ public class ShortCircuit : MonoBehaviour
         //Debug.Log("プレイヤーが漏電フィールドに当たった" + count);
 
         //SampleChara_CopyのmaxLifeをintに変換
-        int maxLife= (int)sample.maxLife;
+        int maxLife= (int)sample.maxHp;
 
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
         sample.DealDamage(this.gameObject,damage,Vector2.zero);//
         //enemyController.ApplyDamage(damage,) //敵が当たった時のダメージ
         Debug.Log(damage);
-        Debug.Log(sample.life);
+        Debug.Log(sample.hp);
 
     }
 

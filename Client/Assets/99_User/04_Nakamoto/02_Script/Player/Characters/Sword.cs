@@ -9,6 +9,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
+using HardLight2DUtil;
 
 public class Sword : Player
 {
@@ -75,9 +76,9 @@ public class Sword : Player
     public bool canDoubleJump = true;                   // ダブルジャンプ使用フラグ
 
     [Foldout("ステータス")]
-    [SerializeField] private float m_BlinkForce = 45f;  // ブリンク力
+    [SerializeField] private float m_BlinkForce = 38f;  // ブリンク力
     [Foldout("ステータス")]
-    [SerializeField] private float blinkTime = 0.2f;    // ブリンク時間
+    [SerializeField] private float blinkTime = 0.35f;   // ブリンク時間
     [Foldout("ステータス")]
     [SerializeField] private float blinkCoolDown = 1f;  // ブリンククールダウン
 
@@ -225,6 +226,7 @@ public class Sword : Player
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
         {   // ジャンプ押下時
+            if(animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
             isJump = true;
         }
 
@@ -301,10 +303,13 @@ public class Sword : Player
             }
         }
 
-        if (m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f)
+        // 接地時にIDLE or RUNモーションに戻るように設定
+        if (m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f
+            || m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Fall && Mathf.Abs(horizontalMove) >= 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Run);
 
-        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Run && Mathf.Abs(horizontalMove) < 0.1f)
+        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Run && Mathf.Abs(horizontalMove) < 0.1f
+            || m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Fall && Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
 
         //---------------------------------
@@ -378,7 +383,6 @@ public class Sword : Player
             m_Rigidbody2D.gravityScale = gravity;
         }
 
-        // 
         Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
         isBlink = false;
@@ -439,14 +443,18 @@ public class Sword : Player
                 // SmoothDampにより、滑らかな移動を実現
                 m_Rigidbody2D.linearVelocity = Vector3.SmoothDamp(m_Rigidbody2D.linearVelocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
-                // キャラが入力と反対方向を向いていた際に反転させる
-                if (move > 0 && !m_FacingRight && !isWallSliding)
-                {   // 右入力
-                    Flip();
-                }
-                else if (move < 0 && m_FacingRight && !isWallSliding)
-                {   // 左入力
-                    Flip();
+                // 攻撃時は反転しないように
+                if(animator.GetInteger("animation_id") != (int)ANIM_ID.Attack && animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                {
+                    // キャラが入力と反対方向を向いていた際に反転させる
+                    if (move > 0 && !m_FacingRight && !isWallSliding)
+                    {   // 右入力
+                        Flip();
+                    }
+                    else if (move < 0 && m_FacingRight && !isWallSliding)
+                    {   // 左入力
+                        Flip();
+                    }
                 }
             }
 
@@ -483,7 +491,13 @@ public class Sword : Player
 
                     isWallJump = false;
 
+                    int id = animator.GetInteger("animation_id");
+
                     animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
+                    //if (id != (int)ANIM_ID.Blink)
+                    //{
+                    //    animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
+                    //}
                 }
                 isBlinking = false;
 
@@ -497,10 +511,13 @@ public class Sword : Player
                     {   // スライド処理
                         oldWallSlidding = true;
                         int id = animator.GetInteger("animation_id");
-                        if (id != (int)ANIM_ID.Attack)
-                        {
-                            animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
-                        }
+
+                        animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
+                        //if (id != (int)ANIM_ID.Attack && id != (int)ANIM_ID.Blink)
+                        //{
+                        //    animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
+                        //}
+
                         m_Rigidbody2D.linearVelocity = new Vector2(-transform.localScale.x * 2, -5);
                     }
                 }
@@ -632,10 +649,28 @@ public class Sword : Player
     }
 
     /// <summary>
-    /// ダメージ受ける処理
+    /// 被ダメ処理(ノックバック無)
     /// </summary>
-    /// <param name="damage">ダメージ量</param>
-    /// <param name="position">攻撃したオブジェの位置</param>
+    public override void DealDamage(GameObject dealer, int damage)
+    {
+        switch (dealer.gameObject.tag)
+        {
+            case "Short circuit":
+                hp -= damage;
+                animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+                if (hp <= 0)
+                {   // 死亡処理
+                    StartCoroutine(WaitToDead());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 被ダメ処理(ノックバック有)
+    /// </summary>
     override public void ApplyDamage(int damage, Vector3 position)
     {
         if (!invincible)
