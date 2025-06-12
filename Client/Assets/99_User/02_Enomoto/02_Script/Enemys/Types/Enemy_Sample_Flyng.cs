@@ -79,11 +79,11 @@ public class Enemy_Sample_Flyng : EnemyBase
             chaseAI.StopChase();
             Attack();
         }
-        else if (runSpeed > 0 && canChaseTarget && target)
+        else if (moveSpeed > 0 && canChaseTarget && target)
         {
             Tracking();
         }
-        else if (runSpeed > 0 && canPatrol && !isPatrolPaused)
+        else if (moveSpeed > 0 && canPatrol && !isPatrolPaused)
         {
             Patorol();
         }
@@ -191,7 +191,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         }
 
         Vector2 speedVec = Vector2.zero;
-        speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * runSpeed / 2, m_rb2d.linearVelocity.y);
+        speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
         patorolCoroutine = null;
     }

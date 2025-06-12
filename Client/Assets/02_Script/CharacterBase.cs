@@ -24,7 +24,7 @@ abstract public class CharacterBase : MonoBehaviour
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected float baseRunSpeed = 40f;   // 速度係数
+    protected float baseMoveSpeed = 10f;   // 移動速度
 
     [Foldout("ステータス")]
     [SerializeField]
@@ -43,7 +43,7 @@ abstract public class CharacterBase : MonoBehaviour
     protected int hp;
     protected int defence;
     protected int power;
-    protected float runSpeed;
+    protected float moveSpeed;
     protected float attackSpeed;
     protected float jumpPower;
     #endregion
@@ -72,7 +72,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// <summary>
     /// 速度係数
     /// </summary>
-    public float RunSpeed { get { return runSpeed; } set { runSpeed = value; } }
+    public float MoveSpeed { get { return moveSpeed; } set { moveSpeed = value; } }
 
     /// <summary>
     /// 攻撃速度
@@ -91,7 +91,7 @@ abstract public class CharacterBase : MonoBehaviour
         hp = baseHp;
         defence = baseDefence;
         power = basePower;
-        runSpeed = baseRunSpeed;
+        moveSpeed = baseMoveSpeed;
         attackSpeed = baseAttackSpeed;
         jumpPower = baseJumpPower;
     }

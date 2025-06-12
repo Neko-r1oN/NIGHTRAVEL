@@ -62,8 +62,8 @@ public class EnemyMelee : EnemyBase
         {
             Attack();
         }
-        else if (runSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
-            || runSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
+            || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
             if (canChaseTarget && IsWall() && !canJump)
             {
@@ -135,7 +135,7 @@ public class EnemyMelee : EnemyBase
         else
         {
             float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * runSpeed, m_rb2d.linearVelocity.y);
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         }
 
         m_rb2d.linearVelocity = speedVec;
@@ -148,7 +148,7 @@ public class EnemyMelee : EnemyBase
     {
         SetAnimId((int)ANIM_ID.Run);
         if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * runSpeed, m_rb2d.linearVelocity.y);
+        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -161,7 +161,7 @@ public class EnemyMelee : EnemyBase
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
-        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * runSpeed, m_rb2d.linearVelocity.y);
+        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         Vector3 velocity = Vector3.zero;
         m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
     }
