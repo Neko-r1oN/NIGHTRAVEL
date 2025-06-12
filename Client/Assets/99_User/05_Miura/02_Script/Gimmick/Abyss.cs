@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Abyss : MonoBehaviour
 {
-    SampleChara_Copy sample;
+    PlayerBase sample;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        sample = GameObject.Find("PlayerSample").GetComponent<SampleChara_Copy>();
+        sample = GameObject.Find("PlayerSample").GetComponent<PlayerBase>();
     }
 
     // Update is called once per frame
