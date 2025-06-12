@@ -5,7 +5,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class EnemyMelee : EnemyController
+public class EnemyMelee : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -62,16 +62,20 @@ public class EnemyMelee : EnemyController
         {
             Attack();
         }
-        else if (speed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
-            || speed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
+            || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
             if (canChaseTarget && IsWall() && !canJump)
             {
                 Idle();
             }
-            else
+            else if (canChaseTarget && target)
             {
                 Tracking();
+            }
+            else if (canPatrol)
+            {
+                Patorol();
             }
         }
         else Idle();
@@ -110,7 +114,7 @@ public class EnemyMelee : EnemyController
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(power, transform.position);
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
             }
         }
         StartCoroutine(AttackCooldown(attackCoolTime));
@@ -123,16 +127,28 @@ public class EnemyMelee : EnemyController
     {
         SetAnimId((int)ANIM_ID.Run);
         Vector2 speedVec = Vector2.zero;
-        if (canChaseTarget && target)
+
+        if (IsFall() || IsWall())
+        {
+            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
+        }
+        else
         {
             float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         }
-        else if (canPatrol)
-        {
-            if (IsFall() || IsWall()) Flip();
-            speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
-        }
+
+        m_rb2d.linearVelocity = speedVec;
+    }
+
+    /// <summary>
+    /// 巡回する処理
+    /// </summary>
+    protected override void Patorol()
+    {
+        SetAnimId((int)ANIM_ID.Run);
+        if (IsFall() || IsWall()) Flip();
+        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -145,7 +161,7 @@ public class EnemyMelee : EnemyController
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
-        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
+        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         Vector3 velocity = Vector3.zero;
         m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
     }
@@ -178,7 +194,16 @@ public class EnemyMelee : EnemyController
     /// <returns></returns>
     protected override void PlayDeadAnim()
     {
-        SetAnimId((int)ANIM_ID.Dead);
+        //SetAnimId((int)ANIM_ID.Dead);
+    }
+
+    /// <summary>
+    /// ヒットアニメーション
+    /// </summary>
+    /// <returns></returns>
+    protected override void PlayHitAnim()
+    {
+        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>

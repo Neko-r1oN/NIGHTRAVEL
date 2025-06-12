@@ -166,7 +166,7 @@ public class AllySanmple: MonoBehaviour
 		Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, 0.9f);
 		for (int i = 0; i < collidersEnemies.Length; i++)
 		{
-			if (collidersEnemies[i].gameObject.tag == "Enemy" && collidersEnemies[i].gameObject != gameObject )
+			if (collidersEnemies[i].gameObject.tag == "EnemyBase" && collidersEnemies[i].gameObject != gameObject )
 			{
 				if (transform.localScale.x < 1)
 				{
@@ -176,7 +176,7 @@ public class AllySanmple: MonoBehaviour
 			}
 			else if (collidersEnemies[i].gameObject.tag == "Player")
 			{
-				collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(2, transform.position);
+				collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
 			}
 		}
 		StartCoroutine(WaitToAttack(0.5f));

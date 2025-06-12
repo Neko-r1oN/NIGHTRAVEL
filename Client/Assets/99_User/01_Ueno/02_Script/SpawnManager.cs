@@ -15,7 +15,7 @@ public class SpawnManager : MonoBehaviour
             this.GetComponent<SpriteRenderer>().enabled = true;
             
             // プレイヤーリストにプレイヤーの情報を格納
-            this.GetComponent<EnemyController>().enabled = true;
+            this.GetComponent<EnemyBase>().enabled = true;
         }
     }
 }

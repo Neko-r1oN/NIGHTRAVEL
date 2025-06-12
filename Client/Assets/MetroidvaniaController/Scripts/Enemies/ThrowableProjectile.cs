@@ -20,15 +20,15 @@ public class ThrowableProjectile : MonoBehaviour
 	{
 		if (collision.gameObject.tag == "Player")
 		{
-			collision.gameObject.GetComponent<Player>().ApplyDamage(2, transform.position);
+			collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
 			Destroy(gameObject);
 		}
-		//else if ( owner != null && collision.gameObject != owner && collision.gameObject.tag == "Enemy" )
+		//else if ( owner != null && collision.gameObject != owner && collision.gameObject.tag == "EnemyBase" )
 		//{
 		//	collision.gameObject.SendMessage("ApplyDamage", Mathf.Sign(direction.x) * 2f);
 		//	Destroy(gameObject);
 		//}
-		else if (collision.gameObject.tag != "Enemy" && collision.gameObject.tag != "Player")
+		else if (collision.gameObject.tag != "EnemyBase" && collision.gameObject.tag != "Player")
 		{
 			Destroy(gameObject);
 		}

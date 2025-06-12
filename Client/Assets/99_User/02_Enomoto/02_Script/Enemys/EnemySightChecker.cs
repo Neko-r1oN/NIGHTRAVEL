@@ -23,11 +23,11 @@ public class EnemySightChecker : MonoBehaviour
     /// <returns></returns>
     public bool IsTargetVisible()
     {
-        GameObject target = GetComponent<EnemyController>().Target;
+        GameObject target = GetComponent<EnemyBase>().Target;
         if (!target) return false;
 
         Vector2 dirToTarget = target.transform.position - transform.position;
-        Vector2 angleVec = new Vector2(transform.localScale.x, 0);
+        Vector2 angleVec = new Vector2(TransformHelper.GetFacingDirection(transform), 0);
         float angle = Vector2.Angle(dirToTarget, angleVec);
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
         return angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player");
@@ -39,7 +39,7 @@ public class EnemySightChecker : MonoBehaviour
     /// <returns></returns>
     public bool IsObstructed()
     {
-        GameObject target = GetComponent<EnemyController>().Target;
+        GameObject target = GetComponent<EnemyBase>().Target;
         Vector2 dirToTarget = target.transform.position - transform.position;
         float dist = dirToTarget.magnitude;
         float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
@@ -56,10 +56,10 @@ public class EnemySightChecker : MonoBehaviour
     {
         GameObject target = null;
         float minTargetDist = float.MaxValue;
-        foreach (GameObject player in GetComponent<EnemyController>().Players)
+        foreach (GameObject player in GetComponent<EnemyBase>().Players)
         {
             Vector2 dirToTarget = player.transform.position - transform.position;
-            Vector2 angleVec = new Vector2(transform.localScale.x, 0);
+            Vector2 angleVec = new Vector2(TransformHelper.GetFacingDirection(transform), 0);
             float angle = Vector2.Angle(dirToTarget, angleVec);
             RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
 
@@ -84,14 +84,14 @@ public class EnemySightChecker : MonoBehaviour
     /// <param name="canChaseTarget"></param>
     public void DrawSightLine(bool canChaseTarget)
     {
-        List<GameObject> players = GetComponent<EnemyController>().Players;
-        GameObject target = GetComponent<EnemyController>().Target;
+        List<GameObject> players = GetComponent<EnemyBase>().Players;
+        GameObject target = GetComponent<EnemyBase>().Target;
         if (players.Count > 0)
         {
             foreach (GameObject player in players)
             {
                 Vector2 dirToTarget = player.transform.position - transform.position;
-                Vector2 angleVec = new Vector2(transform.localScale.x, 0);
+                Vector2 angleVec = new Vector2(TransformHelper.GetFacingDirection(transform), 0);
                 float angle = Vector2.Angle(dirToTarget, angleVec);
                 RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
 

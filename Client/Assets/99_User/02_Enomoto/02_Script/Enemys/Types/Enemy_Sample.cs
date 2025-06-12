@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Enemy_Sample : EnemyController
+public class Enemy_Sample : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -89,16 +89,20 @@ public class Enemy_Sample : EnemyController
         {
             Attack();
         }
-        else if (speed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin 
-            || speed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin 
+            || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
             if (canChaseTarget && IsWall() && !canJump)
             {
                 Idle();
             }
-            else
+            else if (canChaseTarget && target)
             {
                 Tracking();
+            }
+            else if (canPatrol)
+            {
+                Patorol();
             }
         }
         else Idle();
@@ -153,7 +157,7 @@ public class Enemy_Sample : EnemyController
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(power, transform.position);
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
             }
         }
         StartCoroutine(AttackCooldown(attackCoolTime));
@@ -167,9 +171,9 @@ public class Enemy_Sample : EnemyController
         GameObject target = this.target;
         for (int i = 0; i < bulletNum; i++)
         {
-            GameObject throwableProj = Instantiate(throwableObject, transform.position + new Vector3(transform.localScale.x * 0.5f, -0.2f), Quaternion.identity);
+            GameObject throwableProj = Instantiate(throwableObject, transform.position + new Vector3(TransformHelper.GetFacingDirection(transform) * 0.5f, -0.2f), Quaternion.identity);
             throwableProj.GetComponent<ThrowableProjectile>().owner = gameObject;
-            Vector2 direction = new Vector2(transform.localScale.x, 0f);
+            Vector2 direction = new Vector2(TransformHelper.GetFacingDirection(transform), 0f);
             throwableProj.GetComponent<ThrowableProjectile>().direction = direction;
             yield return new WaitForSeconds(shotsPerSecond);
         }
@@ -177,23 +181,24 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
-    /// 走る処理
+    /// 追跡する処理
     /// </summary>
     protected override void Tracking()
     {
         SetAnimId((int)ANIM_ID.Run);
-        Vector2 speedVec = Vector2.zero;
-        if (canChaseTarget && target)
-        {
-            float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
-        }
-        else if (canPatrol)
-        {
-            if (IsFall() || IsWall()) Flip();
-            speedVec = new Vector2(transform.localScale.x * speed, m_rb2d.linearVelocity.y);
-        }
+        float distToPlayer = target.transform.position.x - this.transform.position.x;
+        Vector2 speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
+        m_rb2d.linearVelocity = speedVec;
+    }
 
+    /// <summary>
+    /// 巡回する処理
+    /// </summary>
+    protected override void Patorol()
+    {
+        SetAnimId((int)ANIM_ID.Run);
+        if (IsFall() || IsWall()) Flip();
+        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -206,7 +211,7 @@ public class Enemy_Sample : EnemyController
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
-        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * speed, m_rb2d.linearVelocity.y);
+        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         Vector3 velocity = Vector3.zero;
         m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
     }
@@ -232,14 +237,6 @@ public class Enemy_Sample : EnemyController
     }
 
     /// <summary>
-    /// 巡回する処理
-    /// </summary>
-    protected override IEnumerator Patorol()
-    {
-        yield return null;
-    }
-
-    /// <summary>
     /// 攻撃時のクールダウン処理
     /// </summary>
     /// <returns></returns>
@@ -259,6 +256,15 @@ public class Enemy_Sample : EnemyController
     protected override void PlayDeadAnim()
     {
         SetAnimId((int)ANIM_ID.Dead);
+    }
+
+    /// <summary>
+    /// ヒットアニメーション
+    /// </summary>
+    /// <returns></returns>
+    protected override void PlayHitAnim()
+    {
+        SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>

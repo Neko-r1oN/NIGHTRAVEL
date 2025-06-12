@@ -5,13 +5,16 @@ public class ShortCircuit : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    Player player;
-    EnemyController enemyController;
+    //[SerializeField] GameObject ElectronicEffect;
+    PlayerBase sample;
+    EnemyBase enemyBase;
     Vector2 pos = Vector2.zero;
+    //int count = 0;
 
     void Start()
     {
-
+        sample=GameObject.Find("PlayerSample").GetComponent<PlayerBase>();
+        enemyBase=GameObject.FindWithTag("Enemy").GetComponent<EnemyBase>();
     }
 
     // Update is called once per frame
@@ -20,52 +23,42 @@ public class ShortCircuit : MonoBehaviour
 
     }
 
-    void PlayerHitDamage()
+    void HitDamage()
     {
-        //int maxLife = (int)player.maxHP; //プレイヤーの最大HP
+        //count++;
+        //Debug.Log("プレイヤーが漏電フィールドに当たった" + count);
 
-        ////プレイヤーのダメージ計算
-        //int damage = Mathf.FloorToInt(maxLife * 0.05f); //ダメージ量をfloatからintに変換
-        //player.DealDamage(this.gameObject, damage, Vector2.zero); //トラップごとに対応したダメージ対応処理を呼び出し
-    }
+        //SampleChara_CopyのmaxLifeをintに変換
+        int maxLife= (int)sample.MaxHP;
 
-    void EnemyHitDamage()
-    {
-        int maxHP = enemyController.maxHP; //敵の最大HP
-
-        //敵のダメージ計算
-        int damage = Mathf.FloorToInt(maxHP * 0.05f);
-        enemyController.ApplyDamage(damage); //敵のダメージ対応関数を呼び出し
+        int damage = Mathf.FloorToInt(maxLife * 0.05f);
+        sample.DealDamage(this.gameObject,damage);
+        //enemyController.ApplyDamage(damage,) //敵が当たった時のダメージ
+        Debug.Log(damage);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {//プレイヤー/敵が漏電フィールドに当たったら
+    {
         if (collision.gameObject.CompareTag("Player"))
-        {//プレイヤーが漏電フィールドに当たったら
-            player = collision.GetComponent<Player>(); //playerに、当たったものを代入
-            InvokeRepeating("PlayerHitDamage", 0.1f, 0.5f); //「PlayerHitDamage」を、0.1秒間、0.5秒ごとに繰り返す
+        {
+            InvokeRepeating("HitDamage",0.1f,0.5f);
         }
         if (collision.gameObject.CompareTag("Enemy"))
-        {//敵が漏電フィールドに当たったら
-            enemyController = collision.GetComponent<EnemyController>(); //enemyControllerに、当たったものを代入
-            int HP = enemyController.HP;
-
-            InvokeRepeating("EnemyHitDamage", 0.1f, 0.5f); //「EnemyHitDamage」を、0.1秒後に、0.5秒ごとに繰り返す
-            Debug.Log(HP);
+        {
+            //Debug.Log("敵が漏電フィールドに当たった");
+            InvokeRepeating("HitDamage", 0.1f, 0.5f);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
-    {//プレイヤー/敵が漏電フィールドから離れたら
+    {
         if (collision.gameObject.CompareTag("Player"))
-        {//プレイヤーが漏電フィールドから離れたら
-            player = collision.GetComponent<Player>(); //playerに、当たったものを代入
-            CancelInvoke(); //「PlayerHitDmage」のリピートを止める
+        {
+            CancelInvoke();
         }
-        if (collision.gameObject.CompareTag("Enemy"))
-        {//敵が漏電フィールドから離れたら
-            enemyController = collision.GetComponent<EnemyController>(); //enemyControllerに、当たったものを代入
-            CancelInvoke(); //「EnemyHitDamage」のリピートを止める
+        if(collision.gameObject.CompareTag("Enemy"))
+        {
+            CancelInvoke();
         }
     }
 }

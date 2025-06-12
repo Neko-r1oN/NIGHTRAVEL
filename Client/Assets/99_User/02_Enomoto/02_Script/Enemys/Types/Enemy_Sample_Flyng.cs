@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Sample_Flyng : EnemyController
+public class Enemy_Sample_Flyng : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -36,7 +36,7 @@ public class Enemy_Sample_Flyng : EnemyController
     #region オリジナルステータス
     [Foldout("ステータス")]
     [SerializeField]
-    float tweenMoveRange = 10f;
+    float patorolRange = 10f;
     #endregion
 
     #region 攻撃方法について
@@ -57,6 +57,7 @@ public class Enemy_Sample_Flyng : EnemyController
     [SerializeField] float disToTargetMin = 2.5f;
     #endregion
 
+    Coroutine patorolCoroutine;
     Vector2? startPatorolPoint = null;
     float randomDecision;
 
@@ -78,13 +79,13 @@ public class Enemy_Sample_Flyng : EnemyController
             chaseAI.StopChase();
             Attack();
         }
-        else if (speed > 0 && canChaseTarget && target)
+        else if (moveSpeed > 0 && canChaseTarget && target)
         {
             Tracking();
         }
-        else if (speed > 0 && canPatrol && !isPatrolPaused)
+        else if (moveSpeed > 0 && canPatrol && !isPatrolPaused)
         {
-            StartCoroutine(Patorol());
+            Patorol();
         }
         else
         {
@@ -143,9 +144,20 @@ public class Enemy_Sample_Flyng : EnemyController
     }
 
     /// <summary>
+    /// 巡回処理
+    /// </summary>
+    protected override void Patorol()
+    {
+        if (patorolCoroutine == null)
+        {
+            StartCoroutine(PatorolCoroutine());
+        }
+    }
+
+    /// <summary>
     /// 巡回する処理
     /// </summary>
-    protected override IEnumerator Patorol()
+    IEnumerator PatorolCoroutine()
     {
         float pauseTime = 3f;
         if (startPatorolPoint == null)
@@ -155,9 +167,9 @@ public class Enemy_Sample_Flyng : EnemyController
 
         if (IsWall()) Flip();
 
-        if (transform.localScale.x > 0)
+        if (TransformHelper.GetFacingDirection(transform) > 0)
         {
-            if (transform.position.x >= startPatorolPoint.Value.x + tweenMoveRange)
+            if (transform.position.x >= startPatorolPoint.Value.x + patorolRange)
             {
                 isPatrolPaused = true;
                 Idle();
@@ -166,9 +178,9 @@ public class Enemy_Sample_Flyng : EnemyController
                 Flip();
             }
         }
-        else if (transform.localScale.x < 0)
+        else if (TransformHelper.GetFacingDirection(transform) < 0)
         {
-            if (transform.position.x <= startPatorolPoint.Value.x - tweenMoveRange)
+            if (transform.position.x <= startPatorolPoint.Value.x - patorolRange)
             {
                 isPatrolPaused = true;
                 Idle();
@@ -179,8 +191,9 @@ public class Enemy_Sample_Flyng : EnemyController
         }
 
         Vector2 speedVec = Vector2.zero;
-        speedVec = new Vector2(transform.localScale.x * speed / 2, m_rb2d.linearVelocity.y);
+        speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
+        patorolCoroutine = null;
     }
 
     /// <summary>
@@ -229,6 +242,15 @@ public class Enemy_Sample_Flyng : EnemyController
     protected override void PlayDeadAnim()
     {
         //SetAnimId((int)ANIM_ID.Dead);
+    }
+
+    /// <summary>
+    /// ヒットアニメーション
+    /// </summary>
+    /// <returns></returns>
+    protected override void PlayHitAnim()
+    {
+        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>

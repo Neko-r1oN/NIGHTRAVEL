@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class JumpStep : MonoBehaviour
 {
-    Player player;
+    PlayerBase sample;
 
     private void Start()
     {
-        player=GetComponent<Player>();
+        sample=GetComponent<PlayerBase>();
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
