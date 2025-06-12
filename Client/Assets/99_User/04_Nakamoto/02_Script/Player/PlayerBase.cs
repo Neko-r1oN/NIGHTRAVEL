@@ -1,17 +1,18 @@
 //--------------------------------------------------------------
-// サンプルキャラ [ SampleChara.cs ]
+// プレイヤー抽象親クラス [ PlayerBase.cs ]
 // Author：Kenta Nakamoto
-// 引用：https://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
 //--------------------------------------------------------------
-using UnityEngine;
-using UnityEngine.Events;
-using System.Collections;
-using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class SampleChara_Copy : Player
+abstract public class PlayerBase : MonoBehaviour
 {
+    //--------------------
+    // フィールド
+
     #region アニメーションID
     /// <summary>
     /// アニメーションID
@@ -30,145 +31,176 @@ public class SampleChara_Copy : Player
     }
     #endregion
 
-    #region ステータス関連
-    [Foldout("ステータス")]
-    public float hp = 100f;
-    public float maxHp = 0;
+    #region 共通ステータス
+    [Foldout("共通ステータス")]
+    protected int nowLv = 1;          // 現在レベル
+    [Foldout("共通ステータス")]
+    protected int nowExp = 0;         // 現在の獲得経験値
+    [Foldout("共通ステータス")]
+    protected int nextLvExp = 0;      // 次のレベルまでに必要な経験値
 
-    [Foldout("ステータス")]
-    public float runSpeed = 40f;    // 速度係数
+    [Foldout("共通ステータス")]
+    [SerializeField] protected int maxHp = 200;   // 最大体力
+    [Foldout("共通ステータス")]
+    [SerializeField] protected int hp = 200;      // 現体力
+    [Foldout("共通ステータス")]
+    protected int startHp = 0;                    // 初期体力
 
-    [Foldout("ステータス")]
-    public int dmgValue = 4;        // 攻撃力
+    [Foldout("共通ステータス")]
+    [SerializeField] protected int power = 20;        // 攻撃力
 
-    [Foldout("ステータス")]
-    private float horizontalMove = 0f;      // 速度値
+    [Foldout("共通ステータス")]
+    public float moveSpeed = 40f;   // 走る速度
 
-    [Foldout("ステータス")]
-    private float gravity;  // 重力
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float m_JumpForce = 400f;    // ジャンプ力
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float wallJumpPower = 2f;    // 壁ジャンプ力
+    [Foldout("共通ステータス")]
+    [SerializeField] protected bool m_AirControl = false;   // 空中制御フラグ
+    [Foldout("共通ステータス")]
+    public bool canDoubleJump = true;                       // ダブルジャンプ使用フラグ
 
-    [Foldout("ステータス")]
-    [SerializeField] float ladderSpeed = 1f;   // 梯子移動速度
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float m_BlinkForce = 38f;  // ブリンク力
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float blinkTime = 0.35f;   // ブリンク時間
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float blinkCoolDown = 1f;  // ブリンククールダウン
 
-    [Foldout("ステータス")]
-    [SerializeField] private float m_JumpForce = 400f;
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float ladderSpeed = 1f;   // 梯子移動速度
 
-    [Foldout("ステータス")]
-    [SerializeField] private float m_BlinkForce = 25f;
+    [Foldout("共通ステータス")]
+    [Range(0, .3f)][SerializeField] protected float m_MovementSmoothing = .05f;
 
-    [Foldout("ステータス")]
-    [SerializeField] private bool m_AirControl = false; // 空中制御フラグ
-
-    [Foldout("ステータス")]
-    [SerializeField] GameObject throwableObject;        // 投擲武器
-
-    [Foldout("ステータス")]
-    [Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .05f;
-    
-    [Foldout("ステータス")]
-    public bool canDoubleJump = true;
-
-    [Foldout("ステータス")]
+    [Foldout("共通ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
-    [Foldout("ステータス")]
-    [SerializeField] int testExp = 10;       // デバッグ用獲得経験値
+    [Foldout("共通ステータス")]
+    [SerializeField] protected int testExp = 10;      // デバッグ用獲得経験値
 
-    [Foldout("ステータス")]
-    private int nowLv = 0;          // 現在レベル
+    protected float horizontalMove = 0f;      // 速度用変数
+    protected float gravity;  // 重力
 
-    [Foldout("ステータス")]
-    private int nowExp = 0;         // 現在の獲得経験値
+    #endregion
 
-    [Foldout("ステータス")]
-    private int nextLvExp = 0;      // 次のレベルまでに必要な経験値
+    #region ステータス外部参照用プロパティ
+    /// <summary>
+    /// 最大体力
+    /// </summary>
+    public int MaxHP { get { return maxHp; } }
+
+    /// <summary>
+    /// 体力
+    /// </summary>
+    public int HP { get { return hp; } }
+
+    /// <summary>
+    /// 現レベル
+    /// </summary>
+    public int NowLv { get { return nowLv; } }
+
+    /// <summary>
+    /// 現獲得経験値
+    /// </summary>
+    public int NowExp { get { return nowExp; } }
+
+    /// <summary>
+    /// 次レベルまでの必要経験値
+    /// </summary>
+    public int NextLvExp { get { return nextLvExp; } }
+
     #endregion
 
     #region レイヤー・位置関連
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private LayerMask m_WhatIsGround;  // どのレイヤーを地面と認識させるか
+    [SerializeField] protected LayerMask m_WhatIsGround;// どのレイヤーを地面と認識させるか
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private LayerMask ladderLayer;     // 梯子レイヤー
+    [SerializeField] protected LayerMask ladderLayer;   // 梯子レイヤー
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private Transform m_GroundCheck;	// プレイヤーが接地しているかどうかを確認する用
+    [SerializeField] protected Transform m_GroundCheck;	// プレイヤーが接地しているかどうかを確認する用
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private Transform m_WallCheck;     // プレイヤーが壁に触れているかどうかを確認する用
+    [SerializeField] protected Transform m_WallCheck;   // プレイヤーが壁に触れているかどうかを確認する用
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private Transform attackCheck;		// 攻撃時の当たり判定
+    [SerializeField] private Transform attackCheck;     // 攻撃時の当たり判定
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private Transform playerPos;		// プレイヤー位置情報
+    [SerializeField] protected Transform playerPos;		// プレイヤー位置情報
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private CapsuleCollider2D playerCollider;
+    [SerializeField] protected CapsuleCollider2D playerCollider;
     #endregion
 
     #region プレイヤー情報取得変数
-    private Rigidbody2D m_Rigidbody2D;
-    private Animator animator;
-    private Vector3 velocity = Vector3.zero;
-    private bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
-    private bool m_FallFlag = false;
-    private float limitFallSpeed = 25f; // 落下速度の制限
+    protected Rigidbody2D m_Rigidbody2D;
+    protected Animator animator;
+    protected Vector3 velocity = Vector3.zero;
+    protected bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
+    protected bool m_FallFlag = false;
+    protected float limitFallSpeed = 25f; // 落下速度の制限
     #endregion
 
     #region パーティクル
     [Foldout("動作フラグ関連")]
-    public ParticleSystem particleJumpUp;
+    protected ParticleSystem particleJumpUp;
 
     [Foldout("動作フラグ関連")]
-    public ParticleSystem particleJumpDown;
+    protected ParticleSystem particleJumpDown;
     #endregion
 
     #region カメラ
-    private GameObject cam;
+    protected GameObject cam;
     #endregion
 
     #region 動作フラグ関連
-    private bool canMove = true;    // プレイヤーの動作制御フラグ
-    private bool canBlink = true;   // ダッシュ制御フラグ
-    private bool canAttack = true;  // 攻撃制御フラグ
-    private bool m_Grounded;	    // プレイヤーの接地フラグ
-    private bool m_IsWall = false;  // プレイヤーの前に壁があるか
-    private bool m_IsLadder = false;// 梯子動作フラグ
-    private bool isJump = false;	// ジャンプ入力フラグ
-    private bool isBlink = false;	// ダッシュ入力フラグ
-    private bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
-    private bool isWallSliding = false;     // If player is sliding in a wall
-    private bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
-    private float prevVelocityX = 0f;
-    private bool canCheck = false;          // For check if player is wallsliding
-    private float verticalMove = 0f;        
+    protected bool canMove = true;      // プレイヤーの動作制御フラグ
+    protected bool canBlink = true;     // ダッシュ制御フラグ
+    protected bool canAttack = true;    // 攻撃制御フラグ
+    protected bool m_Grounded;          // プレイヤーの接地フラグ
+    protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
+    protected bool m_IsLadder = false;  // 梯子動作フラグ
+    protected bool isJump = false;      // ジャンプ入力フラグ
+    protected bool isBlink = false;     // ダッシュ入力フラグ
+    protected bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
+    protected bool isWallSliding = false;     // If player is sliding in a wall
+    protected bool isWallJump = false;        // 壁ジャンプ中かどうか
+    protected bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
+    protected float prevVelocityX = 0f;
+    protected bool canCheck = false;          // For check if player is wallsliding
+    protected float verticalMove = 0f;
+    protected float jumpWallStartX = 0;
+    protected float jumpWallDistX = 0;        // プレイヤーと壁の距離
+    protected bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
     #endregion
 
-    #region 動作フラグ関連
-    private const float k_GroundedRadius = .2f; // 接地確認用の円の半径
-    private const float k_AttackRadius = .9f;   // 攻撃判定の円の半径
+    #region 判定係数
+    protected const float k_GroundedRadius = .2f; // 接地確認用の円の半径
+    protected const float k_AttackRadius = .9f;   // 攻撃判定の円の半径
     #endregion
 
-    private float jumpWallStartX = 0;
-    private float jumpWallDistX = 0;        // プレイヤーと壁の距離
-    private bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
+    //--------------------
+    // メソッド
+
+    #region プレイヤー共通処理
+    //---------------------------------------------------
+    // プレイヤーに共通する関数をここに記載する
 
     /// <summary>
     /// Update前処理
     /// </summary>
 
-    private void Awake()
+    protected void Awake()
     {
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
-    }
-
-    private void Start()
-    {
-        maxHp = hp;
+        startHp = maxHp;
     }
 
     /// <summary>
@@ -177,13 +209,14 @@ public class SampleChara_Copy : Player
     private void Update()
     {
         // キャラの移動
-        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
-        verticalMove = Input.GetAxisRaw("Vertical") * runSpeed;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
+        verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
         Ladder();
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
         {   // ジャンプ押下時
-            isJump = true;
+            if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                isJump = true;
         }
 
         if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
@@ -201,22 +234,18 @@ public class SampleChara_Copy : Player
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // 攻撃2
-            GameObject throwableWeapon = Instantiate(throwableObject, transform.position + new Vector3(transform.localScale.x * 0.5f, -0.2f), Quaternion.identity) as GameObject;
-            Vector2 direction = new Vector2(transform.localScale.x, 0);
-            throwableWeapon.GetComponent<ThrowableWeapon>().direction = direction;
-            throwableWeapon.name = "ThrowableWeapon";
+
         }
 
         //-----------------------------
-        // デバッグ
+        // デバッグ用
 
-        if(Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             GetExp(testExp);
             Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
         }
     }
-
 
     /// <summary>
     /// 定期更新処理
@@ -238,11 +267,13 @@ public class SampleChara_Copy : Player
             if (colliders[i].gameObject != gameObject)
                 m_Grounded = true;
 
+            isWallJump = false;
+
             if (m_Grounded && m_FallFlag)
             {   // 高所から着地時にスタン
                 m_FallFlag = false;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                StartCoroutine(Stun(1f));
+                //StartCoroutine(Stun(1f)); // スタン処理
             }
 
             if (!wasGrounded)
@@ -257,10 +288,13 @@ public class SampleChara_Copy : Player
             }
         }
 
-        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f)
+        // 接地時にIDLE or RUNモーションに戻るように設定
+        if (m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Idle && Mathf.Abs(horizontalMove) >= 0.1f
+            || m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Fall && Mathf.Abs(horizontalMove) >= 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Run);
 
-        if(m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Run && Mathf.Abs(horizontalMove) < 0.1f)
+        if (m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Run && Mathf.Abs(horizontalMove) < 0.1f
+            || m_Grounded && animator.GetInteger("animation_id") == (int)ANIM_ID.Fall && Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
 
         //---------------------------------
@@ -271,9 +305,9 @@ public class SampleChara_Copy : Player
         if (!m_Grounded)
         {   // 空中に居るとき
 
-            if(animator.GetInteger("animation_id") == (int)ANIM_ID.Idle)
+            if (animator.GetInteger("animation_id") == (int)ANIM_ID.Idle || animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
-            
+
             Collider2D[] collidersWall = Physics2D.OverlapCircleAll(m_WallCheck.position, k_GroundedRadius, m_WhatIsGround);
             for (int i = 0; i < collidersWall.Length; i++)
             {
@@ -318,13 +352,13 @@ public class SampleChara_Copy : Player
 
         if (Ladder())
         {
-            if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
                 m_IsLadder = true;
             }
         }
 
-        if(m_IsLadder)
+        if (m_IsLadder)
         {
             m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, verticalMove * ladderSpeed);
             m_Rigidbody2D.gravityScale = 0f;
@@ -334,7 +368,6 @@ public class SampleChara_Copy : Player
             m_Rigidbody2D.gravityScale = gravity;
         }
 
-        // 
         Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
         isBlink = false;
@@ -365,6 +398,10 @@ public class SampleChara_Copy : Player
             {   // クールダウンに入るまで加速
                 m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
             }
+            else if (isWallJump)
+            {   // 壁ジャンプ中
+                m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * 12, 12);
+            }
             // 接地しているか空中制御ONの時
             else if (m_Grounded || m_AirControl)
             {
@@ -376,19 +413,31 @@ public class SampleChara_Copy : Player
                 }
 
                 // キャラの目標移動速度を決定
-                Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.linearVelocity.y);
+                Vector3 targetVelocity = new Vector2();
+                if (animator.GetInteger("animation_id") == (int)ANIM_ID.Attack)
+                {
+                    targetVelocity = new Vector2(move * 2f, m_Rigidbody2D.linearVelocity.y);
+                }
+                else
+                {
+                    targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.linearVelocity.y);
+                }
 
                 // SmoothDampにより、滑らかな移動を実現
                 m_Rigidbody2D.linearVelocity = Vector3.SmoothDamp(m_Rigidbody2D.linearVelocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
-                // キャラが入力と反対方向を向いていた際に反転させる
-                if (move > 0 && !m_FacingRight && !isWallSliding)
-                {   // 右入力
-                    Flip();
-                }
-                else if (move < 0 && m_FacingRight && !isWallSliding)
-                {   // 左入力
-                    Flip();
+                // 攻撃時は反転しないように
+                if (animator.GetInteger("animation_id") != (int)ANIM_ID.Attack && animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                {
+                    // キャラが入力と反対方向を向いていた際に反転させる
+                    if (move > 0 && !m_FacingRight && !isWallSliding)
+                    {   // 右入力
+                        Flip();
+                    }
+                    else if (move < 0 && m_FacingRight && !isWallSliding)
+                    {   // 左入力
+                        Flip();
+                    }
                 }
             }
 
@@ -398,7 +447,7 @@ public class SampleChara_Copy : Player
             if (m_Grounded && jump)
             {   // 接地状態 & ジャンプ入力
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
-                
+
                 m_Grounded = false;
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
                 canDoubleJump = true;
@@ -422,6 +471,11 @@ public class SampleChara_Copy : Player
                     Flip();
                     StartCoroutine(WaitToCheck(0.1f));
                     canDoubleJump = true;
+
+                    isWallJump = false;
+
+                    int id = animator.GetInteger("animation_id");
+
                     animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
                 }
                 isBlinking = false;
@@ -436,10 +490,9 @@ public class SampleChara_Copy : Player
                     {   // スライド処理
                         oldWallSlidding = true;
                         int id = animator.GetInteger("animation_id");
-                        if (id != (int)ANIM_ID.Attack)
-                        {
-                            animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
-                        }
+
+                        animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
+
                         m_Rigidbody2D.linearVelocity = new Vector2(-transform.localScale.x * 2, -5);
                     }
                 }
@@ -449,14 +502,17 @@ public class SampleChara_Copy : Player
                     animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
 
                     m_Rigidbody2D.linearVelocity = new Vector2(0f, 0f);
-                    m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_JumpForce * 1.2f, m_JumpForce));
+                    m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_JumpForce * wallJumpPower, m_JumpForce));
                     jumpWallStartX = transform.position.x;
                     limitVelOnWallJump = true;
                     canDoubleJump = true;
                     isWallSliding = false;
                     oldWallSlidding = false;
+
+                    // 壁ジャンコルーチン
+                    StartCoroutine(WallJump());
+
                     m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
-                    //canMove = false;  壁近でバグったので一旦除去。動作不良起きたら再考
                 }
                 else if (blink && canBlink)
                 {   // ダッシュ押下時
@@ -471,6 +527,7 @@ public class SampleChara_Copy : Player
             {   // 壁スライドAnim再生中 && 前に壁が無い
                 isWallSliding = false;
                 oldWallSlidding = false;
+                isWallJump = false;
 
                 if (m_Grounded)
                 {
@@ -480,7 +537,7 @@ public class SampleChara_Copy : Player
                 {
                     animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 }
-                
+
                 m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
                 canDoubleJump = true;
             }
@@ -488,9 +545,23 @@ public class SampleChara_Copy : Player
     }
 
     /// <summary>
+    /// 梯子判定処理
+    /// </summary>
+    /// <returns></returns>
+    protected bool Ladder()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, ladderLayer);
+        if (hit.collider != null)
+            return true;
+        else
+            m_IsLadder = false;
+        return false;
+    }
+
+    /// <summary>
     /// キャラ反転
     /// </summary>
-    private void Flip()
+    protected void Flip()
     {
         m_FacingRight = !m_FacingRight;
         Vector3 theScale = transform.localScale;
@@ -499,51 +570,152 @@ public class SampleChara_Copy : Player
     }
 
     /// <summary>
-    /// 梯子判定処理
-    /// </summary>
-    /// <returns></returns>
-    private bool Ladder()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, ladderLayer);
-        if (hit.collider != null)
-            return true;
-        else
-            m_IsLadder = false;
-            return false;
-    }
-
-    /// <summary>
     /// レベルアップ処理
     /// </summary>
-    private void LevelUp()
+    protected void LevelUp()
     {
+        // レベルアップ処理
         nowLv++;
         nowExp = nowExp - nextLvExp;
         int nextLv = nowLv + 1;
         nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
+
+        // HP反映処理
+        CalcHP();
     }
 
-    //-------------------------------------------
-    // 抽象関数継承処理
+    /// <summary>
+    /// HP計算処理
+    /// </summary> ** ローカル **
+    private void CalcHP()
+    {
+        float hpRatio = (float)hp / (float)maxHp;
+        maxHp = (int)(startHp + (int)Math.Pow(nowLv, 2));
+        hp = (int)(maxHp * hpRatio);
+
+        Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
+    }
+    #endregion
+
+    #region プレイヤー共通非同期処理
+    /// <summary>
+    /// 攻撃制限処理
+    /// </summary>
+    protected IEnumerator AttackCooldown()
+    {
+        yield return new WaitForSeconds(0.25f);
+        canAttack = true;
+    }
+    /// <summary>
+    /// 壁ジャンプ制限処理
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator WallJump()
+    {
+        isWallJump = true;
+        yield return new WaitForSeconds(0.2f);  // ジャンプ時間
+        isWallJump = false;
+    }
+    /// <summary>
+    /// ダメージ後硬直処理
+    /// </summary>
+    protected IEnumerator Stun(float time)
+    {
+        Debug.Log("スタン！：" + time);
+        canMove = false;
+        yield return new WaitForSeconds(time);
+        canMove = true;
+    }
+    /// <summary>
+    /// 無敵時間設定処理
+    /// </summary>
+    protected IEnumerator MakeInvincible(float time)
+    {
+        invincible = true;
+        yield return new WaitForSeconds(time);
+        invincible = false;
+    }
+    /// <summary>
+    /// 動作不能処理
+    /// </summary>
+    protected IEnumerator WaitToMove(float time)
+    {
+        canMove = false;
+        yield return new WaitForSeconds(time);
+        canMove = true;
+    }
+    /// <summary>
+    /// 壁スライド中か確認する処理
+    /// </summary>
+    protected IEnumerator WaitToCheck(float time)
+    {
+        canCheck = false;
+        yield return new WaitForSeconds(time);
+        canCheck = true;
+    }
+    /// <summary>
+    /// 壁スライド終了処理
+    /// </summary>
+    protected IEnumerator WaitToEndSliding()
+    {
+        yield return new WaitForSeconds(0.05f);
+        canDoubleJump = true;
+        isWallSliding = false;
+        animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
+        oldWallSlidding = false;
+        m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
+    }
+    /// <summary>
+    /// 死亡処理
+    /// </summary>
+    protected IEnumerator WaitToDead()
+    {
+        animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
+        canMove = false;
+        invincible = true;
+        canAttack = false;
+        yield return new WaitForSeconds(0.4f);
+        m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
+        yield return new WaitForSeconds(1.1f);
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+    }
+    /// <summary>
+    /// ダッシュ(ブリンク)制限処理
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator BlinkCooldown()
+    {
+        animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
+        isBlinking = true;
+        canBlink = false;
+        yield return new WaitForSeconds(blinkTime);  // ブリンク時間
+        gameObject.layer = 20;
+        isBlinking = false;
+        yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
+        canBlink = true;
+    }
+    #endregion
+
+    #region 外部呼び出し関数
 
     /// <summary>
     /// ダメージを与える処理
     /// </summary>
-    override public void DoDashDamage()
+    public void DoDashDamage()
     {
-        dmgValue = Mathf.Abs(dmgValue);
+        power = Mathf.Abs(power);
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
-            if (collidersEnemies[i].gameObject.tag == "EnemyBase")
+            if (collidersEnemies[i].gameObject.tag == "Enemy")
             {
                 if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
                 {
-                    dmgValue = -dmgValue;
+                    power = -power;
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(dmgValue,playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyController>().ApplyDamage(power, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
@@ -552,7 +724,7 @@ public class SampleChara_Copy : Player
     /// <summary>
     /// 被ダメ処理(ノックバック無)
     /// </summary>
-    public override void DealDamage(GameObject dealer, int damage)
+    public void DealDamage(GameObject dealer, int damage)
     {
         switch (dealer.gameObject.tag)
         {
@@ -570,11 +742,9 @@ public class SampleChara_Copy : Player
     }
 
     /// <summary>
-    /// ダメージ受ける処理
+    /// 被ダメ処理(ノックバック有)
     /// </summary>
-    /// <param name="damage">ダメージ量</param>
-    /// <param name="position">攻撃したオブジェの位置</param>
-    override public void ApplyDamage(int damage, Vector3 position)
+    public void ApplyDamage(int damage, Vector3 position)
     {
         if (!invincible)
         {
@@ -598,34 +768,15 @@ public class SampleChara_Copy : Player
         }
     }
 
-    public void DealDamage(GameObject dealer,int damage,Vector2 pos)
-    {
-        switch (dealer.gameObject.tag)
-        {
-            case "Short circuit":
-                hp -= damage;
-                animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-
-                if (hp <= 0)
-                {   // 死亡処理
-                    StartCoroutine(WaitToDead());
-                }
-                break;
-            default:
-                ApplyDamage(damage, pos);
-                break;
-        }
-    }
-
     /// <summary>
     /// 経験値獲得
     /// </summary>
     /// <param name="exp">経験値量</param>
-    public override void GetExp(int exp)
+    public void GetExp(int exp)
     {
         nowExp += exp;
 
-        if(nextLvExp <= nowExp)
+        if (nextLvExp <= nowExp)
         {   // レベルアップ処理
             LevelUp();
         }
@@ -636,99 +787,9 @@ public class SampleChara_Copy : Player
     /// </summary>
     /// <param name="statusID">増減させるステータスID</param>
     /// <param name="value">増減値</param>
-    public override void ChangeStatus(int statusID, int value)
-    {
+    public void ChangeStatus(int statusID, int value)
+    {   //引数はステータス全部を含んだ通信用パッケージを作って適用
 
     }
-
-    //----------------------------------
-    // 非同期処理
-
-    /// <summary>
-    /// ダッシュ(ブリンク)制限処理
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator BlinkCooldown()
-    {
-        animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
-        isBlinking = true;
-        canBlink = false;
-        yield return new WaitForSeconds(0.1f);  // ブリンク時間
-        gameObject.layer = 20;
-        isBlinking = false;
-        yield return new WaitForSeconds(0.5f);  // クールダウン時間
-        canBlink = true;
-    }
-
-    /// <summary>
-    /// ダメージ後硬直処理
-    /// </summary>
-    IEnumerator Stun(float time)
-    {
-        Debug.Log("スタン！：" + time);
-        canMove = false;
-        yield return new WaitForSeconds(time);
-        canMove = true;
-    }
-    /// <summary>
-    /// 無敵時間設定処理
-    /// </summary>
-    IEnumerator MakeInvincible(float time)
-    {
-        invincible = true;
-        yield return new WaitForSeconds(time);
-        invincible = false;
-    }
-    /// <summary>
-    /// 動作不能処理
-    /// </summary>
-    IEnumerator WaitToMove(float time)
-    {
-        canMove = false;
-        yield return new WaitForSeconds(time);
-        canMove = true;
-    }
-    /// <summary>
-    /// 壁スライド中か確認する処理
-    /// </summary>
-    IEnumerator WaitToCheck(float time)
-    {
-        canCheck = false;
-        yield return new WaitForSeconds(time);
-        canCheck = true;
-    }
-    /// <summary>
-    /// 壁スライド終了処理
-    /// </summary>
-    IEnumerator WaitToEndSliding()
-    {
-        yield return new WaitForSeconds(0.1f);
-        canDoubleJump = true;
-        isWallSliding = false;
-        animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
-        oldWallSlidding = false;
-        m_WallCheck.localPosition = new Vector3(Mathf.Abs(m_WallCheck.localPosition.x), m_WallCheck.localPosition.y, 0);
-    }
-    /// <summary>
-    /// 死亡処理
-    /// </summary>
-    IEnumerator WaitToDead()
-    {
-        animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
-        canMove = false;
-        invincible = true;
-        canAttack = false;
-        yield return new WaitForSeconds(0.4f);
-        m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
-        yield return new WaitForSeconds(1.1f);
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-    }
-    /// <summary>
-    /// 攻撃制限処理
-    /// </summary>
-    IEnumerator AttackCooldown()
-    {
-        yield return new WaitForSeconds(0.25f);
-        canAttack = true;
-    }
+    #endregion
 }

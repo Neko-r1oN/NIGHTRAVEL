@@ -202,7 +202,7 @@ abstract public class EnemyBase : CharacterBase
                 }
                 StartCoroutine(HitTime());
             }
-            collision.gameObject.GetComponent<Player>().ApplyDamage(2, transform.position);
+            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
         }
     }
 
@@ -250,7 +250,7 @@ abstract public class EnemyBase : CharacterBase
             }
             else if (!isDead)
             {
-                Player player = attacker ? attacker.gameObject.GetComponent<Player>() : null;
+                PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
                 StartCoroutine(DestroyEnemy(player));
             }
         }
@@ -346,7 +346,7 @@ abstract public class EnemyBase : CharacterBase
     /// éÄñSèàóù
     /// </summary>
     /// <returns></returns>
-    protected IEnumerator DestroyEnemy(Player player)
+    protected IEnumerator DestroyEnemy(PlayerBase player)
     {
         if (!isDead)
         {

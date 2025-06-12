@@ -157,7 +157,7 @@ public class Enemy_Sample : EnemyBase
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(power, transform.position);
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
             }
         }
         StartCoroutine(AttackCooldown(attackCoolTime));

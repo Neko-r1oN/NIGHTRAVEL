@@ -176,7 +176,7 @@ public class AllySanmple: MonoBehaviour
 			}
 			else if (collidersEnemies[i].gameObject.tag == "Player")
 			{
-				collidersEnemies[i].gameObject.GetComponent<Player>().ApplyDamage(2, transform.position);
+				collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
 			}
 		}
 		StartCoroutine(WaitToAttack(0.5f));
