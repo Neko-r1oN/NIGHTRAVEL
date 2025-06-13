@@ -70,7 +70,7 @@ abstract public class CharacterBase : MonoBehaviour
     public int Power { get { return power; } set { power = value; } }
 
     /// <summary>
-    /// ‘¬“xŒW”
+    /// ˆÚ“®‘¬“x
     /// </summary>
     public float MoveSpeed { get { return moveSpeed; } set { moveSpeed = value; } }
 

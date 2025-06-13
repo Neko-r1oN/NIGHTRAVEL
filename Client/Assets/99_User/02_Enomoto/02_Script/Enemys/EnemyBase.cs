@@ -227,32 +227,29 @@ abstract public class EnemyBase : CharacterBase
     protected virtual void Patorol() { }
 
     /// <summary>
-    /// ダメージ適応処理
+    /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
     public void ApplyDamage(int damage, Transform attacker = null)
     {
-        if (!isInvincible)
+        if (isInvincible || isDead) return;
+
+        hp -= Mathf.Abs(damage);
+
+        // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
+        if (attacker)
         {
-            hp -= Mathf.Abs(damage);
+            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
+            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+            DoKnokBack(damage);
 
-            // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
-            if (attacker)
-            {
-                if (attacker.position.x < transform.position.x && transform.localScale.x > 0
-                || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-                DoKnokBack(damage);
-            }
+            if (hp > 0) StartCoroutine(HitTime());
+        }
 
-            if (hp > 0)
-            {
-                StartCoroutine(HitTime());
-            }
-            else if (!isDead)
-            {
-                PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
-                StartCoroutine(DestroyEnemy(player));
-            }
+        if (hp <= 0)
+        {
+            PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
+            StartCoroutine(DestroyEnemy(player));
         }
     }
 
