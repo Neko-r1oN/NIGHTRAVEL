@@ -20,28 +20,34 @@ public class ShortCircuit : MonoBehaviour
 
     }
 
-    void HitDamage()
+    void HitPlayerDamage()
     {
-        //SampleChara_CopyのmaxLifeをintに変換
-        int maxLife= (int)playerBase.MaxHP;
+        int maxHP = playerBase.MaxHP;
+
+        int damage = Mathf.FloorToInt(maxHP * 0.05f);
+        playerBase.ApplyDamage(damage);
+        Debug.Log(playerBase.HP);
+    }
+    void HitEnemyDamage()
+    {
+        int maxLife = enemyBase.MaxHP;
 
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
-        playerBase.DealDamage(this.gameObject,damage);
-        Debug.Log(damage);
+        enemyBase.ApplyDamage(damage);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            playerBase = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
-            InvokeRepeating("HitDamage",0.1f,0.5f);
+            playerBase = collision.gameObject.GetComponent<PlayerBase>();
+            InvokeRepeating("HitPlayerDamage", 0.1f,0.5f);
         }
         if (collision.gameObject.CompareTag("Enemy"))
         {
             //Debug.Log("敵が漏電フィールドに当たった");
-            enemyBase = GameObject.FindWithTag("Enemy").GetComponent<EnemyBase>();
-            InvokeRepeating("HitDamage", 0.1f, 0.5f);
+            enemyBase = collision.gameObject.GetComponent<EnemyBase>();
+            InvokeRepeating("HitEnemyDamage", 0.1f, 0.5f);
         }
     }
 
