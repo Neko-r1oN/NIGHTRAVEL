@@ -20,8 +20,8 @@ public class SealedDoor : MonoBehaviour
         if (isDoor == true && Input.GetKeyDown(KeyCode.X))
         {
             //ドアを壊す
-            this.gameObject.SetActive(false);
-            Instantiate(ExplosionEffect, this.transform.position,this.transform.rotation);
+            Destroy(this.gameObject);
+            Instantiate(ExplosionEffect, this.transform.position, this.transform.rotation);
         }
     }
 
