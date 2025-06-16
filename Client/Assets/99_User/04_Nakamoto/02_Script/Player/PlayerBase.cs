@@ -148,6 +148,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
     protected bool isWallSliding = false;     // If player is sliding in a wall
     protected bool isWallJump = false;        // 壁ジャンプ中かどうか
+    protected bool isAbnormalMove = false;    // 状態異常フラグ
     protected bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
     protected float prevVelocityX = 0f;
     protected bool canCheck = false;          // For check if player is wallsliding
@@ -193,6 +194,13 @@ abstract public class PlayerBase : CharacterBase
 
         bool wasGrounded = m_Grounded;
         m_Grounded = false;
+
+        if (isAbnormalMove)
+        {
+            animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+            m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
+            return;
+        }
 
         // グラウンドチェックが地面として指定されたものに当たった場合、プレーヤーを接地扱いにする
         // これはレイヤーを使って行うこともできますが、Sample Assetsはプロジェクトの設定を上書きしません。
@@ -557,10 +565,21 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     public IEnumerator Stun(float time)
     {
-        Debug.Log("スタン！：" + time);
+        Debug.Log("スタン：" + time);
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
+    }
+    /// <summary>
+    /// 状態異常時硬直処理
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    public IEnumerator AbnormalityStun(float time)
+    {
+        isAbnormalMove = true;
+        yield return new WaitForSeconds(time);
+        isAbnormalMove = false;
     }
     /// <summary>
     /// 無敵時間設定処理

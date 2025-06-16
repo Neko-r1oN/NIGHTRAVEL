@@ -114,7 +114,7 @@ public class StatusEffectController : MonoBehaviour
                 }
                 ,
                 EFFECT_TYPE.Shock => () => {
-                    if (this.gameObject.tag == "Player") StartCoroutine(playerBase.Stun(maxShockDuration));
+                    if (this.gameObject.tag == "Player") StartCoroutine(playerBase.AbnormalityStun(maxShockDuration));
                     else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(maxShockDuration);
                 }
                 ,

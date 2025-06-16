@@ -44,7 +44,7 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // 攻撃2
-
+            GetComponent<StatusEffectController>().ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Shock);
         }
 
         //-----------------------------
@@ -55,5 +55,11 @@ public class Sword : PlayerBase
             GetExp(testExp);
             Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
         }
+    }
+
+    [ContextMenu("ショック")]
+    public void ShockTest()
+    {
+        this.GetComponent<StatusEffectController>().ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Shock);
     }
 }

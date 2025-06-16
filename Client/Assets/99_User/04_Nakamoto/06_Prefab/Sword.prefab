@@ -9851,6 +9851,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5624364594422293938}
   - component: {fileID: 380074446252948534}
+  - component: {fileID: 724377592439137143}
   - component: {fileID: 6142770223254720856}
   - component: {fileID: 5970952409687817845}
   - component: {fileID: 8008840547159861670}
@@ -9901,6 +9902,12 @@ MonoBehaviour:
   baseMoveSpeed: 60
   baseAttackSpeed: 10
   baseJumpPower: 10
+  hp: 150
+  defence: 20
+  power: 50
+  moveSpeed: 1
+  attackSpeed: 1
+  jumpPower: 50
   m_JumpForce: 850
   wallJumpPower: 2
   m_AirControl: 1
@@ -9925,6 +9932,21 @@ MonoBehaviour:
   playerCollider: {fileID: 4503244493098367853}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
+--- !u!114 &724377592439137143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8712946285843664370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e43c647c3c791364d9d3c4d4731398a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  burnPS: {fileID: 605604136134073261, guid: acf41ac9d4d63834ab12ff5229114a2f, type: 3}
+  freezePS: {fileID: 1769309962393889541, guid: c357540a80e222c4185778f34b2ad27c, type: 3}
+  shockPS: {fileID: 7639705427433666148, guid: c281f46ff31769346991a757f5c29c44, type: 3}
 --- !u!212 &6142770223254720856
 SpriteRenderer:
   m_ObjectHideFlags: 0
