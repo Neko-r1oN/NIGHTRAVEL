@@ -7,8 +7,4 @@ public class CompleteEffect : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    //public void OnCompleteElectronicEffect()
-    //{
-    //    Destroy(this.gameObject);
-    //}
 }
