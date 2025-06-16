@@ -24,15 +24,47 @@ abstract public class CharacterBase : MonoBehaviour
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected float baseMoveSpeed = 10f;   // 移動速度
+    protected float baseMoveSpeed = 1f;   // 移動速度(Animatorの係数)
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected float baseAttackSpeed = 10;    // 攻撃速度
+    protected float baseAttackSpeed = 1f;    // 攻撃速度(Animatorの係数)
 
     [Foldout("ステータス")]
     [SerializeField]
     protected float baseJumpPower = 10;  // 跳躍力
+    #endregion
+
+    #region 初期ステータス外部参照用プロパティ
+    /// <summary>
+    /// 体力
+    /// </summary>
+    public int BaseHP { get { return baseHp; } }
+
+    /// <summary>
+    /// 防御力
+    /// </summary>
+    public int BaseDefence { get { return baseDefence; } }
+
+    /// <summary>
+    /// 攻撃力
+    /// </summary>
+    public int BasePower { get { return basePower; } }
+
+    /// <summary>
+    /// 移動速度
+    /// </summary>
+    public float BaseMoveSpeed { get { return baseMoveSpeed; } }
+
+    /// <summary>
+    /// 攻撃速度
+    /// </summary>
+    public float BaseAttackSpeed { get { return baseAttackSpeed; } }
+
+    /// <summary>
+    /// 跳躍力
+    /// </summary>
+    public float BaseJumpPower { get { return baseJumpPower; } }
     #endregion
 
     #region ステータスの上限値関連
@@ -40,12 +72,14 @@ abstract public class CharacterBase : MonoBehaviour
     #endregion
 
     #region 現在のステータス関連
-    protected int hp;
-    protected int defence;
-    protected int power;
-    protected float moveSpeed;
-    protected float attackSpeed;
-    protected float jumpPower;
+    // インスペクター上で見るためのpublic
+    // 後でpublicを消す
+    public int hp;
+    public int defence;
+    public int power;
+    public float moveSpeed;
+    public float attackSpeed;
+    public float jumpPower;
     #endregion
 
     #region ステータス外部参照用プロパティ
@@ -85,7 +119,59 @@ abstract public class CharacterBase : MonoBehaviour
     public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
     #endregion
 
+    Animator animator;
+
     protected virtual void Start()
+    {
+        RecoverAllStats();
+        animator = GetComponent<Animator>();
+    }
+
+    //protected virtual void Awake()
+    //{
+    //    RecoverAllStats();
+    //}
+
+    /// <summary>
+    /// 一括でステータスに加減する処理
+    /// </summary>
+    public void ApplyStatusBonus(CharacterStatusData addStatusData)
+    {
+        maxHp += addStatusData.hp;
+        hp += addStatusData.hp;
+        defence += addStatusData.defence;
+        power += addStatusData.power;
+        moveSpeed += addStatusData.moveSpeed;
+        attackSpeed += addStatusData.attackSpeed;
+        jumpPower += addStatusData.jumpPower;
+        OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// 基礎ステータスを上書きする処理
+    /// </summary>
+    /// <param name="statusData"></param>
+    /// <param name="shouldResetToBaseStats">現在のステータスを基礎ステータスにリセットするかどうか</param>
+    public void OverrideBaseStatus(CharacterStatusData statusData, bool shouldResetToBaseStats = false)
+    {
+        baseHp = statusData.hp;
+        baseDefence = statusData.defence;
+        basePower = statusData.power;
+        baseMoveSpeed = statusData.moveSpeed;
+        baseAttackSpeed = statusData.attackSpeed;
+        baseJumpPower = statusData.jumpPower;
+        OverrideAnimaterParam();
+
+        if (shouldResetToBaseStats)
+        {
+            RecoverAllStats();
+        }
+    }
+
+    /// <summary>
+    /// 現在のステータスを全て元に戻す
+    /// </summary>
+    public void RecoverAllStats()
     {
         maxHp = baseHp;
         hp = baseHp;
@@ -94,5 +180,18 @@ abstract public class CharacterBase : MonoBehaviour
         moveSpeed = baseMoveSpeed;
         attackSpeed = baseAttackSpeed;
         jumpPower = baseJumpPower;
+        OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// アニメーターのパラメーターを上書きする
+    /// </summary>
+    public void OverrideAnimaterParam()
+    {
+        if (animator)
+        {
+            animator.SetFloat("attack_speed", attackSpeed);
+            animator.SetFloat("move_speed", moveSpeed);
+        }
     }
 }

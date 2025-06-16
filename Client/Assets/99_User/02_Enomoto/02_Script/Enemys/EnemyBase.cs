@@ -5,6 +5,7 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 abstract public class EnemyBase : CharacterBase
@@ -20,6 +21,7 @@ abstract public class EnemyBase : CharacterBase
     #endregion
 
     #region コンポーネント
+    protected EnemyElite enemyElite;
     protected EnemyProjectileChecker projectileChecker;
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
@@ -75,8 +77,6 @@ abstract public class EnemyBase : CharacterBase
     public float AttackDist { get { return attackDist; } }
 
     public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
-
-    public bool IsElite { get { return isElite; } set { isElite = value; } }
     #endregion
 
     #region オプション
@@ -145,6 +145,8 @@ abstract public class EnemyBase : CharacterBase
         projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
+
+        //PromoteToElite(EnemyElite.ELITE_TYPE.Blaze);
     }
 
     private void FixedUpdate()
@@ -323,6 +325,19 @@ abstract public class EnemyBase : CharacterBase
         if (target != null)
         {
             this.target = target;
+        }
+    }
+
+    /// <summary>
+    /// エリート個体にする処理
+    /// </summary>
+    public void PromoteToElite(EnemyElite.ELITE_TYPE type)
+    {
+        if (enemyElite == null)
+        {
+            isElite = true;
+            enemyElite = GetComponent<EnemyElite>();
+            enemyElite.Init(type);
         }
     }
 

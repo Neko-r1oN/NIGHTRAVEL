@@ -16,6 +16,7 @@ public class StatusEffectController : MonoBehaviour
     /// </summary>
     public enum EFFECT_TYPE
     {
+        None,
         Burn,       // 炎上状態
         Freeze,     // 霜焼け状態
         Shock       // 感電状態
@@ -23,26 +24,29 @@ public class StatusEffectController : MonoBehaviour
     Dictionary<EFFECT_TYPE, float> currentEffects = new Dictionary<EFFECT_TYPE, float>();
 
     #region 各状態異常の効果時間
-    readonly float maxBurnDuration = 5f;    // 炎上
+    readonly float maxBurnDuration = 6f;    // 炎上
     readonly float maxFreezeDuration = 10f; // 霜焼け
-    readonly float maxShockDuration = 5f; // 感電
+    readonly float maxShockDuration = 0.3f; // 感電
     #endregion
 
     #region 状態異常の効果が発動する間隔
     readonly float burnTickInterval = 0.5f; // 炎上
     #endregion
 
-    #region ステータスに加減する合計差分
-    public int MoveSpeedOffset { get; private set; }    // 移動速度
-    public int AttackSpeedOffset { get; private set; }  // 攻撃速度
+    #region  各状態異常を適用させたときの効果値
+    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedValue = new Dictionary<EFFECT_TYPE, float>();    // 移動速度
+    Dictionary<EFFECT_TYPE, float> tmpAttackSpeedValue = new Dictionary<EFFECT_TYPE, float>();  // 攻撃速度
     #endregion
 
-    #region  各状態異常を適用させたときの効果値
-    Dictionary<EFFECT_TYPE, int> tmpMoveSpeedValue = new Dictionary<EFFECT_TYPE, int>();    // 移動速度
-    Dictionary<EFFECT_TYPE, int> tmpAttackSpeedValue = new Dictionary<EFFECT_TYPE, int>();  // 攻撃速度
+    #region 状態異常のパーティクル
+    Dictionary<EFFECT_TYPE, GameObject> appliedParticles = new Dictionary<EFFECT_TYPE, GameObject>();   // 適用中のパーティクル
+    [SerializeField] GameObject burnPS;
+    [SerializeField] GameObject freezePS;
+    [SerializeField] GameObject shockPS;
     #endregion
 
     // 各状態異常を適用させたときの効果値
+    CapsuleCollider2D capsule2D;
     CharacterBase characterBase;
     PlayerBase playerBase;
     EnemyBase enemyBase;
@@ -50,9 +54,9 @@ public class StatusEffectController : MonoBehaviour
     private void Start()
     {
         if (this.gameObject.tag == "Player") playerBase = GetComponent<PlayerBase>();
-        else if (this.gameObject.tag == "EnemyBase") enemyBase = GetComponent<EnemyBase>();
+        else if (this.gameObject.tag == "Enemy") enemyBase = GetComponent<EnemyBase>();
+        capsule2D = GetComponent<CapsuleCollider2D>();
         characterBase = GetComponent<CharacterBase>();
-        //Invoke("ApplyStatusEffect", 2f);
     }
 
     private void FixedUpdate()
@@ -97,26 +101,27 @@ public class StatusEffectController : MonoBehaviour
             Action action = effectType switch
             {
                 EFFECT_TYPE.Burn => () => {
-                    Debug.Log("炎上効果適用");
                     InvokeRepeating("ActivateBurnEffect", 0, burnTickInterval);
                 }
                 ,
-                EFFECT_TYPE.Freeze => () => {
-                    Debug.Log("霜焼け効果適用");
-
+                EFFECT_TYPE.Freeze => () =>{
+                    // 移動速度・攻撃速度の50%分を現在のステータスから減算する
+                    float moveSpeedOffset = Mathf.Floor(-characterBase.MoveSpeed * 0.5f);
+                    float attackSpeedOffset = Mathf.Floor(-characterBase.AttackSpeed * 0.5f);
+                    tmpMoveSpeedValue.Add(effectType, moveSpeedOffset);
+                    tmpAttackSpeedValue.Add(effectType, attackSpeedOffset);
+                    characterBase.ApplyStatusBonus(new CharacterStatusData(moveSpeed: moveSpeedOffset, attackSpeed: attackSpeedOffset));
                 }
                 ,
                 EFFECT_TYPE.Shock => () => {
-                    Debug.Log("感電効果適用");
-                    if (this.gameObject.tag == "EnemyBase")
-                    {
-                        GetComponent<EnemyBase>().ApplyStun(maxShockDuration);
-                    }
+                    if (this.gameObject.tag == "Player") Debug.Log("プレイヤーのスタン処理未設定");
+                    else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(maxShockDuration);
                 }
                 ,
                 _ => null
             };
             action();
+            ApplyStatusEffectParticle(effectType);
         }
         else
         {
@@ -133,22 +138,80 @@ public class StatusEffectController : MonoBehaviour
         Action action = effectType switch
         {
             EFFECT_TYPE.Burn => () => { 
-                Debug.Log("炎上効果解除");
                 CancelInvoke("ActivateBurnEffect");
             }
             ,
-            EFFECT_TYPE.Freeze => () => { 
-                Debug.Log($"霜焼け・凍結効果解除：*移動速度：{tmpMoveSpeedValue[EFFECT_TYPE.Freeze]}* , *攻撃速度：{tmpAttackSpeedValue[EFFECT_TYPE.Freeze]}*"); 
+            EFFECT_TYPE.Freeze => () => {
+                // 移動速度・攻撃速度の減算されていた分の値をステータスに加算する
+                characterBase.ApplyStatusBonus(new CharacterStatusData(moveSpeed: -tmpMoveSpeedValue[effectType], attackSpeed: -tmpAttackSpeedValue[effectType]));
+                tmpMoveSpeedValue.Remove(effectType);
+                tmpAttackSpeedValue.Remove(effectType);
             }
             ,
-            EFFECT_TYPE.Shock => () => { 
-                Debug.Log("感電効果解除");
+            EFFECT_TYPE.Shock => () => {
             }
             ,
             _ => null
         };
         action();
         currentEffects.Remove(effectType);
+        DestroyStatusEffectParticle(effectType);
+    }
+
+    /// <summary>
+    /// 状態異常のパーティクルを適用させる
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="particlePrefab"></param>
+    void ApplyStatusEffectParticle(EFFECT_TYPE type)
+    {
+        GameObject psObj = null;
+        ParticleSystem ps;
+
+        // 各パーティクルの詳細設定
+        Action action = type switch
+        {
+            EFFECT_TYPE.Burn => () =>
+            {
+                psObj = Instantiate(burnPS, transform);
+                ps = psObj.GetComponent<ParticleSystem>();
+                ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);
+            }
+            ,
+            EFFECT_TYPE.Freeze => () =>
+            {
+                psObj = Instantiate(freezePS, transform);
+                ps = psObj.GetComponent<ParticleSystem>();
+                ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps, 0.5f);
+            }
+            ,
+            EFFECT_TYPE.Shock => () =>
+            {
+                psObj = Instantiate(shockPS, transform);
+                ps = psObj.GetComponent<ParticleSystem>();
+                float baseRateOverTime = 15f;
+                ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);
+                ParticleHelper.AdjustRateOverTimeBySpriteWidth(capsule2D, ps, baseRateOverTime);
+            }
+            ,
+            _ => () => { }
+        };
+        action();
+        if (psObj != null) appliedParticles.Add(type, psObj);
+    }
+
+    /// <summary>
+    /// 適用されていた状態異常のパーティクルを破棄する
+    /// </summary>
+    /// <param name="type"></param>
+    void DestroyStatusEffectParticle(EFFECT_TYPE type)
+    {
+        if (appliedParticles.ContainsKey(type))
+        {
+            GameObject psObj = appliedParticles[type];
+            appliedParticles.Remove(type);
+            Destroy(psObj);
+        }
     }
 
     /// <summary>
@@ -157,9 +220,8 @@ public class StatusEffectController : MonoBehaviour
     void ActivateBurnEffect()
     {
         // 最大HPの5%のダメージを与える
-        Debug.Log("炎上効果発動中");
-        int dmgValue = Mathf.FloorToInt(characterBase.MaxHP * 0.05f);
-        if (this.gameObject.tag == "Player") playerBase.ApplyDamage(dmgValue, Vector3.zero);
-        else if (this.gameObject.tag == "EnemyBase") enemyBase.ApplyDamage(dmgValue);
+        int dmgValue = Mathf.CeilToInt((float)characterBase.MaxHP * 0.05f);
+        if (this.gameObject.tag == "Player") playerBase.ApplyDamage(dmgValue);
+        else if (this.gameObject.tag == "Enemy") enemyBase.ApplyDamage(dmgValue);
     }
 }
