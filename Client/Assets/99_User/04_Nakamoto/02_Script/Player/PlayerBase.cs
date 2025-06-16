@@ -555,7 +555,7 @@ abstract public class PlayerBase : CharacterBase
     /// <summary>
     /// ダメージ後硬直処理
     /// </summary>
-    protected IEnumerator Stun(float time)
+    public IEnumerator Stun(float time)
     {
         Debug.Log("スタン！：" + time);
         canMove = false;
@@ -619,7 +619,7 @@ abstract public class PlayerBase : CharacterBase
     /// ダッシュ(ブリンク)制限処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator BlinkCooldown()
+    protected IEnumerator BlinkCooldown()
     {
         animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
         isBlinking = true;
@@ -664,7 +664,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
-            animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
 
             // ノックバック処理
