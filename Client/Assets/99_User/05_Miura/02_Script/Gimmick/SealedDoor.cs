@@ -10,7 +10,6 @@ public class SealedDoor : MonoBehaviour
     void Start()
     {
         isDoor = false;
-
     }
 
     // Update is called once per frame
@@ -30,6 +29,14 @@ public class SealedDoor : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             isDoor = true;
+        }
+    }
+
+    public void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            isDoor = false;
         }
     }
 }
