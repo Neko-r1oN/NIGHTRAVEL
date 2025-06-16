@@ -21,5 +21,23 @@ class EnemiesTableSeeder extends Seeder
             'defence' => 1.0,
             'move_speed' => 20.0
         ]);
+
+        Enemy::create([
+            'name' => 'ロボ警備員',
+            'stage_id' => 1,
+            'hp' => 20.0,
+            'attack' => 8.0,
+            'defence' => 1.0,
+            'move_speed' => 10.0
+        ]);
+
+        Enemy::create([
+            'name' => 'ロボドッグ',
+            'stage_id' => 1,
+            'hp' => 5.0,
+            'attack' => 8.0,
+            'defence' => 1.0,
+            'move_speed' => 30.0
+        ]);
     }
 }

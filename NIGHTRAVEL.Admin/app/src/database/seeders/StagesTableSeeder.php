@@ -14,8 +14,16 @@ class StagesTableSeeder extends Seeder
     public function run(): void
     {
         Stage::create([
-            'name' => 'テストステージ',
-            'descriptive_text' => 'ここにステージの説明文が入ります',
+            'name' => 'テストステージ1',
+            'descriptive_text' => 'ここにステージ1の説明文が入ります',
+        ]);
+        Stage::create([
+            'name' => 'テストステージ2',
+            'descriptive_text' => 'ステージ2の説明文が入ります',
+        ]);
+        Stage::create([
+            'name' => 'テストステージ3',
+            'descriptive_text' => 'ここにステージ3の説明文',
         ]);
     }
 }

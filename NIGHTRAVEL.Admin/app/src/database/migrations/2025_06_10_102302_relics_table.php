@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->timestamps();                               //created_atとupdated_at
 
             $table->unique('id');                    //idにユニーク制約設定
-            $table->unique('rarity');                    //nameにユニーク制約設定
+            $table->index('rarity');                    //nameにユニーク制約設定
         });
     }
 

@@ -20,10 +20,10 @@ namespace NIGHTRAVEL.Shared.Services
     /// </summary>
     public interface IStatusEnhancementService : IService<IStatusEnhancementService> 
    {
-        ////ステータス強化をid指定で取得
-        //UnaryResult<Status_Enhancement> GetStatusEnhancement(int id);
-
         //ステータス強化を識別名で取得
         UnaryResult<Status_Enhancement[]> GetStatusEnhancement(string enhancementType);
+
+        //ステータス強化をすべて取得
+        UnaryResult<Status_Enhancement[]> GetAllStatusEnhancement();
     }
 }

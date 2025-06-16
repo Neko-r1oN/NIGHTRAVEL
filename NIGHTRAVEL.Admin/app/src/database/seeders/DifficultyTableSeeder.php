@@ -17,5 +17,13 @@ class DifficultyTableSeeder extends Seeder
             'name' => 'イージー',
             'conditions' => 1
         ]);
+        Difficulty::create([
+            'name' => 'ノーマル',
+            'conditions' => 2
+        ]);
+        Difficulty::create([
+            'name' => 'ハード',
+            'conditions' => 3
+        ]);
     }
 }

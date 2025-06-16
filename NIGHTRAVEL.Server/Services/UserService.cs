@@ -15,9 +15,9 @@ using System.Linq.Expressions;
 
 namespace NIGHTRAVEL.Server.Services
 {
-   /// <summary>
-   /// ユーザーのApiを追加
-   /// </summary>
+    /// <summary>
+    /// ユーザーのApiを追加(public)
+    /// </summary>
     public class UserService:ServiceBase<IUserService>,IUserService
     {
         //ユーザーの登録
@@ -25,6 +25,7 @@ namespace NIGHTRAVEL.Server.Services
         {
             //データベースを取得
             using var context = new GameDbContext();
+
 
             //テーブルにレコードを追加
             User user = new User();             //Userデータ
@@ -53,6 +54,12 @@ namespace NIGHTRAVEL.Server.Services
         {
             //DBを取得
             using var context = new GameDbContext();
+
+            ////バリデーションチェック
+            //if (context.Users.Where(user => user.id == id).Count() > context)
+            //{
+            //    throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument, "");
+            //}
 
             //テーブルからレコードをidを指定して取得
             User user = context.Users.Where(user=>user.id==id).First();

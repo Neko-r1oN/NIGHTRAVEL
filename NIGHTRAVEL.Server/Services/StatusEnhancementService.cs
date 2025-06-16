@@ -16,9 +16,12 @@ using System.Diagnostics;
 
 namespace NIGHTRAVEL.Server.Services
 {
+    /// <summary>
+    /// ステータス強化のApiを追加(public)
+    /// </summary>
     public class StatusEnhancementService : ServiceBase<IStatusEnhancementService>, IStatusEnhancementService
     {
-        //ステータス強化をid指定で取得
+        //ステータス強化を識別名で取得
         public async UnaryResult<Status_Enhancement[]> GetStatusEnhancement(string enhancementType)
         {
 
@@ -47,13 +50,21 @@ namespace NIGHTRAVEL.Server.Services
                     }
                 }
             }
-
-
-
                 //ステータス強化のデータを返す
                 return getResult.ToArray();
-            
-            
+        }
+
+        //ステータス強化をすべて取得
+        public async UnaryResult<Status_Enhancement[]> GetAllStatusEnhancement()
+        {
+            //データベースを取得
+            using var context = new GameDbContext();
+
+            //ステータス強化を全取得
+            Status_Enhancement[] statusEnhancements = context.Status_Enhancements.ToArray();
+
+            //ステータス強化のデータを返す
+            return statusEnhancements;
         }
     }
 }

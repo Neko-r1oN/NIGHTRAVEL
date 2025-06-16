@@ -11,6 +11,9 @@ using System.Text;
 
 namespace NIGHTRAVEL.Shared.Model.Entity
 {
+    /// <summary>
+    /// ステータス強化のカラム設定(Public)
+    /// </summary>
     public class Status_Enhancement
     {
         public int id { get; set; }                         //ステータス強化のid

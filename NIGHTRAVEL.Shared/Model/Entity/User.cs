@@ -10,6 +10,9 @@ using System;
 
 namespace NIGHTRAVEL.Server.Model.Entity
 {
+    /// <summary>
+    /// ユーザーのカラム設定(Public)
+    /// </summary>
     public class User
     {
         public int id { get; set; }                         //ユーザーのid
