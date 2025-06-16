@@ -27,7 +27,6 @@ abstract public class EnemyBase : CharacterBase
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
     protected Coroutine attackCoroutine;
-    Animator animator;
     #endregion
 
     #region チェック判定
@@ -136,9 +135,8 @@ abstract public class EnemyBase : CharacterBase
     protected int exp = 100;
     #endregion
 
-    protected override void Start()
+    protected virtual void Start()
     {
-        base.Start();
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();

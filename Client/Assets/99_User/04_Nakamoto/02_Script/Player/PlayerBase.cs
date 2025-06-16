@@ -118,7 +118,6 @@ abstract public class PlayerBase : CharacterBase
 
     #region プレイヤー情報取得変数
     protected Rigidbody2D m_Rigidbody2D;
-    protected Animator animator;
     protected Vector3 velocity = Vector3.zero;
     protected bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
     protected bool m_FallFlag = false;
@@ -174,8 +173,9 @@ abstract public class PlayerBase : CharacterBase
     /// Update前処理
     /// </summary>
 
-    protected void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();

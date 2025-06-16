@@ -114,7 +114,7 @@ public class StatusEffectController : MonoBehaviour
                 }
                 ,
                 EFFECT_TYPE.Shock => () => {
-                    if (this.gameObject.tag == "Player") Debug.Log("プレイヤーのスタン処理未設定");
+                    if (this.gameObject.tag == "Player") StartCoroutine(playerBase.Stun(maxShockDuration));
                     else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(maxShockDuration);
                 }
                 ,

@@ -119,18 +119,13 @@ abstract public class CharacterBase : MonoBehaviour
     public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
     #endregion
 
-    Animator animator;
+    protected Animator animator;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         RecoverAllStats();
         animator = GetComponent<Animator>();
     }
-
-    //protected virtual void Awake()
-    //{
-    //    RecoverAllStats();
-    //}
 
     /// <summary>
     /// 一括でステータスに加減する処理
