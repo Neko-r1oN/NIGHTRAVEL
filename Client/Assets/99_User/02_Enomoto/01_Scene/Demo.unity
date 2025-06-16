@@ -699,15 +699,15 @@ MonoBehaviour:
   baseHp: 10
   baseDefence: 10
   basePower: 10
-  baseMoveSpeed: 10
-  baseAttackSpeed: 10
   baseJumpPower: 10
+  baseMoveSpeed: 10
   hp: 0
   defence: 0
   power: 0
-  moveSpeed: 0
-  attackSpeed: 0
   jumpPower: 0
+  moveSpeed: 0
+  moveSpeedFactor: 0
+  attackSpeedFactor: 0
   players:
   - {fileID: 8712946286294310159}
   bulletNum: 3
@@ -819,9 +819,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e43c647c3c791364d9d3c4d4731398a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burnPS: {fileID: 0}
-  freezePS: {fileID: 0}
-  shockPS: {fileID: 0}
+  burnPS: {fileID: 605604136134073261, guid: acf41ac9d4d63834ab12ff5229114a2f, type: 3}
+  freezePS: {fileID: 1769309962393889541, guid: c357540a80e222c4185778f34b2ad27c, type: 3}
+  shockPS: {fileID: 7639705427433666148, guid: c281f46ff31769346991a757f5c29c44, type: 3}
 --- !u!1 &68362602
 GameObject:
   m_ObjectHideFlags: 0
@@ -1978,7 +1978,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &701479610
 Transform:
   m_ObjectHideFlags: 0
@@ -2183,15 +2183,15 @@ MonoBehaviour:
   baseHp: 10
   baseDefence: 10
   basePower: 10
-  baseMoveSpeed: 5
-  baseAttackSpeed: 10
   baseJumpPower: 10
+  baseMoveSpeed: 5
   hp: 0
   defence: 0
   power: 0
-  moveSpeed: 0
-  attackSpeed: 0
   jumpPower: 0
+  moveSpeed: 0
+  moveSpeedFactor: 0
+  attackSpeedFactor: 0
   players:
   - {fileID: 8712946286294310159}
   bulletNum: 0
@@ -3634,15 +3634,15 @@ MonoBehaviour:
   baseHp: 10
   baseDefence: 10
   basePower: 10
-  baseMoveSpeed: 10
-  baseAttackSpeed: 10
   baseJumpPower: 10
+  baseMoveSpeed: 10
   hp: 0
   defence: 0
   power: 0
-  moveSpeed: 0
-  attackSpeed: 0
   jumpPower: 0
+  moveSpeed: 0
+  moveSpeedFactor: 0
+  attackSpeedFactor: 0
   players:
   - {fileID: 8712946286294310159}
   bulletNum: 20
@@ -3771,9 +3771,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e43c647c3c791364d9d3c4d4731398a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burnPS: {fileID: 0}
-  freezePS: {fileID: 0}
-  shockPS: {fileID: 0}
+  burnPS: {fileID: 605604136134073261, guid: acf41ac9d4d63834ab12ff5229114a2f, type: 3}
+  freezePS: {fileID: 1769309962393889541, guid: c357540a80e222c4185778f34b2ad27c, type: 3}
+  shockPS: {fileID: 7639705427433666148, guid: c281f46ff31769346991a757f5c29c44, type: 3}
 --- !u!1 &1817013473
 GameObject:
   m_ObjectHideFlags: 0
@@ -4169,15 +4169,15 @@ MonoBehaviour:
   baseHp: 10
   baseDefence: 10
   basePower: 10
-  baseMoveSpeed: 10
-  baseAttackSpeed: 10
   baseJumpPower: 10
+  baseMoveSpeed: 10
   hp: 0
   defence: 0
   power: 0
-  moveSpeed: 0
-  attackSpeed: 0
   jumpPower: 0
+  moveSpeed: 0
+  moveSpeedFactor: 0
+  attackSpeedFactor: 0
   players:
   - {fileID: 8712946286294310159}
   bulletNum: 3
@@ -4383,9 +4383,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e43c647c3c791364d9d3c4d4731398a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burnPS: {fileID: 0}
-  freezePS: {fileID: 0}
-  shockPS: {fileID: 0}
+  burnPS: {fileID: 605604136134073261, guid: acf41ac9d4d63834ab12ff5229114a2f, type: 3}
+  freezePS: {fileID: 1769309962393889541, guid: c357540a80e222c4185778f34b2ad27c, type: 3}
+  shockPS: {fileID: 7639705427433666148, guid: c281f46ff31769346991a757f5c29c44, type: 3}
 --- !u!1 &1908201957
 GameObject:
   m_ObjectHideFlags: 0
@@ -4642,15 +4642,15 @@ MonoBehaviour:
   baseHp: 100
   baseDefence: 10
   basePower: 10
-  baseMoveSpeed: 60
-  baseAttackSpeed: 10
   baseJumpPower: 10
+  baseMoveSpeed: 60
   hp: 0
   defence: 0
   power: 0
-  moveSpeed: 0
-  attackSpeed: 0
   jumpPower: 0
+  moveSpeed: 0
+  moveSpeedFactor: 0
+  attackSpeedFactor: 0
   m_JumpForce: 850
   wallJumpPower: 2
   m_AirControl: 1

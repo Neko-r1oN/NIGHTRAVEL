@@ -143,8 +143,6 @@ abstract public class EnemyBase : CharacterBase
         projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
-
-        //PromoteToElite(EnemyElite.ELITE_TYPE.Blaze);
     }
 
     private void FixedUpdate()

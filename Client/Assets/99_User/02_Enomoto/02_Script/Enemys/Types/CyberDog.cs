@@ -127,7 +127,11 @@ public class CyberDog : EnemyBase
                 if (isElite)
                 {
                     // 状態異常を適用させる
-                    collidersEnemies[i].gameObject.GetComponent<StatusEffectController>().ApplyStatusEffect(applyEffect);
+                    StatusEffectController statusEffect = collidersEnemies[i].gameObject.GetComponent<StatusEffectController>();
+                    if (statusEffect)
+                    {
+                        statusEffect.ApplyStatusEffect(applyEffect);
+                    }
                 }
             }
         }
@@ -208,7 +212,7 @@ public class CyberDog : EnemyBase
     {
         //SetAnimId((int)ANIM_ID.Dead);
     }
-
+    
     /// <summary>
     /// ヒットアニメーション
     /// </summary>

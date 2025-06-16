@@ -7,20 +7,22 @@ using UnityEngine;
 
 public class CharacterStatusData
 {
-    public int hp = 10;   // HP
-    public int defence = 10;  // –hŒä—Í
-    public int power = 10;    // UŒ‚—Í
-    public float moveSpeed = 10f;   // ˆÚ“®‘¬“x
-    public float attackSpeed = 10;    // UŒ‚‘¬“x
-    public float jumpPower = 10;  // ’µ–ô—Í
+    public int hp;              // HP
+    public int defence;         // –hŒä—Í
+    public int power;           // UŒ‚—Í
+    public float jumpPower;     // ’µ–ô—Í
+    public float moveSpeed;     // ˆÚ“®‘¬“x
+    public float moveSpeedFactor;     // ˆÚ“®‘¬“x(Animator‚ÌŒW”)
+    public float attackSpeedFactor;   // UŒ‚‘¬“x(Animator‚ÌŒW”)
 
-    public CharacterStatusData(int hp = 0, int defence = 0, int power = 0, float moveSpeed = 0, float attackSpeed = 0, float jumpPower = 0)
+    public CharacterStatusData(int hp = 0, int defence = 0, int power = 0, float moveSpeed = 0, float moveSpeedFactor = 0, float attackSpeedFactor = 0, float jumpPower = 0)
     {
         this.hp = hp;
         this.defence = defence;
         this.power = power;
-        this.moveSpeed = moveSpeed;
-        this.attackSpeed = attackSpeed;
         this.jumpPower = jumpPower;
+        this.moveSpeed = moveSpeed;
+        this.moveSpeedFactor = moveSpeedFactor;
+        this.attackSpeedFactor = attackSpeedFactor;
     }
 }

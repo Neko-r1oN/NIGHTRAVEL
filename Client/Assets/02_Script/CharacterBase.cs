@@ -24,15 +24,17 @@ abstract public class CharacterBase : MonoBehaviour
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected float baseMoveSpeed = 1f;   // 移動速度(Animatorの係数)
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    protected float baseAttackSpeed = 1f;    // 攻撃速度(Animatorの係数)
-
-    [Foldout("ステータス")]
-    [SerializeField]
     protected float baseJumpPower = 10;  // 跳躍力
+
+    [Foldout("ステータス")]
+    [SerializeField]
+    protected float baseMoveSpeed = 1f;   // 移動速度
+
+    [Foldout("ステータス")]
+    protected float baseMoveSpeedFactor = 1f;    // 移動速度(Animatorの係数)
+
+    [Foldout("ステータス")]
+    protected float baseAttackSpeedFactor = 1f;    // 攻撃速度(Animatorの係数)
     #endregion
 
     #region 初期ステータス外部参照用プロパティ
@@ -52,19 +54,24 @@ abstract public class CharacterBase : MonoBehaviour
     public int BasePower { get { return basePower; } }
 
     /// <summary>
+    /// 跳躍力
+    /// </summary>
+    public float BaseJumpPower { get { return baseJumpPower; } }
+
+    /// <summary>
     /// 移動速度
     /// </summary>
     public float BaseMoveSpeed { get { return baseMoveSpeed; } }
 
     /// <summary>
-    /// 攻撃速度
+    /// 移動速度(Animatorの係数)
     /// </summary>
-    public float BaseAttackSpeed { get { return baseAttackSpeed; } }
+    public float BaseMoveSpeedFactor {  get { return baseMoveSpeedFactor; } }
 
     /// <summary>
-    /// 跳躍力
+    /// 攻撃速度(Animatorの係数)
     /// </summary>
-    public float BaseJumpPower { get { return baseJumpPower; } }
+    public float BaseAttackSpeedFactor { get { return baseAttackSpeedFactor; } }
     #endregion
 
     #region ステータスの上限値関連
@@ -77,9 +84,10 @@ abstract public class CharacterBase : MonoBehaviour
     public int hp;
     public int defence;
     public int power;
-    public float moveSpeed;
-    public float attackSpeed;
     public float jumpPower;
+    public float moveSpeed;
+    public float moveSpeedFactor;
+    public float attackSpeedFactor;
     #endregion
 
     #region ステータス外部参照用プロパティ
@@ -104,19 +112,24 @@ abstract public class CharacterBase : MonoBehaviour
     public int Power { get { return power; } set { power = value; } }
 
     /// <summary>
+    /// 跳躍力
+    /// </summary>
+    public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
+
+    /// <summary>
     /// 移動速度
     /// </summary>
     public float MoveSpeed { get { return moveSpeed; } set { moveSpeed = value; } }
 
     /// <summary>
-    /// 攻撃速度
+    /// 移動速度(Animatorの係数)
     /// </summary>
-    public float AttackSpeed { get { return attackSpeed; } set { attackSpeed = value; } }
+    public float MoveSpeedFactor { get { return moveSpeedFactor; }  set { moveSpeedFactor = value; } }
 
     /// <summary>
-    /// 跳躍力
+    /// 攻撃速度(Animatorの係数)
     /// </summary>
-    public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
+    public float AttackSpeedFactor { get { return attackSpeedFactor; } set { attackSpeedFactor = value; } }
     #endregion
 
     protected Animator animator;
@@ -137,7 +150,8 @@ abstract public class CharacterBase : MonoBehaviour
         defence += addStatusData.defence;
         power += addStatusData.power;
         moveSpeed += addStatusData.moveSpeed;
-        attackSpeed += addStatusData.attackSpeed;
+        moveSpeedFactor += addStatusData.moveSpeedFactor;
+        attackSpeedFactor += addStatusData.attackSpeedFactor;
         jumpPower += addStatusData.jumpPower;
         OverrideAnimaterParam();
     }
@@ -153,7 +167,8 @@ abstract public class CharacterBase : MonoBehaviour
         baseDefence = statusData.defence;
         basePower = statusData.power;
         baseMoveSpeed = statusData.moveSpeed;
-        baseAttackSpeed = statusData.attackSpeed;
+        baseMoveSpeedFactor = statusData.moveSpeedFactor;
+        baseAttackSpeedFactor = statusData.attackSpeedFactor;
         baseJumpPower = statusData.jumpPower;
         OverrideAnimaterParam();
 
@@ -173,8 +188,9 @@ abstract public class CharacterBase : MonoBehaviour
         defence = baseDefence;
         power = basePower;
         moveSpeed = baseMoveSpeed;
-        attackSpeed = baseAttackSpeed;
         jumpPower = baseJumpPower;
+        moveSpeedFactor = baseMoveSpeedFactor;
+        attackSpeedFactor = baseAttackSpeedFactor;
         OverrideAnimaterParam();
     }
 
@@ -185,8 +201,8 @@ abstract public class CharacterBase : MonoBehaviour
     {
         if (animator)
         {
-            animator.SetFloat("attack_speed", attackSpeed);
-            animator.SetFloat("move_speed", moveSpeed);
+            animator.SetFloat("attack_speed", attackSpeedFactor);
+            animator.SetFloat("move_speed", moveSpeedFactor);
         }
     }
 }
