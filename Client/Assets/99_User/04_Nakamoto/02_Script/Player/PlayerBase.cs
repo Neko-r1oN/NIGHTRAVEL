@@ -107,7 +107,7 @@ abstract public class PlayerBase : CharacterBase
     [SerializeField] protected Transform m_WallCheck;   // プレイヤーが壁に触れているかどうかを確認する用
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] private Transform attackCheck;     // 攻撃時の当たり判定
+    [SerializeField] protected Transform attackCheck;     // 攻撃時の当たり判定
 
     [Foldout("レイヤー・位置関連")]
     [SerializeField] protected Transform playerPos;		// プレイヤー位置情報
@@ -139,7 +139,6 @@ abstract public class PlayerBase : CharacterBase
     #region 動作フラグ関連
     protected bool canMove = true;      // プレイヤーの動作制御フラグ
     protected bool canBlink = true;     // ダッシュ制御フラグ
-    protected bool canAttack = true;    // 攻撃制御フラグ
     protected bool m_Grounded;          // プレイヤーの接地フラグ
     protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
     protected bool m_IsLadder = false;  // 梯子動作フラグ
@@ -543,14 +542,6 @@ abstract public class PlayerBase : CharacterBase
 
     #region プレイヤー共通非同期処理
     /// <summary>
-    /// 攻撃制限処理
-    /// </summary>
-    protected IEnumerator AttackCooldown()
-    {
-        yield return new WaitForSeconds(0.25f);
-        canAttack = true;
-    }
-    /// <summary>
     /// 壁ジャンプ制限処理
     /// </summary>
     /// <returns></returns>
@@ -628,7 +619,6 @@ abstract public class PlayerBase : CharacterBase
         animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
         canMove = false;
         invincible = true;
-        canAttack = false;
         yield return new WaitForSeconds(0.4f);
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
@@ -656,25 +646,7 @@ abstract public class PlayerBase : CharacterBase
     /// <summary>
     /// ダメージを与える処理
     /// </summary>
-    public void DoDashDamage()
-    {
-        power = Mathf.Abs(power);
-        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
-        for (int i = 0; i < collidersEnemies.Length; i++)
-        {
-            if (collidersEnemies[i].gameObject.tag == "Enemy")
-            {
-                if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
-                {
-                    power = -power;
-                }
-                //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
-                //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
-                cam.GetComponent<CameraFollow>().ShakeCamera();
-            }
-        }
-    }
+    abstract public void DoDashDamage();
 
     /// <summary>
     /// 被ダメ処理(ノックバック有)
