@@ -24,11 +24,11 @@ abstract public class CharacterBase : MonoBehaviour
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected float baseMoveSpeed = 10f;   // 移動速度
+    protected float baseMoveSpeed = 1f;   // 移動速度(Animatorの係数)
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected float baseAttackSpeed = 10;    // 攻撃速度
+    protected float baseAttackSpeed = 1f;    // 攻撃速度(Animatorの係数)
 
     [Foldout("ステータス")]
     [SerializeField]
@@ -72,6 +72,8 @@ abstract public class CharacterBase : MonoBehaviour
     #endregion
 
     #region 現在のステータス関連
+    // インスペクター上で見るためのpublic
+    // 後でpublicを消す
     public int hp;
     public int defence;
     public int power;
@@ -117,9 +119,12 @@ abstract public class CharacterBase : MonoBehaviour
     public float JumpPower { get { return jumpPower; } set { jumpPower = value; } }
     #endregion
 
+    Animator animator;
+
     protected virtual void Start()
     {
         RecoverAllStats();
+        animator = GetComponent<Animator>();
     }
 
     //protected virtual void Awake()
@@ -139,6 +144,7 @@ abstract public class CharacterBase : MonoBehaviour
         moveSpeed += addStatusData.moveSpeed;
         attackSpeed += addStatusData.attackSpeed;
         jumpPower += addStatusData.jumpPower;
+        OverrideAnimaterParam();
     }
 
     /// <summary>
@@ -154,8 +160,12 @@ abstract public class CharacterBase : MonoBehaviour
         baseMoveSpeed = statusData.moveSpeed;
         baseAttackSpeed = statusData.attackSpeed;
         baseJumpPower = statusData.jumpPower;
+        OverrideAnimaterParam();
 
-        if (shouldResetToBaseStats) RecoverAllStats();
+        if (shouldResetToBaseStats)
+        {
+            RecoverAllStats();
+        }
     }
 
     /// <summary>
@@ -170,5 +180,18 @@ abstract public class CharacterBase : MonoBehaviour
         moveSpeed = baseMoveSpeed;
         attackSpeed = baseAttackSpeed;
         jumpPower = baseJumpPower;
+        OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// アニメーターのパラメーターを上書きする
+    /// </summary>
+    public void OverrideAnimaterParam()
+    {
+        if (animator)
+        {
+            animator.SetFloat("attack_speed", attackSpeed);
+            animator.SetFloat("move_speed", moveSpeed);
+        }
     }
 }
