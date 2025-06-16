@@ -5,16 +5,13 @@ public class ShortCircuit : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    //[SerializeField] GameObject ElectronicEffect;
-    PlayerBase sample;
+    PlayerBase playerBase;
     EnemyBase enemyBase;
     Vector2 pos = Vector2.zero;
-    //int count = 0;
 
     void Start()
     {
-        sample=GameObject.Find("PlayerSample").GetComponent<PlayerBase>();
-        enemyBase=GameObject.FindWithTag("Enemy").GetComponent<EnemyBase>();
+
     }
 
     // Update is called once per frame
@@ -23,30 +20,34 @@ public class ShortCircuit : MonoBehaviour
 
     }
 
-    void HitDamage()
+    void HitPlayerDamage()
     {
-        //count++;
-        //Debug.Log("プレイヤーが漏電フィールドに当たった" + count);
+        int maxHP = playerBase.MaxHP;
 
-        //SampleChara_CopyのmaxLifeをintに変換
-        int maxLife= (int)sample.MaxHP;
+        int damage = Mathf.FloorToInt(maxHP * 0.05f);
+        playerBase.ApplyDamage(damage);
+        Debug.Log(playerBase.HP);
+    }
+    void HitEnemyDamage()
+    {
+        int maxLife = enemyBase.MaxHP;
 
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
-        sample.ApplyDamage(damage);
-        //enemyController.ApplyDamage(damage,) //敵が当たった時のダメージ
-        Debug.Log(damage);
+        enemyBase.ApplyDamage(damage);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            InvokeRepeating("HitDamage",0.1f,0.5f);
+            playerBase = collision.gameObject.GetComponent<PlayerBase>();
+            InvokeRepeating("HitPlayerDamage", 0.1f,0.5f);
         }
         if (collision.gameObject.CompareTag("Enemy"))
         {
             //Debug.Log("敵が漏電フィールドに当たった");
-            InvokeRepeating("HitDamage", 0.1f, 0.5f);
+            enemyBase = collision.gameObject.GetComponent<EnemyBase>();
+            InvokeRepeating("HitEnemyDamage", 0.1f, 0.5f);
         }
     }
 

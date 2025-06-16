@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Abyss : MonoBehaviour
 {
-    PlayerBase sample;
+    PlayerBase playerBase;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        sample = GameObject.Find("PlayerSample").GetComponent<PlayerBase>();
+        playerBase = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
     }
 
     // Update is called once per frame
