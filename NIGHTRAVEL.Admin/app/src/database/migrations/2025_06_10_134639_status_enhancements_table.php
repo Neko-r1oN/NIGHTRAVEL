@@ -18,7 +18,8 @@ return new class extends Migration {
             $table->string('explanation');//explanationカラム
             $table->integer('type');//typeカラム
             $table->float('effect');//effectカラム
-            $table->boolean('duplication');//effectカラム
+            $table->string('enhancement_type'); //enhancement_typeカラム
+            $table->boolean('duplication');//duplicationカラム
             $table->timestamps();                           //created_atとupdated_at
 
             $table->index('name');

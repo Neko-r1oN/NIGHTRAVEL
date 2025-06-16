@@ -19,6 +19,7 @@ namespace NIGHTRAVEL.Shared.Model.Entity
         public string explanation {  get; set; }            //ステータス強化の説明文
         public int type {  get; set; }                      //ステータス強化タイプ
         public double effect {  get; set; }                  //効果量
+        public string enhancement_type { get; set; }        //ステータス強化の識別名
         public bool duplication {  get; set; }              //重複の判定
         public DateTime Created_at { get; set; }            //生成日時
         public DateTime Updated_at { get; set; }            //更新日時
