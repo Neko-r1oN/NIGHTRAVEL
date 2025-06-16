@@ -301,7 +301,7 @@ GameObject:
   - component: {fileID: 536695969}
   - component: {fileID: 536695968}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -877,6 +877,12 @@ MonoBehaviour:
   baseMoveSpeed: 10
   baseAttackSpeed: 10
   baseJumpPower: 10
+  hp: 0
+  defence: 0
+  power: 0
+  moveSpeed: 0
+  attackSpeed: 0
+  jumpPower: 0
   players:
   - {fileID: 0}
   bulletNum: 3
