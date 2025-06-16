@@ -12,8 +12,8 @@ static public class ParticleHelper
     {
         var shape = particle.shape;
         shape.radius = capsule2D.bounds.size.x / 2 + offset;
-        Debug.Log("横のサイズ：" + capsule2D.bounds.size.x);
-        Debug.Log("縦のサイズ：" + capsule2D.bounds.size.y);
+        //Debug.Log("横のサイズ：" + capsule2D.bounds.size.x);
+        //Debug.Log("縦のサイズ：" + capsule2D.bounds.size.y);
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ static public class ParticleHelper
     {
         var emission = particle.emission;
         emission.rateOverTime = baseTime * capsule2D.bounds.size.x;
-        Debug.Log("横のサイズ：" + capsule2D.bounds.size.x);
-        Debug.Log("縦のサイズ：" + capsule2D.bounds.size.y);
+        //Debug.Log("横のサイズ：" + capsule2D.bounds.size.x);
+        //Debug.Log("縦のサイズ：" + capsule2D.bounds.size.y);
     }
 }
