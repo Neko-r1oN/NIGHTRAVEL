@@ -12,4 +12,6 @@ abstract public class ObjectBase : MonoBehaviour
     /// 壊れるオブジェクトのダメージ関数
     /// </summary>
     abstract public void ApplyDamage();
+
+    abstract public void FadeFragment(Transform fragment);
 }
