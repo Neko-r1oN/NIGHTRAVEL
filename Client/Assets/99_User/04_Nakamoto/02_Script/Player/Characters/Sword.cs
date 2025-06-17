@@ -45,6 +45,12 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
         {   // 攻撃1
+            if (isCombo)
+            {
+                isCombo = false;
+                animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
+            }
+
             animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
         }
 
@@ -70,6 +76,7 @@ public class Sword : PlayerBase
     {
         power = Mathf.Abs(power);
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
+
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
             if (collidersEnemies[i].gameObject.tag == "Enemy")
@@ -80,10 +87,34 @@ public class Sword : PlayerBase
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
+
+                if(collidersEnemies[i].gameObject.tag == "Enemy")
+                {
+                    collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
+                }
+                else if(collidersEnemies[i].gameObject.tag == "Object")
+                {
+                    //collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
+                }
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
+    }
+
+    /// <summary>
+    /// 攻撃終了時
+    /// </summary>
+    public void HitAttack()
+    {
+        isCombo = true;
+    }
+
+    /// <summary>
+    /// 攻撃終了時
+    /// </summary>
+    public void AttackEnd()
+    {
+        isCombo = false;
     }
 
     [ContextMenu("ショック")]

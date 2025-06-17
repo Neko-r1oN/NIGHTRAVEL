@@ -139,6 +139,7 @@ abstract public class PlayerBase : CharacterBase
     #region 動作フラグ関連
     protected bool canMove = true;      // プレイヤーの動作制御フラグ
     protected bool canBlink = true;     // ダッシュ制御フラグ
+    protected bool canAttack = true;    // 攻撃可能フラグ
     protected bool m_Grounded;          // プレイヤーの接地フラグ
     protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
     protected bool m_IsLadder = false;  // 梯子動作フラグ
