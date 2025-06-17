@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
 
     float elapsedTime;
 
+    Vector3 bossPos;
+
     public GameObject Enemy { get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
@@ -218,6 +220,8 @@ public class GameManager : MonoBehaviour
     [ContextMenu("DeathBoss")]
     public void DeathBoss()
     {
+        RelicManager.Instance.GenerateRelic(boss.transform.position);
+
         // ボスフラグを変更
         bossFlag = false;
         // 死んだ判定にする
