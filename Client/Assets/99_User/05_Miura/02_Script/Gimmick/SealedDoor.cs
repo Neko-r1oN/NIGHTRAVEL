@@ -1,35 +1,34 @@
+using DG.Tweening;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Unity.VisualScripting;
 using UnityEngine;
+using static Unity.VisualScripting.Member;
 
-public class SealedDoor : MonoBehaviour
+public class SealedDoor : ObjectBase
 {
-    [SerializeField] GameObject ExplosionEffect;
-    public bool isDoor;
+    [SerializeField] GameObject DoorFragment;　//破片エフェクトを取得
+    PlayerBase player;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void ApllyDamage()
     {
-        isDoor = false;
+        player=GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
 
-    }
+        GameObject fragment; //破片のオブジェクト
+        fragment = Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 2), this.transform.rotation); //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)
 
-    // Update is called once per frame
-    void Update()
-    {
-        //ドアに触れていて、攻撃したら
-        if (isDoor == true && Input.GetKeyDown(KeyCode.X))
-        {
-            //ドアを壊す
-            this.gameObject.SetActive(false);
-            Instantiate(ExplosionEffect, this.transform.position,this.transform.rotation);
+        for (int i = 0; i < fragment.transform.childCount; i++)
+        {//fragmentの子の数だけループ
+            if (this.transform.position.x - player.transform.position.x >= 0)
+            {//ドアの位置と比べて、プレイヤーが左側にいたら
+                fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(1000, 200)); //右側に破片を飛ばす
+            }
+            else
+            {//ドアの位置と比べて、プレイヤーが右側にいたら
+                fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(-1000, -200)); //左側に破片を飛ばす
+            }
         }
-    }
 
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            isDoor = true;
-        }
+        Destroy(this.gameObject);//ドアを壊す
     }
 }
