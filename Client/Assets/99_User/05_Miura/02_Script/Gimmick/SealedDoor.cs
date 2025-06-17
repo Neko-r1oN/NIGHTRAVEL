@@ -1,90 +1,34 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Unity.VisualScripting.Member;
 
-public class SealedDoor : MonoBehaviour
+public class SealedDoor : ObjectBase
 {
-    [SerializeField] GameObject DoorFragment;
-    GameObject player;
-    List<Transform> fragmentList=new List<Transform>();
-    Rigidbody2D rigidbody2D;
-    public bool isDoor;
+    [SerializeField] GameObject DoorFragment;　//破片エフェクトを取得
+    PlayerBase player;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void ApllyDamage()
     {
-        isDoor = false;
-        rigidbody2D=this.gameObject.GetComponent<Rigidbody2D>();
-    }
+        player=GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        //ドアに触れていて、攻撃したら
-        if (isDoor == true && Input.GetKeyDown(KeyCode.X))
-        {
-            GameObject fragment;
-            fragment= Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 2), this.transform.rotation);
+        GameObject fragment; //破片のオブジェクト
+        fragment = Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 2), this.transform.rotation); //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)
 
-            for (int i = 0; i < fragment.transform.childCount; i++)
-            {
-                if(this.transform.position.x- player.transform.position.x>=0)
-                {
-                    fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(1000, 200));
-                }
-                else
-                {
-                    fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(-1000, -200));
-                }
+        for (int i = 0; i < fragment.transform.childCount; i++)
+        {//fragmentの子の数だけループ
+            if (this.transform.position.x - player.transform.position.x >= 0)
+            {//ドアの位置と比べて、プレイヤーが左側にいたら
+                fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(1000, 200)); //右側に破片を飛ばす
             }
-
-            //ドアを壊す
-            Destroy(this.gameObject);
-        }
-    }
-
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            player=collision.gameObject;
-            isDoor = true;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.gameObject.CompareTag("Attack"))
-        {
-            player = collision.gameObject;
-            GameObject fragment;
-            fragment = Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 2), this.transform.rotation);
-
-            for (int i = 0; i < fragment.transform.childCount; i++)
-            {
-                if (this.transform.position.x - player.transform.position.x >= 0)
-                {
-                    fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(1000, 200));
-                }
-                else
-                {
-                    fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(-1000, -200));
-                }
+            else
+            {//ドアの位置と比べて、プレイヤーが右側にいたら
+                fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(-1000, -200)); //左側に破片を飛ばす
             }
-
-            //ドアを壊す
-            Destroy(this.gameObject);
-
         }
-    }
 
-    public void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            isDoor = false;
-        }
+        Destroy(this.gameObject);//ドアを壊す
     }
 }
