@@ -10,7 +10,7 @@ public class SealedDoor : ObjectBase
     [SerializeField] GameObject DoorFragment;　//破片エフェクトを取得
     PlayerBase player;
 
-    public override void ApllyDamage()
+    public override void ApplyDamage()
     {
         player=GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
 

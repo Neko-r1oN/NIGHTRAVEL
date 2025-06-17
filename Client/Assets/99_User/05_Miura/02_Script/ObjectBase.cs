@@ -11,5 +11,5 @@ abstract public class ObjectBase : MonoBehaviour
     /// <summary>
     /// 壊れるオブジェクトのダメージ関数
     /// </summary>
-    abstract public void ApllyDamage();
+    abstract public void ApplyDamage();
 }

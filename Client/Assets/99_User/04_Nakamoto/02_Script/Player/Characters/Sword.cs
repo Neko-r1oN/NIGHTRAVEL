@@ -94,7 +94,7 @@ public class Sword : PlayerBase
                 }
                 else if(collidersEnemies[i].gameObject.tag == "Object")
                 {
-                    //collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
+                    collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
                 }
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
