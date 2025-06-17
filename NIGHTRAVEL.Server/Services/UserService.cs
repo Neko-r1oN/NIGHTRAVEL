@@ -55,14 +55,21 @@ namespace NIGHTRAVEL.Server.Services
             //DBを取得
             using var context = new GameDbContext();
 
-            ////バリデーションチェック
-            //if (context.Users.Where(user => user.id == id).Count() > context)
-            //{
-            //    throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument, "");
-            //}
+            //テーブル情報の変数定義
+            User user = new User();
+
+            //バリデーションチェック
+            if (context.Users.Where(user => user.id == id).Count() < id || id <= 0)
+            {//ユーザーのIDが登録分を超過、無効な入力の場合
+
+                //400エラー表示
+                throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument, 
+                    "そのIDのユーザーは登録されていません");
+            }
 
             //テーブルからレコードをidを指定して取得
-            User user = context.Users.Where(user=>user.id==id).First();
+            user = context.Users.Where(user=>user.id==id).First();
+
 
             //ユーザーのデータを返す
             return user;

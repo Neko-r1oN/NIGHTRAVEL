@@ -5,6 +5,7 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
 using Grpc.Core;
 using MagicOnion;
 using NIGHTRAVEL.Server.Model.Entity;

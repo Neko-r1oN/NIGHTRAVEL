@@ -5,6 +5,7 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
 using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
@@ -24,9 +25,8 @@ namespace NIGHTRAVEL.Server.Services
         //ステータス強化を識別名で取得
         public async UnaryResult<Status_Enhancement[]> GetStatusEnhancement(string enhancementType)
         {
-
             //ステータス強化の検索結果を格納
-            List<Status_Enhancement>  getResult=new List<Status_Enhancement>();
+            List<Status_Enhancement>  getResult = new List<Status_Enhancement>();
 
             //データベースを取得
             using var context = new GameDbContext();
@@ -50,8 +50,18 @@ namespace NIGHTRAVEL.Server.Services
                     }
                 }
             }
-                //ステータス強化のデータを返す
-                return getResult.ToArray();
+
+            //バリデーションチェック
+            if (getResult.Count == 0)
+            {//getResultに何も格納されなかったら
+
+                //400エラー表示
+                throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument, 
+                    "識別名のデータが存在しないか、無効な入力です。");
+            }
+
+            //ステータス強化のデータを返す
+            return getResult.ToArray();
         }
 
         //ステータス強化をすべて取得

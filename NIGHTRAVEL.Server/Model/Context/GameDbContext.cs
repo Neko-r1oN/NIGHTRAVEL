@@ -5,6 +5,7 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
 using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Entity;
 using NIGHTRAVEL.Server.Services;
@@ -18,6 +19,9 @@ namespace NIGHTRAVEL.Server.Model.Context
     /// </summary>
     public class GameDbContext : DbContext
     {
+        //アカウントのデータベース設定
+        public DbSet<Account> Accounts { get; set; }
+
         //ユーザーのデータベース設定
         public DbSet<User> Users { get; set; }
 
@@ -32,6 +36,9 @@ namespace NIGHTRAVEL.Server.Model.Context
 
         //ステージのデータベース設定
         public DbSet<Stage> Stages { get; set; }
+
+        //レリックのデータベース設定
+        public DbSet<Relic> Relics { get; set; }
 
         //server名;ユーザー名;パスワード指定
         readonly string connectionString = "server=localhost;database=admin_console;user=jobi;password=jobi;";

@@ -5,6 +5,7 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
 using System;
 using System.Collections.Generic;
 using System.Text;

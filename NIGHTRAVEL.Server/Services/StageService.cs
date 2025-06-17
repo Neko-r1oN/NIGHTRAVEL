@@ -5,6 +5,7 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
 using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
@@ -25,8 +26,18 @@ namespace NIGHTRAVEL.Server.Services
             //DBを取得
             using var context = new GameDbContext();
 
+            //ステージのデータ格納変数を定義
+            Stage stage = new Stage();
+
+            //バリデーションチェック
+            if (context.Stages.Where(stage => stage.id == id).Count() < id)
+            {
+                throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument,
+                    "そのIDのステージは登録されていません");
+            }
+
             //テーブルからレコードをidを指定して取得
-            Stage stage = context.Stages.Where(stage => stage.id == id).First();
+            stage = context.Stages.Where(stage => stage.id == id).First();
 
             //ステージのデータを返す
             return stage;

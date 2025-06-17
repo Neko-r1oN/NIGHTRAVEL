@@ -5,6 +5,7 @@
 /// Aughter:木田晃輔
 ///
 ////////////////////////////////////////////////////////////////
+
 using MagicOnion;
 using NIGHTRAVEL.Shared.Model.Entity;
 using System;

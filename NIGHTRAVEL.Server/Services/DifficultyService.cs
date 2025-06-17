@@ -1,4 +1,12 @@
-﻿using MagicOnion;
+﻿////////////////////////////////////////////////////////////////
+///
+/// 難易度関連の通信を管理するスクリプト
+/// 
+/// Aughter:木田晃輔
+///
+////////////////////////////////////////////////////////////////
+
+using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.Model.Entity;
@@ -19,8 +27,20 @@ namespace NIGHTRAVEL.Server.Services
             //DBを取得
             using var context = new GameDbContext();
 
+            //難易度のデータ格納変数を定義
+            Difficulty difficulty = new Difficulty();
+
+            //バリデーションチェック
+            if (context.Difficulties.Where(difficulty => difficulty.id == id).Count() < id || id <= 0)
+            {//難易度の登録数分を超過、0以下の入力がされた場合
+
+                //400エラー表示
+                throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument,
+                    "そのIDの難易度は登録されていません");
+            }
+
             //テーブルからレコードをidを指定して取得
-            Difficulty difficulty = context.Difficulties.Where(difficulty => difficulty.id == id).First();
+            difficulty = context.Difficulties.Where(difficulty => difficulty.id == id).First();
 
             //難易度のデータを返す
             return difficulty;
