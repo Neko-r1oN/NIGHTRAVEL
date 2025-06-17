@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         isBossDead = false;
+        
     }
 
     /// <summary>
@@ -176,7 +177,7 @@ public class GameManager : MonoBehaviour
         {
             DeathBoss();
         }
-        else if (crushNum >= 200)
+        else if (crushNum >= 15)
         {// Œ‚”j”‚ª15ˆÈã‚É‚È‚Á‚½‚ç(‰¼)
 
             bossFlag = true;
