@@ -30,7 +30,7 @@ namespace NIGHTRAVEL.Server.Services
             Stage stage = new Stage();
 
             //バリデーションチェック
-            if (context.Stages.Where(stage => stage.id == id).Count() < id)
+            if (context.Stages.Count() < id)
             {
                 throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument,
                     "そのIDのステージは登録されていません");

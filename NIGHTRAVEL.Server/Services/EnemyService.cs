@@ -59,7 +59,7 @@ namespace NIGHTRAVEL.Server.Services
         }
 
         //敵をステージIDで取得
-        public async UnaryResult<Enemy[]> GetStageEnemy(int stage_id)
+        public async UnaryResult<Enemy[]> GetStageEnemy(string stage_id)
         {
             //DBを取得
             using var context = new GameDbContext();
@@ -67,17 +67,28 @@ namespace NIGHTRAVEL.Server.Services
             //検索結果を格納
             List<Enemy> getResult = new List<Enemy>();
 
+            //ステージIDを,で区切る
+
+
             //敵を全取得
             Enemy[] enamies = context.Enemies.ToArray();
 
             foreach(var data in enamies)
             {//dataはenemiesの0番目データからループ
-                if(data.stage_id==stage_id)
-                {//そのデータが指定されたIDと一致したら
 
-                    //検索結果に格納
-                    getResult.Add(data);
+                //ステージIDを,で区切る
+                string[] stageId = data.stage_id.ToString().Split(',');
+
+                for (int i = 0; i < stageId.Length; i++) 
+                {
+                    if (stageId[i] == stage_id)
+                    {//そのデータが指定されたIDと一致したら
+
+                        //検索結果に格納
+                        getResult.Add(data);break;
+                    }
                 }
+                
             }
 
             //バリデーションチェック

@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->float('attack');                     //attackカラム
             $table->float('defence');                     //defenceカラム
             $table->float('move_speed');                     //move_speedカラム
-            $table->integer('stage_id');                     //stage_idカラム
+            $table->string('stage_id');                     //stage_idカラム
             $table->timestamps();                               //created_atとupdated_at
 
             $table->index('name');                     //nameにインデックス設定

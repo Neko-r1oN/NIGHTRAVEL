@@ -59,7 +59,7 @@ namespace NIGHTRAVEL.Server.Services
             User user = new User();
 
             //バリデーションチェック
-            if (context.Users.Where(user => user.id == id).Count() < id || id <= 0)
+            if (context.Users.Count() < id || id <= 0)
             {//ユーザーのIDが登録分を超過、無効な入力の場合
 
                 //400エラー表示

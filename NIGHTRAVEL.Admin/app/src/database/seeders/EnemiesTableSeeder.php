@@ -15,7 +15,7 @@ class EnemiesTableSeeder extends Seeder
     {
         Enemy::create([
             'name' => 'ドローン',
-            'stage_id' => 1,
+            'stage_id' => '1,2,4',
             'hp' => 10.0,
             'attack' => 5.0,
             'defence' => 1.0,
@@ -24,7 +24,7 @@ class EnemiesTableSeeder extends Seeder
 
         Enemy::create([
             'name' => 'ロボ警備員',
-            'stage_id' => 1,
+            'stage_id' => '1,2',
             'hp' => 20.0,
             'attack' => 8.0,
             'defence' => 1.0,
@@ -33,7 +33,7 @@ class EnemiesTableSeeder extends Seeder
 
         Enemy::create([
             'name' => 'ロボドッグ',
-            'stage_id' => 1,
+            'stage_id' => '1,3',
             'hp' => 5.0,
             'attack' => 8.0,
             'defence' => 1.0,

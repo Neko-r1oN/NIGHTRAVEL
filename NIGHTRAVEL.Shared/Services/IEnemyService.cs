@@ -26,7 +26,7 @@ namespace NIGHTRAVEL.Shared.Services
         UnaryResult<Enemy[]> GetAllEnemy();
 
         //敵をステージIDで取得
-        UnaryResult<Enemy[]> GetStageEnemy(int stage_id);
+        UnaryResult<Enemy[]> GetStageEnemy(string stage_id);
 
         //敵を名前で取得
         UnaryResult<Enemy> GetNameEnemy(string name);

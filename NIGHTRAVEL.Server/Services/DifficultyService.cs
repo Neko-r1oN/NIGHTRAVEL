@@ -31,7 +31,7 @@ namespace NIGHTRAVEL.Server.Services
             Difficulty difficulty = new Difficulty();
 
             //バリデーションチェック
-            if (context.Difficulties.Where(difficulty => difficulty.id == id).Count() < id || id <= 0)
+            if (context.Difficulties.Count() < id || id <= 0)
             {//難易度の登録数分を超過、0以下の入力がされた場合
 
                 //400エラー表示

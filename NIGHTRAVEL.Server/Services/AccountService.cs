@@ -54,7 +54,7 @@ namespace NIGHTRAVEL.Server.Services
             Account account = new Account();
 
             //バリデーションチェック
-            if (context.Accounts.Where(account => account.id == id).Count() < id || id <= 0)
+            if (context.Accounts.Count() < id || id <= 0)
             {//アカウントのIDが登録分を超過、無効な入力の場合
 
                 //400エラー表示
