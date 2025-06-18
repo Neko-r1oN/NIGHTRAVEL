@@ -1,3 +1,8 @@
+//=========================================
+//鋼鉄製自動ドアの開閉を判定するセンサーのスクリプト
+//Aouther:y-miura
+//Date:2025/06/18
+//=========================================
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEditor.Timeline.Actions;
@@ -8,39 +13,35 @@ public class Sensor : MonoBehaviour
     PlayerBase playerBase;
     SteelDoor steelDoor;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
+    /// <summary>
+    /// センサー範囲内に入ったらドアを開ける関数
+    /// </summary>
+    /// <param name="collision">触れたオブジェクト</param>
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
-        {//プレイヤーが鋼鉄製ドアのセンサーに触れたら
+        {//プレイヤーが鋼鉄製自動ドアのセンサー範囲に入ったら
             steelDoor = GameObject.FindWithTag("SteelDoor").GetComponent<SteelDoor>();
             playerBase = collision.GetComponent<PlayerBase>();
 
-            //SteelDoorクラスのUp関数を呼び出す(ドアが上に移動する)
-            steelDoor.Up();
+            //SteelDoorクラスのOpen関数を呼び出す
+            steelDoor.Open();
         }
     }
 
+    /// <summary>
+    /// センサー範囲から離れたらドアを閉じる関数
+    /// </summary>
+    /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
-        {//プレイヤーが鋼鉄製ドアのセンサーから離れたら
+        {//プレイヤーが鋼鉄製自動ドアのセンサー範囲から離れたら
             steelDoor = GameObject.FindWithTag("SteelDoor").GetComponent<SteelDoor>();
             playerBase = collision.GetComponent<PlayerBase>();
 
-            //SteelDoorクラスのDown関数を呼び出す(ドアの位置をもとに戻す)
-            steelDoor.Down();
+            //SteelDoorクラスのClose関数を呼び出す
+            steelDoor.Close();
         }
     }
 }

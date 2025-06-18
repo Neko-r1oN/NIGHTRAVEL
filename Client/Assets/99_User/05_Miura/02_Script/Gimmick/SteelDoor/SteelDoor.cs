@@ -1,32 +1,30 @@
+//======================
+//鋼鉄製自動ドアのスクリプト
+//Aouther:y-miura
+//Date:2025/06/18
+//======================
+
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
 public class SteelDoor : MonoBehaviour
 {
-    PlayerBase playerBase;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    /// <summary>
+    /// ドアを開ける関数
+    /// </summary>
+    public void Open()
     {
-        
+        //2秒かけて上に移動する
+        this.transform.DOMoveY(5f, 1f); 
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// ドアを閉じる関数
+    /// </summary>
+    public void Close()
     {
-        
-    }
-
-    public void Up()
-    {
-        //ドアが上に移動する処理
-        this.transform.DOMoveY(5f, 2f); //2秒かけて上に移動する
-    }
-
-    public void Down()
-    {
-        //ドアの位置をもとに戻す処理
+        //強制的に処理を停止する
         this.transform.DOKill();
     }
 }
