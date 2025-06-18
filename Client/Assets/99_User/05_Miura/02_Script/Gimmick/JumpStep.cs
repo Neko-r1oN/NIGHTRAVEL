@@ -7,17 +7,17 @@ using UnityEngine;
 
 public class JumpStep : MonoBehaviour
 {
-    PlayerBase sample;
+    public float addPow;
 
     private void Start()
     {
-        sample=GetComponent<PlayerBase>();
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.CompareTag("Player"))
-        {
 
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
+        {
+            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, addPow));
         }
     }
 }
