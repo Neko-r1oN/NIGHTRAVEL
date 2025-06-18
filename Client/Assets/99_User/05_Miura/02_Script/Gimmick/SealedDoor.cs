@@ -39,18 +39,23 @@ public class SealedDoor : ObjectBase
         }
 
         Destroy(this.gameObject);//ドアを壊す
+        DestroyFragment(fragment.transform);
     }
 
     public override void FadeFragment(Transform fragment)
     {
+        if (fragment == null)
+        {
+            return;
+        }
+
         fragment.GetComponent<Renderer>().material.DOFade(0, 6);
 
-        DestroyFragment(fragment);
     }
 
     public async void DestroyFragment(Transform fragment)
     {
         await Task.Delay(6000);
-        Destroy(fragment.transform.parent.gameObject);
+        Destroy(fragment.gameObject);
     }
 }
