@@ -16,6 +16,16 @@ public class Sword : PlayerBase
     //--------------------------
     // フィールド
 
+    /// <summary>
+    /// アニメーションID
+    /// </summary>
+    public enum S_ANIM_ID
+    {
+        Attack1 = 10,
+        Attack2,
+        Skill
+    }
+
     private bool isCombo = false;
 
     //--------------------------
@@ -39,19 +49,27 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
         {   // ブリンク押下時
-            isBlink = true;
-            gameObject.layer = 21;
+            if(canAttack)
+            {
+                isBlink = true;
+                gameObject.layer = 21;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
-        {   // 攻撃1
-            if (isCombo)
+        {   // 通常攻撃
+            Debug.Log("攻撃：" + canAttack + " コンボ：" + isCombo);
+            if (canAttack && !isCombo)
+            {
+                animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
+            }
+            else if (isCombo)
             {
                 isCombo = false;
-                animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
+                animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack2);
             }
 
-            animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
+            canAttack = false;
         }
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
@@ -88,15 +106,12 @@ public class Sword : PlayerBase
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
 
-                if(collidersEnemies[i].gameObject.tag == "Enemy")
-                {
-                    collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
-                }
-                else if(collidersEnemies[i].gameObject.tag == "Object")
-                {
-                    collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
-                }
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
+            }
+            else if (collidersEnemies[i].gameObject.tag == "Object")
+            {
+                collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
             }
         }
     }
@@ -114,7 +129,14 @@ public class Sword : PlayerBase
     /// </summary>
     public void AttackEnd()
     {
+        canAttack = true;
         isCombo = false;
+
+        if (Mathf.Abs(horizontalMove) >= 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+
+        if (Mathf.Abs(horizontalMove) < 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
     }
 
     [ContextMenu("ショック")]
