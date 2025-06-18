@@ -27,6 +27,7 @@ public class Sword : PlayerBase
     }
 
     private bool isCombo = false;
+    private bool cantAtk = false;
 
     //--------------------------
     // メソッド
@@ -36,7 +37,7 @@ public class Sword : PlayerBase
     /// </summary>
     private void Update()
     {
-        Debug.Log("攻撃：" + canAttack + " コンボ：" + isCombo);
+        Debug.Log("攻撃：" + nowAttack + " コンボ：" + isCombo);
 
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
@@ -51,7 +52,7 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
         {   // ブリンク押下時
-            if(canAttack)
+            if(nowAttack)
             {
                 isBlink = true;
                 gameObject.layer = 21;
@@ -60,19 +61,28 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
         {   // 通常攻撃
-            if (isBlink) return;
+            if (isBlink || cantAtk) return;
 
-            if (canAttack && !isCombo)
-            {
+            if (nowAttack && !isCombo)
+            {   // 攻撃1段目
+                nowAttack = false;
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
             }
             else if (isCombo)
-            {
+            {   // 攻撃2,3段目
                 isCombo = false;
-                animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack2);
-            }
+                int id = animator.GetInteger("animation_id");
 
-            canAttack = false;
+                if (id == (int)S_ANIM_ID.Attack1)
+                {
+                    animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack2);
+                }
+                if (id == (int)S_ANIM_ID.Attack2)
+                {
+                    animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
+                    StartCoroutine(LastComboAttack());
+                }
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
@@ -132,14 +142,30 @@ public class Sword : PlayerBase
     /// </summary>
     public void AttackEnd()
     {
-        canAttack = true;
+        if (!isCombo) return;
+
+        // フラグの初期化
+        nowAttack = true;
         isCombo = false;
 
+        // 移動速度に応じてアニメーション分岐
         if (Mathf.Abs(horizontalMove) >= 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Run);
 
         if (Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+    }
+
+    /// <summary>
+    /// 最終コンボ処理
+    /// </summary>
+    IEnumerator LastComboAttack()
+    {
+        cantAtk = true;
+
+        // コンボ終了時待機  
+        yield return new WaitForSeconds(1.5f);
+        cantAtk = false;
     }
 
     [ContextMenu("ショック")]

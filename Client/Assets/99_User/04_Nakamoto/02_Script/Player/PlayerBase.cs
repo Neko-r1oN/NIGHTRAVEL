@@ -28,18 +28,6 @@ abstract public class PlayerBase : CharacterBase
         DBJump,
         WallSlide,
     }
-    //public enum ANIM_ID
-    //{
-    //    Idle = 1,
-    //    Attack,
-    //    Run,
-    //    Hit,
-    //    Fall,
-    //    Dead,
-    //    Blink,
-    //    DBJump,
-    //    WallSlide,
-    //}
     #endregion
 
     #region 共通ステータス
@@ -150,7 +138,7 @@ abstract public class PlayerBase : CharacterBase
     #region 動作フラグ関連
     protected bool canMove = true;      // プレイヤーの動作制御フラグ
     protected bool canBlink = true;     // ダッシュ制御フラグ
-    protected bool canAttack = true;    // 攻撃可能フラグ
+    protected bool nowAttack = true;    // 攻撃可能フラグ
     protected bool m_Grounded;          // プレイヤーの接地フラグ
     protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
     protected bool m_IsLadder = false;  // 梯子動作フラグ
@@ -231,7 +219,7 @@ abstract public class PlayerBase : CharacterBase
                 //StartCoroutine(Stun(1f)); // スタン処理
             }
 
-            if (!wasGrounded)
+            if (!wasGrounded && nowAttack)
             {   // 前フレームで地面に触れていない時
                 animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
 
@@ -369,7 +357,7 @@ abstract public class PlayerBase : CharacterBase
 
                 // キャラの目標移動速度を決定
                 Vector3 targetVelocity = new Vector2();
-                if (!canAttack)
+                if (!nowAttack)
                 {
                     targetVelocity = new Vector2(move * 2f, m_Rigidbody2D.linearVelocity.y);
                 }
@@ -382,7 +370,7 @@ abstract public class PlayerBase : CharacterBase
                 m_Rigidbody2D.linearVelocity = Vector3.SmoothDamp(m_Rigidbody2D.linearVelocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
                 // 攻撃時は反転しないように
-                if (canAttack && animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                if (nowAttack && animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
                 {
                     // キャラが入力と反対方向を向いていた際に反転させる
                     if (move > 0 && !m_FacingRight && !isWallSliding)
@@ -399,7 +387,7 @@ abstract public class PlayerBase : CharacterBase
             //--------------------
             // ジャンプ
 
-            if (m_Grounded && jump && canAttack)
+            if (m_Grounded && jump && nowAttack)
             {   // 接地状態 & ジャンプ入力
                     animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                     m_Grounded = false;
@@ -408,7 +396,7 @@ abstract public class PlayerBase : CharacterBase
                     particleJumpDown.Play();
                     particleJumpUp.Play();
             }
-            else if (!m_Grounded && jump && canDoubleJump && !isWallSliding && canAttack)
+            else if (!m_Grounded && jump && canDoubleJump && !isWallSliding && nowAttack)
             {   // ジャンプ中にジャンプ入力（ダブルジャンプ）
                 canDoubleJump = false;
                 m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, 0);
@@ -416,7 +404,7 @@ abstract public class PlayerBase : CharacterBase
 
                 animator.SetInteger("animation_id", (int)ANIM_ID.DBJump);
             }
-            else if (m_IsWall && !m_Grounded && canAttack)
+            else if (m_IsWall && !m_Grounded && nowAttack)
             {   // 壁に触れた && 空中
                 if (!oldWallSlidding && m_Rigidbody2D.linearVelocity.y < 0 || isBlinking)
                 {   // 前フレームで壁に触れていない && 下に落ちてる or ダッシュ可能
@@ -434,7 +422,7 @@ abstract public class PlayerBase : CharacterBase
                 }
                 isBlinking = false;
 
-                if (isWallSliding && canAttack)
+                if (isWallSliding && nowAttack)
                 {   // 壁スライド中
                     if (move * transform.localScale.x > 0.1f)
                     {   // 壁の反対方向に入力された時
@@ -443,7 +431,6 @@ abstract public class PlayerBase : CharacterBase
                     else
                     {   // スライド処理
                         oldWallSlidding = true;
-                        int id = animator.GetInteger("animation_id");
 
                         animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
 
@@ -451,7 +438,7 @@ abstract public class PlayerBase : CharacterBase
                     }
                 }
 
-                if (jump && isWallSliding && canAttack)
+                if (jump && isWallSliding && nowAttack)
                 {   // スライディング中にジャンプ
                     animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
 
@@ -477,7 +464,7 @@ abstract public class PlayerBase : CharacterBase
                     StartCoroutine(BlinkCooldown());
                 }
             }
-            else if (isWallSliding && !m_IsWall && canCheck && canAttack)
+            else if (isWallSliding && !m_IsWall && canCheck && nowAttack)
             {   // 壁スライドAnim再生中 && 前に壁が無い
                 isWallSliding = false;
                 oldWallSlidding = false;
