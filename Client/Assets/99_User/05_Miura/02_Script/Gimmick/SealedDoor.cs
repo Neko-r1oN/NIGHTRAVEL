@@ -10,9 +10,16 @@ public class SealedDoor : ObjectBase
 {
     [SerializeField] GameObject DoorFragment;　//破片エフェクトを取得
     PlayerBase player;
+    bool isBroken = false;
 
     public override void ApplyDamage()
     {
+        if(isBroken==true)
+        {
+            return;
+        }
+
+        isBroken = true;
         player=GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
 
         GameObject fragment; //破片のオブジェクト
@@ -44,6 +51,6 @@ public class SealedDoor : ObjectBase
     public async void DestroyFragment(Transform fragment)
     {
         await Task.Delay(6000);
-        Destroy(fragment.gameObject);
+        Destroy(fragment.transform.parent.gameObject);
     }
 }
