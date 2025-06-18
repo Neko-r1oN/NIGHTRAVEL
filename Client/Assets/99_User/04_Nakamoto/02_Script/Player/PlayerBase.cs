@@ -660,6 +660,14 @@ abstract public class PlayerBase : CharacterBase
     abstract public void DoDashDamage();
 
     /// <summary>
+    /// ブリンク終了処理
+    /// </summary>
+    public void BlinkEnd()
+    {
+        animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+    }
+
+    /// <summary>
     /// 被ダメ処理(ノックバック有)
     /// </summary>
     public void ApplyDamage(int damage, Vector3? position = null)

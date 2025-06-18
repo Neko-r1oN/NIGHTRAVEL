@@ -36,6 +36,8 @@ public class Sword : PlayerBase
     /// </summary>
     private void Update()
     {
+        Debug.Log("攻撃：" + canAttack + " コンボ：" + isCombo);
+
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
@@ -58,7 +60,8 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
         {   // 通常攻撃
-            Debug.Log("攻撃：" + canAttack + " コンボ：" + isCombo);
+            if (isBlink) return;
+
             if (canAttack && !isCombo)
             {
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
