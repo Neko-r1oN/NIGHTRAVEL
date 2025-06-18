@@ -14,7 +14,7 @@ public class Sensor : MonoBehaviour
     SteelDoor steelDoor;
 
     /// <summary>
-    /// センサー範囲内に入ったらドアを開ける関数
+    /// センサー範囲内に入ったらドアを開ける処理
     /// </summary>
     /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerEnter2D(Collider2D collision)
@@ -22,7 +22,7 @@ public class Sensor : MonoBehaviour
         if (collision.CompareTag("Player"))
         {//プレイヤーが鋼鉄製自動ドアのセンサー範囲に入ったら
             steelDoor = GameObject.FindWithTag("SteelDoor").GetComponent<SteelDoor>();
-            playerBase = collision.GetComponent<PlayerBase>();
+            //playerBase = collision.GetComponent<PlayerBase>();
 
             //SteelDoorクラスのOpen関数を呼び出す
             steelDoor.Open();
@@ -30,7 +30,7 @@ public class Sensor : MonoBehaviour
     }
 
     /// <summary>
-    /// センサー範囲から離れたらドアを閉じる関数
+    /// センサー範囲から離れたらドアを閉じる処理
     /// </summary>
     /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerExit2D(Collider2D collision)
@@ -38,7 +38,7 @@ public class Sensor : MonoBehaviour
         if (collision.CompareTag("Player"))
         {//プレイヤーが鋼鉄製自動ドアのセンサー範囲から離れたら
             steelDoor = GameObject.FindWithTag("SteelDoor").GetComponent<SteelDoor>();
-            playerBase = collision.GetComponent<PlayerBase>();
+            //playerBase = collision.GetComponent<PlayerBase>();
 
             //SteelDoorクラスのClose関数を呼び出す
             steelDoor.Close();
