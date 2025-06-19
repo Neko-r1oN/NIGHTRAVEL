@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('condition', 100);//conditionカラム
             $table->string('name', 20);//nameカラム
             $table->integer('condition_complete');//condition_completeカラム
-            $table->integer('type');//typeカラム
+            $table->string('type');//typeカラム
             $table->timestamps();                               //created_atとupdated_at
 
             $table->unique('id');                    //idにユニーク制約設定
