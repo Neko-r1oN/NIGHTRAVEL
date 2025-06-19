@@ -16,7 +16,40 @@ public class Sword : PlayerBase
     //--------------------------
     // フィールド
 
-    private bool isCombo = false;
+    /// <summary>
+    /// アニメーションID
+    /// </summary>
+    public enum S_ANIM_ID
+    {
+        Attack1 = 10,
+        Attack2,
+        Attack3,
+        Skill
+    }
+
+    private bool isCombo = false;   // コンボ可能フラグ
+    private bool isSkill = false;   // スキル使用中フラグ
+    private bool canSkill = false;  // スキル使用可能フラグ
+    private bool cantAtk = false;   // 攻撃可能フラグ
+
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float skillForth = 5.0f;       // スキルの移動力
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float skillTime = 0.5f;        // スキル効果時間
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
+
+    [Foldout("スキルエフェクト")]
+    [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
+
+    [Foldout("スキルエフェクト")]
+    [SerializeField] private GameObject skillEffect2;   // 剣先に発生するエフェクト
+
+    [Foldout("スキルエフェクト")]
+    [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
 
     //--------------------------
     // メソッド
@@ -26,6 +59,8 @@ public class Sword : PlayerBase
     /// </summary>
     private void Update()
     {
+        Debug.Log("攻撃：" + nowAttack + " コンボ：" + isCombo);
+
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
@@ -39,24 +74,43 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
         {   // ブリンク押下時
-            isBlink = true;
-            gameObject.layer = 21;
+            if(nowAttack)
+            {
+                isBlink = true;
+                gameObject.layer = 21;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
-        {   // 攻撃1
-            if (isCombo)
-            {
-                isCombo = false;
-                animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
-            }
+        {   // 通常攻撃
+            if (isBlink || cantAtk) return;
 
-            animator.SetInteger("animation_id", (int)ANIM_ID.Attack);
+            if (nowAttack && !isCombo)
+            {   // 攻撃1段目
+                nowAttack = false;
+                animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
+            }
+            else if (isCombo)
+            {   // 攻撃2,3段目
+                isCombo = false;
+                int id = animator.GetInteger("animation_id");
+
+                if (id == (int)S_ANIM_ID.Attack1)
+                {
+                    animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack2);
+                }
+                if (id == (int)S_ANIM_ID.Attack2)
+                {
+                    animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack3);
+                    StartCoroutine(LastComboAttack());
+                }
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // 攻撃2
-            GetComponent<StatusEffectController>().ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Shock);
+            animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
+            StartCoroutine(SkillCoolDown());
         }
 
         //-----------------------------
@@ -69,6 +123,12 @@ public class Sword : PlayerBase
         }
     }
 
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+    }
+
     /// <summary>
     /// ダメージを与える処理
     /// </summary>
@@ -76,6 +136,7 @@ public class Sword : PlayerBase
     {
         power = Mathf.Abs(power);
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
+
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
             if (collidersEnemies[i].gameObject.tag == "Enemy")
@@ -86,6 +147,7 @@ public class Sword : PlayerBase
                 }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
+
                 collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
@@ -109,7 +171,38 @@ public class Sword : PlayerBase
     /// </summary>
     public void AttackEnd()
     {
+        if (!isCombo) return;
+
+        // フラグの初期化
+        nowAttack = true;
         isCombo = false;
+
+        // 移動速度に応じてアニメーション分岐
+        if (Mathf.Abs(horizontalMove) >= 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+
+        if (Mathf.Abs(horizontalMove) < 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+    }
+
+    /// <summary>
+    /// 最終コンボ処理
+    /// </summary>
+    IEnumerator LastComboAttack()
+    {
+        cantAtk = true;
+
+        // コンボ終了時待機  
+        yield return new WaitForSeconds(1.5f);
+        cantAtk = false;
+    }
+
+    IEnumerator SkillCoolDown()
+    {
+        isSkill = true;
+        // コンボ終了時待機  
+        yield return new WaitForSeconds(1.5f);
+        cantAtk = false;
     }
 
     [ContextMenu("ショック")]
