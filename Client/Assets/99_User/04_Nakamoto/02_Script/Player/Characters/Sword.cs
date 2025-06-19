@@ -23,11 +23,33 @@ public class Sword : PlayerBase
     {
         Attack1 = 10,
         Attack2,
+        Attack3,
         Skill
     }
 
-    private bool isCombo = false;
-    private bool cantAtk = false;
+    private bool isCombo = false;   // コンボ可能フラグ
+    private bool isSkill = false;   // スキル使用中フラグ
+    private bool canSkill = false;  // スキル使用可能フラグ
+    private bool cantAtk = false;   // 攻撃可能フラグ
+
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float skillForth = 5.0f;       // スキルの移動力
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float skillTime = 0.5f;        // スキル効果時間
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
+
+    [Foldout("スキルエフェクト")]
+    [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
+
+    [Foldout("スキルエフェクト")]
+    [SerializeField] private GameObject skillEffect2;   // 剣先に発生するエフェクト
+
+    [Foldout("スキルエフェクト")]
+    [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
 
     //--------------------------
     // メソッド
@@ -79,7 +101,7 @@ public class Sword : PlayerBase
                 }
                 if (id == (int)S_ANIM_ID.Attack2)
                 {
-                    animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
+                    animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack3);
                     StartCoroutine(LastComboAttack());
                 }
             }
@@ -87,7 +109,8 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // 攻撃2
-            GetComponent<StatusEffectController>().ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Shock);
+            animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
+            StartCoroutine(SkillCoolDown());
         }
 
         //-----------------------------
@@ -98,6 +121,12 @@ public class Sword : PlayerBase
             GetExp(testExp);
             Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
         }
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
     }
 
     /// <summary>
@@ -163,6 +192,14 @@ public class Sword : PlayerBase
     {
         cantAtk = true;
 
+        // コンボ終了時待機  
+        yield return new WaitForSeconds(1.5f);
+        cantAtk = false;
+    }
+
+    IEnumerator SkillCoolDown()
+    {
+        isSkill = true;
         // コンボ終了時待機  
         yield return new WaitForSeconds(1.5f);
         cantAtk = false;

@@ -186,7 +186,7 @@ abstract public class PlayerBase : CharacterBase
     /// <summary>
     /// ’èŠúXVˆ—
     /// </summary>
-    private void FixedUpdate()
+    virtual protected void FixedUpdate()
     {
         //---------------------------------
         // ’n–Ê”»’è
