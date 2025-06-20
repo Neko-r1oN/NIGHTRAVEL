@@ -39,13 +39,11 @@ public class PressurePlate : MonoBehaviour
     /// プレイヤーまたは敵が感圧版から離れた場合の処理
     /// </summary>
     /// <param name="collision">触れたオブジェクト</param>
-
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
         {
             gameObject.SetActive(false);
         }
-
     }
 }

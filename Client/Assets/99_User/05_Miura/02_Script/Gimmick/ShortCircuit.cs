@@ -38,7 +38,7 @@ public class ShortCircuit : MonoBehaviour
     /// <summary>
     /// 漏電フィールドでダメージを与える処理
     /// </summary>
-    /// <param name="collision">ぶつかったオブジェクト</param>
+    /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
