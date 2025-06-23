@@ -1,24 +1,12 @@
+using NUnit.Framework;
 using Pixeye.Unity;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static StatusEffectController;
 
 public class EnemyElite : MonoBehaviour
 {
-    #region マテリアル
-    [Foldout("マテリアル")]
-    [SerializeField]
-    Material blazeMaterial;
-
-    [Foldout("マテリアル")]
-    [SerializeField]
-    Material frostMaterial;
-
-    [Foldout("マテリアル")]
-    [SerializeField]
-    Material thunderMaterial;
-    #endregion
-
     #region プレファブ
     [SerializeField]
     GameObject blazeTrap;
@@ -28,7 +16,8 @@ public class EnemyElite : MonoBehaviour
     readonly float blazeTickInterval = 0.2f; // ブレイズエリート
     #endregion
 
-    Rigidbody2D rb2D;
+    [SerializeField]
+    List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
     float timer;
 
     /// <summary>
@@ -49,11 +38,6 @@ public class EnemyElite : MonoBehaviour
     /// </summary>
     public StatusEffectController.EFFECT_TYPE addStatusEffect { get; private set; }
 
-    private void Start()
-    {
-        rb2D = GetComponent<Rigidbody2D>();
-    }
-
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -65,31 +49,48 @@ public class EnemyElite : MonoBehaviour
         CharacterStatusData data = new CharacterStatusData();
         CharacterBase charaBase = GetComponent<CharacterBase>();
         data.hp = charaBase.BaseHP + Mathf.CeilToInt(charaBase.BaseHP * 0.5f);
-        data.power = charaBase.BasePower+ Mathf.CeilToInt(charaBase.BasePower * 0.5f);
+        data.power = charaBase.BasePower + Mathf.CeilToInt(charaBase.BasePower * 0.5f);
         data.moveSpeed = charaBase.BaseMoveSpeed + Mathf.CeilToInt(charaBase.BaseMoveSpeed * 0.5f);
+        data.moveSpeedFactor = charaBase.BaseMoveSpeedFactor + Mathf.CeilToInt(charaBase.BaseMoveSpeedFactor * 0.5f);
+        data.attackSpeedFactor = charaBase.BaseAttackSpeedFactor + Mathf.CeilToInt(charaBase.BaseAttackSpeedFactor * 0.5f);
 
-        var spriteRenderer = GetComponent<SpriteRenderer>();
+        Color outlineColor = new Color();
         Action action = type switch
         {
             ELITE_TYPE.Blaze => () =>
             {
-                spriteRenderer.material = blazeMaterial;
+                // カラーコード FF5D17(赤色)
+                outlineColor = new Color32(0xFF, 0x5D, 0x17, 0xFF);
             }
             ,
             ELITE_TYPE.Frost => () =>
             {
-                spriteRenderer.material = frostMaterial;
+                // カラーコード 7BB8CF(青色)
+                outlineColor = new Color32(0x7B, 0xB8, 0xCF, 0xFF);
             }
             ,
             ELITE_TYPE.Thunder => () =>
             {
-                spriteRenderer.material = thunderMaterial;
+                // カラーコード E492F0(紫色)
+                outlineColor = new Color32(0xE4, 0x92, 0xF0, 0xFF);
+
                 data.moveSpeed = charaBase.BaseMoveSpeed * 2;
             }
             ,
             _ => () => { }
         };
         action();
+
+        // ユニーク個体のマテリアルのプロパティ設定
+        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        {
+            Material material = spriteRenderer.material;
+            material.SetColor("_OutlineColor", outlineColor);
+            material.SetFloat("_OutlineAlpha", 1f);
+            material.SetFloat("_OutlineGlow", 1.5f);
+            material.SetFloat("_OutlineWidth", 0.2f);
+            material.SetFloat("_OutlineDistortAmount", 0.5f);
+        }
 
         // 基礎ステータス&現在のステータスを上書き
         charaBase.OverrideBaseStatus(data, true);
@@ -116,16 +117,7 @@ public class EnemyElite : MonoBehaviour
     public void ActivateBlazeEffect()
     {
         GameObject trap = Instantiate(blazeTrap, transform.position, Quaternion.identity);
-        trap.GetComponent<BlazeTrap>().InitializeBlazeTrap(this.transform);
-
-        // 移動中は一歩先にトラップを移動させる
-        //float posX = transform.position.x;
-        //if (Mathf.Abs(rb2D.linearVelocityX) > 0)
-        //{
-        //    var sqSr = GetComponent<SpriteRenderer>();
-        //    posX += TransformHelper.GetFacingDirection(transform) * (sqSr.bounds.size.x / 2);
-        //    trap.transform.position = new Vector2(posX, trap.transform.position.y);
-        //}
+        trap.GetComponent<BlazeTrap>().InitializeBlazeTrap(gameObject);
     }
 
     private void FixedUpdate()
@@ -133,7 +125,8 @@ public class EnemyElite : MonoBehaviour
         timer += Time.fixedDeltaTime;
         Action action = eliteType switch
         {
-            ELITE_TYPE.Blaze => () => {
+            ELITE_TYPE.Blaze => () =>
+            {
                 if (timer > blazeTickInterval)
                 {
                     timer = 0;

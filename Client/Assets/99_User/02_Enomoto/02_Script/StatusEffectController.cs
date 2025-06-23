@@ -185,21 +185,24 @@ public class StatusEffectController : MonoBehaviour
         {
             EFFECT_TYPE.Burn => () =>
             {
-                psObj = Instantiate(burnPS, transform);
+                psObj = Instantiate(burnPS, this.transform);
+                psObj.transform.position = capsule2D.bounds.center;
                 ps = psObj.GetComponent<ParticleSystem>();
                 ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);
             }
             ,
             EFFECT_TYPE.Freeze => () =>
             {
-                psObj = Instantiate(freezePS, transform);
+                psObj = Instantiate(freezePS, this.transform);
+                psObj.transform.position = capsule2D.bounds.center;
                 ps = psObj.GetComponent<ParticleSystem>();
-                ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps, 0.5f);
+                ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);
             }
             ,
             EFFECT_TYPE.Shock => () =>
             {
-                psObj = Instantiate(shockPS, transform);
+                psObj = Instantiate(shockPS, this.transform);
+                psObj.transform.position = capsule2D.bounds.center;
                 ps = psObj.GetComponent<ParticleSystem>();
                 float baseRateOverTime = 15f;
                 ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);

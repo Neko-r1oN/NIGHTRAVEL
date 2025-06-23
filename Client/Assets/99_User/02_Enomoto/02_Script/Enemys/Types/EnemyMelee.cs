@@ -117,7 +117,7 @@ public class EnemyMelee : EnemyBase
                 collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
             }
         }
-        StartCoroutine(AttackCooldown(attackCoolTime));
+        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
 
     /// <summary>
@@ -189,21 +189,12 @@ public class EnemyMelee : EnemyBase
     }
 
     /// <summary>
-    /// 死亡アニメーション
+    /// 死亡するときに呼ばれる処理処理
     /// </summary>
     /// <returns></returns>
-    protected override void PlayDeadAnim()
+    protected override void OnDead()
     {
         //SetAnimId((int)ANIM_ID.Dead);
-    }
-
-    /// <summary>
-    /// ヒットアニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayHitAnim()
-    {
-        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>

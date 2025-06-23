@@ -26,7 +26,6 @@ abstract public class EnemyBase : CharacterBase
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
-    protected Coroutine attackCoroutine;
     #endregion
 
     #region チェック判定
@@ -111,6 +110,7 @@ abstract public class EnemyBase : CharacterBase
     #endregion
 
     #region 状態管理
+    protected List<Coroutine> cancellCoroutines = new List<Coroutine>();  // ヒット時にキャンセルするコルーチン
     protected bool isStun;
     protected bool isInvincible;
     protected bool doOnceDecision;
@@ -139,10 +139,10 @@ abstract public class EnemyBase : CharacterBase
     {
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
         projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
+        enemyElite = GetComponent<EnemyElite>();
     }
 
     private void FixedUpdate()
@@ -215,87 +215,38 @@ abstract public class EnemyBase : CharacterBase
     abstract protected void Idle();
 
     /// <summary>
-    /// 追跡する処理
+    /// 方向転換
     /// </summary>
-    abstract protected void Tracking();
-
-    /// <summary>
-    /// 巡回する処理
-    /// </summary>
-    protected virtual void Patorol() { }
-
-    /// <summary>
-    /// ダメージ適用処理
-    /// </summary>
-    /// <param name="damage"></param>
-    public void ApplyDamage(int damage, Transform attacker = null)
+    protected void Flip()
     {
-        if (isInvincible || isDead) return;
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
 
-        hp -= Mathf.Abs(damage);
-
-        // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
-        if (attacker)
+    /// <summary>
+    /// エリート個体にする処理
+    /// </summary>
+    public void PromoteToElite(EnemyElite.ELITE_TYPE type)
+    {
+        if (!isElite)
         {
-            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
-            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-            DoKnokBack(damage);
-
-            if (hp > 0) StartCoroutine(HitTime());
-        }
-
-        if (hp <= 0)
-        {
-            PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
-            StartCoroutine(DestroyEnemy(player));
+            isElite = true;
+            enemyElite.Init(type);
         }
     }
 
     /// <summary>
-    /// 他の検知範囲の描画処理
+    /// その場に待機する処理
     /// </summary>
-    abstract protected void DrawDetectionGizmos();
-
-    /// <summary>
-    /// 死亡アニメーションを再生
-    /// </summary>
-    abstract protected void PlayDeadAnim();
-
-    /// <summary>
-    /// ヒットアニメーションを再生
-    /// </summary>
-    abstract protected void PlayHitAnim();
-
-    /// <summary>
-    /// ダメージを受けたときの処理
-    /// </summary>
-    virtual protected void OnHit()
-    {
-        PlayHitAnim();
-        if (attackCoroutine != null)
-        {
-            StopCoroutine(attackCoroutine); // 攻撃処理を中断する
-        }
-        isAttacking = false;
-        doOnceDecision = true;
-    }
-
-    /// <summary>
-    /// アニメーション設定処理
-    /// </summary>
-    /// <param name="id"></param>
-    public void SetAnimId(int id)
-    {
-        if (animator != null) animator.SetInteger("animation_id", id);
-    }
-
-    /// <summary>
-    /// アニメーションID取得処理
-    /// </summary>
+    /// <param name="waitingTime"></param>
     /// <returns></returns>
-    public int GetAnimId()
+    protected IEnumerator Waiting(float waitingTime)
     {
-        return animator != null ? animator.GetInteger("animation_id") : 0;
+        doOnceDecision = false;
+        Idle();
+        yield return new WaitForSeconds(waitingTime);
+        doOnceDecision = true;
     }
 
     /// <summary>
@@ -324,61 +275,26 @@ abstract public class EnemyBase : CharacterBase
         }
     }
 
-    /// <summary>
-    /// エリート個体にする処理
-    /// </summary>
-    public void PromoteToElite(EnemyElite.ELITE_TYPE type)
-    {
-        if (enemyElite == null)
-        {
-            isElite = true;
-            enemyElite = GetComponent<EnemyElite>();
-            enemyElite.Init(type);
-        }
-    }
+    #region 移動処理関連
 
     /// <summary>
-    /// その場に待機する処理
+    /// 追跡する処理
     /// </summary>
-    /// <param name="waitingTime"></param>
-    /// <returns></returns>
-    protected IEnumerator Waiting(float waitingTime)
-    {
-        doOnceDecision = false;
-        Idle();
-        yield return new WaitForSeconds(waitingTime);
-        doOnceDecision = true;
-    }
+    abstract protected void Tracking();
 
     /// <summary>
-    /// 死亡処理
+    /// 巡回する処理
     /// </summary>
-    /// <returns></returns>
-    protected IEnumerator DestroyEnemy(PlayerBase player)
-    {
-        if (!isDead)
-        {
-            isDead = true;
-            if(player) player.GetExp(exp);
-            PlayDeadAnim();
-            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
-            yield return new WaitForSeconds(0.25f);
-            m_rb2d.excludeLayers = LayerMask.GetMask("TransparentFX") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
-            m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
-            yield return new WaitForSeconds(1f);
-            Destroy(gameObject);
-        }
-    }
+    protected virtual void Patorol() { }
+
+    #endregion
+
+    #region ヒット処理関連
 
     /// <summary>
-    /// 方向転換
+    /// 死亡時に呼ばれる処理 (専用アニメーションなど)
     /// </summary>
-    protected void Flip()
-    {
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
-    }
+    abstract protected void OnDead();
 
     /// <summary>
     /// ノックバック処理
@@ -387,19 +303,56 @@ abstract public class EnemyBase : CharacterBase
     protected void DoKnokBack(int damage)
     {
         int direction = damage / Mathf.Abs(damage);
-        transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(0, 0);
+        transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
         transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 200f, 100f));
     }
 
     /// <summary>
-    /// スタン処理
+    /// ダメージを受けたときの処理
     /// </summary>
-    /// <param name="time"></param>
-    public void ApplyStun(float time)
+    protected virtual void OnHit()
     {
-        if (!isStun)
+        isAttacking = false;
+        doOnceDecision = true;
+    }
+
+    /// <summary>
+    /// ダメージ適用処理
+    /// </summary>
+    /// <param name="damage"></param>
+    public void ApplyDamage(int damage, Transform attacker = null)
+    {
+        if (isInvincible || isDead) return;
+
+        hp -= Mathf.Abs(damage);
+
+        // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
+        if (attacker)
         {
-            StartCoroutine(StunTime(time));
+            // ヒット時に攻撃処理などを停止する
+            if (canCancelAttackOnHit)
+            {
+                foreach(Coroutine coroutine in cancellCoroutines)
+                {
+                    StopCoroutine(coroutine);
+                }
+            }
+
+            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
+            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+            
+            DoKnokBack(damage);
+
+            if (hp > 0) StartCoroutine(HitTime());
+        }
+
+        if (hp <= 0)
+        {
+            // 全てのコルーチン(攻撃処理やスタン処理など)を停止する
+            StopAllCoroutines();
+
+            PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
+            StartCoroutine(DestroyEnemy(player));
         }
     }
 
@@ -419,6 +372,42 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
+    /// 死亡処理
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator DestroyEnemy(PlayerBase player)
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            if (player) player.GetExp(exp);
+            OnDead();
+            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
+            yield return new WaitForSeconds(0.25f);
+            m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
+            m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
+            yield return new WaitForSeconds(1f);
+            Destroy(gameObject);
+        }
+    }
+
+    #endregion
+
+    #region スタン処理関連
+
+    /// <summary>
+    /// スタン処理
+    /// </summary>
+    /// <param name="time"></param>
+    public void ApplyStun(float time)
+    {
+        if (!isStun)
+        {
+            StartCoroutine(StunTime(time));
+        }
+    }
+
+    /// <summary>
     /// 一定時間スタンさせる処理
     /// </summary>
     /// <returns></returns>
@@ -430,11 +419,20 @@ abstract public class EnemyBase : CharacterBase
         isStun = false;
     }
 
+    #endregion
+
+    #region 描画処理関連
+
+    /// <summary>
+    /// 他の検知範囲の描画処理
+    /// </summary>
+    abstract protected void DrawDetectionGizmos();
+
     /// <summary>
     /// [ デバック用 ] Gizmosを使用して検出範囲を描画
     /// </summary>
     private void OnDrawGizmos()
-    {   
+    {
         if (!canDrawRay) return;
 
         // 追跡範囲
@@ -442,11 +440,40 @@ abstract public class EnemyBase : CharacterBase
         Gizmos.DrawWireSphere(transform.position, trackingRange);
 
         // 視線描画
-        if(sightChecker != null) 
-        { 
+        if (sightChecker != null)
+        {
             sightChecker.DrawSightLine(canChaseTarget);
         }
 
         DrawDetectionGizmos();
     }
+
+    #endregion
+
+    #region アニメーション関連
+
+    /// <summary>
+    /// 攻撃のイベント通知で攻撃処理を実行する
+    /// </summary>
+    public virtual void OnAttackAnimEvent() { }
+
+    /// <summary>
+    /// アニメーション設定処理
+    /// </summary>
+    /// <param name="id"></param>
+    public void SetAnimId(int id)
+    {
+        if (animator != null) animator.SetInteger("animation_id", id);
+    }
+
+    /// <summary>
+    /// アニメーションID取得処理
+    /// </summary>
+    /// <returns></returns>
+    public int GetAnimId()
+    {
+        return animator != null ? animator.GetInteger("animation_id") : 0;
+    }
+
+    #endregion
 }
