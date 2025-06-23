@@ -138,7 +138,7 @@ public class CyberDog : EnemyBase
 
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         bool isElite = this.isElite && enemyElite != null;
-        StatusEffectController.EFFECT_TYPE applyEffect = StatusEffectController.EFFECT_TYPE.None;
+        StatusEffectController.EFFECT_TYPE? applyEffect = null;
         if (isElite)
         {
             applyEffect = enemyElite.GetAddStatusEffectEnum();
@@ -149,19 +149,10 @@ public class CyberDog : EnemyBase
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
-
-                if (isElite)
-                {
-                    // 状態異常を適用させる
-                    StatusEffectController statusEffect = collidersEnemies[i].gameObject.GetComponent<StatusEffectController>();
-                    if (statusEffect)
-                    {
-                        statusEffect.ApplyStatusEffect(applyEffect);
-                    }
-                }
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
             }
         }
+
         cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
 

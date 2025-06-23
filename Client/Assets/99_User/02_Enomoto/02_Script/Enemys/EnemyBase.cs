@@ -75,6 +75,8 @@ abstract public class EnemyBase : CharacterBase
     public float AttackDist { get { return attackDist; } }
 
     public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
+
+    public bool IsElite { get { return isElite; } }
     #endregion
 
     #region オプション
@@ -232,6 +234,7 @@ abstract public class EnemyBase : CharacterBase
         if (!isElite)
         {
             isElite = true;
+            if (!enemyElite) enemyElite = GetComponent<EnemyElite>();
             enemyElite.Init(type);
         }
     }
@@ -320,7 +323,7 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public void ApplyDamage(int damage, Transform attacker = null)
+    public void ApplyDamage(int damage, Transform attacker = null, List<StatusEffectController.EFFECT_TYPE> effectTypes = null)
     {
         if (isInvincible || isDead) return;
 
@@ -336,6 +339,12 @@ abstract public class EnemyBase : CharacterBase
                 {
                     StopCoroutine(coroutine);
                 }
+            }
+
+            // 状態異常を付与する
+            foreach(StatusEffectController.EFFECT_TYPE effectType in effectTypes)
+            {
+                effectController.ApplyStatusEffect(effectType);
             }
 
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0

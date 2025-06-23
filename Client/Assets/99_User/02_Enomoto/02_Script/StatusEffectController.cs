@@ -132,7 +132,10 @@ public class StatusEffectController : MonoBehaviour
         }
         else
         {
-            currentEffects[effectType] = effectDuration;    // 効果時間をリセット
+            if (effectType != EFFECT_TYPE.Shock)
+            {
+                currentEffects[effectType] = effectDuration;    // 効果時間をリセット
+            }
         }
     }
 

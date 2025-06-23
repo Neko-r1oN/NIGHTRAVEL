@@ -1,20 +1,37 @@
 using NUnit.Framework;
+using Pixeye.Unity;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GunParticleController : MonoBehaviour
 {
-    [SerializeField] GameObject gunParticleParent;
-    [SerializeField] GunBulletParticle gunBulletParticle;
-    [SerializeField] List<ParticleSystem> particles = new List<ParticleSystem>();
+    #region パーティクル関連
+    [Foldout("パーティクル関連")]
+    [SerializeField]
+    GameObject gunParticleParent;
 
-    [SerializeField] int damageValue;
+    [Foldout("パーティクル関連")]
+    [SerializeField]
+    GunBulletParticle gunBulletParticle;
+    #endregion
 
-    // 攻撃対象
-    [SerializeField] bool canAttackEnemy;
-    [SerializeField] bool canAttackPlayer;
-    [SerializeField] bool canAttackObject;
+    #region 攻撃対象関連
+    [Foldout("攻撃対象の設定")]
+    [SerializeField]
+    bool canAttackEnemy;
+
+    [Foldout("攻撃対象の設定")]
+    [SerializeField]
+    bool canAttackPlayer;
+
+    [Foldout("攻撃対象の設定")]
+    [SerializeField]
+    bool canAttackObject;
     LayerMask attackTargetLayerMask;
+    #endregion
+
+    [SerializeField] GameObject owner;
+    [SerializeField] int damageValue;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -29,7 +46,17 @@ public class GunParticleController : MonoBehaviour
     /// </summary>
     public void StartShooting()
     {
-        gunBulletParticle.Initialize(damageValue, attackTargetLayerMask);
+        // 付与する状態異常を取得
+        StatusEffectController.EFFECT_TYPE? effectType = null;
+        if (owner.tag == "Enemy")
+        {
+            if (owner.GetComponent<EnemyBase>().IsElite)
+            {
+                effectType = owner.GetComponent<EnemyElite>().GetAddStatusEffectEnum();
+            }
+        }
+
+        gunBulletParticle.Initialize(damageValue, attackTargetLayerMask, effectType);
         gunParticleParent.SetActive(true);
     }
 

@@ -132,6 +132,11 @@ abstract public class CharacterBase : MonoBehaviour
     /// 攻撃速度(Animatorの係数)
     /// </summary>
     public float AttackSpeedFactor { get { return attackSpeedFactor; } set { attackSpeedFactor = value; } }
+
+    /// <summary>
+    /// 状態異常管理のコンポーネント
+    /// </summary>
+    public StatusEffectController EffectController { get { return effectController; } }
     #endregion
 
     #region コンポーネント
