@@ -43,6 +43,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         //実績のデータベース設定
         public DbSet<Achievement> Achievements { get; set; }
 
+        //ユーザーの実績進捗のデータベース設定
+        public DbSet<AchievementStatus> Achievement_Statuses { get; set; }
+
+        
+
         //server名;ユーザー名;パスワード指定
         readonly string connectionString = "server=localhost;database=admin_console;user=jobi;password=jobi;";
 

@@ -20,12 +20,12 @@ namespace NIGHTRAVEL.Server.Services
             Achievement achievement = new Achievement();
 
             //バリデーションチェック
-            if (context.Users.Count() < id || id <= 0)
+            if (context.Achievements.Count() < id || id <= 0)
             {//実績のIDが登録分を超過、無効な入力の場合
 
                 //400エラー表示
                 throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument,
-                    "そのIDのユーザーは登録されていません");
+                    "そのIDの実績は登録されていません");
             }
 
             //テーブルからレコードをidを指定して取得
