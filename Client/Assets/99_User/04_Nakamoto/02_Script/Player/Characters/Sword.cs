@@ -178,6 +178,11 @@ public class Sword : PlayerBase
         isCombo = true;
     }
 
+    public void PushPlayer()
+    {
+
+    }
+
     /// <summary>
     /// 攻撃終了時
     /// </summary>
@@ -241,6 +246,6 @@ public class Sword : PlayerBase
     [ContextMenu("ショック")]
     public void ShockTest()
     {
-        this.GetComponent<StatusEffectController>().ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Shock);
+        this.GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Shock);
     }
 }

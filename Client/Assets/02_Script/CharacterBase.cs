@@ -88,6 +88,8 @@ abstract public class CharacterBase : MonoBehaviour
     public float moveSpeed;
     public float moveSpeedFactor;
     public float attackSpeedFactor;
+
+    protected StatusEffectController effectController;
     #endregion
 
     #region ステータス外部参照用プロパティ
@@ -142,6 +144,7 @@ abstract public class CharacterBase : MonoBehaviour
     {
         RecoverAllStats();
         if (!animator) animator = GetComponent<Animator>();
+        effectController = GetComponent<StatusEffectController>();
     }
 
     /// <summary>

@@ -679,7 +679,7 @@ abstract public class PlayerBase : CharacterBase
 
             if(type != null)
             {
-                
+                effectController.ApplyStatusEffect((StatusEffectController.EFFECT_TYPE)type);
             }
 
             if (hp <= 0)
