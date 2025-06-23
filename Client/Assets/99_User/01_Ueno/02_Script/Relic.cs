@@ -4,18 +4,11 @@ public class Relic : MonoBehaviour
 {
     [SerializeField] int id;
 
-    public int ID {  get { return id; } }
+    RelicDeta relicDeta;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        relicDeta = new RelicDeta(id);
     }
 
     /// <summary>
@@ -23,7 +16,7 @@ public class Relic : MonoBehaviour
     /// </summary>
     public void AddRelic()
     {
-        RelicManager.Instance.AddRelic(this);
+        RelicManager.Instance.AddRelic(relicDeta);
     }
 
     /// <summary>
@@ -34,6 +27,7 @@ public class Relic : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             AddRelic();
+            //gameObject.SetActive(false);
             Destroy(this.gameObject);
         }
     }

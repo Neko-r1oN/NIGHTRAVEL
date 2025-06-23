@@ -5,23 +5,34 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+
     SampleChara player;
     EnemyController boss;
 
-    [SerializeField] Slider playerHpBar;       // プレイヤーのHPバー
-    [SerializeField] Slider bossHpBar;         // ボスのHPバー
-    [SerializeField] Slider expBar;            // 経験値バー
-    [SerializeField] Text playerSliderText;    // プレイヤーの最大HPテキスト
-    [SerializeField] Text bossSliderText;      // ボスの最大HPテキスト
-    [SerializeField] Text levelText;           // レベルテキスト
-    [SerializeField] Text pointText;           // ポイントテキスト
-    [SerializeField] GameObject bossStatus;    // ボスのステータス
-    [SerializeField] GameObject powerUpWindow; // ステータス強化ウィンドウ
-    [SerializeField] GameObject bossWindow;    // ボス出現UI
-    [SerializeField] float windowTime;         // ウィンドウが表示される秒数
+    #region 各UI
+    [SerializeField] Slider playerHpBar;        // プレイヤーのHPバー
+    [SerializeField] Slider bossHpBar;          // ボスのHPバー
+    [SerializeField] Slider expBar;             // 経験値バー
+    [SerializeField] Text playerSliderText;     // プレイヤーの最大HPテキスト
+    [SerializeField] Text bossSliderText;       // ボスの最大HPテキスト
+    [SerializeField] Text levelText;            // レベルテキスト
+    [SerializeField] Text pointText;            // ポイントテキスト
+    [SerializeField] GameObject bossStatus;     // ボスのステータス
+    [SerializeField] GameObject statusUpWindow; // ステータス強化ウィンドウ
+    [SerializeField] GameObject bossWindow;     // ボス出現UI
+    [SerializeField] float windowTime;          // ウィンドウが表示される秒数
     [SerializeField] List<Image> relicImages;
-
-    int windowCnt = 0; // ウィンドウが表示できるカウント(一度だけ使う)
+    [SerializeField] List<Text>  relicCntText;  // レリックを持ってる数を表示するテキスト
+    //[SerializeField] List<Text>  statusText;    // ステータスアップ説明テキスト
+    [SerializeField] Text levelUpStock;         // レベルアップストックテキスト
+    [SerializeField] Text levelUpText;          // 強化可能テキスト
+    #endregion 
+     
+    int windowCnt = 0;   // ウィンドウが表示できるカウント(一度だけ使う)
+    int lastLevel = 0;   // レベルアップ前のレベル
+    int statusStock = 0; // レベルアップストック数
+    bool isStatusWindow; // ステータスウィンドウが開けるかどうか
+    bool isHold;         // ステータスウィンドウロック用
 
     private static UIManager instance;
 
@@ -46,7 +57,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// 初期設定
+    /// </summary>
     void Start()
     {
         player = GameManager.Instance.Player.GetComponent<SampleChara>();
@@ -56,11 +69,26 @@ public class UIManager : MonoBehaviour
         expBar.maxValue = player.NextLvExp;
         levelText.text = "" + player.NowExp;
         expBar.value = player.NowExp;
+        lastLevel = player.NowLv;
+        levelText.text = "LV." + player.NowLv;
 
+        for (int i = 0; i < relicCntText.Count; i++)
+        {
+            relicCntText[i].enabled = false;
+        }
+
+       statusUpWindow.SetActive(false);
+
+        isHold = false;
+        isStatusWindow = false;
+        
+        levelUpText.enabled = false;
         bossStatus.SetActive(false);
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// 更新処理
+    /// </summary>
     void Update()
     {
         // プレイヤーHPUI
@@ -71,6 +99,14 @@ public class UIManager : MonoBehaviour
         // 経験値・レベルUI
         expBar.maxValue = player.NextLvExp;
         levelText.text = "LV." + player.NowLv;
+        if(player.NowLv > lastLevel)
+        {
+            isStatusWindow = true;
+            statusStock += player.NowLv - lastLevel;
+            levelUpStock.text = "残り強化数：" + statusStock;
+            levelUpText.enabled = true;
+            lastLevel = player.NowLv;
+        }
         expBar.value = player.NowExp;
 
         if (GameManager.Instance.IsSpawnBoss)
@@ -112,16 +148,118 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 取得したレリックを表示する関数
+    /// </summary>
+    /// <param name="relicSprite"></param>
     public void DisplayRelic(Sprite relicSprite)
     {
         foreach(Image image in relicImages)
         {
-            if (image.sprite == null)
+            if (image != relicSprite)
             {
-                image.color = new Color(1.0f,1.0f, 1.0f, 1.0f);
-                image.sprite = relicSprite;
+                if (image.sprite == null)
+                {
+                    image.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                    image.sprite = relicSprite;
+                    break;
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// レリック入れ替えの際に持っているレリックUIをリセットする関数
+    /// </summary>
+    public void ClearRelic()
+    {
+        foreach (Image image in relicImages)
+        {
+            if (image.sprite != null)
+            {
+                image.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                image.sprite = null;
+            }
+            else
+            {
                 break;
             }
+        }
+    }
+
+    public void totalRelics(Sprite relicSprite, int num)
+    {
+        int count = 0;
+        foreach (Image image in relicImages)
+        {
+            if (image.sprite == relicSprite)
+            {
+                if (image.sprite != null)
+                {
+                    if(num > 1)
+                    {
+                        relicCntText[count].enabled = true;
+                        relicCntText[count].text = "×" + num;
+                    }
+                }
+            }
+            count++;
+        }
+    }
+
+    public void OpenStatusWindow()
+    {
+        if (isStatusWindow)
+        {
+            statusUpWindow.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// ステータスの強化
+    /// </summary>
+    public void UpPlayerStatus(int statusID)
+    {
+        //player.ChangeStatus();
+
+        if(statusStock <= 0)
+        {
+            CloseStatusWindow();
+            isStatusWindow = false;
+        }
+    }
+
+    /// <summary>
+    /// ステータス変更項目を変更
+    /// </summary>
+    public void UpStatusChange()
+    {
+
+    }
+
+    /// <summary>
+    /// ステータス強化ウィンドウロック
+    /// </summary>
+    public void HoldStatusWindow()
+    {
+        if (!isHold)
+        {
+            isHold = true;
+        }
+        else
+        {
+            isHold = false;
+        }
+    }
+
+    /// <summary>
+    /// ステータスウィンドウ閉じる
+    /// </summary>
+    public void CloseStatusWindow()
+    {
+        if (!isHold)
+        {
+           statusUpWindow.SetActive(false);
         }
     }
 }

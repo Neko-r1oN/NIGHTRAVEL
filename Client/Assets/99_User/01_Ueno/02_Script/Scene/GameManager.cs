@@ -49,7 +49,10 @@ public class GameManager : MonoBehaviour
     float elapsedTime;
 
     Vector3 bossPos;
+    #endregion
 
+    #region 各プロパティ
+    [Header("各プロパティ")]
     public GameObject Enemy { get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
@@ -88,7 +91,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// 初期設定
+    /// </summary>
     void Start()
     {
         isBossDead = false;
@@ -123,14 +128,11 @@ public class GameManager : MonoBehaviour
 
         if (isBossDead)
         {// ボスを倒した(仮)
-            //bossFlag = false;
-            //boss.SetActive(false);
-
             // 遅れて呼び出し
             Invoke(nameof(ChengScene), 1.5f);
         }
 
-        if (spawnCnt < maxSpawnCnt)
+        if (spawnCnt < maxSpawnCnt  && !isBossDead)
         {// スポーン回数が限界に達しているか
             elapsedTime += Time.deltaTime;
             if (elapsedTime > spawnInterval)
@@ -138,15 +140,15 @@ public class GameManager : MonoBehaviour
                 elapsedTime = 0;
 
                 if (spawnCnt < 100)
-                {
+                {// 敵が100体いない場合
                     for (int i = 0; i < 5; i++)
-                    {
+                    {// 複数体敵を生成
                         // 敵生成処理
                         GenerateEnemy();
                     }
                 }
                 else
-                {
+                {// いる場合
                     GenerateEnemy();
                 }
             }
@@ -154,10 +156,10 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// シーン変更
+    /// シーン遷移
     /// </summary>
     private void ChengScene()
-    {// シーン変更
+    {// シーン遷移
         SceneManager.LoadScene("Result ueno");
     }
 
@@ -172,9 +174,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("倒した数：" + crushNum);
 
         spawnCnt--;
-        //AddXp();
 
-        Debug.Log(crushNum);
         if (enemy.IsBoss)
         {
             DeathBoss();
@@ -184,37 +184,7 @@ public class GameManager : MonoBehaviour
 
             bossFlag = true;
             Debug.Log("倒した数：" + crushNum + "ボス");
-
-            //boss.SetActive(true);
-            //Debug.Log("ボスでてきた");
-            //crushNum = 0;
         }
-    }
-
-    /// <summary>
-    /// 経験値加算
-    /// </summary>
-    public void AddXp()
-    {
-        xp += 100;
-        if (xp >= requiredXp)
-        {// 必要経験値数を超えたら
-
-            // 必要経験値数を増やす
-            requiredXp += xp;
-            Debug.Log(requiredXp);
-            // レベルアップ関数を
-            UpLevel();
-        }
-    }
-
-    /// <summary>
-    /// レベルアップ
-    /// </summary>
-    public void UpLevel()
-    {
-        level++;
-        Debug.Log("レベルアップ:" + level);
     }
 
     [ContextMenu("DeathBoss")]
@@ -238,6 +208,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 敵のスポーン可能範囲判定処理
+    /// </summary>
+    /// <param name="minPoint"></param>
+    /// <param name="maxPoint"></param>
+    /// <returns></returns>
     private (Vector3 minRange, Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint, Vector3 maxPoint)
     {
         Vector3 minRange = minPoint, maxRange = maxPoint;
@@ -264,6 +240,12 @@ public class GameManager : MonoBehaviour
         return (minRange, maxRange);
     }
 
+    /// <summary>
+    /// 敵生成の位置決定処理
+    /// </summary>
+    /// <param name="minRange"></param>
+    /// <param name="maxRange"></param>
+    /// <returns></returns>
     private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange)
     {
         // 試行回数
@@ -287,11 +269,17 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// 時間経過毎にスポーン間隔を早める処理
+    /// </summary>
     public void DecreaseGeneratInterval()
     {
         spawnInterval -= 1;
     }
 
+    /// <summary>
+    /// 敵生成処理
+    /// </summary>
     public void GenerateEnemy()
     {
         Vector2 minPlayer =
