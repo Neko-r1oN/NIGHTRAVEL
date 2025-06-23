@@ -132,12 +132,16 @@ abstract public class CharacterBase : MonoBehaviour
     public float AttackSpeedFactor { get { return attackSpeedFactor; } set { attackSpeedFactor = value; } }
     #endregion
 
+    #region コンポーネント
+    [Foldout("コンポーネント")]
+    [SerializeField] 
     protected Animator animator;
+    #endregion
 
     protected virtual void Awake()
     {
         RecoverAllStats();
-        animator = GetComponent<Animator>();
+        if (!animator) animator = GetComponent<Animator>();
     }
 
     /// <summary>

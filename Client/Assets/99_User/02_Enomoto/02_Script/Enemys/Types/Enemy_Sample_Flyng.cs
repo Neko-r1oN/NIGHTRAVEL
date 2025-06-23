@@ -39,18 +39,26 @@ public class Enemy_Sample_Flyng : EnemyBase
     float patorolRange = 10f;
     #endregion
 
-    #region 攻撃方法について
-    [Header("攻撃方法")]
-    [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
-    [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
-    [SerializeField] Transform aimTransform;        // 遠距離攻撃の弾の生成位置
+    #region 攻撃関連
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    GameObject throwableObject;    // 遠距離攻撃の弾(仮)
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    Transform aimTransform;        // 遠距離攻撃の弾の生成位置
     #endregion
 
     #region チェック判定
-    [Header("チェック判定")]
     // 壁と地面チェック
-    [SerializeField] Transform wallCheck;
-    [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform wallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField]
+    Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     #endregion
 
     #region ターゲットとの距離
@@ -59,7 +67,6 @@ public class Enemy_Sample_Flyng : EnemyBase
 
     Coroutine patorolCoroutine;
     Vector2? startPatorolPoint = null;
-    float randomDecision;
 
     protected override void Start()
     {
@@ -74,7 +81,7 @@ public class Enemy_Sample_Flyng : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if (canAttack && projectileChecker.CanFireProjectile(throwableObject, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
+        if (canAttack && projectileChecker.CanFireProjectile(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
         {
             chaseAI.StopChase();
             Attack();
@@ -103,6 +110,8 @@ public class Enemy_Sample_Flyng : EnemyBase
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
+    #region 攻撃処理関連
+
     /// <summary>
     /// 攻撃処理
     /// </summary>
@@ -113,7 +122,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         //SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
         chaseAI.StopChase();
-        StartCoroutine(RangeAttack());
+        cancellCoroutines.Add(StartCoroutine(RangeAttack()));
     }
 
     /// <summary>
@@ -131,8 +140,25 @@ public class Enemy_Sample_Flyng : EnemyBase
             throwableProj.GetComponent<Projectile>().Initialize(direction, gameObject);
             yield return new WaitForSeconds(shotsPerSecond);
         }
-        StartCoroutine(AttackCooldown(attackCoolTime));
+        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
+
+    /// <summary>
+    /// 攻撃時のクールダウン処理
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator AttackCooldown(float time)
+    {
+        isAttacking = true;
+        yield return new WaitForSeconds(time);
+        isAttacking = false;
+        doOnceDecision = true;
+        Idle();
+    }
+
+    #endregion
+
+    #region 移動処理関連
 
     /// <summary>
     /// 追跡する処理
@@ -150,7 +176,7 @@ public class Enemy_Sample_Flyng : EnemyBase
     {
         if (patorolCoroutine == null)
         {
-            StartCoroutine(PatorolCoroutine());
+            cancellCoroutines.Add(StartCoroutine(PatorolCoroutine()));
         }
     }
 
@@ -204,6 +230,10 @@ public class Enemy_Sample_Flyng : EnemyBase
         startPatorolPoint = null;
     }
 
+    #endregion
+
+    #region ヒット処理関連
+
     /// <summary>
     /// ダメージを受けたときの処理
     /// </summary>
@@ -214,43 +244,25 @@ public class Enemy_Sample_Flyng : EnemyBase
     }
 
     /// <summary>
+    /// 死亡するときに呼ばれる処理処理
+    /// </summary>
+    /// <returns></returns>
+    protected override void OnDead()
+    {
+        //SetAnimId((int)ANIM_ID.Dead);
+    }
+
+    #endregion
+
+    #region チェック処理関連
+
+    /// <summary>
     /// 壁があるかどうか
     /// </summary>
     /// <returns></returns>
     bool IsWall()
     {
         return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
-    }
-
-    /// <summary>
-    /// 攻撃時のクールダウン処理
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator AttackCooldown(float time)
-    {
-        isAttacking = true;
-        yield return new WaitForSeconds(time);
-        isAttacking = false;
-        doOnceDecision = true;
-        Idle();
-    }
-
-    /// <summary>
-    /// 死亡アニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayDeadAnim()
-    {
-        //SetAnimId((int)ANIM_ID.Dead);
-    }
-
-    /// <summary>
-    /// ヒットアニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayHitAnim()
-    {
-        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -265,7 +277,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         // 射線
         if (sightChecker != null)
         {
-            projectileChecker.DrawProjectileRayGizmo(throwableObject, true);
+            projectileChecker.DrawProjectileRayGizmo(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, true);
         }
 
         // 壁の判定
@@ -275,4 +287,6 @@ public class Enemy_Sample_Flyng : EnemyBase
             Gizmos.DrawWireCube(wallCheck.transform.position, wallCheckRadius);
         }
     }
+
+    #endregion
 }

@@ -24,7 +24,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     private void Start()
     {
         // 視認するLayer [プレイヤー、地面・壁]
-        targetLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("TransparentFX") | LayerMask.GetMask("Player");
+        targetLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player");
         aimTransform.eulerAngles = new Vector3(0, 0, initialAngle);
     }
 
@@ -34,13 +34,13 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <param name="direction"></param>
     /// <param name="max"></param>
     /// <returns></returns>
-    float ClampAngleToTarget(float initialAngle, Vector3 direction)
+    public float ClampAngleToTarget(Vector3 direction)
     {
         // テクスチャが反転していたら、角度も反転させる
         float directionMultiplier = TransformHelper.GetFacingDirection(transform);
         float maxAddAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
         float maxAddAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
-        initialAngle *= directionMultiplier;
+        float initialAngle = this.initialAngle * directionMultiplier;
 
         // 方向からターゲットのラジアンを計算して度に変換する
         float targetAngle = Mathf.Atan2(direction.y, direction.x);
@@ -57,27 +57,29 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// 発射物のRaycastHit2Dを生成する
     /// </summary>
     /// <returns></returns>
-    (RaycastHit2D canterHit2D, RaycastHit2D leftHit2D, RaycastHit2D rightHit2D) GetProjectileRaycastHit(Transform target, GameObject projectile, bool followTargetRotation, float? angle)
+    (RaycastHit2D canterHit2D, RaycastHit2D leftHit2D, RaycastHit2D rightHit2D) GetProjectileRaycastHit(Transform target, float gunBulletWidth, bool followTargetRotation, float? angle, bool canUpdateRotation = true)
     {
         float attackDist = GetComponent<EnemyBase>().AttackDist;
-        float projectileHeight = projectile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
 
-        if (followTargetRotation)
+        if (followTargetRotation && canUpdateRotation)
         {
             // ターゲットのいる方向
             Vector2 direction = (target.transform.position - aimTransform.position).normalized;
-            aimTransform.rotation = Quaternion.Euler(0f, 0f, ClampAngleToTarget(this.initialAngle, direction));
+            aimTransform.rotation = Quaternion.Euler(0f, 0f, ClampAngleToTarget(direction));
         }
-        else if (angle != null)
+        else if (angle != null && canUpdateRotation)
         {
             // 指定された角度に設定する
             aimTransform.localRotation = Quaternion.Euler(0, 0, (float)angle);
         }
         Vector2 rayDirection = aimTransform.up; // aimTransformが向いている方向
 
-        // 発射物の幅に合わせて、各Rayの始点を調整する
-        leftFireRayPoint.localPosition = Vector2.left * projectileHeight;
-        rightFireRayPoint.localPosition = Vector2.right * projectileHeight;
+        if (canUpdateRotation)
+        {
+            // 発射物の幅に合わせて、各Rayの始点を調整する
+            leftFireRayPoint.localPosition = Vector2.left * gunBulletWidth;
+            rightFireRayPoint.localPosition = Vector2.right * gunBulletWidth;
+        }
 
         // RaycastHit2Dをターゲットのいる方向に伸ばす
         RaycastHit2D canterHit2D = Physics2D.Raycast(aimTransform.position, rayDirection, attackDist, targetLayerMask);
@@ -91,9 +93,9 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// </summary>
     /// <param name="projectile"></param>
     /// <returns></returns>
-    public bool CanFireProjectile(GameObject projectile, bool followTargetRotation = false)
+    public bool CanFireProjectile(float gunBulletWidth, bool followTargetRotation = false)
     {
-        return IsProjectileFireable(projectile, followTargetRotation);
+        return IsProjectileFireable(gunBulletWidth, followTargetRotation);
     }
 
     /// <summary>
@@ -101,9 +103,9 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// </summary>
     /// <param name="projectile"></param>
     /// <returns></returns>
-    public bool CanFireProjectile(GameObject projectile, float? angle = null)
+    public bool CanFireProjectile(float gunBulletWidth, float? angle = null)
     {
-        return IsProjectileFireable(projectile, angle: angle);
+        return IsProjectileFireable(gunBulletWidth, angle: angle);
     }
 
     /// <summary>
@@ -113,12 +115,12 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <param name="followTargetRotation"></param>
     /// <param name="angle"></param>
     /// <returns></returns>
-    bool IsProjectileFireable(GameObject projectile, bool followTargetRotation = false, float? angle = null)
+    bool IsProjectileFireable(float gunBulletWidth, bool followTargetRotation = false, float? angle = null)
     {
         GameObject target = GetComponent<EnemyBase>().Target;
-        if (!target || !projectile) return false;
+        if (!target) return false;
 
-        var projectileRays = GetProjectileRaycastHit(target.transform, projectile, followTargetRotation, angle);
+        var projectileRays = GetProjectileRaycastHit(target.transform, gunBulletWidth, followTargetRotation, angle);
 
         // プレイヤーにRayが当たっているか、何も検知ができなかった場合はtrue
         bool resultCenter = projectileRays.canterHit2D && projectileRays.canterHit2D.collider.gameObject.CompareTag("Player");
@@ -131,33 +133,32 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// [デバック用:角度の追従] 発射物の射線を描画する
     /// </summary>
     /// <param name="projectile"></param>
-    public void DrawProjectileRayGizmo(GameObject projectile, bool followTargetRotation = false)
+    public void DrawProjectileRayGizmo(float gunBulletWidth, bool followTargetRotation = false)
     {
-        DrawProjectileRay(projectile, followTargetRotation);
+        DrawProjectileRay(gunBulletWidth, followTargetRotation);
     }
 
     /// <summary>
     /// [デバック用:角度の指定] 発射物の射線を描画する
     /// </summary>
     /// <param name="projectile"></param>
-    public void DrawProjectileRayGizmo(GameObject projectile, float? angle = null)
+    public void DrawProjectileRayGizmo(float gunBulletWidth, float? angle = null)
     {
-        DrawProjectileRay(projectile, angle: angle);
+        DrawProjectileRay(gunBulletWidth, angle: angle);
     }
 
     /// <summary>
-    /// 発射物の射線を描画する
+    /// [Debug用] 発射物の射線を描画する
     /// </summary>
     /// <param name="projectile"></param>
     /// <param name="followTargetRotation"></param>
     /// <param name="angle"></param>
-    void DrawProjectileRay(GameObject projectile, bool followTargetRotation = false, float? angle = null)
+    void DrawProjectileRay(float gunBulletWidth, bool followTargetRotation = false, float? angle = null)
     {
-        float projectileHeight = projectile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
         GameObject target = GetComponent<EnemyBase>().Target;
         if (!target) return;
 
-        var projectileRays = GetProjectileRaycastHit(target.transform, projectile, followTargetRotation, angle);
+        var projectileRays = GetProjectileRaycastHit(target.transform, gunBulletWidth, followTargetRotation, angle, false);
 
         // デバック用
         Color rayUpColor = Color.red;

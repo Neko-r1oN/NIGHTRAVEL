@@ -2,6 +2,7 @@
 //  [敵] サイバードックのクラス
 //  Author:r-enomoto
 //**************************************************
+using Pixeye.Unity;
 using System.Collections;
 using UnityEngine;
 
@@ -12,29 +13,43 @@ public class CyberDog : EnemyBase
     /// </summary>
     public enum ANIM_ID
     {
-        Idle = 1,
+        None = 0,
+        Idle,
         Attack,
         Run,
         Hit,
-        Fall,
         Dead,
     }
 
     #region チェック判定
-    [Header("チェック判定")]
     // 近距離攻撃の範囲
-    [SerializeField] Transform meleeAttackCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform meleeAttackCheck;
+    [Foldout("チェック関連")]
     [SerializeField] float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
-    [SerializeField] Transform wallCheck;
-    [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] Transform groundCheck;
-    [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform wallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Vector2 wallCheckRadius = new Vector2(0, 1.5f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform groundCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
     // 落下チェック
-    [SerializeField] Transform fallCheck;
-    [SerializeField] float fallCheckRange = 0.9f;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform fallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    float fallCheckRange = 0.9f;
     #endregion
 
     #region ターゲットと離す距離
@@ -86,9 +101,19 @@ public class CyberDog : EnemyBase
     /// </summary>
     protected override void Idle()
     {
-        SetAnimId((int)ANIM_ID.Idle);
+        if (!target)
+        {
+            SetAnimId((int)ANIM_ID.Idle);
+        }
+        else
+        {
+            SetAnimId((int)ANIM_ID.None);
+        }
+
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
+
+    #region 攻撃処理関連
 
     /// <summary>
     /// 攻撃処理
@@ -97,18 +122,20 @@ public class CyberDog : EnemyBase
     {
         doOnceDecision = false;
         isAttacking = true;
-        SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
-        if (chaseAI) chaseAI.StopChase();
-
-        MeleeAttack();
+        SetAnimId((int)ANIM_ID.Attack);
     }
 
     /// <summary>
-    /// 近接攻撃処理
+    /// 近接攻撃処理 [Animationイベントからの呼び出し]
     /// </summary>
-    void MeleeAttack()
+    
+    public override void OnAttackAnimEvent()
     {
+        // 前に飛び込む
+        Vector2 jumpVec = new Vector2(18 * TransformHelper.GetFacingDirection(transform), 10);
+        m_rb2d.linearVelocity = jumpVec;
+
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         bool isElite = this.isElite && enemyElite != null;
         StatusEffectController.EFFECT_TYPE applyEffect = StatusEffectController.EFFECT_TYPE.None;
@@ -117,7 +144,7 @@ public class CyberDog : EnemyBase
             applyEffect = enemyElite.GetAddStatusEffectEnum();
         }
 
-            Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
+        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
@@ -135,8 +162,25 @@ public class CyberDog : EnemyBase
                 }
             }
         }
-        StartCoroutine(AttackCooldown(attackCoolTime));
+        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
+
+    /// <summary>
+    /// 攻撃時のクールダウン処理
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator AttackCooldown(float time)
+    {
+        isAttacking = true;
+        yield return new WaitForSeconds(time);
+        isAttacking = false;
+        doOnceDecision = true;
+        Idle();
+    }
+
+    #endregion
+
+    #region 移動処理関連
 
     /// <summary>
     /// 追跡する処理
@@ -173,7 +217,7 @@ public class CyberDog : EnemyBase
     /// </summary>
     void AirMovement()
     {
-        SetAnimId((int)ANIM_ID.Fall);
+        SetAnimId((int)ANIM_ID.Run);
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
@@ -182,45 +226,31 @@ public class CyberDog : EnemyBase
         m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
     }
 
+    #endregion
+
+    #region ヒット処理関連
+
     /// <summary>
     /// ダメージを受けたときの処理
     /// </summary>
     protected override void OnHit()
     {
         base.OnHit();
-        //SetAnimId((int)ANIM_ID.Hit);
+        SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
-    /// 攻撃時のクールダウン処理
+    /// 死亡するときに呼ばれる処理処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator AttackCooldown(float time)
+    protected override void OnDead()
     {
-        isAttacking = true;
-        yield return new WaitForSeconds(time);
-        isAttacking = false;
-        doOnceDecision = true;
-        Idle();
+        SetAnimId((int)ANIM_ID.Dead);
     }
 
-    /// <summary>
-    /// 死亡アニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayDeadAnim()
-    {
-        //SetAnimId((int)ANIM_ID.Dead);
-    }
-    
-    /// <summary>
-    /// ヒットアニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayHitAnim()
-    {
-        //SetAnimId((int)ANIM_ID.Hit);
-    }
+    #endregion
+
+    #region チェック処理関連
 
     /// <summary>
     /// 壁があるかどうか
@@ -295,4 +325,6 @@ public class CyberDog : EnemyBase
             Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
         }
     }
+
+    #endregion
 }

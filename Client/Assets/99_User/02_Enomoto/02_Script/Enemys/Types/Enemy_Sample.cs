@@ -3,6 +3,7 @@
 //  Author:r-enomoto
 //**************************************************
 using HardLight2DUtil;
+using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -33,27 +34,45 @@ public class Enemy_Sample : EnemyBase
         RangeType,
     }
 
-    #region 攻撃について
-    [Header("攻撃方法")]
-    [SerializeField] ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
-    [SerializeField] GameObject throwableObject;    // 遠距離攻撃の弾(仮)
+    #region 攻撃関連
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    GameObject throwableObject;    // 遠距離攻撃の弾(仮)
     #endregion
 
     #region チェック判定
-    [Header("チェック判定")]
     // 近距離攻撃の範囲
-    [SerializeField] Transform meleeAttackCheck;
-    [SerializeField] float meleeAttackRange = 0.9f;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform meleeAttackCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
-    [SerializeField] Transform wallCheck;
-    [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] Transform groundCheck;
-    [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform wallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Vector2 wallCheckRadius = new Vector2(0, 1.5f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform groundCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
     // 落下チェック
-    [SerializeField] Transform fallCheck;
-    [SerializeField] float fallCheckRange = 0.9f;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform fallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    float fallCheckRange = 0.9f;
     #endregion
 
     #region ターゲットとの距離
@@ -85,7 +104,7 @@ public class Enemy_Sample : EnemyBase
         {
             Attack();
         }
-        else if (attackType == ATTACK_TYPE_ID.RangeType && canAttack && projectileChecker.CanFireProjectile(throwableObject, 270f))
+        else if (attackType == ATTACK_TYPE_ID.RangeType && canAttack && projectileChecker.CanFireProjectile(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, 270f))
         {
             Attack();
         }
@@ -117,6 +136,7 @@ public class Enemy_Sample : EnemyBase
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
+    #region 攻撃処理関連
     /// <summary>
     /// 攻撃開始処理
     /// </summary>
@@ -143,7 +163,7 @@ public class Enemy_Sample : EnemyBase
         }
         else if (attackType == ATTACK_TYPE_ID.RangeType)
         {
-            attackCoroutine = StartCoroutine(RangeAttack());
+            cancellCoroutines.Add(StartCoroutine(RangeAttack()));
         }
     }
 
@@ -160,7 +180,7 @@ public class Enemy_Sample : EnemyBase
                 collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
             }
         }
-        StartCoroutine(AttackCooldown(attackCoolTime));
+        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
 
     /// <summary>
@@ -177,7 +197,35 @@ public class Enemy_Sample : EnemyBase
             throwableProj.GetComponent<ThrowableProjectile>().direction = direction;
             yield return new WaitForSeconds(shotsPerSecond);
         }
-        StartCoroutine(AttackCooldown(attackCoolTime));
+        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+    }
+
+    /// <summary>
+    /// 攻撃時のクールダウン処理
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator AttackCooldown(float time)
+    {
+        isAttacking = true;
+        yield return new WaitForSeconds(time);
+        isAttacking = false;
+        doOnceDecision = true;
+        Idle();
+    }
+
+    #endregion
+
+    #region 移動処理関連
+
+    /// <summary>
+    /// ジャンプ処理
+    /// </summary>
+    void Jump()
+    {
+        SetAnimId((int)ANIM_ID.Fall);
+
+        transform.position += Vector3.up * groundCheckRadius.y;
+        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
     }
 
     /// <summary>
@@ -216,16 +264,9 @@ public class Enemy_Sample : EnemyBase
         m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
     }
 
-    /// <summary>
-    /// ジャンプ処理
-    /// </summary>
-    void Jump()
-    {
-        SetAnimId((int)ANIM_ID.Fall);
+    #endregion
 
-        transform.position += Vector3.up * groundCheckRadius.y;
-        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-    }
+    #region ヒット処理関連
 
     /// <summary>
     /// ダメージを受けたときの処理
@@ -237,43 +278,24 @@ public class Enemy_Sample : EnemyBase
     }
 
     /// <summary>
-    /// 攻撃時のクールダウン処理
+    /// 死亡するときに呼ばれる処理処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator AttackCooldown(float time)
-    {
-        isAttacking = true;
-        yield return new WaitForSeconds(time);
-        isAttacking = false;
-        doOnceDecision = true;
-        Idle();
-    }
-
-    /// <summary>
-    /// 死亡アニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayDeadAnim()
+    protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
     }
 
-    /// <summary>
-    /// ヒットアニメーション
-    /// </summary>
-    /// <returns></returns>
-    protected override void PlayHitAnim()
-    {
-        SetAnimId((int)ANIM_ID.Hit);
-    }
+    #endregion
 
+    #region チェック処理関連
     /// <summary>
     /// 壁があるかどうか
     /// </summary>
     /// <returns></returns>
     bool IsWall()
     {
-       return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
+        return Physics2D.OverlapBox(wallCheck.position, wallCheckRadius, 0f, terrainLayerMask);
     }
 
     /// <summary>
@@ -319,7 +341,7 @@ public class Enemy_Sample : EnemyBase
         // 遠距離攻撃の射線
         if (attackType == ATTACK_TYPE_ID.RangeType && sightChecker)
         {
-            projectileChecker.DrawProjectileRayGizmo(throwableObject, 270f);
+            projectileChecker.DrawProjectileRayGizmo(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, 270f);
         }
 
         // 壁の判定
@@ -346,4 +368,6 @@ public class Enemy_Sample : EnemyBase
             Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
         }
     }
+
+    #endregion
 }
