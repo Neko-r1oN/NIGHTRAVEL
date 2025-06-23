@@ -17,8 +17,17 @@ public class ShortCircuit : MonoBehaviour
         //プレイヤーの最大HPを代入
         int maxHP = playerBase.MaxHP;
 
-        //ダメージ量は最大HPの5割
+        //ダメージ量は最大HPの5%
         int damage = Mathf.FloorToInt(maxHP * 0.05f);
+
+        //damageが0より小さいか0だったら
+        if(damage <= 0)
+        {//damegeを1にする
+            damage = 1;
+            playerBase.ApplyDamage(damage);
+        }
+
+        //PlayerBaseのApplyDamgeを呼び出す
         playerBase.ApplyDamage(damage);
     }
 
@@ -30,8 +39,17 @@ public class ShortCircuit : MonoBehaviour
         //敵の最大HPを代入
         int maxLife = enemyBase.MaxHP;
 
-        //ダメージ量は最大HPの5割
+        //ダメージ量は最大HPの5%
         int damage = Mathf.FloorToInt(maxLife * 0.05f);
+
+        //damageが0より小さいか0だったら
+        if (damage <= 0)
+        {//damegeを1にする
+            damage = 1;
+            enemyBase.ApplyDamage(damage);
+        }
+
+        //EnemyBaseのApplyDamageを呼び出す
         enemyBase.ApplyDamage(damage);
     }
 
@@ -42,12 +60,12 @@ public class ShortCircuit : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
-        {
+        {//「Player」タグが付いたオブジェクトが触れたら
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
             InvokeRepeating("HitPlayerDamage", 0.1f,0.5f);
         }
         if (collision.gameObject.CompareTag("Enemy"))
-        {
+        {//「Enemy」タグが付いたオブジェクトが触れたら
             enemyBase = collision.gameObject.GetComponent<EnemyBase>();
             InvokeRepeating("HitEnemyDamage", 0.1f, 0.5f);
         }
