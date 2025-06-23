@@ -662,7 +662,7 @@ abstract public class PlayerBase : CharacterBase
     /// 被ダメ処理
     /// (ノックバックはposに応じて有無が変わる)
     /// </summary>
-    public void ApplyDamage(int damage, Vector3? position = null)
+    public void ApplyDamage(int damage, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
     {
         if (!invincible)
         {
@@ -677,6 +677,11 @@ abstract public class PlayerBase : CharacterBase
                 m_Rigidbody2D.AddForce(damageDir * 10);
             }
 
+            if(type != null)
+            {
+                
+            }
+
             if (hp <= 0)
             {   // 死亡処理
                 StartCoroutine(WaitToDead());
@@ -688,41 +693,6 @@ abstract public class PlayerBase : CharacterBase
                     StartCoroutine(Stun(0.25f));
                     StartCoroutine(MakeInvincible(0.5f));
                 }
-            }
-        }
-    }
-
-    /// <summary>
-    /// 被ダメ処理
-    /// (ノックバックはposに応じて有無が変わる)
-    /// </summary>
-    public void AbnormalDamage(int damage, StatusEffectController.EFFECT_TYPE type)
-    {
-        if (!invincible)
-        {
-            animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-            hp -= damage;
-
-            switch(type)
-            {
-                case StatusEffectController.EFFECT_TYPE.Burn:
-                    break;
-
-                case StatusEffectController.EFFECT_TYPE.Freeze:
-                    break;
-
-                case StatusEffectController.EFFECT_TYPE.Shock:
-                    StartCoroutine(Stun(0.3f));
-                    StartCoroutine(MakeInvincible(0.5f));
-                    break;
-
-                default:
-                    break;
-            }
-
-            if (hp <= 0)
-            {   // 死亡処理
-                StartCoroutine(WaitToDead());
             }
         }
     }
