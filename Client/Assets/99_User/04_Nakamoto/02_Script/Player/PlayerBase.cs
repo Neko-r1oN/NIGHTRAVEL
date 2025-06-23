@@ -5,8 +5,10 @@
 using Pixeye.Unity;
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 abstract public class PlayerBase : CharacterBase
 {
@@ -155,6 +157,8 @@ abstract public class PlayerBase : CharacterBase
     protected float jumpWallStartX = 0;
     protected float jumpWallDistX = 0;        // プレイヤーと壁の距離
     protected bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
+    protected bool isSkill = false;   // スキル使用中フラグ
+    protected bool canSkill = true;   // スキル使用可能フラグ
     #endregion
 
     #region 判定係数
@@ -370,7 +374,7 @@ abstract public class PlayerBase : CharacterBase
                 m_Rigidbody2D.linearVelocity = Vector3.SmoothDamp(m_Rigidbody2D.linearVelocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
                 // 攻撃時は反転しないように
-                if (nowAttack && animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                if (nowAttack && animator.GetInteger("animation_id") != (int)ANIM_ID.Blink && !isSkill)
                 {
                     // キャラが入力と反対方向を向いていた際に反転させる
                     if (move > 0 && !m_FacingRight && !isWallSliding)
@@ -655,7 +659,8 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 被ダメ処理(ノックバック有)
+    /// 被ダメ処理
+    /// (ノックバックはposに応じて有無が変わる)
     /// </summary>
     public void ApplyDamage(int damage, Vector3? position = null)
     {
@@ -678,9 +683,46 @@ abstract public class PlayerBase : CharacterBase
             }
             else
             {   // 被ダメ硬直
-                if(position != null) StartCoroutine(Stun(0.25f));
+                if (position != null)
+                {
+                    StartCoroutine(Stun(0.25f));
+                    StartCoroutine(MakeInvincible(0.5f));
+                }
+            }
+        }
+    }
 
-                StartCoroutine(MakeInvincible(1f));
+    /// <summary>
+    /// 被ダメ処理
+    /// (ノックバックはposに応じて有無が変わる)
+    /// </summary>
+    public void AbnormalDamage(int damage, StatusEffectController.EFFECT_TYPE type)
+    {
+        if (!invincible)
+        {
+            animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            hp -= damage;
+
+            switch(type)
+            {
+                case StatusEffectController.EFFECT_TYPE.Burn:
+                    break;
+
+                case StatusEffectController.EFFECT_TYPE.Freeze:
+                    break;
+
+                case StatusEffectController.EFFECT_TYPE.Shock:
+                    StartCoroutine(Stun(0.3f));
+                    StartCoroutine(MakeInvincible(0.5f));
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (hp <= 0)
+            {   // 死亡処理
+                StartCoroutine(WaitToDead());
             }
         }
     }

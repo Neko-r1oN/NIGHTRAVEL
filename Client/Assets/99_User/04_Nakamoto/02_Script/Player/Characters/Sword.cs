@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using Pixeye.Unity;
 using System;
 using HardLight2DUtil;
+using static StatusEffectController;
 
 public class Sword : PlayerBase
 {
@@ -28,13 +29,12 @@ public class Sword : PlayerBase
     }
 
     private bool isCombo = false;   // コンボ可能フラグ
-    private bool isSkill = false;   // スキル使用中フラグ
-    private bool canSkill = false;  // スキル使用可能フラグ
     private bool cantAtk = false;   // 攻撃可能フラグ
 
+    private float plDirection = 0;  // プレイヤーの向き
 
     [Foldout("キャラ別ステータス")]
-    [SerializeField] private float skillForth = 5.0f;       // スキルの移動力
+    [SerializeField] private float skillForth = 45f;       // スキルの移動力
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillTime = 0.5f;        // スキル効果時間
@@ -59,7 +59,7 @@ public class Sword : PlayerBase
     /// </summary>
     private void Update()
     {
-        Debug.Log("攻撃：" + nowAttack + " コンボ：" + isCombo);
+        //Debug.Log("攻撃：" + nowAttack + " コンボ：" + isCombo);
 
         // キャラの移動
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
@@ -109,8 +109,14 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // 攻撃2
-            animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
-            StartCoroutine(SkillCoolDown());
+            if (canSkill && nowAttack)
+            {
+                gameObject.layer = 21;
+                animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
+                canSkill = false;
+                plDirection = transform.localScale.x;
+                StartCoroutine(SkillCoolDown());
+            }
         }
 
         //-----------------------------
@@ -118,15 +124,21 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.L))
         {
-            GetExp(testExp);
-            Debug.Log("獲得経験値：" + testExp + "現レベル：" + nowLv + " 現経験値：" + nowExp + "必要経験値" + nextLvExp);
+            GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
         }
     }
 
     protected override void FixedUpdate()
     {
+        Debug.Log(canSkill + "：" + isSkill);
+
         base.FixedUpdate();
 
+        if (isSkill)
+        {
+            // クールダウンに入るまで加速
+            m_Rigidbody2D.linearVelocity = new Vector2(plDirection * skillForth, 0);
+        }
     }
 
     /// <summary>
@@ -200,9 +212,30 @@ public class Sword : PlayerBase
     IEnumerator SkillCoolDown()
     {
         isSkill = true;
-        // コンボ終了時待機  
-        yield return new WaitForSeconds(1.5f);
-        cantAtk = false;
+
+        // Effect再生
+        skillEffect1.SetActive(true);
+        skillEffect2.SetActive(true);
+        skillEffect3.SetActive(true);
+
+        yield return new WaitForSeconds(skillTime);
+        isSkill = false;
+        gameObject.layer = 20;
+
+        // Effect非表示
+        skillEffect1.SetActive(false);
+        skillEffect2.SetActive(false);
+        skillEffect3.SetActive(false);
+
+        // 移動速度に応じてアニメーション分岐
+        if (Mathf.Abs(horizontalMove) >= 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+
+        if (Mathf.Abs(horizontalMove) < 0.1f)
+            animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+
+        yield return new WaitForSeconds(skillCoolDown);
+        canSkill = true;
     }
 
     [ContextMenu("ショック")]
