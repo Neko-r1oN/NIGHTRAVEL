@@ -6,11 +6,14 @@ using UnityEngine.UI;
 
 public class TimerDirector : MonoBehaviour
 {
+    #region 初期設定
+    [Header("初期設定")]
     [SerializeField] float minute = 5;
     float second;
 
     [SerializeField] GameObject timerObj; // タイマーテキストの親
     [SerializeField] Text timer;          // タイマーテキスト
+    #endregion
 
     private void Start()
     {

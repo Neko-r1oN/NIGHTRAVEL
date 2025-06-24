@@ -213,14 +213,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfae242b54b19f4389e781fecafcfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLayerMask:
-    serializedVersion: 2
-    m_Bits: 3
   viewAngleMax: 45
   viewDistMax: 6
-  aimTransform: {fileID: 2686644779513176421}
-  leftFireRayPoint: {fileID: 7729906116294664684}
-  rightFireRayPoint: {fileID: 1700594349565147411}
 --- !u!114 &957155623193778079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,6 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf173a75a117f94bb5dda9d4b09546b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
   targetObj: {fileID: 0}
   distance: 0
 --- !u!114 &8345641775741088178
@@ -247,10 +242,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25085a30a5c98b44c8caac09f40f2ae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
   players: []
-  isBoss: 0
-  life: 10
+  hp: 10
+  defence: 0
   power: 2
   speed: 5
   jumpPower: 19
@@ -260,19 +254,21 @@ MonoBehaviour:
   attackDist: 6
   trackingRange: 20
   hitTime: 0.5
+  isBoss: 0
   canDamageOnContact: 0
   canPatrol: 0
   canChaseTarget: 1
   canAttack: 0
   canJump: 0
+  canCancelAttackOnHit: 1
   canDrawRay: 1
+  exp: 100
+  tweenMoveRange: 10
   attackType: 1
   throwableObject: {fileID: 1636419708026085755, guid: 6897dad47fd74c84ca441708d59003c3, type: 3}
+  aimTransform: {fileID: 0}
   wallCheck: {fileID: 2905926310480678381}
   wallCheckRadius: {x: 0, y: 0.7}
-  terrainLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
   disToTargetMin: 2.5
 --- !u!50 &1714827697630523581
 Rigidbody2D:

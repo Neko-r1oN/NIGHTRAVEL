@@ -27,12 +27,14 @@ public class GameManager : MonoBehaviour
     public int maxSpawnCnt;     // マックススポーン回数
     bool isBossDead;            // ボスが死んだかどうか
     bool isSpawnBoss;           // ボスが生成されたかどうか
+    GameObject boss;            // ボス
+
     #endregion
 
     #region その他
     [Header("その他")]
     public List<GameObject> enemyList;       // エネミーリスト
-    [SerializeField] GameObject bossPrefab;  // ボス
+    [SerializeField] GameObject bossPrefab;  // ボスプレハブ
     [SerializeField] Transform randRespawnA; // リスポーン範囲A
     [SerializeField] Transform randRespawnB; // リスポーン範囲B
     [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
@@ -46,13 +48,18 @@ public class GameManager : MonoBehaviour
 
     float elapsedTime;
 
+    Vector3 bossPos;
+    #endregion
+
+    #region 各プロパティ
+    [Header("各プロパティ")]
     public GameObject Enemy { get { return enemy; } }
 
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
     public GameObject Player { get { return player; } }
 
-    public GameObject Boss {  get { return bossPrefab; } }
+    public GameObject Boss {  get { return boss; } }
 
     public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
 
@@ -84,10 +91,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// 初期設定
+    /// </summary>
     void Start()
     {
         isBossDead = false;
+        
     }
 
     /// <summary>
@@ -104,11 +114,11 @@ public class GameManager : MonoBehaviour
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
-                GameObject boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
-                boss.GetComponent<EnemyBase>().IsBoss = true;
+                boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
+                boss.GetComponent<EnemyController>().IsBoss = true;
 
-                boss.GetComponent<EnemyBase>().Players.Add(player);
-                boss.GetComponent<EnemyBase>().SetNearTarget();
+                boss.GetComponent<EnemyController>().Players.Add(player);
+                boss.GetComponent<EnemyController>().SetNearTarget();
             }
 
             isSpawnBoss = true;
@@ -118,45 +128,38 @@ public class GameManager : MonoBehaviour
 
         if (isBossDead)
         {// ボスを倒した(仮)
-            //bossFlag = false;
-            //boss.SetActive(false);
-
             // 遅れて呼び出し
             Invoke(nameof(ChengScene), 1.5f);
         }
 
-        if (spawnCnt < maxSpawnCnt)
+        if (spawnCnt < maxSpawnCnt  && !isBossDead)
         {// スポーン回数が限界に達しているか
             elapsedTime += Time.deltaTime;
             if (elapsedTime > spawnInterval)
             {
                 elapsedTime = 0;
 
-                if (spawnCnt < 50)
-                {
+                if (spawnCnt < 100)
+                {// 敵が100体いない場合
                     for (int i = 0; i < 5; i++)
-                    {
+                    {// 複数体敵を生成
                         // 敵生成処理
                         GenerateEnemy();
                     }
                 }
                 else
-                {
+                {// いる場合
                     GenerateEnemy();
                 }
             }
         }
-        else
-        {
-            Debug.Log("生成限界");
-        }
     }
 
     /// <summary>
-    /// シーン変更
+    /// シーン遷移
     /// </summary>
     private void ChengScene()
-    {// シーン変更
+    {// シーン遷移
         SceneManager.LoadScene("Result ueno");
     }
 
@@ -164,61 +167,31 @@ public class GameManager : MonoBehaviour
     /// <summary>
     ///  敵撃破
     /// </summary>
-    public void CrushEnemy(EnemyBase enemy)
+    public void CrushEnemy(EnemyController enemy)
     {
         crushNum++;
 
         Debug.Log("倒した数：" + crushNum);
 
         spawnCnt--;
-        //AddXp();
 
-        Debug.Log(crushNum);
         if (enemy.IsBoss)
         {
             DeathBoss();
         }
-        else if (crushNum >= 150)
+        else if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
 
             bossFlag = true;
             Debug.Log("倒した数：" + crushNum + "ボス");
-
-            //boss.SetActive(true);
-            //Debug.Log("ボスでてきた");
-            //crushNum = 0;
         }
-    }
-
-    /// <summary>
-    /// 経験値加算
-    /// </summary>
-    public void AddXp()
-    {
-        xp += 100;
-        if (xp >= requiredXp)
-        {// 必要経験値数を超えたら
-
-            // 必要経験値数を増やす
-            requiredXp += xp;
-            Debug.Log(requiredXp);
-            // レベルアップ関数を
-            UpLevel();
-        }
-    }
-
-    /// <summary>
-    /// レベルアップ
-    /// </summary>
-    public void UpLevel()
-    {
-        level++;
-        Debug.Log("レベルアップ:" + level);
     }
 
     [ContextMenu("DeathBoss")]
     public void DeathBoss()
     {
+        RelicManager.Instance.GenerateRelic(boss.transform.position);
+
         // ボスフラグを変更
         bossFlag = false;
         // 死んだ判定にする
@@ -235,6 +208,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 敵のスポーン可能範囲判定処理
+    /// </summary>
+    /// <param name="minPoint"></param>
+    /// <param name="maxPoint"></param>
+    /// <returns></returns>
     private (Vector3 minRange, Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint, Vector3 maxPoint)
     {
         Vector3 minRange = minPoint, maxRange = maxPoint;
@@ -261,6 +240,12 @@ public class GameManager : MonoBehaviour
         return (minRange, maxRange);
     }
 
+    /// <summary>
+    /// 敵生成の位置決定処理
+    /// </summary>
+    /// <param name="minRange"></param>
+    /// <param name="maxRange"></param>
+    /// <returns></returns>
     private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange)
     {
         // 試行回数
@@ -284,11 +269,17 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// 時間経過毎にスポーン間隔を早める処理
+    /// </summary>
     public void DecreaseGeneratInterval()
     {
         spawnInterval -= 1;
     }
 
+    /// <summary>
+    /// 敵生成処理
+    /// </summary>
     public void GenerateEnemy()
     {
         Vector2 minPlayer =
@@ -311,12 +302,12 @@ public class GameManager : MonoBehaviour
             // 生成
             enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
 
-            enemy.GetComponent<EnemyBase>().Players.Add(player);
-            enemy.GetComponent<EnemyBase>().SetNearTarget();
+            enemy.GetComponent<EnemyController>().Players.Add(player);
+            enemy.GetComponent<EnemyController>().SetNearTarget();
 
             if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
             {
-                enemy.GetComponent<EnemyBase>().enabled = false;
+                enemy.GetComponent<EnemyController>().enabled = false;
 
                 // 透明化
                 enemy.GetComponent<SpriteRenderer>().enabled = false;
