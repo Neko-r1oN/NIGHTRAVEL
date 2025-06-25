@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static Grpc.Core.Metadata;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
@@ -248,7 +249,7 @@ public class GameManager : MonoBehaviour
     private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange)
     {
         // ééçsâÒêî
-        int loopMax = 10;
+        int loopMax = 100;
 
         for (int i = 0; i < loopMax; i++)
         {
@@ -261,7 +262,12 @@ public class GameManager : MonoBehaviour
             if (Mathf.Abs(distToPlayer.x) > distMinSpawnPos
                 && Mathf.Abs(distToPlayer.y) > distMinSpawnPos)
             {
-                return spawnPos;
+                Vector2? pos = IsGroundCheck(spawnPos);
+
+                if (pos != null)
+                {
+                    return pos;
+                }
             }
         }
 
@@ -304,13 +310,30 @@ public class GameManager : MonoBehaviour
             enemy.GetComponent<EnemyBase>().Players.Add(player);
             enemy.GetComponent<EnemyBase>().SetNearTarget();
 
-            if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
+            /*if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
             {
                 enemy.GetComponent<EnemyBase>().enabled = false;
 
                 // ìßñæâª
                 enemy.GetComponent<SpriteRenderer>().enabled = false;
-            }
+            }*/
+        }
+    }
+
+    private Vector2? IsGroundCheck(Vector3 rayOrigin)
+    {
+        LayerMask mask = LayerMask.GetMask("Default");
+
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, float.MaxValue, mask);
+
+        Debug.DrawRay((Vector2)rayOrigin, Vector2.down * hit.distance, Color.red);
+        if(hit && hit.collider.gameObject.CompareTag("ground"))
+        {
+            return hit.point;
+        }
+        else
+        {
+            return null;
         }
     }
 }
