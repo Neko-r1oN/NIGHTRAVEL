@@ -57,29 +57,9 @@ public class Sword : PlayerBase
     /// <summary>
     /// 更新処理
     /// </summary>
-    private void Update()
+    protected override void Update()
     {
-        //Debug.Log("攻撃：" + nowAttack + " コンボ：" + isCombo);
-
-        // キャラの移動
-        horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
-        verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
-        Ladder();
-
-        if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
-        {   // ジャンプ押下時
-            if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
-                isJump = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
-        {   // ブリンク押下時
-            if(nowAttack)
-            {
-                isBlink = true;
-                gameObject.layer = 21;
-            }
-        }
+        base.Update();
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
         {   // 通常攻撃
@@ -111,7 +91,7 @@ public class Sword : PlayerBase
         {   // 攻撃2
             if (canSkill && nowAttack)
             {
-                gameObject.layer = 21;
+                //gameObject.layer = 21;
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
                 canSkill = false;
                 plDirection = transform.localScale.x;
@@ -126,11 +106,24 @@ public class Sword : PlayerBase
         {
             GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
         }
+
+        //Escが押された時
+        if (Input.GetKey(KeyCode.Escape))
+        {
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+#else
+    Application.Quit();//ゲームプレイ終了
+#endif
+        }
     }
 
+    /// <summary>
+    /// 定期更新処理
+    /// </summary>
     protected override void FixedUpdate()
     {
-
         base.FixedUpdate();
 
         if (isSkill)
@@ -177,11 +170,6 @@ public class Sword : PlayerBase
         isCombo = true;
     }
 
-    public void PushPlayer()
-    {
-
-    }
-
     /// <summary>
     /// 攻撃終了時
     /// </summary>
@@ -213,6 +201,10 @@ public class Sword : PlayerBase
         cantAtk = false;
     }
 
+    /// <summary>
+    /// スキルクールダウン処理
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SkillCoolDown()
     {
         isSkill = true;
@@ -240,11 +232,5 @@ public class Sword : PlayerBase
 
         yield return new WaitForSeconds(skillCoolDown);
         canSkill = true;
-    }
-
-    [ContextMenu("ショック")]
-    public void ShockTest()
-    {
-        this.GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Shock);
     }
 }

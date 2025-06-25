@@ -9837,9 +9837,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 10
-  baseDefence: 10
-  basePower: 10
+  baseHp: 200
+  baseDefence: 20
+  basePower: 15
   baseJumpPower: 10
   baseMoveSpeed: 60
   hp: 150
@@ -9849,6 +9849,7 @@ MonoBehaviour:
   moveSpeed: 1
   moveSpeedFactor: 0
   attackSpeedFactor: 0
+  animator: {fileID: 8689955818485255211}
   m_JumpForce: 850
   wallJumpPower: 2
   m_AirControl: 1
