@@ -11169,7 +11169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &1507970062
 AudioSource:
   m_ObjectHideFlags: 0
@@ -11469,6 +11469,7 @@ MonoBehaviour:
   moveSpeed: 0
   moveSpeedFactor: 0
   attackSpeedFactor: 0
+  animator: {fileID: 0}
   players:
   - {fileID: 0}
   bulletNum: 3
@@ -24104,6 +24105,7 @@ MonoBehaviour:
   moveSpeed: 40
   moveSpeedFactor: 0
   attackSpeedFactor: 0
+  animator: {fileID: 0}
   m_JumpForce: 850
   wallJumpPower: 2
   m_AirControl: 1
@@ -24128,6 +24130,12 @@ MonoBehaviour:
   playerCollider: {fileID: 4503244492536330279}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
+  skillForth: 45
+  skillTime: 0.5
+  skillCoolDown: 5
+  skillEffect1: {fileID: 0}
+  skillEffect2: {fileID: 0}
+  skillEffect3: {fileID: 0}
 --- !u!1 &412020272843048761
 GameObject:
   m_ObjectHideFlags: 0
@@ -34048,7 +34056,7 @@ Transform:
   m_GameObject: {fileID: 8712946285315182264}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.75, y: 22.22, z: 0}
+  m_LocalPosition: {x: -5.48, y: -1.38, z: 0}
   m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_ConstrainProportionsScale: 1
   m_Children:
