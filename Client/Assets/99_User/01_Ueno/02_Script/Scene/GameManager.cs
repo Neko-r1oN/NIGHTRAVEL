@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (!isSpawnBoss && bossFlag)
+        /*if (!isSpawnBoss && bossFlag)
         {
             // ボスの生成範囲の判定
             var spawnPostions = CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
             isSpawnBoss = true;
 
             bossFlag = false;
-        }
+        }*/
 
         if (isBossDead)
         {// ボスを倒した(仮)
@@ -246,7 +246,7 @@ public class GameManager : MonoBehaviour
     /// <param name="minRange"></param>
     /// <param name="maxRange"></param>
     /// <returns></returns>
-    private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange)
+    private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange,EnemyBase enemyBase)
     {
         // 試行回数
         int loopMax = 100;
@@ -263,10 +263,19 @@ public class GameManager : MonoBehaviour
                 && Mathf.Abs(distToPlayer.y) > distMinSpawnPos)
             {
                 Vector2? pos = IsGroundCheck(spawnPos);
-
                 if (pos != null)
                 {
-                    return pos;
+                    LayerMask mask = LayerMask.GetMask("Default");
+
+
+                    Vector2 result = (Vector2)pos;
+
+                    result.y += enemyBase.SpawnGroundOffset;
+
+                    if (!Physics2D.OverlapCircle(new Vector2(result.x,result.y + 1), 0.8f, mask))
+                    {
+                        return result;
+                    }
                 }
             }
         }
@@ -287,6 +296,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void GenerateEnemy()
     {
+        int listNum = Random.Range(0, enemyList.Count);
+
+        EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
+
         Vector2 minPlayer =
                     new Vector2(player.transform.position.x - xRadius, player.transform.position.y - yRadius);
 
@@ -296,13 +309,11 @@ public class GameManager : MonoBehaviour
         // ランダムな位置を生成
         var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
 
-        Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange);
+        Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange,enemyBase);
 
         if (spawnPos != null)
         {
             spawnCnt++;
-
-            int listNum = Random.Range(0, enemyList.Count);
 
             // 生成
             enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
