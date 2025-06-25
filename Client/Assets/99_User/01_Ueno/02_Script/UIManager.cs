@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-
     PlayerBase player;
     EnemyBase boss;
 
