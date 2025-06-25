@@ -147,7 +147,7 @@ abstract public class EnemyBase : CharacterBase
         enemyElite = GetComponent<EnemyElite>();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
 
@@ -214,7 +214,7 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// アイドル処理
     /// </summary>
-    abstract protected void Idle();
+    protected virtual void Idle() { }
 
     /// <summary>
     /// 方向転換
@@ -283,7 +283,7 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// 追跡する処理
     /// </summary>
-    abstract protected void Tracking();
+    protected virtual void Tracking() { }
 
     /// <summary>
     /// 巡回する処理
@@ -342,9 +342,12 @@ abstract public class EnemyBase : CharacterBase
             }
 
             // 状態異常を付与する
-            foreach(StatusEffectController.EFFECT_TYPE effectType in effectTypes)
+            if (effectTypes != null)
             {
-                effectController.ApplyStatusEffect(effectType);
+                foreach (StatusEffectController.EFFECT_TYPE effectType in effectTypes)
+                {
+                    effectController.ApplyStatusEffect(effectType);
+                }
             }
 
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
