@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
 
-    SampleChara player;
-    EnemyController boss;
+    PlayerBase player;
+    EnemyBase boss;
 
     #region 各UI
     [SerializeField] Slider playerHpBar;        // プレイヤーのHPバー
@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        player = GameManager.Instance.Player.GetComponent<SampleChara>();
+        player = GameManager.Instance.Player.GetComponent<PlayerBase>();
         
         playerHpBar.maxValue = player.MaxHP;
         playerSliderText.text = "" + playerHpBar.maxValue;
@@ -127,7 +127,7 @@ public class UIManager : MonoBehaviour
 
                 if (boss == null)
                 {// ボスがnullのとき
-                    boss = GameManager.Instance.Boss.GetComponent<EnemyController>();
+                    boss = GameManager.Instance.Boss.GetComponent<EnemyBase>();
                     // ボスステータスUI
                     bossHpBar.maxValue = boss.HP;
                     bossHpBar.value = boss.HP;
