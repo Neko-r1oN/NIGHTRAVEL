@@ -36,6 +36,8 @@ public class CameraFollow : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		if (Target == null) return;
+
 		Vector3 newPosition = Target.position;
 		newPosition.z = -10;
 		transform.position = Vector3.Slerp(transform.position, newPosition, FollowSpeed * Time.deltaTime);
