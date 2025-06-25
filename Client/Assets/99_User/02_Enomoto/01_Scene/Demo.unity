@@ -725,6 +725,7 @@ MonoBehaviour:
   canAttack: 1
   canJump: 1
   canCancelAttackOnHit: 1
+  spawnGroundOffset: 0
   canDrawRay: 1
   exp: 100
   attackType: 1
@@ -1130,9 +1131,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -1757,9 +1758,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -2420,9 +2421,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -2593,9 +2594,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -2770,9 +2771,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -2912,9 +2913,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -3210,9 +3211,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -3496,7 +3497,7 @@ MonoBehaviour:
   baseDefence: 10
   basePower: 10
   baseJumpPower: 0
-  baseMoveSpeed: 250
+  baseMoveSpeed: 50
   hp: 0
   defence: 0
   power: 0
@@ -3520,15 +3521,16 @@ MonoBehaviour:
   canAttack: 0
   canJump: 0
   canCancelAttackOnHit: 1
+  spawnGroundOffset: 0
   canDrawRay: 1
   exp: 100
-  rotationSpeed: 75
+  rotationSpeed: 50
   meleeAttackCheck: {fileID: 0}
   meleeAttackRange: 0.9
   stageCenter: {x: 15, y: 5}
   moveRange: 20
-  decisionTime: 8
-  maxMoveTime: 5
+  decisionTime: 5
+  maxMoveTime: 1
 --- !u!1 &1419095211
 GameObject:
   m_ObjectHideFlags: 0
@@ -3560,9 +3562,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -3702,9 +3704,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -4814,6 +4816,7 @@ MonoBehaviour:
   canAttack: 1
   canJump: 0
   canCancelAttackOnHit: 1
+  spawnGroundOffset: 0
   canDrawRay: 1
   exp: 100
   attackType: 2
@@ -4991,9 +4994,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -5493,6 +5496,7 @@ MonoBehaviour:
   canAttack: 1
   canJump: 0
   canCancelAttackOnHit: 1
+  spawnGroundOffset: 0
   canDrawRay: 1
   exp: 100
   patorolRange: 10
@@ -5818,9 +5822,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -5960,9 +5964,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 1
   m_LinearDamping: 5
-  m_AngularDamping: 2.5
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -11376,12 +11380,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3515460544933366228, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3823992611971955053, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
-      propertyPath: 'players.Array.data[0]'
-      value: 
-      objectReference: {fileID: 663467766632702591}
+      propertyPath: spawnGroundOffset
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8326544191249943883, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
       propertyPath: m_LocalPosition.x
       value: 27.01
@@ -16415,9 +16419,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1981468492164226330, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
-      propertyPath: 'players.Array.data[0]'
-      value: 
-      objectReference: {fileID: 663467766632702591}
+      propertyPath: spawnGroundOffset
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 2466742067128067017, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_Name
       value: CyberDog
@@ -16425,6 +16429,14 @@ PrefabInstance:
     - target: {fileID: 2466742067128067017, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3932012138216839847, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.06656812
+      objectReference: {fileID: 0}
+    - target: {fileID: 3932012138216839847, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.99778193
       objectReference: {fileID: 0}
     - target: {fileID: 6574954356512078758, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalPosition.x

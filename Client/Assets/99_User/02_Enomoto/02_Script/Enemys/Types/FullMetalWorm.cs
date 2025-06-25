@@ -26,7 +26,7 @@ public class FullMetalWorm : EnemyBase
     #region ステータス
     [Foldout("ステータス")]
     [SerializeField]
-    float rotationSpeed = 90f; // 頭の回転速度
+    float rotationSpeed = 50f; // 頭の回転速度
     #endregion
 
     #region チェック判定
@@ -137,9 +137,9 @@ public class FullMetalWorm : EnemyBase
     IEnumerator NextDecision(float time)
     {
         doOnceDecision = false;
-        StartCoroutine(MoveGraduallyCoroutine());
+        StartCoroutine("MoveGraduallyCoroutine");
         yield return new WaitForSeconds(time);
-        StopCoroutine(MoveGraduallyCoroutine());
+        StopCoroutine("MoveGraduallyCoroutine");
         randomDecision = Random.Range(0, 1);
         doOnceDecision = true;
     }
@@ -215,7 +215,7 @@ public class FullMetalWorm : EnemyBase
         //m_rb2d.linearVelocity = direction * speed;
         //RotateTowardsMovementDirection();
 
-        m_rb2d.linearVelocity = transform.up * speed;
+        m_rb2d.linearVelocity = transform.up.normalized * speed;
     }
 
     /// <summary>
@@ -242,31 +242,21 @@ public class FullMetalWorm : EnemyBase
     IEnumerator MoveCoroutine()
     {
         Vector3 targetPos = GetNextTargetPosition();
-        bool isTargetPosReached = false;
-        float time = 0;
 
-        while (time < maxMoveTime)
+        while (true)
         {
+            MoveTowardsTarget(moveSpeed);
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
-            if (disToTargetPos > disToTargetPosMin || isTargetPosReached)
+            if (disToTargetPos <= disToTargetPosMin)
             {
-                // 目標地点到達後は回転させずに移動を続ける
-                if (!isTargetPosReached)
-                {
-                    RotateTowardsMovementDirection(targetPos, rotationSpeed);
-                }
-                MoveTowardsTarget(moveSpeed);
+                break;
             }
             else
             {
-                // 目標地点に到達後、カウント開始する
-                isTargetPosReached = true;
+                RotateTowardsMovementDirection(targetPos, rotationSpeed);
             }
-            yield return new WaitForSeconds(0.1f);
-
-            if (isTargetPosReached) time += 0.1f;
+            yield return null;
         }
-
         StartCoroutine(NextDecision(decisionTime));
     }
 
@@ -279,7 +269,7 @@ public class FullMetalWorm : EnemyBase
         Vector3 targetPos = GetNextTargetPosition();
         while (true)
         {
-            RotateTowardsMovementDirection(targetPos, rotationSpeed / 2);
+            RotateTowardsMovementDirection(targetPos, rotationSpeed / 20);
             MoveTowardsTarget(moveSpeed / 10);
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
             if (disToTargetPos <= disToTargetPosMin / 2)
@@ -357,7 +347,7 @@ public class FullMetalWorm : EnemyBase
         }
         else
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
                 // ターゲットのプレイヤーが存在しない場合、ランダムな地点に移動する
                 Vector2 maxPos = stageCenter + Vector2.one * moveRange;

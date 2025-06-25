@@ -70,15 +70,6 @@ abstract public class EnemyBase : CharacterBase
     protected bool isElite = false;
     #endregion
 
-    #region ステータス外部参照用プロパティ
-
-    public float AttackDist { get { return attackDist; } }
-
-    public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
-
-    public bool IsElite { get { return isElite; } }
-    #endregion
-
     #region オプション
     [Foldout("オプション")]
     [Tooltip("接触でダメージを与えることが可能")]
@@ -128,6 +119,11 @@ abstract public class EnemyBase : CharacterBase
 
     #region その他
     [Foldout("その他")]
+    [Tooltip("生成されるときの地面からの距離")]
+    [SerializeField]
+    float spawnGroundOffset;
+
+    [Foldout("その他")]
     [Tooltip("判定を描画するかどうか")]
     [SerializeField]
     protected bool canDrawRay = false;
@@ -135,6 +131,17 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("その他")]
     [SerializeField]
     protected int exp = 100;
+    #endregion
+
+    #region 外部参照用プロパティ
+
+    public float AttackDist { get { return attackDist; } }
+
+    public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
+
+    public bool IsElite { get { return isElite; } }
+
+    public float SpawnGroundOffset { get { return spawnGroundOffset; } }
     #endregion
 
     protected virtual void Start()
