@@ -13,12 +13,20 @@ public class PressMachine : ObjectBase
 {
     [SerializeField] GameObject machineFragment;
     PlayerBase player;
+    Rigidbody2D rigidbody2d;
     bool isBroken = false;
+    public float addPow;
+    public float pullPow;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.gameObject.transform.DOMoveY(0, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        MovePress();
+    }
+
+    private void Update()
+    {
+
     }
 
     public override void ApplyDamage()
@@ -65,5 +73,21 @@ public class PressMachine : ObjectBase
     {
         await Task.Delay(6000);
         Destroy(fragment.gameObject);
+    }
+
+    public async void MovePress()
+    {
+        //Sequenceのインスタンスを作成
+        var sequence = DOTween.Sequence();
+
+        //Appendで動作を追加していく
+         sequence.Append(this.transform.DOMoveY(-addPow, 1))
+                 .AppendInterval(1)
+                 .Append(this.transform.DOMoveY(pullPow, 2));
+                
+        //Playで実行
+        sequence.Play()
+                .AppendInterval(1)
+                .SetLoops(-1);
     }
 }
