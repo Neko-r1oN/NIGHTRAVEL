@@ -130,7 +130,6 @@ public class Sword : PlayerBase
 
     protected override void FixedUpdate()
     {
-        Debug.Log(canSkill + "ÅF" + isSkill);
 
         base.FixedUpdate();
 
