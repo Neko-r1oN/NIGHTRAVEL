@@ -63,7 +63,9 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
         {   // ’ÊíUŒ‚
-            if (isBlink || cantAtk) return;
+            int id = animator.GetInteger("animation_id");
+
+            if (isBlink || cantAtk || id == 3) return;
 
             if (nowAttack && !isCombo)
             {   // UŒ‚1’i–Ú
@@ -73,7 +75,6 @@ public class Sword : PlayerBase
             else if (isCombo)
             {   // UŒ‚2,3’i–Ú
                 isCombo = false;
-                int id = animator.GetInteger("animation_id");
 
                 if (id == (int)S_ANIM_ID.Attack1)
                 {

@@ -181,7 +181,7 @@ abstract public class PlayerBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
+        //canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
@@ -688,7 +688,8 @@ abstract public class PlayerBase : CharacterBase
         yield return new WaitForSeconds(0.4f);
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+
+        Destroy(this.gameObject);
     }
     /// <summary>
     /// ダッシュ(ブリンク)制限処理
@@ -730,15 +731,15 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
-            if (position != null) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null && nowAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
+            Vector2 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
 
             // ノックバック処理
-            if(position != null)
+            if (position != null)
             {
-                Vector2 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                m_Rigidbody2D.AddForce(damageDir * 10);
+                m_Rigidbody2D.AddForce(damageDir * 15);
             }
 
             if(type != null)
@@ -748,6 +749,7 @@ abstract public class PlayerBase : CharacterBase
 
             if (hp <= 0)
             {   // 死亡処理
+                m_Rigidbody2D.AddForce(damageDir * 10);
                 StartCoroutine(WaitToDead());
             }
             else
