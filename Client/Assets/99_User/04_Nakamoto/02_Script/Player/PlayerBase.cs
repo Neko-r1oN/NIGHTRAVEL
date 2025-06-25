@@ -108,7 +108,7 @@ abstract public class PlayerBase : CharacterBase
     [SerializeField] protected Transform m_WallCheck;   // プレイヤーが壁に触れているかどうかを確認する用
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] protected Transform attackCheck;     // 攻撃時の当たり判定
+    [SerializeField] protected Transform attackCheck;   // 攻撃時の当たり判定
 
     [Foldout("レイヤー・位置関連")]
     [SerializeField] protected Transform playerPos;		// プレイヤー位置情報
@@ -123,6 +123,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
     protected bool m_FallFlag = false;
     protected float limitFallSpeed = 25f; // 落下速度の制限
+    protected GameObject canvas;
     #endregion
 
     #region パーティクル
@@ -180,11 +181,35 @@ abstract public class PlayerBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
+        canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
         startHp = maxHp;
+    }
+
+    virtual protected void Update()
+    {
+        // キャラの移動
+        horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
+        verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
+        Ladder();
+
+        if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
+        {   // ジャンプ押下時
+            if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                isJump = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
+        {   // ブリンク押下時
+            if (nowAttack)
+            {
+                isBlink = true;
+                gameObject.layer = 21;
+            }
+        }
     }
 
     /// <summary>
@@ -540,6 +565,45 @@ abstract public class PlayerBase : CharacterBase
 
         Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
     }
+
+    /// <summary>
+    /// 当たり判定
+    /// </summary>
+    /// <param name="collision"></param>
+    protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        // 落下処理
+        if (collision.gameObject.tag == "Abyss")
+        {   // 最も近い復帰点に移動
+            playerPos.position = FetchNearObjectWithTag("ChecKPoint").position;
+        }
+    }
+
+    /// <summary>
+    /// １番近いオブジェクトを取得する
+    /// </summary>
+    /// <param name="tagName">取得したいtagName</param>
+    /// <returns>最小距離の指定Obj</returns>
+    private Transform FetchNearObjectWithTag(string tagName)
+    {
+        // 該当タグが1つしか無い場合はそれを返す
+        var targets = GameObject.FindGameObjectsWithTag(tagName);
+        if (targets.Length == 1) return targets[0].transform;
+
+        GameObject result = null;               // 返り値
+        var minTargetDistance = float.MaxValue; // 最小距離
+        foreach (var target in targets)
+        {
+            // 前回計測したオブジェクトよりも近くにあれば記録
+            var targetDistance = Vector3.Distance(transform.position, target.transform.position);
+            if (!(targetDistance < minTargetDistance)) continue;
+            minTargetDistance = targetDistance;
+            result = target.transform.gameObject;
+        }
+
+        // 最後に記録されたオブジェクトを返す
+        return result?.transform;
+    }
     #endregion
 
     #region プレイヤー共通非同期処理
@@ -712,12 +776,10 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// ステータス変動処理
+    /// ダメージ表記処理
     /// </summary>
-    /// <param name="statusID">増減させるステータスID</param>
-    /// <param name="value">増減値</param>
-    public void ChangeStatus(int statusID, int value)
-    {   //引数はステータス全部を含んだ通信用パッケージを作って適用
+    private void PopDamageUI(int value)
+    {
 
     }
     #endregion

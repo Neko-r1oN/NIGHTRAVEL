@@ -1,7 +1,46 @@
 using UnityEngine;
+using static StatusEffectController;
+using static Sword;
 
 public class Rifle : PlayerBase
 {
+    /// <summary>
+    /// 更新処理
+    /// </summary>
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
+        {   // 通常攻撃
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
+        {   // 攻撃2
+
+        }
+
+        //-----------------------------
+        // デバッグ用
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
+        }
+
+        //Escが押された時
+        if (Input.GetKey(KeyCode.Escape))
+        {
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+#else
+    Application.Quit();//ゲームプレイ終了
+#endif
+        }
+    }
+
     /// <summary>
     /// ダメージを与える処理
     /// </summary>
