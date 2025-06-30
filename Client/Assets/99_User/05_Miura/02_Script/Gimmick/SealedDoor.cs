@@ -56,6 +56,12 @@ public class SealedDoor : ObjectBase
     public async void DestroyFragment(Transform fragment)
     {
         await Task.Delay(6000);
+
+        if (fragment == null)
+        {
+            return;
+        }
+
         Destroy(fragment.gameObject);
     }
 }
