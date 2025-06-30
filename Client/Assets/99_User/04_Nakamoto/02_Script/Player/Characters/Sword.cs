@@ -77,7 +77,7 @@ public class Sword : PlayerBase
             }
             else if (isCombo)
             {   // UŒ‚2,3’i–Ú
-                isCombo = false;
+                if(id != (int)S_ANIM_ID.Attack3) isCombo = false;
 
                 if (id == (int)S_ANIM_ID.Attack1)
                 {
@@ -86,7 +86,6 @@ public class Sword : PlayerBase
                 if (id == (int)S_ANIM_ID.Attack2)
                 {
                     animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack3);
-                    StartCoroutine(LastComboAttack());
                 }
             }
         }
@@ -179,6 +178,8 @@ public class Sword : PlayerBase
     /// </summary>
     public void AttackEnd()
     {
+        int id = animator.GetInteger("animation_id");
+
         if (!isCombo) return;
 
         // ƒtƒ‰ƒO‚Ì‰Šú‰»
@@ -191,6 +192,8 @@ public class Sword : PlayerBase
 
         if (Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+
+        if(animator.GetInteger("animation_id") == (int)S_ANIM_ID.Attack3) StartCoroutine(LastComboAttack());
     }
 
     /// <summary>

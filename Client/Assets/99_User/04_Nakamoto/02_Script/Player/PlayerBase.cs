@@ -779,6 +779,12 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
+    /// 接地判定取得
+    /// </summary>
+    /// <returns></returns>
+    public bool GetGrounded() { return m_Grounded; }
+
+    /// <summary>
     /// ダメージ表記処理
     /// </summary>
     private void PopDamageUI(int value)
