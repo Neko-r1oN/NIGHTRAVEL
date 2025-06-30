@@ -7,10 +7,8 @@
 ////////////////////////////////////////////////////////////////
 
 using Microsoft.EntityFrameworkCore;
-using NIGHTRAVEL.Server.Model.Entity;
 using NIGHTRAVEL.Server.Services;
-using NIGHTRAVEL.Shared.Model.Entity;
-
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 
 namespace NIGHTRAVEL.Server.Model.Context
 {

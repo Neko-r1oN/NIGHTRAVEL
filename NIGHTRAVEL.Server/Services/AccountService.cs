@@ -1,17 +1,24 @@
-﻿using MagicOnion;
+﻿////////////////////////////////////////////////////////////////
+///
+/// アカウント関連の通信を管理するスクリプト
+/// 
+/// Aughter:木田晃輔
+///
+////////////////////////////////////////////////////////////////
+
+using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
-using NIGHTRAVEL.Server.Model.Entity;
-using NIGHTRAVEL.Shared.Model.Entity;
-using NIGHTRAVEL.Shared.Services;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Services;
 
 namespace NIGHTRAVEL.Server.Services
 {
+    /// <summary>
+    /// アカウントのAPI追加
+    /// </summary>
     public class AccountService : ServiceBase<IAccountService>, IAccountService
     {
-        
 
         //アカウントを登録
         public async UnaryResult<int> RegistAccountAsync(string name, string password)

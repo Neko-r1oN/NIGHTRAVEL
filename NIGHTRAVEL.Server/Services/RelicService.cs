@@ -9,11 +9,14 @@
 using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
-using NIGHTRAVEL.Shared.Model.Entity;
-using NIGHTRAVEL.Shared.Services;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Services;
 
 namespace NIGHTRAVEL.Server.Services
 {
+    /// <summary>
+    /// レリックのAPIを追加
+    /// </summary>
     public class RelicService : ServiceBase<IRelicService>,IRelicService
     {
         //レリックをIDで取得

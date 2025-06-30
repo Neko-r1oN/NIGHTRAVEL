@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NIGHTRAVEL.Shared.Services
+namespace NIGHTRAVEL.Shared.Interfaces.Services
 {
     internal class IResultService
     {

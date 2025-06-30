@@ -1,12 +1,23 @@
-﻿using MagicOnion;
+﻿////////////////////////////////////////////////////////////////
+///
+/// 実績の進捗関連の通信を管理するスクリプト
+/// 
+/// Aughter:木田晃輔
+///
+////////////////////////////////////////////////////////////////
+
+using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
-using NIGHTRAVEL.Shared.Model.Entity;
-using NIGHTRAVEL.Shared.Services;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Services;
 using System.Diagnostics;
 
 namespace NIGHTRAVEL.Server.Services
 {
+    /// <summary>
+    /// 実績の進捗API追加
+    /// </summary>
     public class AchievementStatusService : ServiceBase<IAchievementStatusService>, IAchievementStatusService
     {
         //実績進捗をIDで取得

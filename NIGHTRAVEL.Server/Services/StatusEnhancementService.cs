@@ -9,10 +9,8 @@
 using MagicOnion;
 using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
-using NIGHTRAVEL.Server.Model.Entity;
-using NIGHTRAVEL.Shared.Model.Entity;
-using NIGHTRAVEL.Shared.Services;
-using System.Diagnostics;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Services;
 
 
 namespace NIGHTRAVEL.Server.Services

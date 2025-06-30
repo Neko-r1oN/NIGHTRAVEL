@@ -9,7 +9,7 @@
 using MagicOnion;
 using UnityEngine;
 
-namespace NIGHTRAVEL.Shared.Services
+namespace NIGHTRAVEL.Shared.Interfaces.Services
 {
     /// <summary>
     /// インターフェースを設定

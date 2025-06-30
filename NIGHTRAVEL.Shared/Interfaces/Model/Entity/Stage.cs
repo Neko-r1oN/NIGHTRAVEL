@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NIGHTRAVEL.Shared.Model.Entity
+namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
 {
     /// <summary>
     /// ステージのカラム設定(public)

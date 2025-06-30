@@ -8,7 +8,7 @@
 
 using System;
 
-namespace NIGHTRAVEL.Server.Model.Entity
+namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
 {
     /// <summary>
     /// ユーザーのカラム設定(Public)

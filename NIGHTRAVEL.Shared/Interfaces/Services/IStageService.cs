@@ -6,12 +6,12 @@
 ///
 ////////////////////////////////////////////////////////////////
 using MagicOnion;
-using NIGHTRAVEL.Shared.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NIGHTRAVEL.Shared.Services
+namespace NIGHTRAVEL.Shared.Interfaces.Services
 {
     /// <summary>
     /// ステージのインターフェースの追加(Shared)

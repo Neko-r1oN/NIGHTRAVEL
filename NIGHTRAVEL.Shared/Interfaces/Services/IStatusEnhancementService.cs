@@ -6,21 +6,16 @@
 ///
 ////////////////////////////////////////////////////////////////
 
-using Grpc.Core;
 using MagicOnion;
-using NIGHTRAVEL.Server.Model.Entity;
-using NIGHTRAVEL.Shared.Model.Entity;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 
-namespace NIGHTRAVEL.Shared.Services
+namespace NIGHTRAVEL.Shared.Interfaces.Services
 {
     /// <summary>
     /// ステータス強化のインターフェースの追加(Shared)
     /// </summary>
-    public interface IStatusEnhancementService : IService<IStatusEnhancementService> 
-   {
+    public interface IStatusEnhancementService : IService<IStatusEnhancementService>
+    {
         //ステータス強化を識別名で取得
         UnaryResult<Status_Enhancement[]> GetStatusEnhancement(string enhancementType);
 

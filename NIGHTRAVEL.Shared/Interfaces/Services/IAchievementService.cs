@@ -7,12 +7,12 @@
 ////////////////////////////////////////////////////////////////
 
 using MagicOnion;
-using NIGHTRAVEL.Shared.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NIGHTRAVEL.Shared.Services
+namespace NIGHTRAVEL.Shared.Interfaces.Services
 {
     public interface IAchievementService : IService<IAchievementService>
     {
@@ -24,6 +24,6 @@ namespace NIGHTRAVEL.Shared.Services
         UnaryResult<Achievement[]> GetAllAchievement();
 
         //実績をタイプで取得
-        UnaryResult<Achievement[]> GetAchievementType(string type );
+        UnaryResult<Achievement[]> GetAchievementType(string type);
     }
 }

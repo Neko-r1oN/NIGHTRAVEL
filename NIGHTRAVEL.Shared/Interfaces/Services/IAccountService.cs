@@ -7,13 +7,9 @@
 ////////////////////////////////////////////////////////////////
 
 using MagicOnion;
-using NIGHTRAVEL.Server.Model.Entity;
-using NIGHTRAVEL.Shared.Model.Entity;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 
-namespace NIGHTRAVEL.Shared.Services
+namespace NIGHTRAVEL.Shared.Interfaces.Services
 {
     /// <summary>
     /// アカウントのAPI追加(public)
@@ -21,7 +17,7 @@ namespace NIGHTRAVEL.Shared.Services
     public interface IAccountService : IService<IAccountService>
     {
         //アカウントを登録
-        UnaryResult<int> RegistAccountAsync(string name,string password);
+        UnaryResult<int> RegistAccountAsync(string name, string password);
 
         //アカウント一覧を取得
         UnaryResult<Account[]> GetAllAccountsAsync();

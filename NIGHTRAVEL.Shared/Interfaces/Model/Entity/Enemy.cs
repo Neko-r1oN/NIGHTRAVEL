@@ -10,14 +10,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NIGHTRAVEL.Shared.Model.Entity
-{   
-     /// <summary>
-     /// 敵のカラム設定(public)
-     /// </summary>
+namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
+{
+    /// <summary>
+    /// 敵のカラム設定(public)
+    /// </summary>
     public class Enemy
     {
-        public int id {  get; set; }                        //敵のID
+        public int id { get; set; }                        //敵のID
         public string name { get; set; }                    //敵の名前
         public double hp { get; set; }                      //敵のHP
         public double attack { get; set; }                  //敵の攻撃力
