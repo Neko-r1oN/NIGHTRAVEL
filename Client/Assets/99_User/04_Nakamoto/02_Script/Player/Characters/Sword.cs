@@ -28,8 +28,8 @@ public class Sword : PlayerBase
         Skill
     }
 
-    private bool isCombo = false;   // コンボ可能フラグ
-    private bool cantAtk = false;   // 攻撃可能フラグ
+    private bool isCombo = false;       // コンボ可能フラグ
+    private bool isCooldown = false;    // 攻撃のクールダウンフラグ
 
     private float plDirection = 0;  // プレイヤーの向き
 
@@ -65,11 +65,11 @@ public class Sword : PlayerBase
         {   // 通常攻撃
             int id = animator.GetInteger("animation_id");
 
-            if (isBlink || cantAtk || id == 3) return;
+            if (isBlink || isSkill || isCooldown || id == 3) return;
 
-            if (nowAttack && !isCombo)
+            if (canAttack && !isCombo)
             {   // 攻撃1段目
-                nowAttack = false;
+                canAttack = false;
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
             }
             else if (isCombo)
@@ -90,7 +90,7 @@ public class Sword : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // 攻撃2
-            if (canSkill && nowAttack)
+            if (canSkill && canAttack)
             {
                 //gameObject.layer = 21;
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
@@ -179,7 +179,7 @@ public class Sword : PlayerBase
         if (!isCombo) return;
 
         // フラグの初期化
-        nowAttack = true;
+        canAttack = true;
         isCombo = false;
 
         // 移動速度に応じてアニメーション分岐
@@ -195,11 +195,11 @@ public class Sword : PlayerBase
     /// </summary>
     IEnumerator LastComboAttack()
     {
-        cantAtk = true;
+        isCooldown = true;
 
         // コンボ終了時待機  
         yield return new WaitForSeconds(1.5f);
-        cantAtk = false;
+        isCooldown = false;
     }
 
     /// <summary>

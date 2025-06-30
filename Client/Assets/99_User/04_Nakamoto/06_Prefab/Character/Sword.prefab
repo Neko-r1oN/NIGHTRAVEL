@@ -9837,7 +9837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 200
+  baseHp: 20
   baseDefence: 20
   basePower: 15
   baseJumpPower: 10
@@ -9997,7 +9997,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &7378267398007181736
 CapsuleCollider2D:
