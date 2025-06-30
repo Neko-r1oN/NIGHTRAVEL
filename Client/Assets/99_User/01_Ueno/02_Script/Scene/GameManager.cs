@@ -105,12 +105,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        /*if (!isSpawnBoss && bossFlag)
+        if (!isSpawnBoss && bossFlag || Input.GetKeyUp(KeyCode.A))
         {
             // ボスの生成範囲の判定
             var spawnPostions = CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
 
-            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange);
+            EnemyBase bossEnemy = bossPrefab.GetComponent<EnemyBase>();
+
+            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange,bossEnemy);
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
@@ -124,12 +126,12 @@ public class GameManager : MonoBehaviour
             isSpawnBoss = true;
 
             bossFlag = false;
-        }*/
+        }
 
         if (isBossDead)
         {// ボスを倒した(仮)
             // 遅れて呼び出し
-            Invoke(nameof(ChengScene), 1.5f);
+            Invoke(nameof(ChengScene), 15f);
         }
 
         if (spawnCnt < maxSpawnCnt  && !isBossDead)
@@ -181,6 +183,8 @@ public class GameManager : MonoBehaviour
         }
         else if (crushNum >= 15)
         {// 撃破数が15以上になったら(仮)
+
+            DeathBoss();
 
             bossFlag = true;
             Debug.Log("倒した数：" + crushNum + "ボス");
@@ -288,7 +292,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void DecreaseGeneratInterval()
     {
-        spawnInterval -= 1;
+        spawnInterval -= 3;
     }
 
     /// <summary>

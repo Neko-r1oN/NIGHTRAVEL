@@ -20,6 +20,6 @@ public class TitleManager : MonoBehaviour
 
     public void ButtonPush()
     {
-        SceneManager.LoadScene("SampleGameUeno");
+        SceneManager.LoadScene("Stage");
     }
 }

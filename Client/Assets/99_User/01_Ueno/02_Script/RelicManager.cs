@@ -1,10 +1,6 @@
-using Microsoft.Unity.VisualStudio.Editor;
-using NUnit.Framework;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using static UnityEditor.PlayerSettings;
+
 
 public class RelicManager : MonoBehaviour
 {

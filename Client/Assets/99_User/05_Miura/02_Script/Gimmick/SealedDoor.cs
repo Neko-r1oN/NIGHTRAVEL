@@ -57,7 +57,7 @@ public class SealedDoor : ObjectBase
     {
         await Task.Delay(6000);
 
-        if (fragment == null)
+        if(fragment == null)
         {
             return;
         }
