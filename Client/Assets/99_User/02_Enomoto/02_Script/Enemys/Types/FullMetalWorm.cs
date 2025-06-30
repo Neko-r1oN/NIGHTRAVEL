@@ -265,8 +265,6 @@ public class FullMetalWorm : EnemyBase
             {
                 if (currentSpeed <= moveSpeedMin) break;
                 else currentSpeed -= Time.deltaTime * (moveSpeed - moveSpeedMin) / 2;
-
-                Debug.Log("Œ¸‘¬’†F" + currentSpeed);
             }
 
             MoveTowardsTarget(currentSpeed);
