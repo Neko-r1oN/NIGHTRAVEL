@@ -26,7 +26,7 @@ public class StatusEffectController : MonoBehaviour
     #region Šeó‘ÔˆÙí‚ÌŒø‰ÊŠÔ
     readonly float maxBurnDuration = 6f;    // ‰Šã
     readonly float maxFreezeDuration = 10f; // ‘šÄ‚¯
-    readonly float maxShockDuration = 0.3f; // Š´“d
+    readonly float maxShockDuration = 1f; // Š´“d
     #endregion
 
     #region ó‘ÔˆÙí‚ÌŒø‰Ê‚ª”­“®‚·‚éŠÔŠu

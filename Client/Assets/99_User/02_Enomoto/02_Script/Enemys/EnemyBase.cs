@@ -157,9 +157,9 @@ abstract public class EnemyBase : CharacterBase
     {
         if (isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
 
-        if (!target && Players.Count > 0)
+        if (!target && Players.Count > 0 || target.GetComponent<CharacterBase>().HP <= 0)
         {
-            // ターゲットを探す
+            // 新しくターゲットを探す
             target = sightChecker.GetTargetInSight();
         }
         else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())

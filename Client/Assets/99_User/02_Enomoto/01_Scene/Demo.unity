@@ -3497,7 +3497,7 @@ MonoBehaviour:
   baseDefence: 10
   basePower: 10
   baseJumpPower: 0
-  baseMoveSpeed: 50
+  baseMoveSpeed: 25
   hp: 0
   defence: 0
   power: 0
@@ -3525,10 +3525,12 @@ MonoBehaviour:
   canDrawRay: 1
   exp: 100
   rotationSpeed: 50
+  rotationSpeedMin: 2.5
+  moveSpeedMin: 2.5
   meleeAttackCheck: {fileID: 0}
   meleeAttackRange: 0.9
   stageCenter: {x: 15, y: 5}
-  moveRange: 20
+  moveRange: 40
   decisionTime: 5
   maxMoveTime: 1
 --- !u!1 &1419095211
@@ -11386,6 +11388,14 @@ PrefabInstance:
       propertyPath: spawnGroundOffset
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 3823992611971955053, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: players.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3823992611971955053, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: 'players.Array.data[0]'
+      value: 
+      objectReference: {fileID: 663467766632702591}
     - target: {fileID: 8326544191249943883, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
       propertyPath: m_LocalPosition.x
       value: 27.01
@@ -16422,6 +16432,14 @@ PrefabInstance:
       propertyPath: spawnGroundOffset
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 1981468492164226330, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: players.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1981468492164226330, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: 'players.Array.data[0]'
+      value: 
+      objectReference: {fileID: 663467766632702591}
     - target: {fileID: 2466742067128067017, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_Name
       value: CyberDog
@@ -16432,11 +16450,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3932012138216839847, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.06656812
+      value: 0.06656445
       objectReference: {fileID: 0}
     - target: {fileID: 3932012138216839847, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.99778193
+      value: -0.9977822
+      objectReference: {fileID: 0}
+    - target: {fileID: 6574954356512078758, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6574954356512078758, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalPosition.x
