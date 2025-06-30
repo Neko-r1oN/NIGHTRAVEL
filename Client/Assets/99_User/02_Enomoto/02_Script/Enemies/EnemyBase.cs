@@ -27,6 +27,12 @@ abstract public class EnemyBase : CharacterBase
     protected Rigidbody2D m_rb2d;
     #endregion
 
+    #region テクスチャ・アニメーション関連
+    [Foldout("テクスチャ・アニメーション")]
+    [SerializeField]
+    List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
+    #endregion
+
     #region チェック判定
     protected LayerMask terrainLayerMask; // 壁と地面のレイヤー
     #endregion
@@ -141,6 +147,8 @@ abstract public class EnemyBase : CharacterBase
     public bool IsElite { get { return isElite; } }
 
     public float SpawnGroundOffset { get { return spawnGroundOffset; } }
+
+    public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
 
     protected virtual void Start()
