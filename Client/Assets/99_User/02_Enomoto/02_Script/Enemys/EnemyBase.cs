@@ -5,7 +5,6 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 abstract public class EnemyBase : CharacterBase
