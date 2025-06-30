@@ -181,7 +181,7 @@ abstract public class PlayerBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
+        //canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();

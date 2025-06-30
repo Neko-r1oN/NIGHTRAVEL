@@ -27,6 +27,14 @@ public class FullMetalWorm : EnemyBase
     [Foldout("ステータス")]
     [SerializeField]
     float rotationSpeed = 50f; // 頭の回転速度
+
+    [Foldout("ステータス")]
+    [SerializeField]
+    float rotationSpeedMin = 5f; // 最小回転速度
+
+    [Foldout("ステータス")]
+    [SerializeField]
+    float moveSpeedMin = 2.5f;    // 最小移動速度
     #endregion
 
     #region チェック判定
@@ -242,19 +250,26 @@ public class FullMetalWorm : EnemyBase
     IEnumerator MoveCoroutine()
     {
         Vector3 targetPos = GetNextTargetPosition();
+        float currentSpeed = moveSpeed;
+        bool isTargetPos = false;
 
         while (true)
         {
-            MoveTowardsTarget(moveSpeed);
+            // 目標地点に到達するまで、角度を追従する
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
-            if (disToTargetPos <= disToTargetPosMin)
+            if (!isTargetPos && disToTargetPos <= disToTargetPosMin) isTargetPos = true;
+            if (!isTargetPos) RotateTowardsMovementDirection(targetPos, rotationSpeed);
+
+            // 目標地点到達後、徐々に減速する
+            if (isTargetPos)
             {
-                break;
+                if (currentSpeed <= moveSpeedMin) break;
+                else currentSpeed -= Time.deltaTime * (moveSpeed - moveSpeedMin) / 2;
+
+                Debug.Log("減速中：" + currentSpeed);
             }
-            else
-            {
-                RotateTowardsMovementDirection(targetPos, rotationSpeed);
-            }
+
+            MoveTowardsTarget(currentSpeed);
             yield return null;
         }
         StartCoroutine(NextDecision(decisionTime));
@@ -269,8 +284,8 @@ public class FullMetalWorm : EnemyBase
         Vector3 targetPos = GetNextTargetPosition();
         while (true)
         {
-            RotateTowardsMovementDirection(targetPos, rotationSpeed / 20);
-            MoveTowardsTarget(moveSpeed / 10);
+            RotateTowardsMovementDirection(targetPos, rotationSpeedMin);
+            MoveTowardsTarget(moveSpeedMin);
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
             if (disToTargetPos <= disToTargetPosMin / 2)
             {
@@ -314,7 +329,7 @@ public class FullMetalWorm : EnemyBase
         List<GameObject> alivePlayers = new List<GameObject>();
         foreach (GameObject player in Players)
         {
-            if (player)
+            if (player.GetComponent<CharacterBase>().HP > 0)
             {
                 alivePlayers.Add(player);
             }
@@ -341,7 +356,7 @@ public class FullMetalWorm : EnemyBase
     Vector2 GetNextTargetPosition()
     {
         Vector2 targetPos = stageCenter;
-        if (target && SetRandomTargetPlayer())
+        if (target && target.GetComponent<CharacterBase>().HP > 0 && SetRandomTargetPlayer())
         {
             targetPos = target.transform.position;
         }
