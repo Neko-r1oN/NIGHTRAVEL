@@ -8,11 +8,12 @@ using DG.Tweening;
 using System.Configuration;
 using UnityEngine;
 
-public class SteelDoor : MonoBehaviour
+public class SteelDoor : GimmickBase
 {
 
     [SerializeField] GameObject doorObj;
     Vector2 initPos = Vector2.zero;//èâä˙à íu
+    public bool isPowerd = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -41,6 +42,11 @@ public class SteelDoor : MonoBehaviour
          //ÉhÉAÇï¬Ç∂ÇÈ
             doorObj.transform.DOMoveY(initPos.y, 0.5f);
         }
+    }
+
+    public override void TurnOnPower()
+    {
+        isPowerd = false;
     }
 
 }
