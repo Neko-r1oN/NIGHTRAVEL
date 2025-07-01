@@ -13,7 +13,7 @@ public class SteelDoor : GimmickBase
 
     [SerializeField] GameObject doorObj;
     Vector2 initPos = Vector2.zero;//èâä˙à íu
-    public bool isPowerd = true;
+    public bool isPowerd;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -46,7 +46,7 @@ public class SteelDoor : GimmickBase
 
     public override void TurnOnPower()
     {
-        isPowerd = false;
+        isPowerd = true;
     }
 
 }

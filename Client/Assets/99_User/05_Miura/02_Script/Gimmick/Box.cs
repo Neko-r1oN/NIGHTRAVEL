@@ -1,25 +1,18 @@
+//====================
+//足場とする箱のスクリプト
+//Aouther:y-miura
+//Date:2025/07/01
+//====================
+
 using DG.Tweening;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class Box : ObjectBase
 {
-    [SerializeField] GameObject boxFragment;
-
-    public bool isBroken = false;
+    [SerializeField] GameObject BoxFragment;　//破片エフェクトを取得
     PlayerBase player;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    bool isBroken = false;
 
     public override void ApplyDamage()
     {
@@ -32,22 +25,22 @@ public class Box : ObjectBase
         player = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
 
         GameObject fragment; //破片のオブジェクト
-        fragment = Instantiate(boxFragment, new Vector2(this.transform.position.x, this.transform.position.y - 1.5f), this.transform.rotation); //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)
+        fragment = Instantiate(BoxFragment, new Vector2(this.transform.position.x, this.transform.position.y - 1.5f), this.transform.rotation); //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)
 
         for (int i = 0; i < fragment.transform.childCount; i++)
         {//fragmentの子の数だけループ
             if (this.transform.position.x - player.transform.position.x >= 0)
-            {//ドアの位置と比べて、プレイヤーが左側にいたら
+            {//箱の位置と比べて、プレイヤーが左側にいたら
                 fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(1000, 200)); //右側に破片を飛ばす
             }
             else
-            {//ドアの位置と比べて、プレイヤーが右側にいたら
+            {//箱の位置と比べて、プレイヤーが右側にいたら
                 fragment.transform.GetChild(i).GetComponent<Rigidbody2D>().AddForce(new Vector2(-1000, -200)); //左側に破片を飛ばす
             }
             FadeFragment(fragment.transform.GetChild(i));
         }
 
-        Destroy(this.gameObject);//ドアを壊す
+        Destroy(this.gameObject);//箱を壊す
         DestroyFragment(fragment.transform);
     }
 
@@ -59,11 +52,18 @@ public class Box : ObjectBase
         }
 
         fragment.GetComponent<Renderer>().material.DOFade(0, 6);
+
     }
 
     public async void DestroyFragment(Transform fragment)
     {
         await Task.Delay(6000);
+
+        if (fragment == null)
+        {
+            return;
+        }
+
         Destroy(fragment.gameObject);
     }
 }
