@@ -23018,6 +23018,59 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1877055301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1877055303}
+  - component: {fileID: 1877055302}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1877055302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877055301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b3e72659cc4c14d9ea175873854886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  randRespawnA: {fileID: 2032298648}
+  randRespawnB: {fileID: 1105730915}
+  distMinSpawnPos: 3
+  player: {fileID: 7393988378002152513}
+  enemyList:
+  - {fileID: 7210549400569271725, guid: 7ef10320a1d8cef45b65b581d02f19af, type: 3}
+  - {fileID: 916580131304402255, guid: 030d7aec2d6ce5a4b8c16aeb9f64340e, type: 3}
+  xRadius: 10
+  yRadius: 6
+--- !u!4 &1877055303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877055301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 753.44434, y: 527.513, z: -0.39149538}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1890321816
 GameObject:
   m_ObjectHideFlags: 0
@@ -23032,6 +23085,7 @@ GameObject:
   - component: {fileID: 1890321820}
   - component: {fileID: 1890321819}
   - component: {fileID: 1890321818}
+  - component: {fileID: 1890321823}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -23236,6 +23290,20 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890321816}
   m_Enabled: 1
+--- !u!114 &1890321823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890321816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4714169225363e84b89c52220581bee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCamera: {fileID: 1890321821}
+  aspectVec: {x: 1980, y: 1080}
 --- !u!1 &1902757624
 GameObject:
   m_ObjectHideFlags: 0
@@ -24179,19 +24247,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 18
-  maxSpawnCnt: 100
-  enemyList:
-  - {fileID: 7210549400569271725, guid: 7ef10320a1d8cef45b65b581d02f19af, type: 3}
-  - {fileID: 916580131304402255, guid: 030d7aec2d6ce5a4b8c16aeb9f64340e, type: 3}
+  spawnInterval: 7
+  maxSpawnCnt: 1000
   bossPrefab: {fileID: 916580131304402255, guid: b258c6f1637a9c244aa9165411f81671, type: 3}
-  randRespawnA: {fileID: 2032298648}
-  randRespawnB: {fileID: 1105730915}
   minCameraPos: {fileID: 1980890281}
   maxCameraPos: {fileID: 1873303072}
   xRadius: 10
   yRadius: 6
   distMinSpawnPos: 3
+  knockTermsNum: 100
   player: {fileID: 7393988378002152513}
 --- !u!4 &2102152737
 Transform:
@@ -78604,3 +78668,4 @@ SceneRoots:
   - {fileID: 2093330898}
   - {fileID: 3644052783411525277}
   - {fileID: 231020318}
+  - {fileID: 1877055303}

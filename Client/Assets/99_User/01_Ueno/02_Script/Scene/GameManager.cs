@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 {
     #region 初期設定
     [Header("初期設定")]
-    int crushNum; 　　　　　    // 撃破数
+    int crashNum = 0; 　　　　　    // 撃破数
     bool bossFlag = false;      // ボスが出たかどうか
     int xp;                     // 経験値
     int requiredXp = 100;       // 必要経験値
@@ -34,18 +34,15 @@ public class GameManager : MonoBehaviour
 
     #region その他
     [Header("その他")]
-    public List<GameObject> enemyList;       // エネミーリスト
     [SerializeField] GameObject bossPrefab;  // ボスプレハブ
-    [SerializeField] Transform randRespawnA; // リスポーン範囲A
-    [SerializeField] Transform randRespawnB; // リスポーン範囲B
     [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
     [SerializeField] Transform maxCameraPos; // カメラ範囲の最大値
     [SerializeField] float xRadius;          // 生成範囲のx半径
     [SerializeField] float yRadius;          // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
+    [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
 
     [SerializeField] GameObject player;      // プレイヤーの情報
-    GameObject enemy;                        // エネミーの情報
 
     float elapsedTime;
 
@@ -54,8 +51,6 @@ public class GameManager : MonoBehaviour
 
     #region 各プロパティ
     [Header("各プロパティ")]
-    public GameObject Enemy { get { return enemy; } }
-
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
     public GameObject Player { get { return player; } }
@@ -65,6 +60,10 @@ public class GameManager : MonoBehaviour
     public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
 
     public bool IsSpawnBoss { get { return isSpawnBoss; } }
+
+    public int KnockTermsNum { get { return knockTermsNum; } }
+
+    public int SpawnCnt { get { return spawnCnt; } set { spawnCnt = value; } }
 
     private static GameManager instance;
 
@@ -98,6 +97,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         isBossDead = false;
+
+        UIManager.Instance.CountClashText(crashNum);
     }
 
     /// <summary>
@@ -105,14 +106,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (!isSpawnBoss && bossFlag || Input.GetKeyUp(KeyCode.A))
+        if (!isSpawnBoss && bossFlag)
         {
             // ボスの生成範囲の判定
-            var spawnPostions = CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
+            var spawnPostions = SpawnManager.Instance.CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
 
             EnemyBase bossEnemy = bossPrefab.GetComponent<EnemyBase>();
 
-            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange,bossEnemy);
+            Vector3? spawnPos = SpawnManager.Instance.GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange,bossEnemy);
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
@@ -141,17 +142,17 @@ public class GameManager : MonoBehaviour
             {
                 elapsedTime = 0;
 
-                if (spawnCnt < 100)
+                if (spawnCnt < maxSpawnCnt / 2)
                 {// 敵が100体いない場合
                     for (int i = 0; i < 5; i++)
                     {// 複数体敵を生成
                         // 敵生成処理
-                        GenerateEnemy();
+                        SpawnManager.Instance.GenerateEnemy();
                     }
                 }
                 else
                 {// いる場合
-                    GenerateEnemy();
+                    SpawnManager.Instance.GenerateEnemy();
                 }
             }
         }
@@ -171,9 +172,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CrushEnemy(EnemyBase enemy)
     {
-        crushNum++;
+        crashNum++;
 
-        Debug.Log("倒した数：" + crushNum);
+        UIManager.Instance.CountClashText(crashNum);
+
+        //Debug.Log("倒した数：" + crashNum);
 
         spawnCnt--;
 
@@ -181,13 +184,13 @@ public class GameManager : MonoBehaviour
         {
             DeathBoss();
         }
-        else if (crushNum >= 15)
+        else if (crashNum >= knockTermsNum)
         {// 撃破数が15以上になったら(仮)
 
             DeathBoss();
 
             bossFlag = true;
-            Debug.Log("倒した数：" + crushNum + "ボス");
+            Debug.Log("倒した数：" + crashNum + "ボス");
         }
     }
 
@@ -212,143 +215,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 敵のスポーン可能範囲判定処理
-    /// </summary>
-    /// <param name="minPoint"></param>
-    /// <param name="maxPoint"></param>
-    /// <returns></returns>
-    private (Vector3 minRange, Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint, Vector3 maxPoint)
-    {
-        Vector3 minRange = minPoint, maxRange = maxPoint;
-        if (minPoint.y < randRespawnA.position.y)
-        {
-            minRange.y = randRespawnA.position.y;
-        }
-
-        if (minPoint.x < randRespawnA.position.x)
-        {
-            minRange.x = randRespawnA.position.x;
-        }
-
-        if (maxPoint.y > randRespawnB.position.y)
-        {
-            maxRange.y = randRespawnB.position.y;
-        }
-
-        if (maxPoint.x > randRespawnB.position.x)
-        {
-            maxRange.x = randRespawnB.position.x;
-        }
-
-        return (minRange, maxRange);
-    }
-
-    /// <summary>
-    /// 敵生成の位置決定処理
-    /// </summary>
-    /// <param name="minRange"></param>
-    /// <param name="maxRange"></param>
-    /// <returns></returns>
-    private Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange,EnemyBase enemyBase)
-    {
-        // 試行回数
-        int loopMax = 100;
-
-        for (int i = 0; i < loopMax; i++)
-        {
-            Vector3 spawnPos = new Vector3
-                 (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
-
-            Vector3 distToPlayer =
-                player.transform.position - spawnPos;
-
-            if (Mathf.Abs(distToPlayer.x) > distMinSpawnPos
-                && Mathf.Abs(distToPlayer.y) > distMinSpawnPos)
-            {
-                Vector2? pos = IsGroundCheck(spawnPos);
-                if (pos != null)
-                {
-                    LayerMask mask = LayerMask.GetMask("Default");
-
-
-                    Vector2 result = (Vector2)pos;
-
-                    result.y += enemyBase.SpawnGroundOffset;
-
-                    if (!Physics2D.OverlapCircle(new Vector2(result.x,result.y + 1), 0.8f, mask))
-                    {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
+    [ContextMenu("DecreaseGeneratInterval")]
     /// <summary>
     /// 時間経過毎にスポーン間隔を早める処理
     /// </summary>
     public void DecreaseGeneratInterval()
     {
-        spawnInterval -= 3;
-    }
-
-    /// <summary>
-    /// 敵生成処理
-    /// </summary>
-    public void GenerateEnemy()
-    {
-        int listNum = Random.Range(0, enemyList.Count);
-
-        EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
-
-        Vector2 minPlayer =
-                    new Vector2(player.transform.position.x - xRadius, player.transform.position.y - yRadius);
-
-        Vector2 maxPlayer =
-            new Vector2(player.transform.position.x + xRadius, player.transform.position.y + yRadius);
-
-        // ランダムな位置を生成
-        var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
-
-        Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange,enemyBase);
-
-        if (spawnPos != null)
-        {
-            spawnCnt++;
-
-            // 生成
-            enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
-
-            enemy.GetComponent<EnemyBase>().Players.Add(player);
-            enemy.GetComponent<EnemyBase>().SetNearTarget();
-
-            /*if (enemy.GetComponent<Rigidbody2D>().gravityScale != 0)
-            {
-                enemy.GetComponent<EnemyBase>().enabled = false;
-
-                // 透明化
-                enemy.GetComponent<SpriteRenderer>().enabled = false;
-            }*/
-        }
-    }
-
-    private Vector2? IsGroundCheck(Vector3 rayOrigin)
-    {
-        LayerMask mask = LayerMask.GetMask("Default");
-
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, float.MaxValue, mask);
-
-        Debug.DrawRay((Vector2)rayOrigin, Vector2.down * hit.distance, Color.red);
-        if(hit && hit.collider.gameObject.CompareTag("ground"))
-        {
-            return hit.point;
-        }
-        else
-        {
-            return null;
-        }
+        spawnInterval -= 2;
     }
 }
