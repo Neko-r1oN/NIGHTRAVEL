@@ -8,7 +8,7 @@ public class TimerDirector : MonoBehaviour
 {
     #region 初期設定
     [Header("初期設定")]
-    [SerializeField] float minute = 5;
+    [SerializeField] float minute;
     float second;
 
     [SerializeField] GameObject timerObj; // タイマーテキストの親
@@ -32,7 +32,7 @@ public class TimerDirector : MonoBehaviour
             timer.text = span.ToString(@"mm\:ss");
         }
 
-        if (minute <= 0 && GameManager.Instance.BossFlag == false)
+        if (minute <= 0 && second <= 0 && GameManager.Instance.BossFlag == false)
         {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
             timerObj.SetActive(false);
             // ボス出現

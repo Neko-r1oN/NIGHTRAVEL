@@ -1,5 +1,8 @@
+using DG.Tweening;
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,17 +24,22 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject bossWindow;     // ボス出現UI
     [SerializeField] float windowTime;          // ウィンドウが表示される秒数
     [SerializeField] List<Image> relicImages;
-    [SerializeField] List<Text>  relicCntText;  // レリックを持ってる数を表示するテキスト
+    [SerializeField] List<Text> relicCntText;  // レリックを持ってる数を表示するテキスト
     //[SerializeField] List<Text>  statusText;    // ステータスアップ説明テキスト
     [SerializeField] Text levelUpStock;         // レベルアップストックテキスト
     [SerializeField] Text levelUpText;          // 強化可能テキスト
-    #endregion 
-     
+    [SerializeField] Text clashNumText;         // 撃破数テキスト
+    [SerializeField] CanvasGroup canvasGroup;
+    [SerializeField] float fadeDuration;
+    #endregion
+
     int windowCnt = 0;   // ウィンドウが表示できるカウント(一度だけ使う)
     int lastLevel = 0;   // レベルアップ前のレベル
     int statusStock = 0; // レベルアップストック数
     bool isStatusWindow; // ステータスウィンドウが開けるかどうか
     bool isHold;         // ステータスウィンドウロック用
+
+
 
     private static UIManager instance;
 
@@ -62,7 +70,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         player = GameManager.Instance.Player.GetComponent<PlayerBase>();
-        
+
         playerHpBar.maxValue = player.MaxHP;
         playerSliderText.text = "" + playerHpBar.maxValue;
         expBar.maxValue = player.NextLvExp;
@@ -76,11 +84,11 @@ public class UIManager : MonoBehaviour
             relicCntText[i].enabled = false;
         }
 
-       statusUpWindow.SetActive(false);
+        statusUpWindow.SetActive(false);
 
         isHold = false;
         isStatusWindow = false;
-        
+
         levelUpText.enabled = false;
         bossStatus.SetActive(false);
     }
@@ -98,7 +106,7 @@ public class UIManager : MonoBehaviour
         // 経験値・レベルUI
         expBar.maxValue = player.NextLvExp;
         levelText.text = "LV." + player.NowLv;
-        if(player.NowLv > lastLevel)
+        if (player.NowLv > lastLevel)
         {
             isStatusWindow = true;
             statusStock += player.NowLv - lastLevel;
@@ -140,9 +148,9 @@ public class UIManager : MonoBehaviour
             {// ボスのHP表示がマイナスにならないようにする
                 bossHpBar.value = 0;
             }
-            
+
             bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
-            
+
             bossStatus.SetActive(true);
         }
     }
@@ -153,7 +161,7 @@ public class UIManager : MonoBehaviour
     /// <param name="relicSprite"></param>
     public void DisplayRelic(Sprite relicSprite)
     {
-        foreach(Image image in relicImages)
+        foreach (Image image in relicImages)
         {
             if (image != relicSprite)
             {
@@ -166,7 +174,7 @@ public class UIManager : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// レリック入れ替えの際に持っているレリックUIをリセットする関数
     /// </summary>
@@ -195,7 +203,7 @@ public class UIManager : MonoBehaviour
             {
                 if (image.sprite != null)
                 {
-                    if(num > 1)
+                    if (num > 1)
                     {
                         relicCntText[count].enabled = true;
                         relicCntText[count].text = "×" + num;
@@ -221,7 +229,7 @@ public class UIManager : MonoBehaviour
     {
         //player.ChangeStatus();
 
-        if(statusStock <= 0)
+        if (statusStock <= 0)
         {
             CloseStatusWindow();
             isStatusWindow = false;
@@ -258,7 +266,31 @@ public class UIManager : MonoBehaviour
     {
         if (!isHold)
         {
-           statusUpWindow.SetActive(false);
+            statusUpWindow.SetActive(false);
         }
+    }
+
+    public void CountClashText(int clashNum)
+    {
+        Text text = Instantiate(
+            clashNumText,
+            GameManager.Instance.transform.position + Vector3.up,
+            Quaternion.identity);
+
+        StartCoroutine(Fade(1, 0));
+
+        text.text = "" + clashNum + "/" + GameManager.Instance.KnockTermsNum;
+    }
+
+    IEnumerator Fade(float start, float end)
+    {
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / fadeDuration;
+            canvasGroup.alpha = Mathf.Lerp(start, end, t);
+            yield return null;
+        }
+        canvasGroup.alpha = end;
     }
 }
