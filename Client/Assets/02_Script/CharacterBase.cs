@@ -143,6 +143,12 @@ abstract public class CharacterBase : MonoBehaviour
     [Foldout("コンポーネント")]
     [SerializeField] 
     protected Animator animator;
+
+    [Foldout("コンポーネント")]
+    [SerializeField] 
+    protected GameObject damageTextPrefab;
+
+    protected GameObject canvas;
     #endregion
 
     protected virtual void Awake()
@@ -216,5 +222,21 @@ abstract public class CharacterBase : MonoBehaviour
             animator.SetFloat("attack_speed", attackSpeedFactor);
             animator.SetFloat("move_speed", moveSpeedFactor);
         }
+    }
+
+    /// <summary>
+    /// ダメージ表記処理
+    /// </summary>
+    public void PopDamageUI(Transform popTransform)
+    {
+        var ui = Instantiate(damageTextPrefab);
+
+        ui.transform.SetParent(canvas.transform);
+
+        var circlePos = UnityEngine.Random.insideUnitCircle * 1.2f;
+        var textPos = popTransform.position + new Vector3(0, 0.5f, 0) * UnityEngine.Random.Range(0.5f, 1.5f) + new Vector3(circlePos.x, 0, circlePos.y);
+        ui.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, textPos);
+
+        ui.SetActive(true);
     }
 }

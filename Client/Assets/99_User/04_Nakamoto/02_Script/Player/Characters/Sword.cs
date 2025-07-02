@@ -37,7 +37,7 @@ public class Sword : PlayerBase
     [SerializeField] private float attackCoolDown = 0.8f;   // 攻撃クールダウン処理
 
     [Foldout("キャラ別ステータス")]
-    [SerializeField] private float skillForth = 45f;       // スキルの移動力
+    [SerializeField] private float skillForth = 45f;        // スキルの移動力
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillTime = 0.5f;        // スキル効果時間
@@ -68,7 +68,7 @@ public class Sword : PlayerBase
         {   // 通常攻撃
             int id = animator.GetInteger("animation_id");
 
-            if (isBlink || isSkill || isCooldown || id == 3) return;
+            if (isBlink || isSkill || isCooldown || id == 3 || m_IsZipline) return;
 
             if (canAttack && !isCombo)
             {   // 攻撃1段目
@@ -178,34 +178,14 @@ public class Sword : PlayerBase
     /// </summary>
     public void AttackEnd()
     {
-        int id = animator.GetInteger("animation_id");
-
         if (!isCombo) return;
 
         // フラグの初期化
         canAttack = true;
         isCombo = false;
 
-        // 移動速度に応じてアニメーション分岐
-        if (Mathf.Abs(horizontalMove) >= 0.1f)
-            animator.SetInteger("animation_id", (int)ANIM_ID.Run);
-
-        if (Mathf.Abs(horizontalMove) < 0.1f)
-            animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
-
-        if(animator.GetInteger("animation_id") == (int)S_ANIM_ID.Attack3) StartCoroutine(LastComboAttack());
-    }
-
-    /// <summary>
-    /// 最終コンボ処理
-    /// </summary>
-    IEnumerator LastComboAttack()
-    {
-        isCooldown = true;
-
-        // コンボ終了時待機  
-        yield return new WaitForSeconds(attackCoolDown);
-        isCooldown = false;
+        // Idleに戻る
+        animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
     }
 
     /// <summary>
