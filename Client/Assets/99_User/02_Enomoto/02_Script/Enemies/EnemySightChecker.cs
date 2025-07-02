@@ -27,7 +27,7 @@ public class EnemySightChecker : MonoBehaviour
         if (!target) return false;
 
         Vector2 dirToTarget = target.transform.position - transform.position;
-        Vector2 angleVec = new Vector2(TransformHelper.GetFacingDirection(transform), 0);
+        Vector2 angleVec = new Vector2(TransformUtils.GetFacingDirection(transform), 0);
         float angle = Vector2.Angle(dirToTarget, angleVec);
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
         return angle <= viewAngleMax && hit2D && hit2D.collider.gameObject.CompareTag("Player");
@@ -61,7 +61,7 @@ public class EnemySightChecker : MonoBehaviour
             if (player.GetComponent<CharacterBase>().HP <= 0) continue;
 
             Vector2 dirToTarget = player.transform.position - transform.position;
-            Vector2 angleVec = new Vector2(TransformHelper.GetFacingDirection(transform), 0);
+            Vector2 angleVec = new Vector2(TransformUtils.GetFacingDirection(transform), 0);
             float angle = Vector2.Angle(dirToTarget, angleVec);
             RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
 
@@ -93,7 +93,7 @@ public class EnemySightChecker : MonoBehaviour
             foreach (GameObject player in players)
             {
                 Vector2 dirToTarget = player.transform.position - transform.position;
-                Vector2 angleVec = new Vector2(TransformHelper.GetFacingDirection(transform), 0);
+                Vector2 angleVec = new Vector2(TransformUtils.GetFacingDirection(transform), 0);
                 float angle = Vector2.Angle(dirToTarget, angleVec);
                 RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
 

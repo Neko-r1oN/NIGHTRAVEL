@@ -52,6 +52,16 @@ public class EnemyChaseAI : MonoBehaviour
     }
 
     /// <summary>
+    /// 目標地点に向かって移動する処理
+    /// </summary>
+    public void DoMove(Vector2 targetPos)
+    {
+        if (!agent) Start();
+        previousDestination = agent.destination;
+        agent.destination = targetPos;
+    }
+
+    /// <summary>
     /// 前回の地点に引き返す処理(保留中)
     /// </summary>
     public void ReturnToPreviousDestination()

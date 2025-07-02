@@ -19,6 +19,7 @@ public class CyberDog : EnemyBase
         Run,
         Hit,
         Dead,
+        JumpOut,
     }
 
     #region チェック判定
@@ -113,6 +114,20 @@ public class CyberDog : EnemyBase
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
+    /// <summary>
+    /// 自身が生成されたときの処理
+    /// </summary>
+    public override void OnGenerated()
+    {
+        base.OnGenerated();
+        InvokeRepeating("FadeIn", 0, 0.1f);
+        SetAnimId((int)ANIM_ID.JumpOut);
+
+        // 前に飛び込む
+        Vector2 jumpVec = new Vector2(jumpPower * TransformUtils.GetFacingDirection(transform), jumpPower / 2);
+        m_rb2d.linearVelocity = jumpVec;
+    }
+
     #region 攻撃処理関連
 
     /// <summary>
@@ -132,8 +147,8 @@ public class CyberDog : EnemyBase
     
     public override void OnAttackAnimEvent()
     {
-        // 前に飛び込む
-        Vector2 jumpVec = new Vector2(18 * TransformHelper.GetFacingDirection(transform), 10);
+        // 前に飛び出す
+        Vector2 jumpVec = new Vector2(jumpPower * 2 * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
 
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
@@ -199,7 +214,7 @@ public class CyberDog : EnemyBase
     {
         SetAnimId((int)ANIM_ID.Run);
         if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
+        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 

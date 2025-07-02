@@ -4,6 +4,7 @@
 //**************************************************
 using Pixeye.Unity;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Drone : EnemyBase
@@ -106,6 +107,22 @@ public class Drone : EnemyBase
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
+    /// <summary>
+    /// ©g‚ª¶¬‚³‚ê‚½‚Æ‚«‚Ìˆ—
+    /// </summary>
+    public override void OnGenerated()
+    {
+        base.OnGenerated();
+        InvokeRepeating("FadeIn", 0, 0.1f);
+
+        // ƒ‰ƒ“ƒ_ƒ€‚ÈêŠ‚ÉŒü‚©‚Á‚Ä­‚µˆÚ“®
+        float moveRange = 2f;
+        float posX = transform.position.x + Random.Range(-moveRange, moveRange);
+        float posY = transform.position.y + Random.Range(-moveRange, moveRange);
+        Vector2 targetPoint = new Vector2(posX, posY);
+        chaseAI.DoMove(targetPoint);
+    }
+
     #region UŒ‚ˆ—ŠÖ˜A
 
     /// <summary>
@@ -199,7 +216,7 @@ public class Drone : EnemyBase
 
         if (IsWall()) Flip();
 
-        if (TransformHelper.GetFacingDirection(transform) > 0)
+        if (TransformUtils.GetFacingDirection(transform) > 0)
         {
             if (transform.position.x >= startPatorolPoint.Value.x + patorolRange)
             {
@@ -210,7 +227,7 @@ public class Drone : EnemyBase
                 Flip();
             }
         }
-        else if (TransformHelper.GetFacingDirection(transform) < 0)
+        else if (TransformUtils.GetFacingDirection(transform) < 0)
         {
             if (transform.position.x <= startPatorolPoint.Value.x - patorolRange)
             {
@@ -223,7 +240,7 @@ public class Drone : EnemyBase
         }
 
         Vector2 speedVec = Vector2.zero;
-        speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
+        speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
         patorolCoroutine = null;
     }

@@ -37,7 +37,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     public float ClampAngleToTarget(Vector3 direction)
     {
         // テクスチャが反転していたら、角度も反転させる
-        float directionMultiplier = TransformHelper.GetFacingDirection(transform);
+        float directionMultiplier = TransformUtils.GetFacingDirection(transform);
         float maxAddAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
         float maxAddAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
         float initialAngle = this.initialAngle * directionMultiplier;
@@ -196,7 +196,7 @@ public class EnemyProjectileChecker : MonoBehaviour
         initialAngle = this.initialAngle;
 
         // テクスチャが反転していたら、角度も反転させる
-        float directionMultiplier = TransformHelper.GetFacingDirection(transform);
+        float directionMultiplier = TransformUtils.GetFacingDirection(transform);
         float maxAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
         float maxAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
         initialAngle *= directionMultiplier;

@@ -193,7 +193,7 @@ public class Enemy_Sample_Flyng : EnemyBase
 
         if (IsWall()) Flip();
 
-        if (TransformHelper.GetFacingDirection(transform) > 0)
+        if (TransformUtils.GetFacingDirection(transform) > 0)
         {
             if (transform.position.x >= startPatorolPoint.Value.x + patorolRange)
             {
@@ -204,7 +204,7 @@ public class Enemy_Sample_Flyng : EnemyBase
                 Flip();
             }
         }
-        else if (TransformHelper.GetFacingDirection(transform) < 0)
+        else if (TransformUtils.GetFacingDirection(transform) < 0)
         {
             if (transform.position.x <= startPatorolPoint.Value.x - patorolRange)
             {
@@ -217,7 +217,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         }
 
         Vector2 speedVec = Vector2.zero;
-        speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
+        speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
         patorolCoroutine = null;
     }

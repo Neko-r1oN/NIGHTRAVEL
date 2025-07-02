@@ -191,9 +191,9 @@ public class Enemy_Sample : EnemyBase
         GameObject target = this.target;
         for (int i = 0; i < bulletNum; i++)
         {
-            GameObject throwableProj = Instantiate(throwableObject, transform.position + new Vector3(TransformHelper.GetFacingDirection(transform) * 0.5f, -0.2f), Quaternion.identity);
+            GameObject throwableProj = Instantiate(throwableObject, transform.position + new Vector3(TransformUtils.GetFacingDirection(transform) * 0.5f, -0.2f), Quaternion.identity);
             throwableProj.GetComponent<ThrowableProjectile>().owner = gameObject;
-            Vector2 direction = new Vector2(TransformHelper.GetFacingDirection(transform), 0f);
+            Vector2 direction = new Vector2(TransformUtils.GetFacingDirection(transform), 0f);
             throwableProj.GetComponent<ThrowableProjectile>().direction = direction;
             yield return new WaitForSeconds(shotsPerSecond);
         }
@@ -246,7 +246,7 @@ public class Enemy_Sample : EnemyBase
     {
         SetAnimId((int)ANIM_ID.Run);
         if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
+        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
