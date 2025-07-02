@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -225,6 +226,11 @@ public class UIManager : MonoBehaviour
                 clashNumText.enabled = false;
             }
         }
+    }
+
+    public void ChangTitleScene()
+    {
+        SceneManager.LoadScene("Title ueno");
     }
 
     /// <summary>

@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour
         if (isBossDead)
         {// ボスを倒した(仮)
             // 遅れて呼び出し
-            Invoke(nameof(ChengScene), 15f);
+            Invoke(nameof(ChengResultScene), 15f);
         }
 
         if (spawnCnt < maxSpawnCnt  && !isBossDead)
@@ -170,9 +170,14 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// シーン遷移
     /// </summary>
-    private void ChengScene()
+    private void ChengResultScene()
     {// シーン遷移
         SceneManager.LoadScene("Result ueno");
+    }
+
+    public void ChangTitleScene()
+    {
+        SceneManager.LoadScene("Title ueno");
     }
 
     [ContextMenu("CrushEnemy")]

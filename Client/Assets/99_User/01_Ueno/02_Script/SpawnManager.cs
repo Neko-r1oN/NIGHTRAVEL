@@ -13,7 +13,6 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] float yRadius;              // ê∂ê¨îÕàÕÇÃyîºåa
     
     GameObject enemy;
-    GameManager gameManager;
 
     public Transform RandRespawnA { get { return randRespawnA; } }
     public Transform RandRespawnB { get { return randRespawnB; } }
@@ -43,7 +42,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
-        gameManager = GameManager.Instance;
+        
     }
 
     /// <summary>
@@ -144,7 +143,7 @@ public class SpawnManager : MonoBehaviour
 
         if (spawnPos != null)
         {
-            gameManager.SpawnCnt++;
+            GameManager.Instance.SpawnCnt++;
 
             // ê∂ê¨
             enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
