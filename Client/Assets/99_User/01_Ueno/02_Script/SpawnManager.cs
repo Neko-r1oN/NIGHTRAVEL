@@ -15,6 +15,9 @@ public class SpawnManager : MonoBehaviour
     GameObject enemy;
     GameManager gameManager;
 
+    public Transform RandRespawnA { get { return randRespawnA; } }
+    public Transform RandRespawnB { get { return randRespawnB; } }
+
     private static SpawnManager instance;
 
     public static SpawnManager Instance
@@ -101,7 +104,6 @@ public class SpawnManager : MonoBehaviour
                 if (pos != null)
                 {
                     LayerMask mask = LayerMask.GetMask("Default");
-
 
                     Vector2 result = (Vector2)pos;
 
