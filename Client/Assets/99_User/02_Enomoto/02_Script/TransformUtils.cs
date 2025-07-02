@@ -2,6 +2,10 @@
 //  Transform（回転・座標・スケールなど）ユーティリティクラス
 //  Author:r-enomoto
 //**************************************************
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public static class TransformUtils
@@ -40,5 +44,35 @@ public static class TransformUtils
     {
         return position.position.x >= min.position.x && position.position.x <= max.position.x &&
                position.position.y >= min.position.y && position.position.y <= max.position.y;
+    }
+
+    /// <summary>
+    /// 始点からターゲットに向かってRayを出した時の着弾地点を取得する
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="startPos"></param>
+    /// <returns></returns>
+    public static Vector2? GetHitPointToTarget(Transform target, Vector2 startPos)
+    {
+        float dist = Vector2.Distance(startPos, target.position);
+        Vector2 direction = ((Vector2)target.position - startPos).normalized;
+        LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(target.gameObject.layer));
+        RaycastHit2D[] hits = Physics2D.RaycastAll(startPos, direction, dist, mask);
+        RaycastHit2D enemyHit = new RaycastHit2D();
+
+        foreach (var hit in hits)
+        {
+            if (hit.collider.gameObject == target.gameObject)
+            {
+                enemyHit = hit;
+                break;
+            }
+        }
+
+        if (enemyHit.collider != null)
+        {
+            return enemyHit.point;
+        }
+        return null;
     }
 }

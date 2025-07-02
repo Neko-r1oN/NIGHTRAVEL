@@ -2696,7 +2696,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &1390350885
 Rigidbody2D:
   serializedVersion: 5
@@ -10687,6 +10687,7 @@ MonoBehaviour:
   playerCollider: {fileID: 8365939688814995126}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
+  attackCoolDown: 0.8
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
