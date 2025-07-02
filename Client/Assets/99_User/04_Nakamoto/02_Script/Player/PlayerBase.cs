@@ -191,7 +191,6 @@ abstract public class PlayerBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
@@ -772,7 +771,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
-            PopDamageUI(this.transform);
+            UIManager.Instance.PopDamageUI(transform.position, true);
             if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
             Vector2 damageDir = Vector2.zero;

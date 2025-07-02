@@ -78191,7 +78191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 1
+  baseHp: 5000
   baseDefence: 20
   basePower: 15
   baseJumpPower: 10
@@ -78204,6 +78204,7 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 381784682089448715}
+  damageTextPrefab: {fileID: 0}
   m_JumpForce: 850
   wallJumpPower: 2
   m_AirControl: 1
@@ -78211,16 +78212,18 @@ MonoBehaviour:
   m_BlinkForce: 40
   blinkTime: 0.12
   blinkCoolDown: 1
-  ladderSpeed: 0.3
+  m_ZipJumpForceX: 60
+  m_ZipJumpForceY: 40
+  zipSpeed: 150
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 53
-  ladderLayer:
+  ziplineLayer:
     serializedVersion: 2
-    m_Bits: 4194304
+    m_Bits: 0
   m_GroundCheck: {fileID: 3617300371867122913}
   m_WallCheck: {fileID: 1549317196988642173}
   attackCheck: {fileID: 2823061100579887310}
@@ -78228,6 +78231,7 @@ MonoBehaviour:
   playerCollider: {fileID: 1995214449918072968}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
+  ziplineSpark: {fileID: 0}
   attackCoolDown: 0.8
   skillForth: 45
   skillTime: 0.25
