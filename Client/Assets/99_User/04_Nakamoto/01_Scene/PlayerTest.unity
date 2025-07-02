@@ -1850,8 +1850,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 561162294}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -2005,15 +2007,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 182423857}
-  - {fileID: 321239950}
-  - {fileID: 439647796}
-  - {fileID: 7695979}
-  - {fileID: 1639914381}
-  - {fileID: 1198116389}
-  - {fileID: 117680927}
-  - {fileID: 1056696842}
 --- !u!114 &141729707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2904,8 +2897,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 2097210631}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -3059,15 +3054,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 113174526}
-  - {fileID: 2001354153}
-  - {fileID: 1087782011}
-  - {fileID: 238989186}
-  - {fileID: 650832376}
-  - {fileID: 1471943401}
-  - {fileID: 1107399927}
-  - {fileID: 2137716432}
 --- !u!114 &202850063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3292,6 +3278,50 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &218533298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 218533300}
+  - component: {fileID: 218533299}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &218533299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 218533298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6172492ba9e9e340804342a4ce42707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &218533300
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 218533298}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.404751, y: 4.8480253, z: -0.08814138}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &224986809
 GameObject:
   m_ObjectHideFlags: 0
@@ -4184,8 +4214,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 1825249834}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -4238,15 +4270,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 1336430778}
-  - {fileID: 1801121756}
-  - {fileID: 40495972}
-  - {fileID: 1534299242}
-  - {fileID: 724692196}
-  - {fileID: 292488878}
-  - {fileID: 301537098}
-  - {fileID: 256896954}
 --- !u!114 &291609933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4842,8 +4865,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 1999897056}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -4997,15 +5022,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 165032393}
-  - {fileID: 6284175}
-  - {fileID: 1504559579}
-  - {fileID: 1551125775}
-  - {fileID: 802478726}
-  - {fileID: 435690086}
-  - {fileID: 658789124}
-  - {fileID: 618324279}
 --- !u!114 &362483811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5151,8 +5167,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 1010885859}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -5306,15 +5324,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 96012971}
-  - {fileID: 859135690}
-  - {fileID: 237418583}
-  - {fileID: 678569556}
-  - {fileID: 1505616100}
-  - {fileID: 216410385}
-  - {fileID: 1832483173}
-  - {fileID: 1596310375}
 --- !u!114 &388088384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14935,8 +14944,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 392110477}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -15090,15 +15101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 183290470}
-  - {fileID: 1669170963}
-  - {fileID: 819865425}
-  - {fileID: 1997358195}
-  - {fileID: 1701937464}
-  - {fileID: 1896107670}
-  - {fileID: 165271993}
-  - {fileID: 282085327}
 --- !u!114 &1495644219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19613,8 +19615,10 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 254018831}
+  damageTextPrefab: {fileID: 0}
   players:
   - {fileID: 831884097}
+  spriteRenderers: []
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
@@ -19768,15 +19772,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
-  spriteRenderers:
-  - {fileID: 1182097293}
-  - {fileID: 1473143192}
-  - {fileID: 104680145}
-  - {fileID: 197679621}
-  - {fileID: 2069712619}
-  - {fileID: 69906696}
-  - {fileID: 959875551}
-  - {fileID: 1087768194}
 --- !u!114 &2112986741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20470,3 +20465,4 @@ SceneRoots:
   - {fileID: 1240468634}
   - {fileID: 2121032879}
   - {fileID: 2129706303}
+  - {fileID: 218533300}

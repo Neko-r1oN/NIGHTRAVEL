@@ -16,6 +16,9 @@ public class UIManager : MonoBehaviour
     EnemyBase boss;
 
     #region 各UI
+    [Foldout("キャンバス")]
+    [SerializeField] GameObject canvas;           // キャンバス
+
     [Foldout("UI(プレイヤーステータス関連)")]
     [SerializeField] Slider playerHpBar;          // プレイヤーのHPバー
     [Foldout("UI(プレイヤーステータス関連)")]
@@ -42,6 +45,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text clashNumText;           // 撃破数テキスト
     [Foldout("UI(テキスト)")]
     [SerializeField] Text tmText;                 // クリア条件テキスト
+    [Foldout("UI(テキスト)")]
+    [SerializeField] GameObject playerDmgText;    // プレイヤーダメージ表記
+    [Foldout("UI(テキスト)")]
+    [SerializeField] GameObject otherDmgText;     // その他ダメージ表記
 
     [Foldout("UI(フェードアウト)")]
     [SerializeField] Canvas parentCanvas;         // テキストが表示されるキャンバスを割り当ててください
@@ -471,5 +478,24 @@ public class UIManager : MonoBehaviour
         material.DisableKeyword("_ALPHATEST_ON");
         material.EnableKeyword("_ALPHABLEND_ON");
         material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+    }
+
+    /// <summary>
+    /// ダメージ表記処理
+    /// </summary>
+    public void PopDamageUI(Vector3 popPosition,bool isPlayer)
+    {
+        GameObject ui;
+
+        if (isPlayer) ui = Instantiate(playerDmgText);
+        else ui = Instantiate(otherDmgText);
+
+        ui.transform.SetParent(canvas.transform);
+
+        var circlePos = UnityEngine.Random.insideUnitCircle * 1.2f;
+        var textPos = popPosition + new Vector3(0, 0.5f, 0) * UnityEngine.Random.Range(0.5f, 1.5f) + new Vector3(circlePos.x, 0, circlePos.y);
+        ui.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, textPos);
+
+        ui.SetActive(true);
     }
 }

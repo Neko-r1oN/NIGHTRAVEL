@@ -6448,6 +6448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52e75f6d757e76a4b81afd071ce3d15e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 1285931599}
   playerHpBar: {fileID: 1327008807}
   expBar: {fileID: 2049914910}
   playerSliderText: {fileID: 2057071156}
@@ -6514,6 +6515,8 @@ MonoBehaviour:
   levelUpText: {fileID: 831144236}
   clashNumText: {fileID: 878236447}
   tmText: {fileID: 858075408}
+  playerDmgText: {fileID: 3843102958331717962, guid: 5b39f5315dae4c141898ed971b3029a0, type: 3}
+  otherDmgText: {fileID: 3843102958331717962, guid: 1493ed7c793f7a4488e8e595a890044d, type: 3}
   parentCanvas: {fileID: 1285931602}
   fadeDuration: 3
   displayDuration: 2
@@ -10849,10 +10852,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
