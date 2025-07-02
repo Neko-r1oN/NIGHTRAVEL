@@ -2,6 +2,7 @@
 // ゲームマネージャー(GameManager.cs)
 // Author : Souma Ueno
 //----------------------------------------------------
+using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,15 +34,21 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region その他
-    [Header("その他")]
+    [Foldout("その他")]
     [SerializeField] GameObject bossPrefab;  // ボスプレハブ
+    [Foldout("その他")]
     [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
+    [Foldout("その他")]
     [SerializeField] Transform maxCameraPos; // カメラ範囲の最大値
+    [Foldout("その他")]
     [SerializeField] float xRadius;          // 生成範囲のx半径
+    [Foldout("その他")]
     [SerializeField] float yRadius;          // 生成範囲のy半径
+    [Foldout("その他")]
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
+    [Foldout("その他")]
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
-
+    [Foldout("その他")]
     [SerializeField] GameObject player;      // プレイヤーの情報
 
     float elapsedTime;
@@ -98,7 +105,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        UIManager.Instance.CountClashText(crashNum);
+        UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -125,6 +132,8 @@ public class GameManager : MonoBehaviour
             }
 
             isSpawnBoss = true;
+
+            UIManager.Instance.ShowUIAndFadeOut();
 
             bossFlag = false;
         }
@@ -174,7 +183,7 @@ public class GameManager : MonoBehaviour
     {
         crashNum++;
 
-        UIManager.Instance.CountClashText(crashNum);
+        UIManager.Instance.CountTermsText(crashNum);
 
         //Debug.Log("倒した数：" + crashNum);
 
@@ -186,11 +195,7 @@ public class GameManager : MonoBehaviour
         }
         else if (crashNum >= knockTermsNum)
         {// 撃破数が15以上になったら(仮)
-
-            DeathBoss();
-
             bossFlag = true;
-            Debug.Log("倒した数：" + crashNum + "ボス");
         }
     }
 
