@@ -49,6 +49,9 @@ public class PressurePlate : MonoBehaviour
                 case "PressMachine":
                     gimmick.GetComponent<PressMachine>().TurnOnPower();
                     break;
+
+                default:
+                    break;
             }
         }
     }
