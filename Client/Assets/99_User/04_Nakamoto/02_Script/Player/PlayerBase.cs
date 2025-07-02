@@ -29,6 +29,7 @@ abstract public class PlayerBase : CharacterBase
         Blink,
         DBJump,
         WallSlide,
+        Zipline,
     }
     #endregion
 
@@ -41,7 +42,7 @@ abstract public class PlayerBase : CharacterBase
     protected int nextLvExp = 0;      // 次のレベルまでに必要な経験値
 
     [Foldout("共通ステータス")]
-    protected int startHp = 0;                    // 初期体力
+    protected int startHp = 0;        // 初期体力
 
     [Foldout("共通ステータス")]
     [SerializeField] protected float m_JumpForce = 400f;    // ジャンプ力
@@ -60,7 +61,12 @@ abstract public class PlayerBase : CharacterBase
     [SerializeField] protected float blinkCoolDown = 1f;  // ブリンククールダウン
 
     [Foldout("共通ステータス")]
-    [SerializeField] protected float ladderSpeed = 1f;   // 梯子移動速度
+    [SerializeField] protected float m_ZipJumpForceX = 60f;  // ジップから降りるときの力(X軸)
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float m_ZipJumpForceY = 40f;  // ジップから降りるときの力(Y軸)
+
+    [Foldout("共通ステータス")]
+    [SerializeField] protected float zipSpeed = 150f;   // 梯子移動速度
 
     [Foldout("共通ステータス")]
     [Range(0, .3f)][SerializeField] protected float m_MovementSmoothing = .05f;
@@ -99,7 +105,7 @@ abstract public class PlayerBase : CharacterBase
     [SerializeField] protected LayerMask m_WhatIsGround;// どのレイヤーを地面と認識させるか
 
     [Foldout("レイヤー・位置関連")]
-    [SerializeField] protected LayerMask ladderLayer;   // 梯子レイヤー
+    [SerializeField] protected LayerMask ziplineLayer;  // レイヤー
 
     [Foldout("レイヤー・位置関連")]
     [SerializeField] protected Transform m_GroundCheck;	// プレイヤーが接地しているかどうかを確認する用
@@ -115,6 +121,8 @@ abstract public class PlayerBase : CharacterBase
 
     [Foldout("レイヤー・位置関連")]
     [SerializeField] protected CapsuleCollider2D playerCollider;
+
+    protected float ladderPosX = 0; // 梯子のX座標
     #endregion
 
     #region プレイヤー情報取得変数
@@ -123,15 +131,17 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
     protected bool m_FallFlag = false;
     protected float limitFallSpeed = 25f; // 落下速度の制限
-    protected GameObject canvas;
     #endregion
 
-    #region パーティクル
-    [Foldout("動作フラグ関連")]
+    #region パーティクル・エフェクト
+    [Foldout("パーティクル・エフェクト")]
     [SerializeField] protected ParticleSystem particleJumpUp;
 
-    [Foldout("動作フラグ関連")]
+    [Foldout("パーティクル・エフェクト")]
     [SerializeField] protected ParticleSystem particleJumpDown;
+
+    [Foldout("パーティクル・エフェクト")]
+    [SerializeField] protected GameObject ziplineSpark;
     #endregion
 
     #region カメラ
@@ -144,7 +154,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool canAttack = true;    // 攻撃可能フラグ
     protected bool m_Grounded;          // プレイヤーの接地フラグ
     protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
-    protected bool m_IsLadder = false;  // 梯子動作フラグ
+    protected bool m_IsZipline = false; // 動作フラグ
     protected bool isJump = false;      // ジャンプ入力フラグ
     protected bool isBlink = false;     // ダッシュ入力フラグ
     protected bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
@@ -181,7 +191,7 @@ abstract public class PlayerBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        //canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
+        canvas = GameObject.FindGameObjectsWithTag("Canvas")[0];
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
@@ -192,22 +202,44 @@ abstract public class PlayerBase : CharacterBase
     virtual protected void Update()
     {
         // キャラの移動
+        if(!canMove) return;
+
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
         Ladder();
 
-        if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
-        {   // ジャンプ押下時
-            if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
-                isJump = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
-        {   // ブリンク押下時
-            if (canAttack)
+        if(m_IsZipline)
+        {
+            if(Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                isBlink = true;
-                gameObject.layer = 21;
+                animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
+                m_IsZipline = false;
+                ziplineSpark.SetActive(false);
+                m_Rigidbody2D.AddForce(new Vector2(-m_ZipJumpForceX,m_ZipJumpForceY));
+            }
+            else if(Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
+                m_IsZipline = false;
+                ziplineSpark.SetActive(false);
+                m_Rigidbody2D.AddForce(new Vector2(m_ZipJumpForceX, m_ZipJumpForceY));
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
+            {   // ジャンプ押下時
+                if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
+                    isJump = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
+            {   // ブリンク押下時
+                if (canAttack)
+                {
+                    isBlink = true;
+                    gameObject.layer = 21;
+                }
             }
         }
     }
@@ -324,15 +356,18 @@ abstract public class PlayerBase : CharacterBase
 
         if (Ladder())
         {
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.UpArrow) && canBlink && canSkill && canAttack)
             {
-                m_IsLadder = true;
+                m_IsZipline = true;
+                ziplineSpark.SetActive(true);
+                animator.SetInteger("animation_id", (int)ANIM_ID.Zipline);
             }
         }
 
-        if (m_IsLadder)
+        if (m_IsZipline)
         {
-            m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, verticalMove * ladderSpeed);
+            m_Rigidbody2D.position = new Vector2(ladderPosX, m_Rigidbody2D.position.y);
+            m_Rigidbody2D.linearVelocity = new Vector2(0, zipSpeed);
             m_Rigidbody2D.gravityScale = 0f;
         }
         else
@@ -353,6 +388,8 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="blink">ダッシュ入力</param>
     private void Move(float move, bool jump, bool blink)
     {
+        if (m_IsZipline) return;
+
         if (canMove)
         {
             //--------------------
@@ -445,8 +482,6 @@ abstract public class PlayerBase : CharacterBase
 
                     isWallJump = false;
 
-                    int id = animator.GetInteger("animation_id");
-
                     if(canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.WallSlide);
                 }
                 isBlinking = false;
@@ -515,17 +550,23 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 梯子判定処理
+    /// ジップライン判定処理
     /// </summary>
     /// <returns></returns>
     protected bool Ladder()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, ladderLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, ziplineLayer);
         if (hit.collider != null)
+        {
+            ladderPosX = hit.collider.transform.position.x;
             return true;
+        }
         else
-            m_IsLadder = false;
-        return false;
+        {
+            ladderPosX = 0;
+            m_IsZipline = false;
+            return false;
+        }
     }
 
     /// <summary>
@@ -567,7 +608,7 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 当たり判定
+    /// 接触判定
     /// </summary>
     /// <param name="collision"></param>
     protected void OnTriggerEnter2D(Collider2D collision)
@@ -731,6 +772,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
+            PopDamageUI(this.transform);
             if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
@@ -757,8 +799,8 @@ abstract public class PlayerBase : CharacterBase
             {   // 被ダメ硬直
                 if (position != null)
                 {
-                    StartCoroutine(Stun(0.25f));
-                    StartCoroutine(MakeInvincible(0.5f));
+                    StartCoroutine(Stun(0.35f));
+                    StartCoroutine(MakeInvincible(0.4f));
                 }
             }
         }
@@ -783,13 +825,5 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     /// <returns></returns>
     public bool GetGrounded() { return m_Grounded; }
-
-    /// <summary>
-    /// ダメージ表記処理
-    /// </summary>
-    private void PopDamageUI(int value)
-    {
-
-    }
     #endregion
 }
