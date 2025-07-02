@@ -16,8 +16,6 @@ public class EnemyElite : MonoBehaviour
     readonly float blazeTickInterval = 0.2f; // ブレイズエリート
     #endregion
 
-    [SerializeField]
-    List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
     float timer;
 
     /// <summary>
@@ -45,14 +43,16 @@ public class EnemyElite : MonoBehaviour
     {
         eliteType = type;
 
-        // 50%UPしたステータスデータ作成
-        CharacterStatusData data = new CharacterStatusData();
+        // HP・攻撃力が50%増し、防御力・移動速度が25%増しのステータスデータ作成
         CharacterBase charaBase = GetComponent<CharacterBase>();
-        data.hp = charaBase.BaseHP + Mathf.CeilToInt(charaBase.BaseHP * 0.5f);
-        data.power = charaBase.BasePower + Mathf.CeilToInt(charaBase.BasePower * 0.5f);
-        data.moveSpeed = charaBase.BaseMoveSpeed + Mathf.CeilToInt(charaBase.BaseMoveSpeed * 0.5f);
-        data.moveSpeedFactor = charaBase.BaseMoveSpeedFactor + Mathf.CeilToInt(charaBase.BaseMoveSpeedFactor * 0.5f);
-        data.attackSpeedFactor = charaBase.BaseAttackSpeedFactor + Mathf.CeilToInt(charaBase.BaseAttackSpeedFactor * 0.5f);
+        CharacterStatusData data = new CharacterStatusData(
+            hp: charaBase.BaseHP + Mathf.CeilToInt(charaBase.BaseHP * 0.5f),
+            defence: charaBase.BaseDefence + Mathf.CeilToInt(charaBase.BaseDefence * 0.25f),
+            power: charaBase.BasePower + Mathf.CeilToInt(charaBase.BasePower * 0.5f),
+            moveSpeed: charaBase.BaseMoveSpeed + Mathf.CeilToInt(charaBase.BaseMoveSpeed * 0.25f),
+            moveSpeedFactor: charaBase.BaseMoveSpeedFactor + Mathf.CeilToInt(charaBase.BaseMoveSpeedFactor * 0.25f),
+            attackSpeedFactor: charaBase.BaseAttackSpeedFactor + Mathf.CeilToInt(charaBase.BaseAttackSpeedFactor * 0.25f)
+         );
 
         Color outlineColor = new Color();
         Action action = type switch
@@ -82,7 +82,7 @@ public class EnemyElite : MonoBehaviour
         action();
 
         // ユニーク個体のマテリアルのプロパティ設定
-        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        foreach (SpriteRenderer spriteRenderer in GetComponent<EnemyBase>().SpriteRenderers)
         {
             Material material = spriteRenderer.material;
             material.SetColor("_OutlineColor", outlineColor);

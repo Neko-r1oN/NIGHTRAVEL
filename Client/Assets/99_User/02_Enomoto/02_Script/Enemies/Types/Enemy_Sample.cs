@@ -1,25 +1,47 @@
 //**************************************************
-//  [敵] サイバードックのクラス
+//  エネミーのサンプルクラス
 //  Author:r-enomoto
 //**************************************************
+using HardLight2DUtil;
 using Pixeye.Unity;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class CyberDog : EnemyBase
+public class Enemy_Sample : EnemyBase
 {
     /// <summary>
     /// アニメーションID
     /// </summary>
     public enum ANIM_ID
     {
-        None = 0,
-        Idle,
+        Idle = 1,
         Attack,
         Run,
         Hit,
+        Fall,
         Dead,
     }
+
+    /// <summary>
+    /// 攻撃方法
+    /// </summary>
+    public enum ATTACK_TYPE_ID
+    {
+        None,
+        MeleeType,
+        RangeType,
+    }
+
+    #region 攻撃関連
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
+    [Foldout("攻撃関連")]
+    [SerializeField] 
+    GameObject throwableObject;    // 遠距離攻撃の弾(仮)
+    #endregion
 
     #region チェック判定
     // 近距離攻撃の範囲
@@ -27,7 +49,8 @@ public class CyberDog : EnemyBase
     [SerializeField] 
     Transform meleeAttackCheck;
     [Foldout("チェック関連")]
-    [SerializeField] float meleeAttackRange = 0.9f;
+    [SerializeField] 
+    float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
     [Foldout("チェック関連")]
@@ -52,7 +75,7 @@ public class CyberDog : EnemyBase
     float fallCheckRange = 0.9f;
     #endregion
 
-    #region ターゲットと離す距離
+    #region ターゲットとの距離
     readonly float disToTargetMin = 0.25f;
     #endregion
 
@@ -69,15 +92,23 @@ public class CyberDog : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if (canChaseTarget && !IsGround())
+        if (canChaseTarget && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump)
+        {
+            Jump();
+        }
+        else if (canChaseTarget && !IsGround())
         {
             AirMovement();
         }
-        else if (canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
+        else if (attackType == ATTACK_TYPE_ID.MeleeType && canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
         {
             Attack();
         }
-        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
+        else if (attackType == ATTACK_TYPE_ID.RangeType && canAttack && projectileChecker.CanFireProjectile(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, 270f))
+        {
+            Attack();
+        }
+        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin 
             || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
             if (canChaseTarget && IsWall() && !canJump)
@@ -101,58 +132,71 @@ public class CyberDog : EnemyBase
     /// </summary>
     protected override void Idle()
     {
-        if (!target)
-        {
-            SetAnimId((int)ANIM_ID.Idle);
-        }
-        else
-        {
-            SetAnimId((int)ANIM_ID.None);
-        }
-
+        SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
     #region 攻撃処理関連
-
     /// <summary>
-    /// 攻撃処理
+    /// 攻撃開始処理
     /// </summary>
-    public void Attack()
+    void Attack()
     {
         doOnceDecision = false;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack);
+        if (chaseAI) chaseAI.StopChase();
+
+        // デバック用
+        OnAttackEvent();
     }
 
     /// <summary>
-    /// 近接攻撃処理 [Animationイベントからの呼び出し]
+    /// 攻撃実行処理（基本的にアニメーションイベントから呼ばれる）
     /// </summary>
-    
-    public override void OnAttackAnimEvent()
+    public void OnAttackEvent()
     {
-        // 前に飛び込む
-        Vector2 jumpVec = new Vector2(18 * TransformHelper.GetFacingDirection(transform), 10);
-        m_rb2d.linearVelocity = jumpVec;
-
-        // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-        bool isElite = this.isElite && enemyElite != null;
-        StatusEffectController.EFFECT_TYPE? applyEffect = null;
-        if (isElite)
+        if (attackType == ATTACK_TYPE_ID.MeleeType)
         {
-            applyEffect = enemyElite.GetAddStatusEffectEnum();
+            MeleeAttack();
         }
+        else if (attackType == ATTACK_TYPE_ID.RangeType)
+        {
+            cancellCoroutines.Add(StartCoroutine(RangeAttack()));
+        }
+    }
 
+    /// <summary>
+    /// 近接攻撃処理
+    /// </summary>
+    void MeleeAttack()
+    {
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
             }
         }
+        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+    }
 
+    /// <summary>
+    /// 遠距離攻撃処理
+    /// </summary>
+    IEnumerator RangeAttack()
+    {
+        GameObject target = this.target;
+        for (int i = 0; i < bulletNum; i++)
+        {
+            GameObject throwableProj = Instantiate(throwableObject, transform.position + new Vector3(TransformUtils.GetFacingDirection(transform) * 0.5f, -0.2f), Quaternion.identity);
+            throwableProj.GetComponent<ThrowableProjectile>().owner = gameObject;
+            Vector2 direction = new Vector2(TransformUtils.GetFacingDirection(transform), 0f);
+            throwableProj.GetComponent<ThrowableProjectile>().direction = direction;
+            yield return new WaitForSeconds(shotsPerSecond);
+        }
         cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
 
@@ -174,21 +218,24 @@ public class CyberDog : EnemyBase
     #region 移動処理関連
 
     /// <summary>
+    /// ジャンプ処理
+    /// </summary>
+    void Jump()
+    {
+        SetAnimId((int)ANIM_ID.Fall);
+
+        transform.position += Vector3.up * groundCheckRadius.y;
+        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+    }
+
+    /// <summary>
     /// 追跡する処理
     /// </summary>
     protected override void Tracking()
     {
         SetAnimId((int)ANIM_ID.Run);
-        Vector2 speedVec = Vector2.zero;
-        if (IsFall() || IsWall())
-        {
-            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
-        }
-        else
-        {
-            float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
-        }
+        float distToPlayer = target.transform.position.x - this.transform.position.x;
+        Vector2 speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -199,7 +246,7 @@ public class CyberDog : EnemyBase
     {
         SetAnimId((int)ANIM_ID.Run);
         if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
+        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -208,7 +255,7 @@ public class CyberDog : EnemyBase
     /// </summary>
     void AirMovement()
     {
-        SetAnimId((int)ANIM_ID.Run);
+        SetAnimId((int)ANIM_ID.Fall);
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
@@ -242,7 +289,6 @@ public class CyberDog : EnemyBase
     #endregion
 
     #region チェック処理関連
-
     /// <summary>
     /// 壁があるかどうか
     /// </summary>
@@ -290,6 +336,12 @@ public class CyberDog : EnemyBase
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(meleeAttackCheck.transform.position, meleeAttackRange);
+        }
+
+        // 遠距離攻撃の射線
+        if (attackType == ATTACK_TYPE_ID.RangeType && sightChecker)
+        {
+            projectileChecker.DrawProjectileRayGizmo(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, 270f);
         }
 
         // 壁の判定

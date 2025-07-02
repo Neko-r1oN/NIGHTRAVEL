@@ -1,40 +1,56 @@
 //**************************************************
-//  近接タイプの敵クラス
+//  [敵] サイバードックのクラス
 //  Author:r-enomoto
 //**************************************************
+using Pixeye.Unity;
 using System.Collections;
 using UnityEngine;
 
-public class EnemyMelee : EnemyBase
+public class CyberDog : EnemyBase
 {
     /// <summary>
     /// アニメーションID
     /// </summary>
     public enum ANIM_ID
     {
-        Idle = 1,
+        None = 0,
+        Idle,
         Attack,
         Run,
         Hit,
-        Fall,
         Dead,
+        JumpOut,
     }
 
     #region チェック判定
-    [Header("チェック判定")]
     // 近距離攻撃の範囲
-    [SerializeField] Transform meleeAttackCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform meleeAttackCheck;
+    [Foldout("チェック関連")]
     [SerializeField] float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
-    [SerializeField] Transform wallCheck;
-    [SerializeField] Vector2 wallCheckRadius = new Vector2(0, 1.5f);
-    [SerializeField] Transform groundCheck;
-    [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform wallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Vector2 wallCheckRadius = new Vector2(0, 1.5f);
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform groundCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
     // 落下チェック
-    [SerializeField] Transform fallCheck;
-    [SerializeField] float fallCheckRange = 0.9f;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    Transform fallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField] 
+    float fallCheckRange = 0.9f;
     #endregion
 
     #region ターゲットと離す距離
@@ -86,9 +102,33 @@ public class EnemyMelee : EnemyBase
     /// </summary>
     protected override void Idle()
     {
-        SetAnimId((int)ANIM_ID.Idle);
+        if (!target)
+        {
+            SetAnimId((int)ANIM_ID.Idle);
+        }
+        else
+        {
+            SetAnimId((int)ANIM_ID.None);
+        }
+
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
+
+    /// <summary>
+    /// 自身が生成されたときの処理
+    /// </summary>
+    public override void OnGenerated()
+    {
+        base.OnGenerated();
+        InvokeRepeating("FadeIn", 0, 0.1f);
+        SetAnimId((int)ANIM_ID.JumpOut);
+
+        // 前に飛び込む
+        Vector2 jumpVec = new Vector2(jumpPower * TransformUtils.GetFacingDirection(transform), jumpPower / 2);
+        m_rb2d.linearVelocity = jumpVec;
+    }
+
+    #region 攻撃処理関連
 
     /// <summary>
     /// 攻撃処理
@@ -97,82 +137,38 @@ public class EnemyMelee : EnemyBase
     {
         doOnceDecision = false;
         isAttacking = true;
-        SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
-        if (chaseAI) chaseAI.StopChase();
-
-        MeleeAttack();
+        SetAnimId((int)ANIM_ID.Attack);
     }
 
     /// <summary>
-    /// 近接攻撃処理
+    /// 近接攻撃処理 [Animationイベントからの呼び出し]
     /// </summary>
-    void MeleeAttack()
+    
+    public override void OnAttackAnimEvent()
     {
+        // 前に飛び出す
+        Vector2 jumpVec = new Vector2(jumpPower * 2 * TransformUtils.GetFacingDirection(transform), jumpPower);
+        m_rb2d.linearVelocity = jumpVec;
+
+        // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+        bool isElite = this.isElite && enemyElite != null;
+        StatusEffectController.EFFECT_TYPE? applyEffect = null;
+        if (isElite)
+        {
+            applyEffect = enemyElite.GetAddStatusEffectEnum();
+        }
+
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
             }
         }
+
         cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
-    }
-
-    /// <summary>
-    /// 追跡する処理
-    /// </summary>
-    protected override void Tracking()
-    {
-        SetAnimId((int)ANIM_ID.Run);
-        Vector2 speedVec = Vector2.zero;
-
-        if (IsFall() || IsWall())
-        {
-            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
-        }
-        else
-        {
-            float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
-        }
-
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
-    /// 巡回する処理
-    /// </summary>
-    protected override void Patorol()
-    {
-        SetAnimId((int)ANIM_ID.Run);
-        if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
-    /// 空中状態での移動処理
-    /// </summary>
-    void AirMovement()
-    {
-        SetAnimId((int)ANIM_ID.Fall);
-
-        // ジャンプ(落下)中にプレイヤーに向かって移動する
-        float distToPlayer = target.transform.position.x - this.transform.position.x;
-        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
-        Vector3 velocity = Vector3.zero;
-        m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
-    }
-
-    /// <summary>
-    /// ダメージを受けたときの処理
-    /// </summary>
-    protected override void OnHit()
-    {
-        base.OnHit();
-        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -188,14 +184,79 @@ public class EnemyMelee : EnemyBase
         Idle();
     }
 
+    #endregion
+
+    #region 移動処理関連
+
+    /// <summary>
+    /// 追跡する処理
+    /// </summary>
+    protected override void Tracking()
+    {
+        SetAnimId((int)ANIM_ID.Run);
+        Vector2 speedVec = Vector2.zero;
+        if (IsFall() || IsWall())
+        {
+            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
+        }
+        else
+        {
+            float distToPlayer = target.transform.position.x - this.transform.position.x;
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
+        }
+        m_rb2d.linearVelocity = speedVec;
+    }
+
+    /// <summary>
+    /// 巡回する処理
+    /// </summary>
+    protected override void Patorol()
+    {
+        SetAnimId((int)ANIM_ID.Run);
+        if (IsFall() || IsWall()) Flip();
+        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
+        m_rb2d.linearVelocity = speedVec;
+    }
+
+    /// <summary>
+    /// 空中状態での移動処理
+    /// </summary>
+    void AirMovement()
+    {
+        SetAnimId((int)ANIM_ID.Run);
+
+        // ジャンプ(落下)中にプレイヤーに向かって移動する
+        float distToPlayer = target.transform.position.x - this.transform.position.x;
+        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
+        Vector3 velocity = Vector3.zero;
+        m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
+    }
+
+    #endregion
+
+    #region ヒット処理関連
+
+    /// <summary>
+    /// ダメージを受けたときの処理
+    /// </summary>
+    protected override void OnHit()
+    {
+        base.OnHit();
+        SetAnimId((int)ANIM_ID.Hit);
+    }
+
     /// <summary>
     /// 死亡するときに呼ばれる処理処理
     /// </summary>
     /// <returns></returns>
     protected override void OnDead()
     {
-        //SetAnimId((int)ANIM_ID.Dead);
+        SetAnimId((int)ANIM_ID.Dead);
     }
+
+    #endregion
+
+    #region チェック処理関連
 
     /// <summary>
     /// 壁があるかどうか
@@ -270,4 +331,6 @@ public class EnemyMelee : EnemyBase
             Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
         }
     }
+
+    #endregion
 }

@@ -1,12 +1,15 @@
 //**************************************************
-//  [敵] ドローンを制御するクラス
+//  エネミーのサンプルクラス(飛行型)
 //  Author:r-enomoto
 //**************************************************
+using DG.Tweening;
+using HardLight2DUtil;
 using Pixeye.Unity;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Drone : EnemyBase
+public class Enemy_Sample_Flyng : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -14,6 +17,10 @@ public class Drone : EnemyBase
     public enum ANIM_ID
     {
         Idle = 1,
+        Attack,
+        Run,
+        Hit,
+        Fall,
         Dead,
     }
 
@@ -30,22 +37,18 @@ public class Drone : EnemyBase
     [Foldout("ステータス")]
     [SerializeField]
     float patorolRange = 10f;
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    float aimRotetionSpeed = 3f;
     #endregion
 
     #region 攻撃関連
     [Foldout("攻撃関連")]
     [SerializeField] 
-    Transform aimTransform;
+    ATTACK_TYPE_ID attackType = ATTACK_TYPE_ID.None;
     [Foldout("攻撃関連")]
     [SerializeField] 
-    GunParticleController gunPsController;
+    GameObject throwableObject;    // 遠距離攻撃の弾(仮)
     [Foldout("攻撃関連")]
     [SerializeField] 
-    float gunBulletWidth;
+    Transform aimTransform;        // 遠距離攻撃の弾の生成位置
     #endregion
 
     #region チェック判定
@@ -54,7 +57,7 @@ public class Drone : EnemyBase
     [SerializeField] 
     Transform wallCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     #endregion
 
@@ -78,7 +81,7 @@ public class Drone : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if (canAttack && projectileChecker.CanFireProjectile(gunBulletWidth, true) && !sightChecker.IsObstructed())
+        if (canAttack && projectileChecker.CanFireProjectile(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
         {
             chaseAI.StopChase();
             Attack();
@@ -103,6 +106,7 @@ public class Drone : EnemyBase
     /// </summary>
     protected override void Idle()
     {
+        //SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
@@ -115,6 +119,7 @@ public class Drone : EnemyBase
     {
         doOnceDecision = false;
         isAttacking = true;
+        //SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
         chaseAI.StopChase();
         cancellCoroutines.Add(StartCoroutine(RangeAttack()));
@@ -125,26 +130,16 @@ public class Drone : EnemyBase
     /// </summary>
     IEnumerator RangeAttack()
     {
-        yield return new WaitForSeconds(0.25f);  // 攻撃開始を遅延
-        gunPsController.StartShooting();
+        yield return new WaitForSeconds(0.5f);  // 攻撃開始を遅延
 
-        float time = 0;
-        while (time < shotsPerSecond)
+        GameObject target = this.target;
+        for (int i = 0; i < bulletNum; i++)
         {
-            // ターゲットのいる方向に向かってエイム
-            if (target)
-            {
-                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-
-                Vector3 direction = target.transform.position - transform.position;
-                Quaternion quaternion = Quaternion.Euler(0, 0, projectileChecker.ClampAngleToTarget(direction));
-                aimTransform.rotation = Quaternion.RotateTowards(aimTransform.rotation, quaternion, aimRotetionSpeed);
-            }
-            yield return new WaitForSeconds(0.1f);
-            time += 0.1f;
+            GameObject throwableProj = Instantiate(throwableObject, aimTransform.position, Quaternion.identity);
+            Vector3 direction = target.transform.position - transform.position;
+            throwableProj.GetComponent<Projectile>().Initialize(direction, gameObject);
+            yield return new WaitForSeconds(shotsPerSecond);
         }
-
         cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
 
@@ -154,7 +149,6 @@ public class Drone : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time)
     {
-        gunPsController.StopShooting();
         isAttacking = true;
         yield return new WaitForSeconds(time);
         isAttacking = false;
@@ -191,7 +185,7 @@ public class Drone : EnemyBase
     /// </summary>
     IEnumerator PatorolCoroutine()
     {
-        float pauseTime = 2f;
+        float pauseTime = 3f;
         if (startPatorolPoint == null)
         {
             startPatorolPoint = transform.position;
@@ -199,7 +193,7 @@ public class Drone : EnemyBase
 
         if (IsWall()) Flip();
 
-        if (TransformHelper.GetFacingDirection(transform) > 0)
+        if (TransformUtils.GetFacingDirection(transform) > 0)
         {
             if (transform.position.x >= startPatorolPoint.Value.x + patorolRange)
             {
@@ -210,7 +204,7 @@ public class Drone : EnemyBase
                 Flip();
             }
         }
-        else if (TransformHelper.GetFacingDirection(transform) < 0)
+        else if (TransformUtils.GetFacingDirection(transform) < 0)
         {
             if (transform.position.x <= startPatorolPoint.Value.x - patorolRange)
             {
@@ -223,7 +217,7 @@ public class Drone : EnemyBase
         }
 
         Vector2 speedVec = Vector2.zero;
-        speedVec = new Vector2(TransformHelper.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
+        speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
         patorolCoroutine = null;
     }
@@ -246,7 +240,7 @@ public class Drone : EnemyBase
     protected override void OnHit()
     {
         base.OnHit();
-        gunPsController.StopShooting();
+        //SetAnimId((int)ANIM_ID.Hit);
     }
 
     /// <summary>
@@ -255,8 +249,7 @@ public class Drone : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
-        gunPsController.StopShooting();
-        SetAnimId((int)ANIM_ID.Dead);
+        //SetAnimId((int)ANIM_ID.Dead);
     }
 
     #endregion
@@ -284,7 +277,7 @@ public class Drone : EnemyBase
         // 射線
         if (sightChecker != null)
         {
-            projectileChecker.DrawProjectileRayGizmo(gunBulletWidth, true);
+            projectileChecker.DrawProjectileRayGizmo(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, true);
         }
 
         // 壁の判定

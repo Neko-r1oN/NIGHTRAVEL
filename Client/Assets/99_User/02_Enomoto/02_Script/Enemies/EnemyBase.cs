@@ -2,6 +2,7 @@
 //  エネミーの抽象クラス
 //  Author:r-enomoto
 //**************************************************
+using Grpc.Core;
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,6 +26,12 @@ abstract public class EnemyBase : CharacterBase
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
+    #endregion
+
+    #region テクスチャ・アニメーション関連
+    [Foldout("テクスチャ・アニメーション")]
+    [SerializeField]
+    List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
     #endregion
 
     #region チェック判定
@@ -141,6 +148,8 @@ abstract public class EnemyBase : CharacterBase
     public bool IsElite { get { return isElite; } }
 
     public float SpawnGroundOffset { get { return spawnGroundOffset; } }
+
+    public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
 
     protected virtual void Start()
@@ -225,7 +234,7 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// 方向転換
     /// </summary>
-    protected void Flip()
+    public void Flip()
     {
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
@@ -281,6 +290,59 @@ abstract public class EnemyBase : CharacterBase
         if (target != null)
         {
             this.target = target;
+        }
+    }
+
+    /// <summary>
+    /// 生存しているプレイヤーの取得処理
+    /// </summary>
+    /// <returns></returns>
+    protected List<GameObject> GetAlivePlayers()
+    {
+        List<GameObject> alivePlayers = new List<GameObject>();
+        foreach (GameObject player in Players)
+        {
+            if (player && player.GetComponent<CharacterBase>().HP > 0)
+            {
+                alivePlayers.Add(player);
+            }
+        }
+        return alivePlayers;
+    }
+
+    /// <summary>
+    /// 自身が生成されたときの処理
+    /// </summary>
+    public virtual void OnGenerated()
+    {
+        if (!m_rb2d) Start();   // Startが実行されていない場合
+        isInvincible = true;    // 無敵状態にする & 本来の行動不可
+        
+        foreach(var spriteRenderer in spriteRenderers)
+        {
+            Color color = spriteRenderer.color;
+            color.a = 0;
+            spriteRenderer.color = color;
+        }
+    }
+
+    /// <summary>
+    /// フェードイン処理
+    /// </summary>
+    protected void FadeIn()
+    {
+        foreach (var spriteRenderer in spriteRenderers)
+        {
+            Color color = spriteRenderer.color;
+            color.a += 0.2f;
+            spriteRenderer.color = color;
+        }
+
+        // フェードインが完了したら、無敵状態解除
+        if (!isInvincible && spriteRenderers[0].color.a >= 1)
+        {
+            isInvincible = true;
+            CancelInvoke("FadeIn");
         }
     }
 
@@ -439,7 +501,7 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region 描画処理関連
+    #region Debug描画処理関連
 
     /// <summary>
     /// 他の検知範囲の描画処理
@@ -468,7 +530,7 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region アニメーション関連
+    #region テクスチャ・アニメーション関連
 
     /// <summary>
     /// 攻撃のイベント通知で攻撃処理を実行する
@@ -481,7 +543,10 @@ abstract public class EnemyBase : CharacterBase
     /// <param name="id"></param>
     public void SetAnimId(int id)
     {
-        if (animator != null) animator.SetInteger("animation_id", id);
+        if (animator != null)
+        {
+            animator.SetInteger("animation_id", id);
+        }
     }
 
     /// <summary>
@@ -492,6 +557,5 @@ abstract public class EnemyBase : CharacterBase
     {
         return animator != null ? animator.GetInteger("animation_id") : 0;
     }
-
     #endregion
 }

@@ -139,8 +139,8 @@ abstract public class CharacterBase : MonoBehaviour
     public StatusEffectController EffectController { get { return effectController; } }
     #endregion
 
-    #region コンポーネント
-    [Foldout("コンポーネント")]
+    #region テクスチャ・アニメーション
+    [Foldout("テクスチャ・アニメーション")]
     [SerializeField] 
     protected Animator animator;
     #endregion
