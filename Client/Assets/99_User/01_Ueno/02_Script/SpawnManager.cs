@@ -142,7 +142,7 @@ public class SpawnManager : MonoBehaviour
 
         if (spawnPos != null)
         {
-            gameManager.SpawnCnt++;
+            GameManager.Instance.SpawnCnt++;
 
             // ê∂ê¨
             enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);

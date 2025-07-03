@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        UIManager.Instance.CountClashText(crashNum);
+       // UIManager.Instance.CountClashText(crashNum);
     }
 
     /// <summary>
