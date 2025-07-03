@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-       // UIManager.Instance.CountClashText(crashNum);
+        UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -144,17 +144,11 @@ public class GameManager : MonoBehaviour
 
                 if (spawnCnt < maxSpawnCnt / 2)
                 {// 敵が100体いない場合
-                    /*for (int i = 0; i < 5; i++)
-                    {// 複数体敵を生成
-                        // 敵生成処理
-                        SpawnManager.Instance.GenerateEnemy();
-                    }*/
-
-                    CallFunctionForSpecificCount(SpawnManager.Instance.GenerateEnemy, 5);
+                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,10));
                 }
                 else
                 {// いる場合
-                    CallFunctionForSpecificCount(SpawnManager.Instance.GenerateEnemy, 1);
+                    SpawnManager.Instance.GenerateEnemy(1);
                 }
             }
         }
@@ -176,7 +170,7 @@ public class GameManager : MonoBehaviour
     {
         crashNum++;
 
-        UIManager.Instance.CountClashText(crashNum);
+        UIManager.Instance.CountTermsText(crashNum);
 
         //Debug.Log("倒した数：" + crashNum);
 
@@ -224,18 +218,5 @@ public class GameManager : MonoBehaviour
     public void DecreaseGeneratInterval()
     {
         spawnInterval -= 2;
-    }
-
-    /// <summary>
-    /// 指定された関数を、指定回数だけ呼び出す汎用関数
-    /// </summary>
-    /// <param name="actionToCall">呼び出す関数（引数なし、戻り値なし）</param>
-    /// <param name="count">関数を呼び出す回数</param>
-    public void CallFunctionForSpecificCount(Action actionToCall, int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            actionToCall.Invoke(); // 渡された関数を実行
-        }
     }
 }

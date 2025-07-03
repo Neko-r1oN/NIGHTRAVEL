@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -122,34 +124,37 @@ public class SpawnManager : MonoBehaviour
     /// <summary>
     /// 敵生成処理
     /// </summary>
-    public void GenerateEnemy()
+    public void GenerateEnemy(int num)
     {
-        int listNum = Random.Range(0, enemyList.Count);
-
-        EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
-
-        Vector2 minPlayer =
-                    new Vector2(player.transform.position.x - xRadius,
-                    player.transform.position.y - yRadius);
-
-        Vector2 maxPlayer =
-            new Vector2(player.transform.position.x + xRadius,
-            player.transform.position.y + yRadius);
-
-        // ランダムな位置を生成
-        var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
-
-        Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
-
-        if (spawnPos != null)
+        for (int i = 0; i < num; i++)
         {
-            GameManager.Instance.SpawnCnt++;
+            int listNum = Random.Range(0, enemyList.Count);
 
-            // 生成
-            enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+            EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
 
-            enemy.GetComponent<EnemyBase>().Players.Add(player);
-            enemy.GetComponent<EnemyBase>().SetNearTarget();
+            Vector2 minPlayer =
+                        new Vector2(player.transform.position.x - xRadius,
+                        player.transform.position.y - yRadius);
+
+            Vector2 maxPlayer =
+                new Vector2(player.transform.position.x + xRadius,
+                player.transform.position.y + yRadius);
+
+            // ランダムな位置を生成
+            var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
+
+            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
+
+            if (spawnPos != null)
+            {
+                GameManager.Instance.SpawnCnt++;
+
+                // 生成
+                enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+
+                enemy.GetComponent<EnemyBase>().Players.Add(player);
+                enemy.GetComponent<EnemyBase>().SetNearTarget();
+            }
         }
     }
 
