@@ -76,7 +76,7 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
                 isUsed = true;  // 使用済みにする
-                SpawnManager.Instance.GenerateEnemy(1);   // 敵生成
+                SpawnManager.Instance.GenerateEnemy(6);   // 敵生成
                 break;
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合

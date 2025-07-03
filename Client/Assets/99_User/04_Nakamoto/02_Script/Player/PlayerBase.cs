@@ -771,7 +771,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
-            UIManager.Instance.PopDamageUI(transform.position, true);
+            // UIManager.Instance.PopDamageUI(transform.position, true);
             if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
             Vector2 damageDir = Vector2.zero;

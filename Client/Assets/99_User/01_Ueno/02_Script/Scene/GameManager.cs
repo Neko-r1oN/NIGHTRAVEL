@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        UIManager.Instance.ShowUIAndFadeOut();
+        //UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -135,23 +135,23 @@ public class GameManager : MonoBehaviour
             Invoke(nameof(ChengScene), 15f);
         }
 
-        if (spawnCnt < maxSpawnCnt  && !isBossDead)
-        {// ƒXƒ|[ƒ“‰ñ”‚ªŒÀŠE‚É’B‚µ‚Ä‚¢‚é‚©
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime > spawnInterval)
-            {
-                elapsedTime = 0;
+        //if (spawnCnt < maxSpawnCnt  && !isBossDead)
+        //{// ƒXƒ|[ƒ“‰ñ”‚ªŒÀŠE‚É’B‚µ‚Ä‚¢‚é‚©
+        //    elapsedTime += Time.deltaTime;
+        //    if (elapsedTime > spawnInterval)
+        //    {
+        //        elapsedTime = 0;
 
-                if (spawnCnt < maxSpawnCnt / 2)
-                {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
-                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,10));
-                }
-                else
-                {// ‚¢‚éê‡
-                    SpawnManager.Instance.GenerateEnemy(1);
-                }
-            }
-        }
+        //        if (spawnCnt < maxSpawnCnt / 2)
+        //        {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
+        //            SpawnManager.Instance.GenerateEnemy(Random.Range(3,10));
+        //        }
+        //        else
+        //        {// ‚¢‚éê‡
+        //            SpawnManager.Instance.GenerateEnemy(1);
+        //        }
+        //    }
+        //}
     }
 
     /// <summary>
