@@ -176,7 +176,7 @@ public class GameManager : MonoBehaviour
     {
         crashNum++;
 
-        UIManager.Instance.CountClashText(crashNum);
+        UIManager.Instance.CountTermsText(crashNum);
 
         //Debug.Log("“|‚µ‚½”F" + crashNum);
 

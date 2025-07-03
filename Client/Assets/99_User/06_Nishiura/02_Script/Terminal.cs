@@ -15,6 +15,8 @@ public class Terminal : MonoBehaviour
     // 端末の種別
     public int terminalType;
 
+    GameManager gameManager;
+
     // 端末タイプ列挙型
     public enum TerminalCode 
     {
@@ -30,7 +32,7 @@ public class Terminal : MonoBehaviour
 
     private void Start()
     {
-
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     private void Update()

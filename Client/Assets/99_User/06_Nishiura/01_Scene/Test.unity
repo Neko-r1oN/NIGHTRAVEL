@@ -1498,6 +1498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   addPower: 7
+  isPowerd: 0
 --- !u!1 &475836954
 GameObject:
   m_ObjectHideFlags: 0
@@ -1782,10 +1783,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linkedGimmick:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 173941093}
 --- !u!212 &740514390
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1850,7 +1848,7 @@ Transform:
   m_GameObject: {fileID: 740514387}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.5, y: -4.2, z: 0}
+  m_LocalPosition: {x: -6.9755745, y: -4.2, z: 0}
   m_LocalScale: {x: 1.75, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2145,7 +2143,7 @@ Transform:
   m_GameObject: {fileID: 1253553933}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.905574, y: -0.71290576, z: -10}
+  m_LocalPosition: {x: -3.57, y: -0.71290576, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -42298,16 +42296,18 @@ MonoBehaviour:
   m_BlinkForce: 40
   blinkTime: 0.12
   blinkCoolDown: 1
-  ladderSpeed: 0.3
+  m_ZipJumpForceX: 60
+  m_ZipJumpForceY: 40
+  zipSpeed: 150
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 53
-  ladderLayer:
+  ziplineLayer:
     serializedVersion: 2
-    m_Bits: 4194304
+    m_Bits: 0
   m_GroundCheck: {fileID: 8598294689641667587}
   m_WallCheck: {fileID: 5827723042538017695}
   attackCheck: {fileID: 7083594789256869932}
@@ -42315,6 +42315,7 @@ MonoBehaviour:
   playerCollider: {fileID: 6831978277090424938}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
+  ziplineSpark: {fileID: 0}
   attackCoolDown: 0.8
   skillForth: 45
   skillTime: 0.25
@@ -52451,7 +52452,7 @@ Transform:
   m_GameObject: {fileID: 2593164853972597923}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.47, y: -2.27, z: 0}
+  m_LocalPosition: {x: -9.005575, y: -2.27, z: 0}
   m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_ConstrainProportionsScale: 1
   m_Children:

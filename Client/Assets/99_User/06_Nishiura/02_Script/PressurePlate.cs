@@ -50,6 +50,10 @@ public class PressurePlate : MonoBehaviour
                     gimmick.GetComponent<PressMachine>().TurnOnPower();
                     break;
 
+                case "SawBlade":
+                    gimmick.GetComponent<SawBlade>().TurnOnPower();
+                    break;
+
                 default:
                     break;
             }
