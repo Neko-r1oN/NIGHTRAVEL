@@ -25,7 +25,7 @@ public class BoomEffect : MonoBehaviour
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.30f);
             playerBase.ApplyDamage(damage, pos);
 
-            Invoke("DeleteThis", 0.8f);
+            Invoke("DeleteThis", 0.3f);
         }
     }
 

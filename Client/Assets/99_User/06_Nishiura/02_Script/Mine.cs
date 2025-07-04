@@ -25,7 +25,7 @@ public class Mine : MonoBehaviour
     {
         if (collision.transform.tag == "Player")
         {
-            Instantiate(boomEffect);    // 爆発エフェクトを生成
+            Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
             Destroy(this.gameObject);   // 自身を破壊
             Debug.Log("Boomed Mine");
         }else if (collision.transform.tag == "Enemy")

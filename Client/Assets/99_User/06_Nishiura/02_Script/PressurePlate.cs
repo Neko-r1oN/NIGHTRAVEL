@@ -32,26 +32,30 @@ public class PressurePlate : MonoBehaviour
     {
         foreach (GameObject gimmick in linkedGimmick)
         {
-            switch (gimmick.name)
+            switch (gimmick.tag)
             {
-                case "SteelDoor_Set":
+                case "Gimmick/SteelDoor":
                     gimmick.GetComponent<SteelDoor>().TurnOnPower();
                     break;
 
-                case "Belt Conveyor":
+                case "Gimmick/BeltConveyor":
 
                     break;
 
-                case "Fan":
+                case "Gimmick/Fan":
 
                     break;
 
-                case "PressMachine":
+                case "Gimmick/PressMachine":
                     gimmick.GetComponent<PressMachine>().TurnOnPower();
                     break;
 
-                case "SawBlade":
+                case "Gimmick/SawBlade":
                     gimmick.GetComponent<SawBlade>().TurnOnPower();
+                    break;
+
+                case "Gimmick/Elevator":
+                    gimmick.GetComponent<Elevator>().TurnOnPower();
                     break;
 
                 default:
