@@ -40,7 +40,7 @@ public class Box : ObjectBase
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //触れたもののタグが「Abyss」だったら
-        if(collision.CompareTag("Abyss"))
+        if(collision.CompareTag("Gimmick/Abyss"))
         {
             GameObject boxPrefab = BoxPrefab;
 
