@@ -324,7 +324,8 @@ abstract public class PlayerBase : CharacterBase
                 if (collidersWall[i].gameObject != null)
                 {
                     isBlinking = false;
-                    m_IsWall = true;
+
+                    if (gameObject.layer != 21) m_IsWall = true;
                 }
             }
             prevVelocityX = m_Rigidbody2D.linearVelocity.x;
@@ -633,10 +634,10 @@ abstract public class PlayerBase : CharacterBase
 
     protected void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Scaffold")
-        {
-            m_IsScaffold = false;
-        }
+        //if (collision.gameObject.tag == "Scaffold")
+        //{
+        //    m_IsScaffold = false;
+        //}
     }
 
     /// <summary>
@@ -683,7 +684,7 @@ abstract public class PlayerBase : CharacterBase
     /// <returns></returns>
     protected IEnumerator ScaffoldDown()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
         m_IsScaffold = false;
         gameObject.layer = 20;
     }

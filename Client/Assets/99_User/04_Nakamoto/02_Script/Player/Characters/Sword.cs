@@ -4,12 +4,8 @@
 // à¯ópÅFhttps://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
 //--------------------------------------------------------------
 using UnityEngine;
-using UnityEngine.Events;
 using System.Collections;
-using UnityEngine.SceneManagement;
 using Pixeye.Unity;
-using System;
-using HardLight2DUtil;
 using static StatusEffectController;
 
 public class Sword : PlayerBase
