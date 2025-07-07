@@ -14,7 +14,8 @@ public class Drone : EnemyBase
     /// </summary>
     public enum ANIM_ID
     {
-        Idle = 1,
+        Spawn = 0,
+        Idle,
         Dead,
     }
 
