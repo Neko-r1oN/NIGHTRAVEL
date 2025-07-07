@@ -31,7 +31,7 @@ public class Sword : PlayerBase
     private bool isCombo = false;       // コンボ可能フラグ
     private bool isCooldown = false;    // 攻撃のクールダウンフラグ
 
-    private float plDirection = 0;  // プレイヤーの向き
+    private float plDirection = 0;      // プレイヤーの向き
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float attackCoolDown = 0.8f;   // 攻撃クールダウン処理

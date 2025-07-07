@@ -9795,6 +9795,7 @@ GameObject:
   - component: {fileID: 6652703405110584885}
   - component: {fileID: 7378267398007181736}
   - component: {fileID: 1240149661454908886}
+  - component: {fileID: 490470278367506586}
   m_Layer: 20
   m_Name: Sword
   m_TagString: Player
@@ -9838,7 +9839,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 500
+  baseHp: 5000
   baseDefence: 20
   basePower: 15
   baseJumpPower: 10
@@ -9866,7 +9867,7 @@ MonoBehaviour:
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 53
+    m_Bits: 16777269
   ziplineLayer:
     serializedVersion: 2
     m_Bits: 4194304
@@ -9878,7 +9879,6 @@ MonoBehaviour:
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
   ziplineSpark: {fileID: 618913795184563851}
-  damageText: {fileID: 3843102958331717962, guid: 5b39f5315dae4c141898ed971b3029a0, type: 3}
   attackCoolDown: 0.4
   skillForth: 45
   skillTime: 0.25
@@ -9924,7 +9924,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 6624a6a4ce607894c825bcfba5044c1c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10139,6 +10139,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &490470278367506586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965832932378072417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentShaderType: 0
+  normalStrength: 5
+  normalSmoothing: 1
+  computingNormal: 0
 --- !u!1 &2813547042872242808
 GameObject:
   m_ObjectHideFlags: 0

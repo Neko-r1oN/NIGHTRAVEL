@@ -155,6 +155,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_Grounded;          // プレイヤーの接地フラグ
     protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
     protected bool m_IsZipline = false; // 動作フラグ
+    protected bool m_IsScaffold = false;// 足場接地フラグ
     protected bool isJump = false;      // ジャンプ入力フラグ
     protected bool isBlink = false;     // ダッシュ入力フラグ
     protected bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
@@ -239,6 +240,12 @@ abstract public class PlayerBase : CharacterBase
                     isBlink = true;
                     gameObject.layer = 21;
                 }
+            }
+
+            if(m_IsScaffold && Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                gameObject.layer = 21;
+                StartCoroutine(ScaffoldDown());
             }
         }
     }
@@ -619,6 +626,19 @@ abstract public class PlayerBase : CharacterBase
         }
     }
 
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        m_IsScaffold = true;
+    }
+
+    protected void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Scaffold")
+        {
+            m_IsScaffold = false;
+        }
+    }
+
     /// <summary>
     /// １番近いオブジェクトを取得する
     /// </summary>
@@ -656,6 +676,16 @@ abstract public class PlayerBase : CharacterBase
         isWallJump = true;
         yield return new WaitForSeconds(0.2f);  // ジャンプ時間
         isWallJump = false;
+    }
+    /// <summary>
+    /// 足場すり抜け復帰処理
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator ScaffoldDown()
+    {
+        yield return new WaitForSeconds(0.5f);
+        m_IsScaffold = false;
+        gameObject.layer = 20;
     }
     /// <summary>
     /// ダメージ後硬直処理
@@ -771,7 +801,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
-            UIManager.Instance.PopDamageUI(transform.position, true);
+            UIManager.Instance.PopDamageUI(damage,transform.position,true);
             if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
