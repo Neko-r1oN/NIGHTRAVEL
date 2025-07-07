@@ -21,16 +21,6 @@ public class Elevator : GimmickBase
     // 動作中判定変数
     private bool isMoving;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start()
-    {
-    }
-
-    private void Update()
-    {
-
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
@@ -46,7 +36,6 @@ public class Elevator : GimmickBase
 
     private void MoveElevator()
     {
-
         Invoke("MovingCheck", 4f);  //動作チェック
         if (!isRised)
         {   //上昇済みでない場合
@@ -81,5 +70,32 @@ public class Elevator : GimmickBase
     public override void TurnOnPower()
     {
         isPowerd = true;
+    }
+
+    /// <summary>
+    /// 昇降ボタン処理
+    /// </summary>
+    public void MoveButton(bool type)
+    {
+        if (isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
+        if (type == false)
+        {
+            Invoke("MovingCheck", 4f);  //動作チェック
+
+            if (isRised)
+            {   //上昇済みの場合
+                isMoving = true;    // 動作中にする
+                this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
+            }
+        }
+        else
+        {
+            Invoke("MovingCheck", 4f);  //動作チェック
+            if (!isRised)
+            {   //上昇済みでない場合
+                isMoving = true;    // 動作中にする
+                this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
+            }
+        }
     }
 }
