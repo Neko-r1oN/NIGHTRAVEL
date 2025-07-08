@@ -46,8 +46,13 @@ public class PressMachine : GimmickBase
                 .SetLoops(-1);
     }
 
-    public override void TurnOnPower()
+    public override void TurnOnPower(int t)
     {
        isPowerd = false;
+    }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
     }
 }

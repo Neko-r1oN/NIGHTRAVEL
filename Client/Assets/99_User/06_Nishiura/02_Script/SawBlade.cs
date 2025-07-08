@@ -59,9 +59,14 @@ public class SawBlade : GimmickBase
     /// <summary>
     /// ìdåπÉIÉìä÷êî
     /// </summary>
-    public override void TurnOnPower()
+    public override void TurnOnPower(int t)
     {
         isPowerd = true;
         MoveBlade();
+    }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
     }
 }

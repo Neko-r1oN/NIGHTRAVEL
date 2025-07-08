@@ -66,4 +66,14 @@ public class Box : ObjectBase
         await Task.Delay(6000);
         Destroy(fragment.gameObject);
     }
+
+    public override void TurnOnPower(int triggerID)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
+    }
 }

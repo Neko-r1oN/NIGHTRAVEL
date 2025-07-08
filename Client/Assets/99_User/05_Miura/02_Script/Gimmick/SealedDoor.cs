@@ -64,4 +64,14 @@ public class SealedDoor : ObjectBase
 
         Destroy(fragment.gameObject);
     }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void TurnOnPower(int triggerID)
+    {
+        throw new System.NotImplementedException();
+    }
 }
