@@ -13,8 +13,6 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([                   //シーダーを使った初期データの登録
 
-        ]);
     }
 }

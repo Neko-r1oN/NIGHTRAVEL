@@ -1,3 +1,5 @@
+using NIGHTRAVEL.Server.Model.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MagicOnion services to the container and enable JSON transcoding feature.
@@ -5,6 +7,8 @@ builder.Services.AddMagicOnion().AddJsonTranscoding();
 // Add MagicOnion JSON transcoding Swagger support.
 builder.Services.AddMagicOnionJsonTranscodingSwagger();
 
+builder.Services.AddMagicOnion();
+builder.Services.AddSingleton<RoomContextRepository>();
 builder.Services.AddMvcCore();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

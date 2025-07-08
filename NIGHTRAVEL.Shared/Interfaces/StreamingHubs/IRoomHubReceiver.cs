@@ -19,7 +19,7 @@ namespace Shared.Interfaces.StreamingHubs
         //ここにサーバー～クライアントの定義
 
         //ユーザーの入室通知
-        void Onjoin(JoinedUser user);
+        void Onjoin(Dictionary<Guid, JoinedUser> joindUserList);
 
         //ユーザーの退室通知
         void OnLeave(JoinedUser user);
