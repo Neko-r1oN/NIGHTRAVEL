@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        UIManager.Instance.ShowUIAndFadeOut();
+        //UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
