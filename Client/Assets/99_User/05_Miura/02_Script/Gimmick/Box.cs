@@ -12,6 +12,8 @@ public class Box : ObjectBase
 {
     [SerializeField] GameObject BoxPrefab;  //箱プレハブ取得
     [SerializeField] GameObject BoxFragment;　//破片エフェクトを取得
+
+    SurfaceEffector2D effector;
     PlayerBase player;
 
     bool isBroken = false;
@@ -28,9 +30,19 @@ public class Box : ObjectBase
     public void SpawnBox()
     {
         GameObject boxObj = BoxPrefab;
+        float spawnX = Random.Range(1, 3);
 
-        //箱を生成する
-        Instantiate(boxObj, new Vector2(28.0f, 27.0f), Quaternion.identity);
+
+        if (spawnX==1)
+        {
+            //箱を生成する
+            Instantiate(boxObj, new Vector2(27.09f, 27), Quaternion.identity);
+        }
+        if (spawnX==2)
+        {
+            //箱を生成する
+            Instantiate(boxObj, new Vector2(28.9f, 27), Quaternion.identity);
+        }
     }
 
     /// <summary>
