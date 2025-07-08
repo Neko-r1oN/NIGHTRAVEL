@@ -111,9 +111,9 @@ public class Drone : EnemyBase
     /// <summary>
     /// ©g‚ª¶¬‚³‚ê‚½‚Æ‚«‚Ìˆ—
     /// </summary>
-    public override void OnGenerated()
+    public override void TransparentSprites()
     {
-        base.OnGenerated();
+        base.TransparentSprites();
         InvokeRepeating("FadeIn", 0, 0.1f);
 
         // ƒ‰ƒ“ƒ_ƒ€‚ÈêŠ‚ÉŒü‚©‚Á‚Ä­‚µˆÚ“®

@@ -6,6 +6,7 @@ using Grpc.Core;
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 abstract public class EnemyBase : CharacterBase
@@ -311,42 +312,6 @@ abstract public class EnemyBase : CharacterBase
         return alivePlayers;
     }
 
-    /// <summary>
-    /// 自身が生成されたときの処理
-    /// </summary>
-    public virtual void OnGenerated()
-    {
-        if (!m_rb2d) Start();   // Startが実行されていない場合
-        isInvincible = true;    // 無敵状態にする & 本来の行動不可
-        
-        foreach(var spriteRenderer in spriteRenderers)
-        {
-            Color color = spriteRenderer.color;
-            color.a = 0;
-            spriteRenderer.color = color;
-        }
-    }
-
-    /// <summary>
-    /// フェードイン処理
-    /// </summary>
-    protected void FadeIn()
-    {
-        foreach (var spriteRenderer in spriteRenderers)
-        {
-            Color color = spriteRenderer.color;
-            color.a += 0.2f;
-            spriteRenderer.color = color;
-        }
-
-        // フェードインが完了したら、無敵状態解除
-        if (!isInvincible && spriteRenderers[0].color.a >= 1)
-        {
-            isInvincible = true;
-            CancelInvoke("FadeIn");
-        }
-    }
-
     #region 移動処理関連
 
     /// <summary>
@@ -392,10 +357,13 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public void ApplyDamage(int damage, Transform attacker = null, List<StatusEffectController.EFFECT_TYPE> effectTypes = null)
+    public void ApplyDamage(int damage, Transform attacker = null, params StatusEffectController.EFFECT_TYPE[] effectTypes)
     {
         if (isInvincible || isDead) return;
 
+        var hitPoint = TransformUtils.GetHitPointToTarget(transform, attacker.position);
+        if (hitPoint == null) hitPoint = transform.position;
+        UIManager.Instance.PopDamageUI((Vector2)hitPoint, false);   // ダメージ表記
         hp -= Mathf.Abs(damage);
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
@@ -411,12 +379,9 @@ abstract public class EnemyBase : CharacterBase
             }
 
             // 状態異常を付与する
-            if (effectTypes != null)
+            if (effectTypes.Length > 0)
             {
-                foreach (StatusEffectController.EFFECT_TYPE effectType in effectTypes)
-                {
-                    effectController.ApplyStatusEffect(effectType);
-                }
+                effectController.ApplyStatusEffect(effectTypes);
             }
 
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
@@ -534,9 +499,47 @@ abstract public class EnemyBase : CharacterBase
     #region テクスチャ・アニメーション関連
 
     /// <summary>
-    /// 攻撃のイベント通知で攻撃処理を実行する
+    /// 攻撃アニメーションのイベント通知で攻撃処理を実行する
     /// </summary>
     public virtual void OnAttackAnimEvent() { }
+
+    /// <summary>
+    /// スプライトを透明にする
+    /// </summary>
+    public virtual void TransparentSprites()
+    {
+        if (isSpawn) Start();   // Startが実行されていない場合
+        isSpawn = false;
+        isInvincible = true;    // 無敵状態にする & 本来の行動不可
+
+        foreach (var spriteRenderer in spriteRenderers)
+        {
+            Color color = spriteRenderer.color;
+            color.a = 0;
+            spriteRenderer.color = color;
+        }
+    }
+
+    /// <summary>
+    /// フェードイン処理
+    /// </summary>
+    protected void FadeIn()
+    {
+        foreach (var spriteRenderer in spriteRenderers)
+        {
+            Color color = spriteRenderer.color;
+            color.a += 0.2f;
+            spriteRenderer.color = color;
+        }
+
+        // フェードインが完了したら、無敵状態解除
+        if (!isInvincible && spriteRenderers[0].color.a >= 1)
+        {
+            isInvincible = true;
+            CancelInvoke("FadeIn");
+        }
+    }
+
 
     /// <summary>
     /// スポーンアニメーションが終了したとき
