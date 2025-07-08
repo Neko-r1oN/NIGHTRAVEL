@@ -4,12 +4,8 @@
 // 引用：https://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
 //--------------------------------------------------------------
 using UnityEngine;
-using UnityEngine.Events;
 using System.Collections;
-using UnityEngine.SceneManagement;
 using Pixeye.Unity;
-using System;
-using HardLight2DUtil;
 using static StatusEffectController;
 
 public class Sword : PlayerBase
@@ -31,7 +27,7 @@ public class Sword : PlayerBase
     private bool isCombo = false;       // コンボ可能フラグ
     private bool isCooldown = false;    // 攻撃のクールダウンフラグ
 
-    private float plDirection = 0;  // プレイヤーの向き
+    private float plDirection = 0;      // プレイヤーの向き
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float attackCoolDown = 0.8f;   // 攻撃クールダウン処理

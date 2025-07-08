@@ -12,8 +12,10 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - CLIPPING_ON
   - FADE_ON
   - HITEFFECT_ON
+  - HOLOGRAM_ON
   - OUTBASE8DIR_ON
   - OUTBASE_ON
   - OUTDIST_ON
@@ -93,10 +95,10 @@ Material:
     - _Brightness: 0
     - _ChromAberrAlpha: 0.356
     - _ChromAberrAmount: 0.366
-    - _ClipUvDown: 1
-    - _ClipUvLeft: 1
-    - _ClipUvRight: 1
-    - _ClipUvUp: 1
+    - _ClipUvDown: 0
+    - _ClipUvLeft: 0
+    - _ClipUvRight: 0
+    - _ClipUvUp: 0
     - _ColorChangeLuminosity: 0
     - _ColorChangeTolerance: 0.25
     - _ColorChangeTolerance2: 0.25
@@ -145,7 +147,7 @@ Material:
     - _HandDrawnSpeed: 5
     - _HitEffectBlend: 0
     - _HitEffectGlow: 5
-    - _HologramBlend: 1
+    - _HologramBlend: 0
     - _HologramMaxAlpha: 2
     - _HologramMinAlpha: 0.167
     - _HologramStripesAmount: 0.088
@@ -243,7 +245,7 @@ Material:
     - _GradTopRightCol: {r: 1, g: 0, b: 0, a: 1}
     - _GreyscaleTintColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
     - _HitEffectColor: {r: 0.1641509, g: 0.35900122, b: 1, a: 1}
-    - _HologramStripeColor: {r: 0, g: 0.2841599, b: 0.8490566, a: 1}
+    - _HologramStripeColor: {r: 0.8509804, g: 0.22745098, b: 0, a: 1}
     - _InnerOutlineColor: {r: 1, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0.43268147, b: 0.67058825, a: 1}
     - _OverlayColor: {r: 1, g: 1, b: 1, a: 1}

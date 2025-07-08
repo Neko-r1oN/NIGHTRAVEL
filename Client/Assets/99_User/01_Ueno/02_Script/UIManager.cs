@@ -483,12 +483,14 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// ダメージ表記処理
     /// </summary>
-    public void PopDamageUI(Vector3 popPosition,bool isPlayer)
+    public void PopDamageUI(int dmgVol, Vector3 popPosition, bool isPlayer)
     {
         GameObject ui;
 
         if (isPlayer) ui = Instantiate(playerDmgText);
         else ui = Instantiate(otherDmgText);
+
+        ui.GetComponent<Text>().text = dmgVol.ToString();
 
         ui.transform.SetParent(canvas.transform);
 

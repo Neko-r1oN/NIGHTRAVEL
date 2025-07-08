@@ -13,7 +13,7 @@ public class CyberDog : EnemyBase
     /// </summary>
     public enum ANIM_ID
     {
-        None = 0,
+        Spawn = 0,
         Idle,
         Attack,
         Run,
@@ -102,15 +102,7 @@ public class CyberDog : EnemyBase
     /// </summary>
     protected override void Idle()
     {
-        if (!target)
-        {
-            SetAnimId((int)ANIM_ID.Idle);
-        }
-        else
-        {
-            SetAnimId((int)ANIM_ID.None);
-        }
-
+        SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 

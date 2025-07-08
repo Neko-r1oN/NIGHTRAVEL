@@ -33,10 +33,10 @@ public class StatusEffectController : MonoBehaviour
     readonly float burnTickInterval = 0.5f; // 炎上
     #endregion
 
-    #region  各状態異常を適用させたときの効果値
-    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedValue = new Dictionary<EFFECT_TYPE, float>();    // 移動速度
-    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedFactorValue = new Dictionary<EFFECT_TYPE, float>();    // 移動速度(Animatorの係数)
-    Dictionary<EFFECT_TYPE, float> tmpAttackSpeedFactorValue = new Dictionary<EFFECT_TYPE, float>();  // 攻撃速度(Animatorの係数)
+    #region  各状態異常を適用させた効果割合
+    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedRates = new Dictionary<EFFECT_TYPE, float>();    // 移動速度
+    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedFactorRates = new Dictionary<EFFECT_TYPE, float>();    // 移動速度(Animatorの係数)
+    Dictionary<EFFECT_TYPE, float> tmpAttackSpeedFactorRates = new Dictionary<EFFECT_TYPE, float>();  // 攻撃速度(Animatorの係数)
     #endregion
 
     #region 状態異常のパーティクル
@@ -107,17 +107,16 @@ public class StatusEffectController : MonoBehaviour
                 ,
                 EFFECT_TYPE.Freeze => () =>{
                     // 移動速度・攻撃速度の50%分を現在のステータスから減算する
-                    float moveSpeedOffset = Mathf.Floor(-characterBase.MoveSpeed * 0.5f);
-                    float moveSpeedFactorOffset = -characterBase.MoveSpeedFactor * 0.5f;
-                    float attackSpeedFactorOffset = -characterBase.AttackSpeedFactor * 0.5f;
-                    CharacterStatusData data = new CharacterStatusData(
-                        moveSpeed: moveSpeedOffset,
-                        moveSpeedFactor: moveSpeedFactorOffset,
-                        attackSpeedFactor: attackSpeedFactorOffset);
-                    tmpMoveSpeedValue.Add(effectType, moveSpeedOffset);
-                    tmpMoveSpeedFactorValue.Add(effectType, moveSpeedFactorOffset);
-                    tmpAttackSpeedFactorValue.Add(effectType, attackSpeedFactorOffset);
-                    characterBase.ApplyStatusBonus(data);
+                    float freezeRatio = -0.5f;
+                    tmpMoveSpeedRates.Add(effectType, freezeRatio);
+                    tmpMoveSpeedFactorRates.Add(effectType, freezeRatio);
+                    tmpAttackSpeedFactorRates.Add(effectType, freezeRatio);
+                    characterBase.ApplyStatusModifierByRate(
+                        freezeRatio,
+                        CharacterBase.STATUS_TYPE.MoveSpeed,
+                        CharacterBase.STATUS_TYPE.MoveSpeedFactor,
+                        CharacterBase.STATUS_TYPE.AttackSpeedFactor
+                    );
                 }
                 ,
                 EFFECT_TYPE.Shock => () => {
@@ -153,14 +152,16 @@ public class StatusEffectController : MonoBehaviour
             ,
             EFFECT_TYPE.Freeze => () => {
                 // 移動速度・攻撃速度の減算されていた分の値をステータスに加算する
-                CharacterStatusData data = new CharacterStatusData(
-                    moveSpeed: -tmpMoveSpeedValue[effectType], 
-                    moveSpeedFactor: -tmpMoveSpeedFactorValue[effectType], 
-                    attackSpeedFactor: -tmpAttackSpeedFactorValue[effectType]);
-                characterBase.ApplyStatusBonus(data);
-                tmpMoveSpeedValue.Remove(effectType);
-                tmpMoveSpeedFactorValue.Remove(effectType);
-                tmpAttackSpeedFactorValue.Remove(effectType);
+                float freezeRatio = 0.5f;
+                characterBase.ApplyStatusModifierByRate(
+                        freezeRatio,
+                        CharacterBase.STATUS_TYPE.MoveSpeed,
+                        CharacterBase.STATUS_TYPE.MoveSpeedFactor,
+                        CharacterBase.STATUS_TYPE.AttackSpeedFactor
+                    );
+                tmpMoveSpeedRates.Remove(effectType);
+                tmpMoveSpeedFactorRates.Remove(effectType);
+                tmpAttackSpeedFactorRates.Remove(effectType);
             }
             ,
             EFFECT_TYPE.Shock => () => {

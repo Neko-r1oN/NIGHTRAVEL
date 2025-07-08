@@ -116,6 +116,7 @@ abstract public class EnemyBase : CharacterBase
     protected bool isAttacking;
     protected bool isDead;
     protected bool isPatrolPaused;
+    protected bool isSpawn = true; // スポーン中かどうか
     #endregion
 
     #region ターゲットとの距離
@@ -164,9 +165,9 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void FixedUpdate()
     {
-        if (isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
+        if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
 
-        if (!target && Players.Count > 0 || target.GetComponent<CharacterBase>().HP <= 0)
+        if (Players.Count > 0 && !target || Players.Count > 0 && target.GetComponent<CharacterBase>().HP <= 0)
         {
             // 新しくターゲットを探す
             target = sightChecker.GetTargetInSight();
@@ -536,6 +537,14 @@ abstract public class EnemyBase : CharacterBase
     /// 攻撃のイベント通知で攻撃処理を実行する
     /// </summary>
     public virtual void OnAttackAnimEvent() { }
+
+    /// <summary>
+    /// スポーンアニメーションが終了したとき
+    /// </summary>
+    public void OnEndSpawnAnim()
+    {
+        isSpawn = false;   // 行動できるようにする
+    }
 
     /// <summary>
     /// アニメーション設定処理

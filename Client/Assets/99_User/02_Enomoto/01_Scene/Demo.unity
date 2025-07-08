@@ -11333,16 +11333,18 @@ MonoBehaviour:
   m_BlinkForce: 40
   blinkTime: 0.12
   blinkCoolDown: 1
-  ladderSpeed: 0.3
+  m_ZipJumpForceX: 60
+  m_ZipJumpForceY: 40
+  zipSpeed: 150
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 53
-  ladderLayer:
+  ziplineLayer:
     serializedVersion: 2
-    m_Bits: 4194304
+    m_Bits: 0
   m_GroundCheck: {fileID: 6744877869638877919}
   m_WallCheck: {fileID: 8802816407715073347}
   attackCheck: {fileID: 5225339087299716848}
@@ -11350,6 +11352,7 @@ MonoBehaviour:
   playerCollider: {fileID: 8365939688814995126}
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
+  ziplineSpark: {fileID: 0}
   attackCoolDown: 0.8
   skillForth: 45
   skillTime: 0.25
@@ -56273,6 +56276,10 @@ PrefabInstance:
     - target: {fileID: 6958166859940720960, guid: 20af63612413ddc448177483cc4b4170, type: 3}
       propertyPath: looping
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6958166859940720960, guid: 20af63612413ddc448177483cc4b4170, type: 3}
+      propertyPath: stopAction
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6958166859940720960, guid: 20af63612413ddc448177483cc4b4170, type: 3}
       propertyPath: lengthInSec
