@@ -6,7 +6,7 @@
 
 using UnityEngine;
 
-abstract public class ObjectBase : MonoBehaviour
+abstract public class ObjectBase : GimmickBase
 {
     /// <summary>
     /// 壊れるオブジェクトのダメージ関数

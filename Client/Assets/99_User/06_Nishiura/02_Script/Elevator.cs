@@ -20,6 +20,10 @@ public class Elevator : GimmickBase
     public int moveSpeed;
     // 動作中判定変数
     private bool isMoving;
+    // 破壊判定変数
+    public bool isBroken = false;
+    // ワイヤー
+    [SerializeField] GameObject wire;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -30,7 +34,6 @@ public class Elevator : GimmickBase
         {
             isMoving = true;    // 動作中にする
             Invoke("MoveElevator", 1f);  //昇降開始
-            Debug.Log("You Entered Elevator");
         }
     }
 
@@ -40,10 +43,13 @@ public class Elevator : GimmickBase
         if (!isRised)
         {   //上昇済みでない場合
             this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
+            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
         }
         else
         {   //上昇済みの場合
             this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
+            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
+           
         }
     }
 
@@ -61,15 +67,21 @@ public class Elevator : GimmickBase
             isRised = false;    // 下降済みとする
         }
 
+        Debug.Log("Elevator Ready");
         isMoving = false;   // 動作完了にする
     }
 
     /// <summary>
     /// 電源オン関数
     /// </summary>
-    public override void TurnOnPower()
+    public override void TurnOnPower(int triggerID)
     {
         isPowerd = true;
+    }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
     }
 
     /// <summary>
@@ -86,6 +98,7 @@ public class Elevator : GimmickBase
             {   //上昇済みの場合
                 isMoving = true;    // 動作中にする
                 this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
+                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
             }
         }
         else
@@ -95,6 +108,7 @@ public class Elevator : GimmickBase
             {   //上昇済みでない場合
                 isMoving = true;    // 動作中にする
                 this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
+                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
             }
         }
     }

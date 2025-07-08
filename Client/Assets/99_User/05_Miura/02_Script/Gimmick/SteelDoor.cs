@@ -44,9 +44,14 @@ public class SteelDoor : GimmickBase
         }
     }
 
-    public override void TurnOnPower()
+    public override void TurnOnPower(int t)
     {
         isPowerd = true;
+    }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
     }
 
 }
