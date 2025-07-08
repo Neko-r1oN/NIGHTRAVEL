@@ -84,56 +84,62 @@ public class StatusEffectController : MonoBehaviour
     /// 状態異常を付与する処理
     /// </summary>
     /// <param name="effectType"></param>
-    public void ApplyStatusEffect(EFFECT_TYPE effectType)
+    public void ApplyStatusEffect(params EFFECT_TYPE[] effectTypes)
     {
-        float effectDuration = effectType switch
+        foreach (EFFECT_TYPE effectType in effectTypes)
         {
-            EFFECT_TYPE.Burn => maxBurnDuration,
-            EFFECT_TYPE.Freeze => maxFreezeDuration,
-            EFFECT_TYPE.Shock => maxShockDuration,
-            _ => 0
-        };
-
-        if (!currentEffects.ContainsKey(effectType))
-        {
-            currentEffects.Add(effectType, effectDuration);
-
-            // 状態異常の効果を適用させる
-            Action action = effectType switch
+            float effectDuration = effectType switch
             {
-                EFFECT_TYPE.Burn => () => {
-                    InvokeRepeating("ActivateBurnEffect", 0, burnTickInterval);
-                }
-                ,
-                EFFECT_TYPE.Freeze => () =>{
-                    // 移動速度・攻撃速度の50%分を現在のステータスから減算する
-                    float freezeRatio = -0.5f;
-                    tmpMoveSpeedRates.Add(effectType, freezeRatio);
-                    tmpMoveSpeedFactorRates.Add(effectType, freezeRatio);
-                    tmpAttackSpeedFactorRates.Add(effectType, freezeRatio);
-                    characterBase.ApplyStatusModifierByRate(
-                        freezeRatio,
-                        CharacterBase.STATUS_TYPE.MoveSpeed,
-                        CharacterBase.STATUS_TYPE.MoveSpeedFactor,
-                        CharacterBase.STATUS_TYPE.AttackSpeedFactor
-                    );
-                }
-                ,
-                EFFECT_TYPE.Shock => () => {
-                    if (this.gameObject.tag == "Player") StartCoroutine(playerBase.AbnormalityStun(maxShockDuration));
-                    else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(maxShockDuration);
-                }
-                ,
-                _ => null
+                EFFECT_TYPE.Burn => maxBurnDuration,
+                EFFECT_TYPE.Freeze => maxFreezeDuration,
+                EFFECT_TYPE.Shock => maxShockDuration,
+                _ => 0
             };
-            action();
-            ApplyStatusEffectParticle(effectType);
-        }
-        else
-        {
-            if (effectType != EFFECT_TYPE.Shock)
+
+            if (!currentEffects.ContainsKey(effectType))
             {
-                currentEffects[effectType] = effectDuration;    // 効果時間をリセット
+                currentEffects.Add(effectType, effectDuration);
+
+                // 状態異常の効果を適用させる
+                Action action = effectType switch
+                {
+                    EFFECT_TYPE.Burn => () =>
+                    {
+                        InvokeRepeating("ActivateBurnEffect", 0, burnTickInterval);
+                    }
+                    ,
+                    EFFECT_TYPE.Freeze => () =>
+                    {
+                        // 移動速度・攻撃速度の50%分を現在のステータスから減算する
+                        float freezeRatio = -0.5f;
+                        tmpMoveSpeedRates.Add(effectType, freezeRatio);
+                        tmpMoveSpeedFactorRates.Add(effectType, freezeRatio);
+                        tmpAttackSpeedFactorRates.Add(effectType, freezeRatio);
+                        characterBase.ApplyStatusModifierByRate(
+                            freezeRatio,
+                            CharacterBase.STATUS_TYPE.MoveSpeed,
+                            CharacterBase.STATUS_TYPE.MoveSpeedFactor,
+                            CharacterBase.STATUS_TYPE.AttackSpeedFactor
+                        );
+                    }
+                    ,
+                    EFFECT_TYPE.Shock => () =>
+                    {
+                        if (this.gameObject.tag == "Player") StartCoroutine(playerBase.AbnormalityStun(maxShockDuration));
+                        else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(maxShockDuration);
+                    }
+                    ,
+                    _ => null
+                };
+                action();
+                ApplyStatusEffectParticle(effectType);
+            }
+            else
+            {
+                if (effectType != EFFECT_TYPE.Shock)
+                {
+                    currentEffects[effectType] = effectDuration;    // 効果時間をリセット
+                }
             }
         }
     }

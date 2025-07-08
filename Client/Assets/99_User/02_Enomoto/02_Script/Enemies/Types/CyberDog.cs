@@ -109,9 +109,9 @@ public class CyberDog : EnemyBase
     /// <summary>
     /// ©g‚ª¶¬‚³‚ê‚½‚Æ‚«‚Ìˆ—
     /// </summary>
-    public override void OnGenerated()
+    public override void TransparentSprites()
     {
-        base.OnGenerated();
+        base.TransparentSprites();
         InvokeRepeating("FadeIn", 0, 0.1f);
         SetAnimId((int)ANIM_ID.JumpOut);
 

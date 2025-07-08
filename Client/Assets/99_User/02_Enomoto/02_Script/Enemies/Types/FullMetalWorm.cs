@@ -49,7 +49,7 @@ public class FullMetalWorm : EnemyBase
 
     [Foldout("チェック関連")]
     [SerializeField]
-    Vector2 stageCenter = Vector2.zero;
+    Transform stageCenter;
     [Foldout("チェック関連")]
     [SerializeField]
     float moveRange;
@@ -252,7 +252,7 @@ public class FullMetalWorm : EnemyBase
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
 
         if ((int)Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
-        enemy.OnGenerated();
+        enemy.TransparentSprites();
         return enemyObj;
     }
 
@@ -432,7 +432,7 @@ public class FullMetalWorm : EnemyBase
     /// ステージの中央の座標を設定
     /// </summary>
     /// <param name="stageCenter"></param>
-    public void SetStageCenterParam(Vector2 stageCenter)
+    public void SetStageCenterParam(Transform stageCenter)
     {
         this.stageCenter = stageCenter;
     }
@@ -454,8 +454,8 @@ public class FullMetalWorm : EnemyBase
             for (int i = 0; i < 100; i++)
             {
                 // ターゲットのプレイヤーが存在しない場合、ランダムな地点に移動する
-                Vector2 maxPos = stageCenter + Vector2.one * moveRange;
-                Vector2 minPos = stageCenter + Vector2.one * -moveRange;
+                Vector2 maxPos = (Vector2)stageCenter.position + Vector2.one * moveRange;
+                Vector2 minPos = (Vector2)stageCenter.position + Vector2.one * -moveRange;
                 targetPos = new Vector2(Random.Range(minPos.x, maxPos.x + 1), Random.Range(minPos.y, maxPos.y + 1));
 
                 // ランダムな目標地点との距離が一定以上離れていれば確定する
@@ -485,10 +485,10 @@ public class FullMetalWorm : EnemyBase
         }
 
         // 移動範囲
-        if (stageCenter != Vector2.zero)
+        if (stageCenter != null)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(stageCenter, moveRange);
+            Gizmos.DrawWireSphere((Vector2)stageCenter.position, moveRange);
         }
 
         Gizmos.color = Color.green;
