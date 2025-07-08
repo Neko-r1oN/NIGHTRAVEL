@@ -30,9 +30,6 @@ public class Sword : PlayerBase
     private float plDirection = 0;      // プレイヤーの向き
 
     [Foldout("キャラ別ステータス")]
-    [SerializeField] private float attackCoolDown = 0.8f;   // 攻撃クールダウン処理
-
-    [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillForth = 45f;        // スキルの移動力
 
     [Foldout("キャラ別ステータス")]

@@ -785,11 +785,13 @@ abstract public class PlayerBase : CharacterBase
     /// 被ダメ処理
     /// (ノックバックはposに応じて有無が変わる)
     /// </summary>
-    public void ApplyDamage(int damage, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
+    public void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
     {
         if (!invincible)
         {
-            // UIManager.Instance.PopDamageUI(transform.position, true);
+            var damage = CalculationLibrary.CalcDamage(power, Defense);
+
+            UIManager.Instance.PopDamageUI(damage, transform.position, true);
             if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
             Vector2 damageDir = Vector2.zero;

@@ -15,7 +15,7 @@ abstract public class CharacterBase : MonoBehaviour
     {
         All,
         HP,
-        Defence,
+        Defense,
         Power,
         JumpPower,
         MoveSpeed,
@@ -30,7 +30,7 @@ abstract public class CharacterBase : MonoBehaviour
 
     [Foldout("ステータス")]
     [SerializeField]
-    protected int baseDefence = 10;  // 防御力
+    protected int baseDefense = 10;  // 防御力
 
     [Foldout("ステータス")]
     [SerializeField]
@@ -60,7 +60,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// <summary>
     /// 防御力
     /// </summary>
-    public int BaseDefence { get { return baseDefence; } }
+    public int BaseDefense { get { return baseDefense; } }
 
     /// <summary>
     /// 攻撃力
@@ -133,7 +133,7 @@ abstract public class CharacterBase : MonoBehaviour
     // インスペクター上で見るためのpublic
     // 後でpublicを消す
     public int hp;
-    public int defence;
+    public int defense;
     public int power;
     public float jumpPower;
     public float moveSpeed;
@@ -152,7 +152,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// <summary>
     /// 防御力
     /// </summary>
-    public int Defence { get { return defence; } set { defence = value; } }
+    public int Defense { get { return defense; } set { defense = value; } }
 
     /// <summary>
     /// 攻撃力
@@ -206,7 +206,7 @@ abstract public class CharacterBase : MonoBehaviour
         var applyHp = hp + addStatusData.hp;
         hp = applyHp < maxHp ? applyHp : maxHp;
 
-        defence += addStatusData.defence;
+        defense += addStatusData.defence;
 
         var applyPower = power + addStatusData.power;
         power = applyPower < maxPower ? applyPower : maxPower;
@@ -248,7 +248,7 @@ abstract public class CharacterBase : MonoBehaviour
         if (statusList.Contains(STATUS_TYPE.All)) 
         {
             statusList = new List<STATUS_TYPE> {
-                STATUS_TYPE.HP, STATUS_TYPE.Defence, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
+                STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
                 STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor, STATUS_TYPE.AttackSpeedFactor
             };
         }
@@ -263,8 +263,8 @@ abstract public class CharacterBase : MonoBehaviour
                     if (canResetHpToMax) hp = maxHp;
                     else hp = applyHp < hp ? applyHp : hp;
                     break;
-                case STATUS_TYPE.Defence:
-                    defence += (int)(baseDefence * rate);
+                case STATUS_TYPE.Defense:
+                    defense += (int)(baseDefense * rate);
                     break;
                 case STATUS_TYPE.Power:
                     maxPower += (int)(basePower * rate);

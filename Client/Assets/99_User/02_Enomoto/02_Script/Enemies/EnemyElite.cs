@@ -46,7 +46,7 @@ public class EnemyElite : MonoBehaviour
         // HP・攻撃力が50%増し、防御力・移動速度・移動速度係数が25%増しにする
         CharacterBase charaBase = GetComponent<CharacterBase>();
         charaBase.ApplyStatusModifierByRate(0.5f, true, CharacterBase.STATUS_TYPE.HP, CharacterBase.STATUS_TYPE.Power);
-        charaBase.ApplyStatusModifierByRate(0.25f, CharacterBase.STATUS_TYPE.Defence, CharacterBase.STATUS_TYPE.MoveSpeed, CharacterBase.STATUS_TYPE.MoveSpeedFactor);
+        charaBase.ApplyStatusModifierByRate(0.25f, CharacterBase.STATUS_TYPE.Defense, CharacterBase.STATUS_TYPE.MoveSpeed, CharacterBase.STATUS_TYPE.MoveSpeedFactor);
 
         Color outlineColor = new Color();
         Action action = type switch
