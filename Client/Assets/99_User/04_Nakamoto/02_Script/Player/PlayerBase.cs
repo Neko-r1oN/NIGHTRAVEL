@@ -155,6 +155,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_Grounded;          // プレイヤーの接地フラグ
     protected bool m_IsWall = false;    // プレイヤーの前に壁があるか
     protected bool m_IsZipline = false; // 動作フラグ
+    protected bool m_IsScaffold = false;// 足場動作フラグ
     protected bool isJump = false;      // ジャンプ入力フラグ
     protected bool isBlink = false;     // ダッシュ入力フラグ
     protected bool isBlinking = false;        // プレイヤーがダッシュ中かどうか
@@ -240,6 +241,12 @@ abstract public class PlayerBase : CharacterBase
                     gameObject.layer = 21;
                 }
             }
+
+            if (m_IsScaffold && Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                gameObject.layer = 21;
+                StartCoroutine(ScaffoldDown());
+            }
         }
     }
 
@@ -317,7 +324,7 @@ abstract public class PlayerBase : CharacterBase
                 if (collidersWall[i].gameObject != null)
                 {
                     isBlinking = false;
-                    m_IsWall = true;
+                    if (gameObject.layer != 21) m_IsWall = true;
                 }
             }
             prevVelocityX = m_Rigidbody2D.linearVelocity.x;
@@ -644,6 +651,11 @@ abstract public class PlayerBase : CharacterBase
         // 最後に記録されたオブジェクトを返す
         return result?.transform;
     }
+
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Scaffold") m_IsScaffold = true;
+    }
     #endregion
 
     #region プレイヤー共通非同期処理
@@ -745,6 +757,12 @@ abstract public class PlayerBase : CharacterBase
         isBlinking = false;
         yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
         canBlink = true;
+    }
+    protected IEnumerator ScaffoldDown()
+    {
+        yield return new WaitForSeconds(0.3f);
+        m_IsScaffold = false;
+        gameObject.layer = 20;
     }
     #endregion
 
