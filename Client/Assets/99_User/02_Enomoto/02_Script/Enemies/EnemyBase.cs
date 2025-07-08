@@ -357,13 +357,14 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public void ApplyDamage(int damage, Transform attacker = null, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    public void ApplyDamage(int power, Transform attacker = null, params StatusEffectController.EFFECT_TYPE[] effectTypes)
     {
         if (isInvincible || isDead) return;
 
+        var damage = CalculationLibrary.CalcDamage(power, Defense);
         var hitPoint = TransformUtils.GetHitPointToTarget(transform, attacker.position);
         if (hitPoint == null) hitPoint = transform.position;
-        UIManager.Instance.PopDamageUI((Vector2)hitPoint, false);   // ダメージ表記
+        UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ダメージ表記
         hp -= Mathf.Abs(damage);
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる

@@ -789,7 +789,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (!invincible)
         {
-            var damage = CalculationLibrary.CalcDamage(power, Defense);
+            var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
             if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);

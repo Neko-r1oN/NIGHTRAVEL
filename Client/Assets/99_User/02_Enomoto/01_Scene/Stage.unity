@@ -470,7 +470,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &54375128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,12 +484,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHp: 10
-  baseDefence: 10
+  baseDefense: 10
   basePower: 10
   baseJumpPower: 0
   baseMoveSpeed: 25
   hp: 0
-  defence: 0
+  defense: 0
   power: 0
   jumpPower: 0
   moveSpeed: 0
@@ -23987,7 +23987,9 @@ MonoBehaviour:
   randRespawnB: {fileID: 1105730915}
   distMinSpawnPos: 3
   player: {fileID: 7393988378002152513}
-  enemyList: []
+  enemyList:
+  - {fileID: 9004236794111217968, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+  - {fileID: 3047601142500118110, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
   xRadius: 10
   yRadius: 6
 --- !u!4 &1877055303
@@ -45182,17 +45184,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 572547763}
     m_Modifications:
+    - target: {fileID: 2194721598947248831, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.06656533
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975501357827476406, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.54825586
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975501357827476406, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.8363107
+      objectReference: {fileID: 0}
     - target: {fileID: 3136978941888288294, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: 'players.Array.data[0]'
       value: 
       objectReference: {fileID: 7393988378002152513}
+    - target: {fileID: 5739610127967878025, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.49443105
+      objectReference: {fileID: 0}
+    - target: {fileID: 5739610127967878025, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.86921686
+      objectReference: {fileID: 0}
     - target: {fileID: 5827695898741677683, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5827695898741677683, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -3.3
       objectReference: {fileID: 0}
     - target: {fileID: 5827695898741677683, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_LocalPosition.z
@@ -45226,13 +45248,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6747288462790832883, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9654972
+      objectReference: {fileID: 0}
+    - target: {fileID: 6747288462790832883, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.26041353
+      objectReference: {fileID: 0}
     - target: {fileID: 9004236794111217968, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_Name
       value: CyberDog
       objectReference: {fileID: 0}
     - target: {fileID: 9004236794111217968, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139444315726439288, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9895062
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139444315726439288, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.14449047
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -79509,12 +79547,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHp: 5000
-  baseDefence: 20
+  baseDefense: 10
   basePower: 15
   baseJumpPower: 10
   baseMoveSpeed: 60
   hp: 150
-  defence: 20
+  defense: 0
   power: 50
   jumpPower: 50
   moveSpeed: 1
@@ -79548,7 +79586,6 @@ MonoBehaviour:
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
   ziplineSpark: {fileID: 0}
-  attackCoolDown: 0.8
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
