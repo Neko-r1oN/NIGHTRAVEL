@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
 
-		animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
+		animator.SetFloat("MoveSpeed", Mathf.Abs(horizontalMove));
 
 		if (Input.GetKeyDown(KeyCode.Z))
 		{
