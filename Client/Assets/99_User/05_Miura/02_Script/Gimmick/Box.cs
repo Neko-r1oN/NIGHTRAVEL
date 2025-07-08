@@ -133,11 +133,11 @@ public class Box : ObjectBase
 
     public override void TurnOnPower(int triggerID)
     {
-        throw new System.NotImplementedException();
+        ApplyDamage();
     }
 
     public override void TruggerRequest()
     {
-        throw new System.NotImplementedException();
+
     }
 }

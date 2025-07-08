@@ -232,7 +232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &161226439
 Transform:
   m_ObjectHideFlags: 0
@@ -1063,7 +1063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &1003676394
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1352,12 +1352,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHp: 10
-  baseDefence: 10
+  baseDefense: 10
   basePower: 10
   baseJumpPower: 10
   baseMoveSpeed: 10
   hp: 0
-  defence: 0
+  defense: 0
   power: 0
   jumpPower: 0
   moveSpeed: 0
@@ -1366,6 +1366,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   players:
   - {fileID: 1162590609}
+  spriteRenderers: []
   bulletNum: 3
   shotsPerSecond: 0.5
   attackCoolTime: 1
@@ -2561,7 +2562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5572682094587039261, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
