@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        //UIManager.Instance.ShowUIAndFadeOut();
+        UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -135,23 +135,23 @@ public class GameManager : MonoBehaviour
             Invoke(nameof(ChengScene), 15f);
         }
 
-        //if (spawnCnt < maxSpawnCnt  && !isBossDead)
-        //{// ÉXÉ|Å[ÉìâÒêîÇ™å¿äEÇ…íBÇµÇƒÇ¢ÇÈÇ©
-        //    elapsedTime += Time.deltaTime;
-        //    if (elapsedTime > spawnInterval)
-        //    {
-        //        elapsedTime = 0;
+        if (spawnCnt < maxSpawnCnt  && !isBossDead)
+        {// ÉXÉ|Å[ÉìâÒêîÇ™å¿äEÇ…íBÇµÇƒÇ¢ÇÈÇ©
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime > spawnInterval)
+            {
+                elapsedTime = 0;
 
-        //        if (spawnCnt < maxSpawnCnt / 2)
-        //        {// ìGÇ™100ëÃÇ¢Ç»Ç¢èÍçá
-        //            SpawnManager.Instance.GenerateEnemy(Random.Range(3,10));
-        //        }
-        //        else
-        //        {// Ç¢ÇÈèÍçá
-        //            SpawnManager.Instance.GenerateEnemy(1);
-        //        }
-        //    }
-        //}
+                if (spawnCnt < maxSpawnCnt / 2)
+                {// ìGÇ™100ëÃÇ¢Ç»Ç¢èÍçá
+                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,7));
+                }
+                else
+                {// Ç¢ÇÈèÍçá
+                    SpawnManager.Instance.GenerateEnemy(1);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -172,8 +172,6 @@ public class GameManager : MonoBehaviour
 
         UIManager.Instance.CountTermsText(crashNum);
 
-        //Debug.Log("ì|ÇµÇΩêîÅF" + crashNum);
-
         spawnCnt--;
 
         if (enemy.IsBoss)
@@ -181,10 +179,7 @@ public class GameManager : MonoBehaviour
             DeathBoss();
         }
         else if (crashNum >= knockTermsNum)
-        {// åÇîjêîÇ™15à»è„Ç…Ç»Ç¡ÇΩÇÁ(âº)
-
-            DeathBoss();
-
+        {
             bossFlag = true;
             Debug.Log("ì|ÇµÇΩêîÅF" + crashNum + "É{ÉX");
         }

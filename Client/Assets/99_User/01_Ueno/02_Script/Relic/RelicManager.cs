@@ -1,3 +1,8 @@
+//----------------------------------------------------
+// レリック管理クラス
+// Author : Souma Ueno
+//----------------------------------------------------
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +15,8 @@ public class RelicManager : MonoBehaviour
     [SerializeField] List<RelicDeta> haveRelicList = new List<RelicDeta>();     // 所持レリックリスト
     [SerializeField] List<GameObject> relicPrefab = new List<GameObject>();  // レリックプレファブ
     #endregion
+
+    float elapsedTime;
 
     /// <summary>
     /// レリックのレアリティ
@@ -51,7 +58,7 @@ public class RelicManager : MonoBehaviour
     /// レリックを持ち物に追加する処理
     /// </summary>
     public void AddRelic(RelicDeta relic)
-    {
+    {       
         if (haveRelicList.Find(X => X.ID == relic.ID) != null)
         {
             CountRelic(relic.ID);
