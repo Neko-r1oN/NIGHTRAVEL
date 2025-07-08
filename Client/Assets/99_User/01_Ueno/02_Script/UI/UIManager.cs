@@ -1,3 +1,7 @@
+//----------------------------------------------------
+// UI管理クラス
+// Author : Souma Ueno
+//----------------------------------------------------
 using DG.Tweening;
 using NUnit.Framework;
 using Pixeye.Unity;
@@ -19,58 +23,65 @@ public class UIManager : MonoBehaviour
     [Foldout("キャンバス")]
     [SerializeField] GameObject canvas;           // キャンバス
 
-    [Foldout("UI(プレイヤーステータス関連)")]
+    [Foldout("プレイヤーステータス関連)")]
     [SerializeField] Slider playerHpBar;          // プレイヤーのHPバー
-    [Foldout("UI(プレイヤーステータス関連)")]
+    [Foldout("プレイヤーステータス関連")]
     [SerializeField] Slider expBar;               // 経験値バー
 
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text playerSliderText;       // プレイヤーの最大HPテキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text bossSliderText;         // ボスの最大HPテキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text levelText;              // レベルテキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text pointText;              // ポイントテキスト
     [SerializeField] List<Image> relicImages;
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] List<Text> relicCntText;     // レリックを持ってる数を表示するテキスト
     //[Foldout("UI(テキスト)")]
     //[SerializeField] List<Text>  statusText;      // ステータスアップ説明テキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text levelUpStock;           // レベルアップストックテキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text levelUpText;            // 強化可能テキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text clashNumText;           // 撃破数テキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] Text tmText;                 // クリア条件テキスト
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] GameObject playerDmgText;    // プレイヤーダメージ表記
-    [Foldout("UI(テキスト)")]
+    [Foldout("テキスト")]
     [SerializeField] GameObject otherDmgText;     // その他ダメージ表記
+    [Foldout("テキスト")]
+    [SerializeField] Text relicName;              // その他ダメージ表記
 
-    [Foldout("UI(フェードアウト)")]
+
+    [Foldout("フェードアウト")]
     [SerializeField] Canvas parentCanvas;         // テキストが表示されるキャンバスを割り当ててください
-    [Foldout("UI(フェードアウト)")]
+    [Foldout("フェードアウト")]
     [SerializeField] float fadeDuration = 2f;     // テキストがフェードアウトにかかる時間（秒）
-    [Foldout("UI(フェードアウト)")]
+    [Foldout("フェードアウト")]
     [SerializeField] float displayDuration = 1f;  // テキストが完全に表示される時間（フェード開始まで）
 
-    [Foldout("UI(ボスステータス関連)")]
+    [Foldout("ボスステータス関連")]
     [SerializeField] Slider bossHpBar;            // ボスのHPバー
-    [Foldout("UI(ボスステータス関連)")]
+    [Foldout("ボスステータス関連")]
     [SerializeField] GameObject bossStatus;       // ボスのステータス
 
-    [Foldout("UI(ウィンドウ関係)")]
+    [Foldout("ウィンドウ関係")]
     [SerializeField] GameObject statusUpWindow;   // ステータス強化ウィンドウ
-    [Foldout("UI(ウィンドウ関係)")]
+    [Foldout("ウィンドウ関係")]
     [SerializeField] float windowTime;            // ウィンドウが表示される秒数
 
-    [Foldout("UI(バナー関係)")]
+    [Foldout("バナー関係")]
     [SerializeField] GameObject bossWindow;       // ボス出現UI
-    [Foldout("UI(バナー関係)")]
+    [Foldout("バナー関係")]
     [SerializeField] GameObject termsBanner;      // クリア条件バナー
+    [Foldout("バナー関係")]
+    [SerializeField] GameObject relicBanner;      // 取得したレリックバナー
+
+    [SerializeField] Image relicImg;              // レリックのイメージ
 
     #endregion
 
@@ -86,6 +97,8 @@ public class UIManager : MonoBehaviour
     // フェードイン時に元の不透明な状態に戻すために必要
     private System.Collections.Generic.List<Color> initialRendererColors = new System.Collections.Generic.List<Color>();
     private System.Collections.Generic.List<Color> initialTextColors = new System.Collections.Generic.List<Color>();
+
+    bool isRelicGet;
 
     private static UIManager instance;
 
@@ -158,9 +171,12 @@ public class UIManager : MonoBehaviour
 
         isHold = false;
         isStatusWindow = false;
+        isRelicGet = false;
 
         levelUpText.enabled = false;
         bossStatus.SetActive(false);
+
+        relicBanner.SetActive(false);
 
         clashNumText.text = "条件:0/" + GameManager.Instance.KnockTermsNum;
 
@@ -254,10 +270,13 @@ public class UIManager : MonoBehaviour
                 {
                     image.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                     image.sprite = relicSprite;
+                    isRelicGet = true;
+                    ShowUIAndFadeOut();
+                    GetRelicBanner(relicSprite);
                     break;
                 }
             }
-        }
+        }   
     }
 
     /// <summary>
@@ -297,6 +316,8 @@ public class UIManager : MonoBehaviour
             }
             count++;
         }
+
+        GetRelicBanner(relicSprite);
     }
 
     public void OpenStatusWindow()
@@ -372,7 +393,11 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator FadeSequence()
     {
-        if (GameManager.Instance.IsSpawnBoss)
+        if (isRelicGet)
+        {
+            relicBanner.SetActive(true);
+        }
+        else if (GameManager.Instance.IsSpawnBoss)
         {
             bossWindow.SetActive(true);
         }
@@ -459,6 +484,12 @@ public class UIManager : MonoBehaviour
         {
             bossWindow.SetActive(false);
         }
+        else if(relicBanner.activeSelf == true)
+        {
+            relicBanner.SetActive(false);
+            isRelicGet = false;
+            DeleteRelicBunnerImg();
+        }
         else
         {
             termsBanner.SetActive(false); // 完全に透明になったらUIパネルを非表示にする
@@ -497,5 +528,26 @@ public class UIManager : MonoBehaviour
         ui.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, textPos);
 
         ui.SetActive(true);
+    }
+
+    /// <summary>
+    /// 取得したレリックをバナーで表示
+    /// </summary>
+    /// <param name="relicImg"></param>
+    public void GetRelicBanner(Sprite relicSprite)
+    {
+        if (relicImg.sprite == null)
+        {
+            relicImg.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            relicImg.sprite = relicSprite;
+        }
+    }
+
+    public void DeleteRelicBunnerImg()
+    {
+        if(relicImg.sprite != null)
+        {
+            relicImg.sprite = null;
+        }
     }
 }

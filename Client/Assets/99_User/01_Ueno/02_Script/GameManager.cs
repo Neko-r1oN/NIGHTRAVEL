@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
 
                 if (spawnCnt < maxSpawnCnt / 2)
                 {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
-                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,10));
+                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,7));
                 }
                 else
                 {// ‚¢‚éê‡
@@ -172,8 +172,6 @@ public class GameManager : MonoBehaviour
 
         UIManager.Instance.CountTermsText(crashNum);
 
-        //Debug.Log("“|‚µ‚½”F" + crashNum);
-
         spawnCnt--;
 
         if (enemy.IsBoss)
@@ -181,10 +179,7 @@ public class GameManager : MonoBehaviour
             DeathBoss();
         }
         else if (crashNum >= knockTermsNum)
-        {// Œ‚”j”‚ª15ˆÈã‚É‚È‚Á‚½‚ç(‰¼)
-
-            DeathBoss();
-
+        {
             bossFlag = true;
             Debug.Log("“|‚µ‚½”F" + crashNum + "ƒ{ƒX");
         }

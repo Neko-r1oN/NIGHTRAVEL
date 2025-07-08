@@ -1,3 +1,7 @@
+//----------------------------------------------------
+// ìGê∂ê¨ÉNÉâÉX
+// Author : Souma Ueno
+//----------------------------------------------------
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
