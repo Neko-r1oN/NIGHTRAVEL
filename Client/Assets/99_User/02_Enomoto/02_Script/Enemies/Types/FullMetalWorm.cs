@@ -115,7 +115,7 @@ public class FullMetalWorm : EnemyBase
 
     protected override void FixedUpdate()
     {
-        if (isStun || isAttacking || isInvincible || hp <= 0) return;
+        if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0) return;
 
         if (!target && Players.Count > 0)
         {

@@ -2,7 +2,6 @@
 // ゲームマネージャー(GameManager.cs)
 // Author : Souma Ueno
 //----------------------------------------------------
-using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,21 +33,15 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region その他
-    [Foldout("その他")]
+    [Header("その他")]
     [SerializeField] GameObject bossPrefab;  // ボスプレハブ
-    [Foldout("その他")]
     [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
-    [Foldout("その他")]
     [SerializeField] Transform maxCameraPos; // カメラ範囲の最大値
-    [Foldout("その他")]
     [SerializeField] float xRadius;          // 生成範囲のx半径
-    [Foldout("その他")]
     [SerializeField] float yRadius;          // 生成範囲のy半径
-    [Foldout("その他")]
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
-    [Foldout("その他")]
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
-    [Foldout("その他")]
+
     [SerializeField] GameObject player;      // プレイヤーの情報
 
     float elapsedTime;
@@ -105,7 +98,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        UIManager.Instance.ShowUIAndFadeOut();
+        //UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -133,51 +126,40 @@ public class GameManager : MonoBehaviour
 
             isSpawnBoss = true;
 
-            UIManager.Instance.ShowUIAndFadeOut();
-
             bossFlag = false;
         }
 
         if (isBossDead)
         {// ボスを倒した(仮)
             // 遅れて呼び出し
-            Invoke(nameof(ChengResultScene), 15f);
+            Invoke(nameof(ChengScene), 15f);
         }
 
-        if (spawnCnt < maxSpawnCnt  && !isBossDead)
-        {// スポーン回数が限界に達しているか
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime > spawnInterval)
-            {
-                elapsedTime = 0;
+        //if (spawnCnt < maxSpawnCnt  && !isBossDead)
+        //{// スポーン回数が限界に達しているか
+        //    elapsedTime += Time.deltaTime;
+        //    if (elapsedTime > spawnInterval)
+        //    {
+        //        elapsedTime = 0;
 
-                if (spawnCnt < maxSpawnCnt / 2)
-                {// 敵が100体いない場合
-                    for (int i = 0; i < 5; i++)
-                    {// 複数体敵を生成
-                        // 敵生成処理
-                        SpawnManager.Instance.GenerateEnemy();
-                    }
-                }
-                else
-                {// いる場合
-                    SpawnManager.Instance.GenerateEnemy();
-                }
-            }
-        }
+        //        if (spawnCnt < maxSpawnCnt / 2)
+        //        {// 敵が100体いない場合
+        //            SpawnManager.Instance.GenerateEnemy(Random.Range(3,10));
+        //        }
+        //        else
+        //        {// いる場合
+        //            SpawnManager.Instance.GenerateEnemy(1);
+        //        }
+        //    }
+        //}
     }
 
     /// <summary>
     /// シーン遷移
     /// </summary>
-    private void ChengResultScene()
+    private void ChengScene()
     {// シーン遷移
         SceneManager.LoadScene("Result ueno");
-    }
-
-    public void ChangTitleScene()
-    {
-        SceneManager.LoadScene("Title ueno");
     }
 
     [ContextMenu("CrushEnemy")]
@@ -200,7 +182,11 @@ public class GameManager : MonoBehaviour
         }
         else if (crashNum >= knockTermsNum)
         {// 撃破数が15以上になったら(仮)
+
+            DeathBoss();
+
             bossFlag = true;
+            Debug.Log("倒した数：" + crashNum + "ボス");
         }
     }
 

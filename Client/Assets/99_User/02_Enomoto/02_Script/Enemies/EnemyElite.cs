@@ -43,38 +43,33 @@ public class EnemyElite : MonoBehaviour
     {
         eliteType = type;
 
-        // HP・攻撃力が50%増し、防御力・移動速度が25%増しのステータスデータ作成
+        // HP・攻撃力が50%増し、防御力・移動速度・移動速度係数が25%増しにする
         CharacterBase charaBase = GetComponent<CharacterBase>();
-        CharacterStatusData data = new CharacterStatusData(
-            hp: charaBase.BaseHP + Mathf.CeilToInt(charaBase.BaseHP * 0.5f),
-            defence: charaBase.BaseDefence + Mathf.CeilToInt(charaBase.BaseDefence * 0.25f),
-            power: charaBase.BasePower + Mathf.CeilToInt(charaBase.BasePower * 0.5f),
-            moveSpeed: charaBase.BaseMoveSpeed + Mathf.CeilToInt(charaBase.BaseMoveSpeed * 0.25f),
-            moveSpeedFactor: charaBase.BaseMoveSpeedFactor + Mathf.CeilToInt(charaBase.BaseMoveSpeedFactor * 0.25f),
-            attackSpeedFactor: charaBase.BaseAttackSpeedFactor + Mathf.CeilToInt(charaBase.BaseAttackSpeedFactor * 0.25f)
-         );
+        charaBase.ApplyStatusModifierByRate(0.5f, true, CharacterBase.STATUS_TYPE.HP, CharacterBase.STATUS_TYPE.Power);
+        charaBase.ApplyStatusModifierByRate(0.25f, CharacterBase.STATUS_TYPE.Defence, CharacterBase.STATUS_TYPE.MoveSpeed, CharacterBase.STATUS_TYPE.MoveSpeedFactor);
 
         Color outlineColor = new Color();
         Action action = type switch
         {
             ELITE_TYPE.Blaze => () =>
             {
-                // カラーコード FF5D17(赤色)
-                outlineColor = new Color32(0xFF, 0x5D, 0x17, 0xFF);
+                // カラーコード FF0000(赤色)
+                outlineColor = new Color32(0xFF, 0x00, 0x00, 0xFF);
             }
             ,
             ELITE_TYPE.Frost => () =>
             {
-                // カラーコード 7BB8CF(青色)
-                outlineColor = new Color32(0x7B, 0xB8, 0xCF, 0xFF);
+                // カラーコード 00FFEA(水色)
+                outlineColor = new Color32(0x00, 0xFF, 0xEF, 0xFF);
             }
             ,
             ELITE_TYPE.Thunder => () =>
             {
-                // カラーコード E492F0(紫色)
-                outlineColor = new Color32(0xE4, 0x92, 0xF0, 0xFF);
+                // カラーコード E100FF(紫色)
+                outlineColor = new Color32(0xE1, 0x00, 0xFF, 0xFF);
 
-                data.moveSpeed = charaBase.BaseMoveSpeed * 2;
+                // Thunderのみ移動速度・移動速度係数が2倍になるようにする
+                charaBase.ApplyStatusModifierByRate(0.75f, CharacterBase.STATUS_TYPE.MoveSpeed, CharacterBase.STATUS_TYPE.MoveSpeedFactor);
             }
             ,
             _ => () => { }
@@ -87,13 +82,11 @@ public class EnemyElite : MonoBehaviour
             Material material = spriteRenderer.material;
             material.SetColor("_OutlineColor", outlineColor);
             material.SetFloat("_OutlineAlpha", 1f);
-            material.SetFloat("_OutlineGlow", 1.5f);
+            material.SetFloat("_OutlineGlow", 50f);
             material.SetFloat("_OutlineWidth", 0.2f);
             material.SetFloat("_OutlineDistortAmount", 0.5f);
         }
 
-        // 基礎ステータス&現在のステータスを上書き
-        charaBase.OverrideBaseStatus(data, true);
     }
 
     /// <summary>
