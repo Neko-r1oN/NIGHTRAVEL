@@ -162,6 +162,47 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ìGê∂ê¨èàóù
+    /// </summary>
+    public void TerminalGenerateEnemy(int num)
+    {
+        int enemyCnt = 0;
+
+        while (enemyCnt < num)
+        {
+            int listNum = Random.Range(0, enemyList.Count);
+
+            EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
+
+            Vector2 minPlayer =
+                        new Vector2(player.transform.position.x - xRadius,
+                        player.transform.position.y - yRadius);
+
+            Vector2 maxPlayer =
+                new Vector2(player.transform.position.x + xRadius,
+                player.transform.position.y + yRadius);
+
+            // ÉâÉìÉ_ÉÄÇ»à íuÇê∂ê¨
+            var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
+
+            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
+
+            if (spawnPos != null)
+            {
+                GameManager.Instance.SpawnCnt++;
+
+                // ê∂ê¨
+                enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
+
+                enemy.GetComponent<EnemyBase>().Players.Add(player);
+                enemy.GetComponent<EnemyBase>().SetNearTarget();
+
+                enemyCnt++;
+            }
+        }
+    }
+
     private Vector2? IsGroundCheck(Vector3 rayOrigin)
     {
         LayerMask mask = LayerMask.GetMask("Default");
