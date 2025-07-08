@@ -12,18 +12,24 @@ public class SealedDoor : ObjectBase
     PlayerBase player;
     bool isBroken = false;
 
+
+    /// <summary>
+    /// ドアを壊したときの処理
+    /// </summary>
     public override void ApplyDamage()
     {
-        if(isBroken==true)
+        if (isBroken == true)
         {
             return;
         }
 
         isBroken = true;
-        player=GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
 
         GameObject fragment; //破片のオブジェクト
-        fragment = Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 1.5f), this.transform.rotation); //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)
+
+        //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)
+        fragment = Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 1.5f), this.transform.rotation);
 
         for (int i = 0; i < fragment.transform.childCount; i++)
         {//fragmentの子の数だけループ
@@ -38,10 +44,18 @@ public class SealedDoor : ObjectBase
             FadeFragment(fragment.transform.GetChild(i));
         }
 
-        Destroy(this.gameObject);//ドアを壊す
+        //ドアを壊す
+        Destroy(this.gameObject);
+
+        //破片を消す
         DestroyFragment(fragment.transform);
     }
 
+
+    /// <summary>
+    /// 破片をフェードアウトする処理
+    /// </summary>
+    /// <param name="fragment">破片プレハブ</param>
     public override void FadeFragment(Transform fragment)
     {
         if (fragment == null)
@@ -49,15 +63,19 @@ public class SealedDoor : ObjectBase
             return;
         }
 
+        //6秒かけてフェードアウトする
         fragment.GetComponent<Renderer>().material.DOFade(0, 6);
-
     }
 
+    /// <summary>
+    /// 破片を消す処理
+    /// </summary>
+    /// <param name="fragment">破片プレハブ</param>
     public async void DestroyFragment(Transform fragment)
     {
         await Task.Delay(6000);
 
-        if(fragment == null)
+        if (fragment == null)
         {
             return;
         }

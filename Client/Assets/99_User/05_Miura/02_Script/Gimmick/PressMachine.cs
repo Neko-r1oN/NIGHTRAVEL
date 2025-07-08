@@ -11,18 +11,21 @@ using UnityEngine;
 
 public class PressMachine : GimmickBase
 {
-    [SerializeField] GameObject machineFragment;
     PlayerBase player;
-    Rigidbody2D rigidbody2d;
-    bool isBroken = false;
     public float addPow;
     public float pullPow;
-    public bool isPowerd = true;
+    public bool isPowerd;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if(isPowerd==false)
+        {
+            return;
+        }
+
         MovePress();
+        Debug.Log(isPowerd);
     }
 
     private void Update()
@@ -30,24 +33,59 @@ public class PressMachine : GimmickBase
 
     }
 
-    public async void MovePress()
+    public void MovePress()
     {
-        //Sequenceのインスタンスを作成
-        var sequence = DOTween.Sequence();
+        if (isPowerd == true)
+        {
+            Debug.Log(isPowerd);
 
-        //Appendで動作を追加していく
-         sequence.Append(this.transform.DOMoveY(-addPow, 1))
-                 .AppendInterval(1)
-                 .Append(this.transform.DOMoveY(pullPow, 2));
-                
-        //Playで実行
-        sequence.Play()
-                .AppendInterval(1)
-                .SetLoops(-1);
+            //Sequenceのインスタンスを作成
+            var sequence = DOTween.Sequence();
+
+            //Appendで動作を追加していく
+            sequence.Append(this.transform.DOMoveY(-addPow, 1))
+                     .AppendInterval(1)
+                     .Append(this.transform.DOMoveY(pullPow, 2));
+
+            //Playで実行
+            sequence.Play()
+                    .AppendInterval(1)
+                    .SetLoops(-1);
+        }
+        if (isPowerd == false)
+        {
+            Debug.Log(isPowerd);
+            return;
+        }
+
+        //switch (isPowerd)
+        //{
+        //    case true:
+        //        Debug.Log(isPowerd);
+
+        //        //Sequenceのインスタンスを作成
+        //        var sequence = DOTween.Sequence();
+
+        //        //Appendで動作を追加していく
+        //        sequence.Append(this.transform.DOMoveY(-addPow, 1))
+        //                 .AppendInterval(1)
+        //                 .Append(this.transform.DOMoveY(pullPow, 2));
+
+        //        //Playで実行
+        //        sequence.Play()
+        //                .AppendInterval(1)
+        //                .SetLoops(-1);
+        //        break;
+
+        //    case false:
+        //        break;
+
+        //    default:
+        //}
     }
 
     public override void TurnOnPower()
     {
-       isPowerd = false;
+        isPowerd = true;
     }
 }
