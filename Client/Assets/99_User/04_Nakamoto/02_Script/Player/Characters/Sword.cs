@@ -130,25 +130,37 @@ public class Sword : PlayerBase
     }
 
     /// <summary>
+    /// 移動処理
+    /// </summary>
+    /// <param name="move">移動量</param>
+    /// <param name="jump">ジャンプ入力</param>
+    /// <param name="blink">ダッシュ入力</param>
+    protected override void Move(float move, bool jump, bool blink)
+    {
+        base.Move(move, jump, blink);
+
+        // ダッシュ中の場合
+        if (isBlinking)
+        {   // クールダウンに入るまで加速
+            m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
+        }
+    }
+
+    /// <summary>
     /// ダメージを与える処理
     /// </summary>
     public override void DoDashDamage()
     {
-        power = Mathf.Abs(power);
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
 
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
             if (collidersEnemies[i].gameObject.tag == "Enemy")
             {
-                if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
-                {
-                    power = -power;
-                }
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
 
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(Power, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
             else if (collidersEnemies[i].gameObject.tag == "Object")
@@ -159,7 +171,7 @@ public class Sword : PlayerBase
     }
 
     /// <summary>
-    /// 攻撃終了時
+    /// コンボ判定開始
     /// </summary>
     public void HitAttack()
     {

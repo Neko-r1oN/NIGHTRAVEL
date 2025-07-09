@@ -3,9 +3,6 @@
 // Aouther:y-miura
 // Date:2025/07/07
 //===================
-
-using System.Collections;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class Burner : MonoBehaviour

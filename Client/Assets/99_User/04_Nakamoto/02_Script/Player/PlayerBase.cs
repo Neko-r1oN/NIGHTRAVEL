@@ -392,7 +392,7 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="move">移動量</param>
     /// <param name="jump">ジャンプ入力</param>
     /// <param name="blink">ダッシュ入力</param>
-    private void Move(float move, bool jump, bool blink)
+    virtual protected void Move(float move, bool jump, bool blink)
     {
         if (m_IsZipline) return;
 
@@ -404,16 +404,10 @@ abstract public class PlayerBase : CharacterBase
             // ダッシュ入力 & ダッシュ可能 & 壁に触れてない
             if (blink && canBlink && !isWallSliding)
             {
-                //m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_DashForce, 0f));
                 StartCoroutine(BlinkCooldown()); // ブリンククールダウン
             }
-            // If crouching, check to see if the character can stand up
-            // ダッシュ中の場合
-            if (isBlinking)
-            {   // クールダウンに入るまで加速
-                m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
-            }
-            else if (isWallJump)
+            
+            if (isWallJump)
             {   // 壁ジャンプ中
                 m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * 12, 12);
             }
@@ -431,7 +425,7 @@ abstract public class PlayerBase : CharacterBase
                 Vector3 targetVelocity = new Vector2();
                 if (!canAttack)
                 {
-                    targetVelocity = new Vector2(move * 2f, m_Rigidbody2D.linearVelocity.y);
+                    targetVelocity = new Vector2(move, m_Rigidbody2D.linearVelocity.y);
                 }
                 else
                 {
