@@ -14,6 +14,9 @@ public class ElevatorWire : ObjectBase
     {
         Destroy(this.gameObject);   // ƒƒCƒ„[‚ğ”j‰ó
         Elevator.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        Elevator.GetComponent<Elevator>().isBroken = true;
+
+        Elevator.GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, -100f));  // —Í‚ğ‰Á‚¦‚é
 
         Debug.Log(Elevator.GetComponent<Rigidbody2D>().bodyType);
     }

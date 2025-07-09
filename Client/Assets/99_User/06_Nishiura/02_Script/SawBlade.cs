@@ -14,6 +14,9 @@ public class SawBlade : GimmickBase
     // 加力値
     public float addPower;
 
+    // 移動速度
+    public float moveSpeed;
+
     // 電源判定
     public bool isPowerd;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,17 +24,24 @@ public class SawBlade : GimmickBase
     {
         // このゲームオブジェクトのポジションを取得
         pos = this.gameObject.transform.position;
-        // 電源オンの場合、移動開始
-        if (isPowerd == true) MoveBlade();
+        // 電源オンの場合
+        if (isPowerd == true)
+        {
+            MoveBlade();    // 移動開始
+            // 回転させる
+            transform.DOLocalRotate(new Vector3(0, 0, 360f), 0.25f, RotateMode.FastBeyond360)
+                .SetEase(Ease.Linear)
+                .SetLoops(-1, LoopType.Restart);
+        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isPowerd == true && collision.transform.tag == "Player")
         {
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
-            // プレイヤーの最大HP15%相当のダメージに設定
-            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.15f);
+            // プレイヤーの最大HP30%相当のダメージに設定
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.30f);
             playerBase.ApplyDamage(damage, pos);
             Debug.Log("Hit SawBlade");
         }
@@ -47,12 +57,12 @@ public class SawBlade : GimmickBase
 
         //Appendで動作を追加していく
         sequence.Append(this.transform.DOMoveX((pos.x - addPower), 1))
-                .AppendInterval(0.01f)
+                .AppendInterval(moveSpeed)
                 .Append(this.transform.DOMoveX(pos.x , 1));
 
         //Playで実行
         sequence.Play()
-                .AppendInterval(0.01f)
+                .AppendInterval(moveSpeed)
                 .SetLoops(-1);
     }
 
@@ -63,6 +73,10 @@ public class SawBlade : GimmickBase
     {
         isPowerd = true;
         MoveBlade();
+        // 回転させる
+        transform.DOLocalRotate(new Vector3(0, 0, 360f), 0.25f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear)
+            .SetLoops(-1, LoopType.Restart);
     }
 
     public override void TruggerRequest()
