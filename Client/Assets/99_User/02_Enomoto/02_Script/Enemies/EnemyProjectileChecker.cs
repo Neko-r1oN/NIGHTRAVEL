@@ -1,5 +1,5 @@
 //**************************************************
-//  エネミーの発射物に関する判定を担当するクラス
+//  エネミーの発射物に関する判定を管理するクラス
 //  Author:r-enomoto
 //**************************************************
 using Unity.VisualScripting;
@@ -9,6 +9,8 @@ using UnityEngine;
 
 public class EnemyProjectileChecker : MonoBehaviour
 {
+    [SerializeField] Transform enemy;   // 本体
+
     [SerializeField] Transform aimTransform;
     [SerializeField] Transform leftFireRayPoint;
     [SerializeField] Transform rightFireRayPoint;
@@ -36,11 +38,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <returns></returns>
     public float ClampAngleToTarget(Vector3 direction)
     {
-        // テクスチャが反転していたら、角度も反転させる
-        float directionMultiplier = TransformUtils.GetFacingDirection(transform);
-        float maxAddAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
-        float maxAddAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
-        float initialAngle = this.initialAngle * directionMultiplier;
+        var angleRange = GetAdjustedAngleRangeByFacing();
 
         // 方向からターゲットのラジアンを計算して度に変換する
         float targetAngle = Mathf.Atan2(direction.y, direction.x);
@@ -48,9 +46,9 @@ public class EnemyProjectileChecker : MonoBehaviour
         targetAngle = targetAngle * Mathf.Rad2Deg - 90;
 
         // 初期角度との角度差を求め、制限角度内に収める
-        float deltaAngle = Mathf.DeltaAngle(initialAngle, targetAngle);
-        float clampedDelta = Mathf.Clamp(deltaAngle, -maxAddAngleLeft, maxAddAngleRight);
-        return initialAngle + clampedDelta;
+        float deltaAngle = Mathf.DeltaAngle(angleRange.initialAngle, targetAngle);
+        float clampedDelta = Mathf.Clamp(deltaAngle, -angleRange.maxAddAngleLeft, angleRange.maxAddAngleRight);
+        return angleRange.initialAngle + clampedDelta;
     }
 
     /// <summary>
@@ -59,7 +57,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <returns></returns>
     (RaycastHit2D canterHit2D, RaycastHit2D leftHit2D, RaycastHit2D rightHit2D) GetProjectileRaycastHit(Transform target, float gunBulletWidth, bool followTargetRotation, float? angle, bool canUpdateRotation = true)
     {
-        float attackDist = GetComponent<EnemyBase>().AttackDist;
+        float attackDist = enemy.GetComponent<EnemyBase>().AttackDist;
 
         if (followTargetRotation && canUpdateRotation)
         {
@@ -117,7 +115,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <returns></returns>
     bool IsProjectileFireable(float gunBulletWidth, bool followTargetRotation = false, float? angle = null)
     {
-        GameObject target = GetComponent<EnemyBase>().Target;
+        GameObject target = enemy.GetComponent<EnemyBase>().Target;
         if (!target) return false;
 
         var projectileRays = GetProjectileRaycastHit(target.transform, gunBulletWidth, followTargetRotation, angle);
@@ -155,7 +153,7 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// <param name="angle"></param>
     void DrawProjectileRay(float gunBulletWidth, bool followTargetRotation = false, float? angle = null)
     {
-        GameObject target = GetComponent<EnemyBase>().Target;
+        GameObject target = enemy.GetComponent<EnemyBase>().Target;
         if (!target) return;
 
         var projectileRays = GetProjectileRaycastHit(target.transform, gunBulletWidth, followTargetRotation, angle, false);
@@ -173,7 +171,7 @@ public class EnemyProjectileChecker : MonoBehaviour
         }
 
         Vector3 rayDirection = aimTransform.up;
-        float attackDist = GetComponent<EnemyBase>().AttackDist;
+        float attackDist = enemy.GetComponent<EnemyBase>().AttackDist;
         Debug.DrawRay(aimTransform.position, rayDirection * attackDist, rayUpColor);
         Debug.DrawRay(leftFireRayPoint.position, rayDirection * attackDist, rayUpColor);
         Debug.DrawRay(rightFireRayPoint.position, rayDirection * attackDist, rayDownColor);
@@ -188,21 +186,26 @@ public class EnemyProjectileChecker : MonoBehaviour
     }
 
     /// <summary>
+    /// 向きに応じて調整された射線の可動域（基準 + 左右のmax）を取得
+    /// </summary>
+    (float maxAddAngleLeft, float maxAddAngleRight, float initialAngle) GetAdjustedAngleRangeByFacing()
+    {
+        // 本体のテクスチャが反転していたら、角度も反転させる
+        float directionMultiplier = TransformUtils.GetFacingDirection(enemy);
+        float maxAddAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
+        float maxAddAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
+        float initialAngle = this.initialAngle * directionMultiplier;
+        return (maxAddAngleLeft, maxAddAngleRight, initialAngle);
+    }
+
+    /// <summary>
     /// [デバック用] 射線の可動域を描画する
     /// </summary>
     private void OnDrawGizmos()
     {
-        float initialAngle;
-        initialAngle = this.initialAngle;
-
-        // テクスチャが反転していたら、角度も反転させる
-        float directionMultiplier = TransformUtils.GetFacingDirection(transform);
-        float maxAngleLeft = directionMultiplier == 1 ? this.maxAddAngleLeft : this.maxAddAngleRight;
-        float maxAngleRight = directionMultiplier == 1 ? this.maxAddAngleRight : this.maxAddAngleLeft;
-        initialAngle *= directionMultiplier;
-
-        float attackDist = GetComponent<EnemyBase>().AttackDist;
-        Debug.DrawRay(aimTransform.position, GetDirection(initialAngle, -maxAngleLeft).normalized * attackDist, Color.red);
-        Debug.DrawRay(aimTransform.position, GetDirection(initialAngle, maxAngleRight).normalized * attackDist, Color.red);
+        var adjustedAngleRange = GetAdjustedAngleRangeByFacing();
+        float attackDist = enemy.GetComponent<EnemyBase>().AttackDist;
+        Debug.DrawRay(aimTransform.position, GetDirection(adjustedAngleRange.initialAngle, -adjustedAngleRange.maxAddAngleLeft).normalized * attackDist, Color.red);
+        Debug.DrawRay(aimTransform.position, GetDirection(adjustedAngleRange.initialAngle, adjustedAngleRange.maxAddAngleRight).normalized * attackDist, Color.red);
     }
 }

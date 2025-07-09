@@ -34489,7 +34489,6 @@ GameObject:
   - component: {fileID: 1572801596146378588}
   - component: {fileID: 597644756301075540}
   - component: {fileID: 4746008732584929451}
-  - component: {fileID: 3183063523629392717}
   - component: {fileID: 6284177371170680187}
   - component: {fileID: 7084967700252733209}
   - component: {fileID: 1365652372171678792}
@@ -34516,7 +34515,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3047601142500118110}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -34557,24 +34556,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
---- !u!114 &3183063523629392717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3047601142500118110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a51b0b8ef8349e4d9af1608b18920fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aimTransform: {fileID: 3195488026561358393}
-  leftFireRayPoint: {fileID: 2656463187502370756}
-  rightFireRayPoint: {fileID: 2174345861939096868}
-  maxAddAngleLeft: 65
-  maxAddAngleRight: 0
-  initialAngle: 270
 --- !u!114 &6284177371170680187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34615,12 +34596,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHp: 10
-  baseDefence: 10
+  baseDefense: 10
   basePower: 10
   baseJumpPower: 10
   baseMoveSpeed: 5
   hp: 0
-  defence: 0
+  defense: 0
   power: 0
   jumpPower: 0
   moveSpeed: 0
@@ -69096,6 +69077,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3195488026561358393}
   - component: {fileID: 2067417269057826569}
+  - component: {fileID: 4447041671694146661}
   m_Layer: 0
   m_Name: AimTransform
   m_TagString: Untagged
@@ -69176,6 +69158,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4447041671694146661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7322660107607508660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a51b0b8ef8349e4d9af1608b18920fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemy: {fileID: 1572801596146378588}
+  aimTransform: {fileID: 3195488026561358393}
+  leftFireRayPoint: {fileID: 2656463187502370756}
+  rightFireRayPoint: {fileID: 2174345861939096868}
+  maxAddAngleLeft: 65
+  maxAddAngleRight: 0
+  initialAngle: 270
 --- !u!1 &7602136698185101943
 GameObject:
   m_ObjectHideFlags: 0
