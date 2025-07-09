@@ -2,14 +2,9 @@
 // UI管理クラス
 // Author : Souma Ueno
 //----------------------------------------------------
-using DG.Tweening;
-using NUnit.Framework;
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -90,7 +85,6 @@ public class UIManager : MonoBehaviour
     int statusStock = 0; // レベルアップストック数
     bool isStatusWindow; // ステータスウィンドウが開けるかどうか
     bool isHold;         // ステータスウィンドウロック用
-    Text clashText;
     private Renderer[] childRenderers; // 子オブジェクトのRendererを複数対応
     private Text[] childTexts; // 子オブジェクトの標準UI.Textを複数対応
     // 各RendererとTextの初期色を保存するためのリスト
@@ -251,7 +245,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ChangTitleScene()
+    private void ChangTitleScene()
     {
         SceneManager.LoadScene("Title ueno");
     }
@@ -333,10 +327,10 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpPlayerStatus(int statusID)
     {
-        //player.ChangeStatus();
+        //ステータス変更
 
         if (statusStock <= 0)
-        {
+        {// 強化ストックが0の場合
             CloseStatusWindow();
             isStatusWindow = false;
         }
@@ -356,11 +350,13 @@ public class UIManager : MonoBehaviour
     public void HoldStatusWindow()
     {
         if (!isHold)
-        {
+        {// ホールド状態でないとき
+            // ホールドにする
             isHold = true;
         }
         else
-        {
+        {// ホールド状態のとき
+            // ホールド解除
             isHold = false;
         }
     }
@@ -371,7 +367,8 @@ public class UIManager : MonoBehaviour
     public void CloseStatusWindow()
     {
         if (!isHold)
-        {
+        {// ホールド状態でないとき
+            // ウィンドウを閉じる
             statusUpWindow.SetActive(false);
         }
     }
@@ -382,8 +379,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 条件バナーを一定時間表示し、その後フェードアウトさせます。
-    /// ゲームのUpdateは停止しません。
+    /// 条件バナーを一定時間表示し、その後フェードアウト
     /// </summary>
     public void ShowUIAndFadeOut()
     {
@@ -391,6 +387,10 @@ public class UIManager : MonoBehaviour
         StartCoroutine(FadeSequence());
     }
 
+    /// <summary>
+    /// フェードアウト処理
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator FadeSequence()
     {
         if (isRelicGet)
@@ -536,7 +536,7 @@ public class UIManager : MonoBehaviour
     /// 取得したレリックをバナーで表示
     /// </summary>
     /// <param name="relicImg"></param>
-    public void GetRelicBanner(Sprite relicSprite)
+    private void GetRelicBanner(Sprite relicSprite)
     {
         if (relicImg.sprite == null)
         {
@@ -545,7 +545,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void DeleteRelicBunnerImg()
+    /// <summary>
+    /// レリックイメージを元に戻す
+    /// </summary>
+    private void DeleteRelicBunnerImg()
     {
         if(relicImg.sprite != null)
         {

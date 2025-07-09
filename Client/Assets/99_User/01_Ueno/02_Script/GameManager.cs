@@ -2,6 +2,7 @@
 // ゲームマネージャー(GameManager.cs)
 // Author : Souma Ueno
 //----------------------------------------------------
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,8 +42,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] float yRadius;          // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
-
-    [SerializeField] GameObject player;      // プレイヤーの情報
+    [SerializeField] GameObject player;
+    //[SerializeField] List<GameObject> players;      // プレイヤーの情報
 
     float elapsedTime;
 
@@ -54,6 +55,8 @@ public class GameManager : MonoBehaviour
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
 
     public GameObject Player { get { return player; } }
+
+    //public List<GameObject> Players { get { return players; } }
 
     public GameObject Boss {  get { return boss; } }
 
@@ -69,6 +72,8 @@ public class GameManager : MonoBehaviour
 
     //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
     #endregion
+    
+    
 
     public static GameManager Instance
     {
@@ -98,7 +103,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
 
-        //UIManager.Instance.ShowUIAndFadeOut();
+        UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -106,6 +111,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // ポーズ処理(仮)
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            Time.timeScale = 0;
+        }
+        else if(Input.GetKeyDown(KeyCode.S))
+        {
+            Time.timeScale = 1;
+        }
+
         if (!isSpawnBoss && bossFlag)
         {
             // ボスの生成範囲の判定
@@ -144,7 +159,7 @@ public class GameManager : MonoBehaviour
 
                 if (spawnCnt < maxSpawnCnt / 2)
                 {// 敵が100体いない場合
-                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,7));
+                    SpawnManager.Instance.GenerateEnemy(Random.Range(1,2));
                 }
                 else
                 {// いる場合
@@ -181,12 +196,11 @@ public class GameManager : MonoBehaviour
         else if (crashNum >= knockTermsNum)
         {
             bossFlag = true;
-            Debug.Log("倒した数：" + crashNum + "ボス");
         }
     }
 
     [ContextMenu("DeathBoss")]
-    public void DeathBoss()
+    private void DeathBoss()
     {
         RelicManager.Instance.GenerateRelic(boss.transform.position);
 
@@ -210,7 +224,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 時間経過毎にスポーン間隔を早める処理
     /// </summary>
-    public void DecreaseGeneratInterval()
+    private void DecreaseGeneratInterval()
     {
         spawnInterval -= 2;
     }
