@@ -33,6 +33,10 @@ public class Enemy_Sample_Flyng : EnemyBase
         RangeType,
     }
 
+    #region コンポーネント
+    EnemyProjectileChecker projectileChecker;
+    #endregion
+
     #region オリジナルステータス
     [Foldout("ステータス")]
     [SerializeField]
@@ -83,7 +87,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         // 行動パターン
         if (canAttack && projectileChecker.CanFireProjectile(throwableObject.GetComponent<SpriteRenderer>().bounds.size.y / 2, true) && !sightChecker.IsObstructed() && attackType != ATTACK_TYPE_ID.None)
         {
-            chaseAI.StopChase();
+            chaseAI.Stop();
             Attack();
         }
         else if (moveSpeed > 0 && canChaseTarget && target)
@@ -96,7 +100,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         }
         else
         {
-            chaseAI.StopChase();
+            chaseAI.Stop();
             Idle();
         }
     }
@@ -121,7 +125,7 @@ public class Enemy_Sample_Flyng : EnemyBase
         isAttacking = true;
         //SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
-        chaseAI.StopChase();
+        chaseAI.Stop();
         cancellCoroutines.Add(StartCoroutine(RangeAttack()));
     }
 
