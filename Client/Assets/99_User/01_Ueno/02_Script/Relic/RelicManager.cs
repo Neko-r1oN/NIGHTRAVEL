@@ -30,6 +30,8 @@ public class RelicManager : MonoBehaviour
         SPECIAL // “Áê
     }
 
+    //RELIC_RARITY relicType = RELIC_RARITY.NORMAL;
+
     private static RelicManager instance;
 
     public static RelicManager Instance
@@ -58,7 +60,7 @@ public class RelicManager : MonoBehaviour
     /// ƒŒƒŠƒbƒN‚ğ‚¿•¨‚É’Ç‰Á‚·‚éˆ—
     /// </summary>
     public void AddRelic(RelicDeta relic)
-    {       
+    {
         if (haveRelicList.Find(X => X.ID == relic.ID) != null)
         {
             CountRelic(relic.ID);
@@ -70,21 +72,6 @@ public class RelicManager : MonoBehaviour
 
         haveRelicList.Add(relic);
         Debug.Log(haveRelicList[haveRelicList.Count - 1]);
-
-        /*foreach(Relic rlc in haveRelicList)
-        {
-            if (haveRelicList.Count > 1)
-            {
-                if (relic.ID == rlc.ID)
-                {
-                    CountRelic(relic.ID);
-                }
-                else
-                {
-                    UIManager.Instance.DisplayRelic(relicSprites[relic.ID]);
-                }
-            }
-        }*/
     }
 
     /// <summary>
@@ -99,8 +86,8 @@ public class RelicManager : MonoBehaviour
         Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbody‚ğæ“¾
         float boundRnd = Random.Range(2f, 6f);
         boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
-        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);  // —Í‚ğİ’è
-        rb.AddForce(force, ForceMode2D.Impulse);          // —Í‚ğ‰Á‚¦‚é
+        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // —Í‚ğİ’è
+        rb.AddForce(force, ForceMode2D.Impulse);             // —Í‚ğ‰Á‚¦‚é
     }
 
     [ContextMenu("GenerateRelicTest")]
@@ -113,8 +100,8 @@ public class RelicManager : MonoBehaviour
         Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbody‚ğæ“¾
         float boundRnd = Random.Range(2f,6f);
         boundRnd = (int)Random.Range(0f,2f) == 0 ? boundRnd : boundRnd * -1;
-        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);  // —Í‚ğİ’è
-        rb.AddForce(force, ForceMode2D.Impulse);          // —Í‚ğ‰Á‚¦‚é
+        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // —Í‚ğİ’è
+        rb.AddForce(force, ForceMode2D.Impulse);             // —Í‚ğ‰Á‚¦‚é
     }
 
     [ContextMenu("ShuffleRelic")]

@@ -30,6 +30,11 @@ public class TimerDirector : MonoBehaviour
             var span = new TimeSpan(0,0,(int)second);
             minute = span.Minutes;
             timer.text = span.ToString(@"mm\:ss");
+
+            if(minute == minute / 2)
+            {
+                LevelManager.Instance.UpGameLevel();
+            }
         }
 
         if (minute <= 0 && second <= 0 && GameManager.Instance.BossFlag == false)

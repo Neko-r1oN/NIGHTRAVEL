@@ -2,26 +2,27 @@
 // 敵生成クラス
 // Author : Souma Ueno
 //----------------------------------------------------
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] Transform randRespawnA;     // リスポーン範囲A
-    [SerializeField] Transform randRespawnB;     // リスポーン範囲B
-    [SerializeField] float distMinSpawnPos;      // 生成しない範囲
-    [SerializeField] GameObject player;          // プレイヤーの情報
-    [SerializeField] List<GameObject> enemyList; // エネミーリスト
-    [SerializeField] float xRadius;              // 生成範囲のx半径
-    [SerializeField] float yRadius;              // 生成範囲のy半径
+    [SerializeField] Transform randRespawnA;             // リスポーン範囲A
+    [SerializeField] Transform randRespawnB;             // リスポーン範囲B
+    [SerializeField] float distMinSpawnPos;              // 生成しない範囲
+    [SerializeField] GameObject player;                  // プレイヤーの情報
+    [SerializeField] List<GameObject> plyers;
+    [SerializeField] List<GameObject> enemyList;         // エネミーリスト
+    [SerializeField] List<GameObject> terminalSpawnList; // 端末から生成された敵のリスト
+    [SerializeField] float xRadius;                      // 生成範囲のx半径
+    [SerializeField] float yRadius;                      // 生成範囲のy半径
     
     GameObject enemy;
 
     public Transform RandRespawnA { get { return randRespawnA; } }
     public Transform RandRespawnB { get { return randRespawnB; } }
+    public List<GameObject> TerminalSpawnList {  get { return terminalSpawnList; } }
 
     private static SpawnManager instance;
 
@@ -44,11 +45,6 @@ public class SpawnManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
-    }
-
-    private void Start()
-    {
-        
     }
 
     /// <summary>
@@ -156,6 +152,13 @@ public class SpawnManager : MonoBehaviour
                 // 生成
                 enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
 
+                int number = Random.Range(0, 100);
+
+                if(number < 50)
+                {
+                    enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.ELITE_TYPE)Random.Range(1,4));
+                }
+
                 enemy.GetComponent<EnemyBase>().Players.Add(player);
                 enemy.GetComponent<EnemyBase>().SetNearTarget();
             }
@@ -163,7 +166,7 @@ public class SpawnManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 敵生成処理
+    /// 端末操作時の敵生成処理
     /// </summary>
     public void TerminalGenerateEnemy(int num)
     {
@@ -198,11 +201,19 @@ public class SpawnManager : MonoBehaviour
                 enemy.GetComponent<EnemyBase>().Players.Add(player);
                 enemy.GetComponent<EnemyBase>().SetNearTarget();
 
+                // 端末から出た敵をリストに追加
+                terminalSpawnList.Add(enemy);
+
                 enemyCnt++;
             }
         }
     }
 
+    /// <summary>
+    /// 床チェック
+    /// </summary>
+    /// <param name="rayOrigin"></param>
+    /// <returns></returns>
     private Vector2? IsGroundCheck(Vector3 rayOrigin)
     {
         LayerMask mask = LayerMask.GetMask("Default");
