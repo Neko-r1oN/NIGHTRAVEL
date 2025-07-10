@@ -130,6 +130,23 @@ public class Sword : PlayerBase
     }
 
     /// <summary>
+    /// 移動処理
+    /// </summary>
+    /// <param name="move">移動量</param>
+    /// <param name="jump">ジャンプ入力</param>
+    /// <param name="blink">ダッシュ入力</param>
+    protected override void Move(float move, bool jump, bool blink)
+    {
+        base.Move(move, jump, blink);
+
+        // ダッシュ中の場合
+        if (isBlinking)
+        {   // クールダウンに入るまで加速
+            m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
+        }
+    }
+
+    /// <summary>
     /// ダメージを与える処理
     /// </summary>
     public override void DoDashDamage()
@@ -154,7 +171,7 @@ public class Sword : PlayerBase
     }
 
     /// <summary>
-    /// 攻撃終了時
+    /// コンボ判定開始
     /// </summary>
     public void HitAttack()
     {
