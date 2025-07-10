@@ -608,7 +608,16 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 接触判定
+    /// コライダー接触判定
+    /// </summary>
+    /// <param name="collision"></param>
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Scaffold") m_IsScaffold = true;
+    }
+
+    /// <summary>
+    /// トリガー接触判定
     /// </summary>
     /// <param name="collision"></param>
     protected void OnTriggerEnter2D(Collider2D collision)
@@ -616,7 +625,7 @@ abstract public class PlayerBase : CharacterBase
         // 落下処理
         if (collision.gameObject.tag == "Abyss")
         {   // 最も近い復帰点に移動
-            playerPos.position = FetchNearObjectWithTag("ChecKPoint").position;
+            MoveCheckPoint();
         }
     }
 
@@ -646,10 +655,6 @@ abstract public class PlayerBase : CharacterBase
         return result?.transform;
     }
 
-    protected void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == "Scaffold") m_IsScaffold = true;
-    }
     #endregion
 
     #region プレイヤー共通非同期処理
@@ -773,6 +778,14 @@ abstract public class PlayerBase : CharacterBase
     public void BlinkEnd()
     {
         animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+    }
+
+    /// <summary>
+    /// 近くのチェックポイントに移動
+    /// </summary>
+    public void MoveCheckPoint()
+    {
+        playerPos.position = FetchNearObjectWithTag("ChecKPoint").position;
     }
 
     /// <summary>
