@@ -18,6 +18,8 @@ public class Terminal : MonoBehaviour
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
 
+    List<GameObject> terminalSpawnList;
+
     GameManager gameManager;
 
     // 端末タイプ列挙型
@@ -45,6 +47,10 @@ public class Terminal : MonoBehaviour
         {
             Debug.Log("Terminal Booted");
             BootTerminal(); // 端末を起動
+        }
+        if (Input.GetKeyDown(KeyCode.Tab) && terminalType == (int)TerminalCode.Type_Enemy)
+        {
+            Debug.Log(terminalSpawnList.Count);
         }
     }
 
@@ -84,6 +90,8 @@ public class Terminal : MonoBehaviour
 
                 rndNum = rand.Next(6, 11); // 生成数を乱数(6-10)で設定
                 SpawnManager.Instance.TerminalGenerateEnemy(rndNum);   // 敵生成
+                terminalSpawnList = SpawnManager.Instance.TerminalSpawnList;   // 生成した敵のリストを取得
+
                 break;
 
             case (int)TerminalCode.Type_Speed:
@@ -139,7 +147,7 @@ public class Terminal : MonoBehaviour
         {
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
-                
+                Debug.Log("Jesus Reward Here!!!!!");
                 break;
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合
