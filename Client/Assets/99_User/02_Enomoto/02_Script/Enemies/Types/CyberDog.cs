@@ -107,12 +107,10 @@ public class CyberDog : EnemyBase
     }
 
     /// <summary>
-    /// 自身が生成されたときの処理
+    /// スプライトが透明になるときに呼ばれる処理
     /// </summary>
-    public override void TransparentSprites()
+    protected override void OnTransparentSprites()
     {
-        base.TransparentSprites();
-        InvokeRepeating("FadeIn", 0, 0.1f);
         SetAnimId((int)ANIM_ID.JumpOut);
 
         // 前に飛び込む

@@ -72,7 +72,7 @@ public class EnemyChaseAI : MonoBehaviour
     /// <summary>
     /// ’ÇÕ‚ğˆê’â~
     /// </summary>
-    public void StopChase()
+    public void Stop()
     {
         agent.isStopped = true;
         agent.ResetPath();

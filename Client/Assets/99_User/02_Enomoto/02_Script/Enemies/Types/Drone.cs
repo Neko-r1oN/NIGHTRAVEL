@@ -28,6 +28,10 @@ public class Drone : EnemyBase
         RangeType,
     }
 
+    #region コンポーネント
+    EnemyProjectileChecker projectileChecker;
+    #endregion
+
     #region オリジナルステータス
     [Foldout("ステータス")]
     [SerializeField]
@@ -41,7 +45,7 @@ public class Drone : EnemyBase
     #region 攻撃関連
     [Foldout("攻撃関連")]
     [SerializeField] 
-    Transform aimTransform;
+    Transform aimTransform; // 銃のAIM部分
     [Foldout("攻撃関連")]
     [SerializeField] 
     GunParticleController gunPsController;
@@ -70,6 +74,7 @@ public class Drone : EnemyBase
     protected override void Start()
     {
         base.Start();
+        projectileChecker = aimTransform.GetComponent<EnemyProjectileChecker>();
         isAttacking = false;
         doOnceDecision = true;
     }
@@ -82,7 +87,7 @@ public class Drone : EnemyBase
         // 行動パターン
         if (canAttack && projectileChecker.CanFireProjectile(gunBulletWidth, true) && !sightChecker.IsObstructed())
         {
-            chaseAI.StopChase();
+            chaseAI.Stop();
             Attack();
         }
         else if (moveSpeed > 0 && canChaseTarget && target)
@@ -95,7 +100,7 @@ public class Drone : EnemyBase
         }
         else
         {
-            chaseAI.StopChase();
+            chaseAI.Stop();
             Idle();
         }
     }
@@ -109,12 +114,11 @@ public class Drone : EnemyBase
     }
 
     /// <summary>
-    /// 自身が生成されたときの処理
+    /// スプライトが透明になるときに呼ばれる処理
     /// </summary>
-    public override void TransparentSprites()
+    protected override void OnTransparentSprites()
     {
-        base.TransparentSprites();
-        InvokeRepeating("FadeIn", 0, 0.1f);
+        SetAnimId((int)ANIM_ID.Idle);
 
         // ランダムな場所に向かって少し移動
         float moveRange = 2f;
@@ -122,6 +126,14 @@ public class Drone : EnemyBase
         float posY = transform.position.y + Random.Range(-moveRange, moveRange);
         Vector2 targetPoint = new Vector2(posX, posY);
         chaseAI.DoMove(targetPoint);
+    }
+
+    /// <summary>
+    /// フェードインが完了したときに呼ばれる処理
+    /// </summary>
+    protected override void OnFadeInComp()
+    {
+        chaseAI.Stop();
     }
 
     #region 攻撃処理関連
@@ -134,7 +146,7 @@ public class Drone : EnemyBase
         doOnceDecision = false;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
-        chaseAI.StopChase();
+        chaseAI.Stop();
         cancellCoroutines.Add(StartCoroutine(RangeAttack()));
     }
 
@@ -147,6 +159,7 @@ public class Drone : EnemyBase
         gunPsController.StartShooting();
 
         float time = 0;
+        float waitSec = 0.05f;
         while (time < shotsPerSecond)
         {
             // ターゲットのいる方向に向かってエイム
@@ -159,8 +172,8 @@ public class Drone : EnemyBase
                 Quaternion quaternion = Quaternion.Euler(0, 0, projectileChecker.ClampAngleToTarget(direction));
                 aimTransform.rotation = Quaternion.RotateTowards(aimTransform.rotation, quaternion, aimRotetionSpeed);
             }
-            yield return new WaitForSeconds(0.1f);
-            time += 0.1f;
+            yield return new WaitForSeconds(waitSec);
+            time += waitSec;
         }
 
         cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
@@ -189,6 +202,7 @@ public class Drone : EnemyBase
     /// </summary>
     protected override void Tracking()
     {
+        aimTransform.localEulerAngles = Vector3.back * 90f; // 銃の向きを初期化
         StopPatorol();
         chaseAI.DoChase(target);
     }
@@ -198,6 +212,7 @@ public class Drone : EnemyBase
     /// </summary>
     protected override void Patorol()
     {
+        aimTransform.localEulerAngles = Vector3.back * 90f; // 銃の向きを初期化
         if (patorolCoroutine == null)
         {
             cancellCoroutines.Add(StartCoroutine(PatorolCoroutine()));
@@ -300,7 +315,7 @@ public class Drone : EnemyBase
         Gizmos.DrawWireSphere(transform.position, attackDist);
 
         // 射線
-        if (sightChecker != null)
+        if (projectileChecker != null)
         {
             projectileChecker.DrawProjectileRayGizmo(gunBulletWidth, true);
         }

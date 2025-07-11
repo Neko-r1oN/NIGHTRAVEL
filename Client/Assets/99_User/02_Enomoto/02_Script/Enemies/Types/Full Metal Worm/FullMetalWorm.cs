@@ -1,5 +1,5 @@
 //**************************************************
-//  [ボス] フルメタルワームのクラス
+//  [ボス] フルメタルワーム(本体)のの管理クラス
 //  Author:r-enomoto
 //**************************************************
 using DG.Tweening;
@@ -8,6 +8,7 @@ using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FullMetalWorm : EnemyBase
 {
@@ -23,6 +24,10 @@ public class FullMetalWorm : EnemyBase
         Hit,
         Dead,
     }
+
+    #region コンポーネント
+    List<FullMetalBody> bodys = new List<FullMetalBody>();
+    #endregion
 
     #region ステータス
     [Foldout("ステータス")]
@@ -57,6 +62,7 @@ public class FullMetalWorm : EnemyBase
     [Foldout("チェック関連")]
     [SerializeField]
     float terrainCheckRange;    // 地形に埋まっていないかチェックする範囲
+    public float TerrainCheckRane { get { return terrainCheckRange; } }
     #endregion
 
     #region 抽選処理関連
@@ -83,20 +89,27 @@ public class FullMetalWorm : EnemyBase
     [Foldout("敵の生成関連")]
     [SerializeField]
     List<GameObject> enemyPrefabs = new List<GameObject>();
+    public List<GameObject> EnemyPrefabs { get { return enemyPrefabs; } }
 
     [Foldout("敵の生成関連")]
     [SerializeField]
     int generatedMax = 15;
+    public int GeneratedMax { get { return generatedMax; } }
 
     [Foldout("敵の生成関連")]
     [SerializeField]
     float distToPlayerMin = 6;
+    public float DistToPlayerMin { get { return distToPlayerMin; } }
 
+    // 生成済みの敵
     List<GameObject> generatedEnemies = new List<GameObject>();
+    public List<GameObject> GeneratedEnemies { get { return generatedEnemies; } set { generatedEnemies = value; } }
 
     // あとで消す
     [SerializeField] Transform minRange;
     [SerializeField] Transform maxRange;
+    public Transform MinRange { get { return minRange; } }
+    public Transform MaxRange { get { return maxRange; } }
 
     #endregion
 
@@ -110,7 +123,9 @@ public class FullMetalWorm : EnemyBase
         isAttacking = false;
         doOnceDecision = false;
         endDecision = true;
-        cancellCoroutines.Add(StartCoroutine(NextDecision()));
+        isSpawn = false;
+        bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));
+        //cancellCoroutines.Add(StartCoroutine(NextDecision()));
     }
 
     protected override void FixedUpdate()
@@ -150,21 +165,52 @@ public class FullMetalWorm : EnemyBase
         if (doOnceDecision)
         {
             doOnceDecision = false;
-            if (!isAttacking && randomDecision <= 0.5f)
+            if (!isAttacking && randomDecision <= 1f)
             {
-                // 既に死亡している敵の要素を削除
-                generatedEnemies.RemoveAll(s => s == null);
+                // 既に死亡している生成済みの敵の要素を削除
+                //generatedEnemies.RemoveAll(item => item == null);
 
-                if (generatedEnemies.Count < generatedMax)
+                //if (generatedEnemies.Count < generatedMax)
+                //{
+                //    bool isGenerateSucsess = false;
+                //    foreach (var body in bodys)
+                //    {
+                //        if (body.HP > 0 && body.RoleType == FullMetalBody.ROLE_TYPE.Spawner)
+                //        {
+                //            bool result = body.RunEnemySpawn();
+                //            if (!isGenerateSucsess) isGenerateSucsess = result;
+                //        }
+                //    }
+                //    float time = isGenerateSucsess ? attackCoolTime : 0f;
+                //    cancellCoroutines.Add(StartCoroutine(AttackCooldown(time)));
+                //    return;
+                //}
+
+
+                foreach (var body in bodys)
                 {
-                    RunEnemySpawnLoops();
-                    return;
+                    if (body.HP > 0 && body.RoleType == FullMetalBody.ROLE_TYPE.Attacker)
+                    {
+
+                    }
                 }
             }
             else
             {
                 StopCoroutine("MoveGraduallyCoroutine");
                 cancellCoroutines.Add(StartCoroutine(MoveCoroutine()));
+            }
+        }
+    }
+
+    [ContextMenu("CallAttackMethodTest")]
+    public void CallAttackMethodTest()
+    {
+        foreach (var body in bodys)
+        {
+            if (body.HP > 0 && body.RoleType == FullMetalBody.ROLE_TYPE.Attacker)
+            {
+                body.Attack();
             }
         }
     }
@@ -186,75 +232,6 @@ public class FullMetalWorm : EnemyBase
     }
 
     #region 攻撃処理関連
-
-    /// <summary>
-    /// ザコ敵を複数生成するコルーチンの実行
-    /// </summary>
-    void RunEnemySpawnLoops()
-    {
-        isAttacking = true;
-        bool isGenerateSucsess = false;
-        int generatedEnemiesCnt = generatedEnemies.Count;
-        var alivePlayers = GetAlivePlayers();
-
-        foreach (Transform point in enemySpawnPoints)
-        {
-            if (generatedEnemiesCnt >= generatedMax) continue;
-
-            bool isPlayerNearby = false;
-            foreach (var playerObj in alivePlayers)
-            {
-                float distToPlayer = Vector2.Distance(point.position, playerObj.transform.position);
-                if (distToPlayer <= distToPlayerMin) isPlayerNearby = true;
-            }
-
-            // 生成位置の近くにプレイヤーがいる && 生成位置がステージの範囲内 && 生成位置が壁に埋まっていない場合
-            if (isPlayerNearby
-                && TransformUtils.IsWithinBounds(point, minRange, maxRange)
-                && !Physics2D.OverlapCircle(point.position, terrainCheckRange, terrainLayerMask))
-            {
-                isGenerateSucsess = true;
-                int maxEnemies = Random.Range(1, 4);
-                if (generatedEnemiesCnt + maxEnemies > generatedMax) maxEnemies = generatedMax - generatedEnemiesCnt;
-
-                cancellCoroutines.Add(StartCoroutine(GenerateEnemeiesCoroutine(point, maxEnemies)));
-            }
-        }
-
-        // 一度でも敵の生成が成功した場合はクールタイムをしっかり実行する
-        float time = isGenerateSucsess ? attackCoolTime : 0f;
-        cancellCoroutines.Add(StartCoroutine(AttackCooldown(time)));
-    }
-
-    /// <summary>
-    /// ザコ敵を複数生成するコルーチン
-    /// </summary>
-    IEnumerator GenerateEnemeiesCoroutine(Transform point, int maxEnemies)
-    {
-        for (int i = 0; i < maxEnemies; i++)
-        {
-            Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
-            float time = Random.Range(0f, 0.5f);
-            yield return new WaitForSeconds(time);
-
-            // ここに生成する処理 && ハッチが開くアニメーション####################################
-            Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
-            generatedEnemies.Add(GenerateEnemy(point.transform.position));
-        }
-    }
-
-    /// <summary>
-    /// ザコ敵を生成する処理
-    /// </summary>
-    GameObject GenerateEnemy(Vector2 point)
-    {
-        var enemyObj = Instantiate(enemyPrefabs[(int)Random.Range(0, enemyPrefabs.Count)], point, Quaternion.identity).gameObject;
-        EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
-
-        if ((int)Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
-        enemy.TransparentSprites();
-        return enemyObj;
-    }
 
     /// <summary>
     /// 攻撃処理
@@ -296,6 +273,31 @@ public class FullMetalWorm : EnemyBase
 
         cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
     }
+
+    //IEnumerator RangeAttack()
+    //{
+    //    yield return new WaitForSeconds(0.25f);  // 攻撃開始を遅延
+    //    gunPsControllerList.StartShooting();
+
+    //    float time = 0;
+    //    while (time < shotsPerSecond)
+    //    {
+    //        // ターゲットのいる方向に向かってエイム
+    //        if (target)
+    //        {
+    //            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+    //                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+
+    //            Vector3 direction = target.transform.position - transform.position;
+    //            Quaternion quaternion = Quaternion.Euler(0, 0, projectileChecker.ClampAngleToTarget(direction));
+    //            aimTransformList.rotation = Quaternion.RotateTowards(aimTransformList.rotation, quaternion, aimRotetionSpeed);
+    //        }
+    //        yield return new WaitForSeconds(0.1f);
+    //        time += 0.1f;
+    //    }
+
+    //    cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+    //}
 
     /// <summary>
     /// クールダウン処理
@@ -444,16 +446,15 @@ public class FullMetalWorm : EnemyBase
     void SetNextTargetPosition(bool isTargetLottery = true)
     {
         if(isTargetLottery) SetRandomTargetPlayer();
+        float rnd = Random.Range(0f, 1f);
 
-        if (target)
-        {
-            targetPos = target.transform.position;
-        }
-        else
+        if (target) targetPos = target.transform.position;
+
+        if (!target || target && rnd < 0.3f)
         {
             for (int i = 0; i < 100; i++)
             {
-                // ターゲットのプレイヤーが存在しない場合、ランダムな地点に移動する
+                // ランダムな地点を抽選
                 Vector2 maxPos = (Vector2)stageCenter.position + Vector2.one * moveRange;
                 Vector2 minPos = (Vector2)stageCenter.position + Vector2.one * -moveRange;
                 targetPos = new Vector2(Random.Range(minPos.x, maxPos.x + 1), Random.Range(minPos.y, maxPos.y + 1));

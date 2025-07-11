@@ -99,7 +99,7 @@ public class EnemyMelee : EnemyBase
         isAttacking = true;
         SetAnimId((int)ANIM_ID.Attack);
         m_rb2d.linearVelocity = Vector2.zero;
-        if (chaseAI) chaseAI.StopChase();
+        if (chaseAI) chaseAI.Stop();
 
         MeleeAttack();
     }

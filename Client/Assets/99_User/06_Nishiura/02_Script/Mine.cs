@@ -4,7 +4,6 @@
 // Date:2025/07/02
 //===================
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Mine : MonoBehaviour
 {

@@ -34,6 +34,10 @@ public class Enemy_Sample : EnemyBase
         RangeType,
     }
 
+    #region コンポーネント
+    EnemyProjectileChecker projectileChecker;
+    #endregion
+
     #region 攻撃関連
     [Foldout("攻撃関連")]
     [SerializeField] 
@@ -146,7 +150,7 @@ public class Enemy_Sample : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack);
-        if (chaseAI) chaseAI.StopChase();
+        if (chaseAI) chaseAI.Stop();
 
         // デバック用
         OnAttackEvent();

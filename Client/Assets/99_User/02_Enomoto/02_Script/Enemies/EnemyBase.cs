@@ -23,7 +23,6 @@ abstract public class EnemyBase : CharacterBase
 
     #region コンポーネント
     protected EnemyElite enemyElite;
-    protected EnemyProjectileChecker projectileChecker;
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
@@ -118,6 +117,7 @@ abstract public class EnemyBase : CharacterBase
     protected bool isDead;
     protected bool isPatrolPaused;
     protected bool isSpawn = true; // スポーン中かどうか
+    protected bool isStartComp;
     #endregion
 
     #region ターゲットとの距離
@@ -158,10 +158,10 @@ abstract public class EnemyBase : CharacterBase
     {
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
-        projectileChecker = GetComponent<EnemyProjectileChecker>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
         enemyElite = GetComponent<EnemyElite>();
+        isStartComp = true;
     }
 
     protected virtual void FixedUpdate()
@@ -176,7 +176,7 @@ abstract public class EnemyBase : CharacterBase
         else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())
         {// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
             target = null;
-            if (chaseAI) chaseAI.StopChase();
+            if (chaseAI) chaseAI.Stop();
         }
 
         if (!target)
@@ -270,32 +270,6 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// 一番近いプレイヤーをターゲットに設定する
-    /// </summary>
-    public void SetNearTarget()
-    {
-        GameObject target = null;
-        float dist = float.MaxValue;
-        foreach (GameObject player in Players)
-        {
-            if (player != null)
-            {
-                float distToPlayer = Vector2.Distance(transform.position, player.transform.position);
-                if (Mathf.Abs(distToPlayer) < dist)
-                {
-                    target = player;
-                    dist = distToPlayer;
-                }
-            }
-        }
-
-        if (target != null)
-        {
-            this.target = target;
-        }
-    }
-
-    /// <summary>
     /// 生存しているプレイヤーの取得処理
     /// </summary>
     /// <returns></returns>
@@ -310,6 +284,41 @@ abstract public class EnemyBase : CharacterBase
             }
         }
         return alivePlayers;
+    }
+
+    /// <summary>
+    /// 一番近いプレイヤーを取得する
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetNearPlayer()
+    {
+        GameObject nearPlayer = null;
+        float dist = float.MaxValue;
+        foreach (GameObject player in GetAlivePlayers())
+        {
+            if (player != null)
+            {
+                float distToPlayer = Vector2.Distance(transform.position, player.transform.position);
+                if (Mathf.Abs(distToPlayer) < dist)
+                {
+                    nearPlayer = player;
+                    dist = distToPlayer;
+                }
+            }
+        }
+        return nearPlayer;
+    }
+
+    /// <summary>
+    /// 一番近いプレイヤーをターゲットに設定する
+    /// </summary>
+    public void SetNearTarget()
+    {
+        GameObject target = GetNearPlayer();
+        if (target != null)
+        {
+            this.target = target;
+        }
     }
 
     #region 移動処理関連
@@ -505,11 +514,21 @@ abstract public class EnemyBase : CharacterBase
     public virtual void OnAttackAnimEvent() { }
 
     /// <summary>
+    /// スプライトを透明にするときに呼ばれる処理
+    /// </summary>
+    protected virtual void OnTransparentSprites() { }
+
+    /// <summary>
+    /// フェードインが完了したときに呼ばれる処理
+    /// </summary>
+    protected virtual void OnFadeInComp() { }
+
+    /// <summary>
     /// スプライトを透明にする
     /// </summary>
-    public virtual void TransparentSprites()
+    public void TransparentSprites()
     {
-        if (isSpawn) Start();   // Startが実行されていない場合
+        if (!isStartComp) Start();   // Startが実行されていない場合
         isSpawn = false;
         isInvincible = true;    // 無敵状態にする & 本来の行動不可
 
@@ -519,6 +538,9 @@ abstract public class EnemyBase : CharacterBase
             color.a = 0;
             spriteRenderer.color = color;
         }
+
+        InvokeRepeating("FadeIn", 0, 0.1f);
+        OnTransparentSprites();
     }
 
     /// <summary>
@@ -534,9 +556,10 @@ abstract public class EnemyBase : CharacterBase
         }
 
         // フェードインが完了したら、無敵状態解除
-        if (!isInvincible && spriteRenderers[0].color.a >= 1)
+        if (isInvincible && spriteRenderers[0].color.a >= 1)
         {
-            isInvincible = true;
+            isInvincible = false;
+            OnFadeInComp();
             CancelInvoke("FadeIn");
         }
     }

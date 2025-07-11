@@ -392,7 +392,7 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="move">移動量</param>
     /// <param name="jump">ジャンプ入力</param>
     /// <param name="blink">ダッシュ入力</param>
-    private void Move(float move, bool jump, bool blink)
+    virtual protected void Move(float move, bool jump, bool blink)
     {
         if (m_IsZipline) return;
 
@@ -404,16 +404,10 @@ abstract public class PlayerBase : CharacterBase
             // ダッシュ入力 & ダッシュ可能 & 壁に触れてない
             if (blink && canBlink && !isWallSliding)
             {
-                //m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_DashForce, 0f));
                 StartCoroutine(BlinkCooldown()); // ブリンククールダウン
             }
-            // If crouching, check to see if the character can stand up
-            // ダッシュ中の場合
-            if (isBlinking)
-            {   // クールダウンに入るまで加速
-                m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
-            }
-            else if (isWallJump)
+            
+            if (isWallJump)
             {   // 壁ジャンプ中
                 m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * 12, 12);
             }
@@ -431,7 +425,7 @@ abstract public class PlayerBase : CharacterBase
                 Vector3 targetVelocity = new Vector2();
                 if (!canAttack)
                 {
-                    targetVelocity = new Vector2(move * 2f, m_Rigidbody2D.linearVelocity.y);
+                    targetVelocity = new Vector2(move, m_Rigidbody2D.linearVelocity.y);
                 }
                 else
                 {
@@ -614,7 +608,16 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 接触判定
+    /// コライダー接触判定
+    /// </summary>
+    /// <param name="collision"></param>
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Scaffold") m_IsScaffold = true;
+    }
+
+    /// <summary>
+    /// トリガー接触判定
     /// </summary>
     /// <param name="collision"></param>
     protected void OnTriggerEnter2D(Collider2D collision)
@@ -622,7 +625,7 @@ abstract public class PlayerBase : CharacterBase
         // 落下処理
         if (collision.gameObject.tag == "Abyss")
         {   // 最も近い復帰点に移動
-            playerPos.position = FetchNearObjectWithTag("ChecKPoint").position;
+            MoveCheckPoint();
         }
     }
 
@@ -652,10 +655,6 @@ abstract public class PlayerBase : CharacterBase
         return result?.transform;
     }
 
-    protected void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == "Scaffold") m_IsScaffold = true;
-    }
     #endregion
 
     #region プレイヤー共通非同期処理
@@ -779,6 +778,14 @@ abstract public class PlayerBase : CharacterBase
     public void BlinkEnd()
     {
         animator.SetInteger("animation_id", (int)ANIM_ID.Run);
+    }
+
+    /// <summary>
+    /// 近くのチェックポイントに移動
+    /// </summary>
+    public void MoveCheckPoint()
+    {
+        playerPos.position = FetchNearObjectWithTag("ChecKPoint").position;
     }
 
     /// <summary>
