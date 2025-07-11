@@ -18,6 +18,8 @@ public class Terminal : MonoBehaviour
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
 
+    List<GameObject> terminalSpawnList;
+
     GameManager gameManager;
 
     // 端末タイプ列挙型
@@ -45,6 +47,12 @@ public class Terminal : MonoBehaviour
         {
             Debug.Log("Terminal Booted");
             BootTerminal(); // 端末を起動
+        }
+
+
+        if (SpawnManager.Instance.TerminalSpawnList.Count <= 0)
+        {
+
         }
     }
 

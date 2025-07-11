@@ -22,6 +22,7 @@ public class Press : MonoBehaviour
             // プレイヤーの最大HP70%相当のダメージに設定
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.7f);
             playerBase.ApplyDamage(damage);
+            playerBase.MoveCheckPoint();    // つぶれたプレイヤーをチェックポイントへ戻す
 
             Debug.Log("You Pancaked");
         }
