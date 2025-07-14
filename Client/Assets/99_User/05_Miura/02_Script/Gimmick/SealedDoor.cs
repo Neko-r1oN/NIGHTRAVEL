@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -11,6 +12,12 @@ public class SealedDoor : ObjectBase
     [SerializeField] GameObject DoorFragment;　//破片エフェクトを取得
     PlayerBase player;
     bool isBroken = false;
+
+    public enum Power_ID
+    {
+        ON = 0,
+        OFF
+    };
 
     public override void ApplyDamage()
     {
@@ -65,13 +72,13 @@ public class SealedDoor : ObjectBase
         Destroy(fragment.gameObject);
     }
 
-    public override void TruggerRequest()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public override void TurnOnPower(int triggerID)
     {
-        throw new System.NotImplementedException();
+        ApplyDamage();
+    }
+
+    public override void TruggerRequest()
+    {
+
     }
 }
