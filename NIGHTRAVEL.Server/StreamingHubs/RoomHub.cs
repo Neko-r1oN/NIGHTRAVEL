@@ -59,7 +59,7 @@ namespace StreamingHubs
             //{
             //    await MasterLostAsync();
             //}
-
+             
             //グループデータから削除
             roomStorage.Remove(this.ConnectionId);
 
