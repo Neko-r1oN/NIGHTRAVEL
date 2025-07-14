@@ -1,4 +1,5 @@
 ﻿using Cysharp.Runtime.Multicast;
+using NIGHTRAVEL.Server.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 
 namespace NIGHTRAVEL.Server.Model.Context
@@ -9,6 +10,16 @@ namespace NIGHTRAVEL.Server.Model.Context
         public string Name { get;} //ルーム名
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group {  get;}
         public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new(); //参加ユーザー一覧
+        /// <summary>
+        /// ルームデータリスト
+        /// Author:Nishiura
+        /// </summary>
+        public Dictionary<Guid, RoomData> roomDataList { get; } = new();
+        /// <summary>
+        /// エネミーデータリスト
+        /// Author:Nishiura
+        /// </summary>
+        public Dictionary<int, EnemyData> enemyDataList { get; } = new();
         //[その他、ゲームのルームデータをフィールドに保存]
 
         public RoomContext(IMulticastGroupProvider groupProvider,string roomName)
@@ -18,8 +29,51 @@ namespace NIGHTRAVEL.Server.Model.Context
             Group =
                 groupProvider.GetOrAddSynchronousGroup<Guid, IRoomHubReceiver>(roomName);
         }
+
+        /// <summary>
+        /// データ追加処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID">自身の接続ID</param>
+        public void AddRoomData(Guid conID)
+        {
+            // データリストに自身のデータを追加
+            roomDataList.Add(conID,new RoomData());
+        }
+
+        /// <summary>
+        /// データ削除処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID">自身の接続ID</param>
+        public void RemoveRoomData(Guid conID)
+        {
+            // データリストから自身のデータを消去
+            roomDataList.Remove(conID);
+        }
+
         public void Dispose() { 
             Group.Dispose();
+        }
+
+        /// <summary>
+        /// ユーザ情報渡す関数
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID"></param>
+        public RoomData GetRoomData(Guid conID)
+        {
+            return roomDataList[conID];
+        }
+
+        /// <summary>
+        /// ユーザ情報渡す関数
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID"></param>
+        public EnemyData GetEnemyData(int enemID)
+        {
+            return enemyDataList[enemID];
         }
     }
 }
