@@ -102,110 +102,110 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnJoinedUser(user);
     }
 
-    //退室
-    public async UniTask LeaveAsync()
-    {
-        await roomHub.LeavedAsync();
-    }
+    ////退室
+    //public async UniTask LeaveAsync()
+    //{
+    //    await roomHub.LeavedAsync();
+    //}
 
-    //退室通知
-    public void OnLeave(JoinedUser user)
-    {
-        OnLeavedUser(user);
-    }
+    ////退室通知
+    //public void OnLeave(JoinedUser user)
+    //{
+    //    OnLeavedUser(user);
+    //}
 
-    public void OnMasterClient(JoinedUser user)
-    {
-        OnMasteredClient(user);
-    }
+    //public void OnMasterClient(JoinedUser user)
+    //{
+    //    OnMasteredClient(user);
+    //}
 
-    //移動
-    public async Task MoveAsync(Vector3 pos, Quaternion rot, int anim)
-    {
-        await roomHub.MoveAsync(pos, rot, anim);
-    }
+    ////移動
+    //public async Task MoveAsync(Vector3 pos, Quaternion rot, int anim)
+    //{
+    //    await roomHub.MoveAsync(pos, rot, anim);
+    //}
 
-    //移動通知
-    public void OnMove(JoinedUser user, Vector3 pos, Quaternion rot, int anim)
-    {
-        OnMoveCharacter(user, pos, rot, anim);
-    }
+    ////移動通知
+    //public void OnMove(JoinedUser user, Vector3 pos, Quaternion rot, int anim)
+    //{
+    //    OnMoveCharacter(user, pos, rot, anim);
+    //}
 
-    //敵の出現通知
-    public void OnSpawn(string enemyName, Vector3 pos)
-    {
-        OnSpawnEnemy(enemyName, pos);
-    }
+    ////敵の出現通知
+    //public void OnSpawn(string enemyName, Vector3 pos)
+    //{
+    //    OnSpawnEnemy(enemyName, pos);
+    //}
 
-    //敵の出現
-    public async UniTask SpawnEnemyAsync(string enemyName, Vector3 pos)
-    {
-        await roomHub.SpawnAsync(enemyName, pos);
-    }
+    ////敵の出現
+    //public async UniTask SpawnEnemyAsync(string enemyName, Vector3 pos)
+    //{
+    //    await roomHub.SpawnAsync(enemyName, pos);
+    //}
 
-    //てきのId送信
-    public async UniTask EnemyIdAsync(int enemyId)
-    {
-        await roomHub.EnemyIdAsync(enemyId);
-    }
+    ////てきのId送信
+    //public async UniTask EnemyIdAsync(int enemyId)
+    //{
+    //    await roomHub.EnemyIdAsync(enemyId);
+    //}
 
-    //敵のID通知
-    public void OnIdEnemy(int enemyId)
-    {
-        OnIdAsyncEnemy(enemyId);
-    }
+    ////敵のID通知
+    //public void OnIdEnemy(int enemyId)
+    //{
+    //    OnIdAsyncEnemy(enemyId);
+    //}
 
-    //敵の移動回転
-    public void OnMoveEnemy(string enemyName, Vector3 pos, Quaternion rot)
-    {
-        OnMovedEnemy(enemyName, pos, rot);
-    }
+    ////敵の移動回転
+    //public void OnMoveEnemy(string enemyName, Vector3 pos, Quaternion rot)
+    //{
+    //    OnMovedEnemy(enemyName, pos, rot);
+    //}
 
-    //敵の移動回転同期
-    public async UniTask MoveEnemyAsync(string enemyName, Vector3 pos, Quaternion rot)
-    {
-        await roomHub.EnemyMoveAsync(enemyName, pos, rot);
-    }
+    ////敵の移動回転同期
+    //public async UniTask MoveEnemyAsync(string enemyName, Vector3 pos, Quaternion rot)
+    //{
+    //    await roomHub.EnemyMoveAsync(enemyName, pos, rot);
+    //}
 
-    //敵の撃破
-    public void OnExcusionEnemy(string enemyName)
-    {
-        OnExcusionedEnemy(enemyName);
-    }
+    ////敵の撃破
+    //public void OnExcusionEnemy(string enemyName)
+    //{
+    //    OnExcusionedEnemy(enemyName);
+    //}
 
-    //敵の撃破同期
-    public async UniTask ExcusionEnemyAsync(string enemyName)
-    {
-        await roomHub.EnemyExcusionAsync(enemyName);
-    }
+    ////敵の撃破同期
+    //public async UniTask ExcusionEnemyAsync(string enemyName)
+    //{
+    //    await roomHub.EnemyExcusionAsync(enemyName);
+    //}
 
-    //マスタークライアント譲渡
-    public async UniTask MasterLostAsync()
-    {
-        await roomHub.MasterLostAsync();
-    }
+    ////マスタークライアント譲渡
+    //public async UniTask MasterLostAsync()
+    //{
+    //    await roomHub.MasterLostAsync();
+    //}
 
-    //オブジェクトの生成同期
-    public async UniTask ObjectSpawnAsync(string objectName, Vector3 pos, Quaternion rot, Vector3 fow)
-    {
-        await roomHub.ObjectSpawnAsync(ConnectionId, objectName, pos, rot, fow);
-    }
+    ////オブジェクトの生成同期
+    //public async UniTask ObjectSpawnAsync(string objectName, Vector3 pos, Quaternion rot, Vector3 fow)
+    //{
+    //    await roomHub.ObjectSpawnAsync(ConnectionId, objectName, pos, rot, fow);
+    //}
 
-    //オブジェクトの生成
-    public void OnObjectSpawn(Guid connectionId, string objectName, Vector3 pos, Quaternion rot, Vector3 fow)
-    {
-        OnSpawnObject(connectionId, objectName, pos, rot, fow);
-    }
+    ////オブジェクトの生成
+    //public void OnObjectSpawn(Guid connectionId, string objectName, Vector3 pos, Quaternion rot, Vector3 fow)
+    //{
+    //    OnSpawnObject(connectionId, objectName, pos, rot, fow);
+    //}
 
-    //オブジェクトの移動同期
-    public async UniTask ObjectMoveAsync(string objectName, Vector3 pos, Quaternion rot)
-    {
-        await roomHub.ObjectMoveAsync(objectName, pos, rot);
-    }
+    ////オブジェクトの移動同期
+    //public async UniTask ObjectMoveAsync(string objectName, Vector3 pos, Quaternion rot)
+    //{
+    //    await roomHub.ObjectMoveAsync(objectName, pos, rot);
+    //}
 
-    //オブジェクトの移動
-    public void OnObjectMove(string objectName, Vector3 pos, Quaternion rot)
-    {
-        OnMovedObject(objectName, pos, rot);
-    }
+    ////オブジェクトの移動
+    //public void OnObjectMove(string objectName, Vector3 pos, Quaternion rot)
+    //{
+    //    OnMovedObject(objectName, pos, rot);
+    //}
 }
