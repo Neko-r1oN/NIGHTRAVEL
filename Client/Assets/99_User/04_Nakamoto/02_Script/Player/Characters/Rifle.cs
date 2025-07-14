@@ -1,4 +1,6 @@
+using Pixeye.Unity;
 using System.Collections;
+using System.Collections.Generic;   // HashSet 用
 using UnityEngine;
 using static StatusEffectController;
 using static Sword;
@@ -14,12 +16,47 @@ public class Rifle : PlayerBase
     public enum GS_ANIM_ID
     {
         Attack = 10,
-        Skill
+        Skill,
+        BeamReady
     }
 
-    private bool isChanging = false;    // 変形中フラグ
+    private bool isFiring = false;      // ビーム照射中フラグ
     private bool isRailgun = false;     // 銃変形フラグ
-    private bool isCooldown = false;    // 攻撃のクールダウンフラグ
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private Transform firePoint;           // 発射地点
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float maxDistance = 20f;       // ビームの長さ
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float beamRadius = 0.15f;      // ビーム半径
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float beamWidthScale = 1f;     // LineRenderer に乗算して見た目を調整したい場合
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private LayerMask targetLayers;        // 敵レイヤー
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float duration = 2.5f;         // 照射時間
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float damageInterval = 0.3f;   // ダメージ間隔
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private GameObject beamEffect;         // ビームエフェクト
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private LineRenderer lr;
+
+    //--------------------------
+    // メソッド
+
+    /// <summary>
+    /// 被ダメ時各フラグをリセット
+    /// </summary>
+    public override void HitReset()
+    {
+        canAttack = true;
+        isFiring = false;
+        isRailgun = false;
+        isSkill = false;
+    }
+
+    #region 更新関連処理
 
     /// <summary>
     /// 更新処理
@@ -30,15 +67,15 @@ public class Rifle : PlayerBase
         {   // 通常攻撃
             int id = animator.GetInteger("animation_id");
 
-            if (isBlink || isSkill || isCooldown || id == 3 || m_IsZipline) return;
+            if (isBlink || isSkill || id == 3 || m_IsZipline) return;
 
             if (canAttack)
             {
-                if(isRailgun)
+                if (isRailgun)
                 {
                     canAttack = false;
                     isRailgun = false;
-                    animator.SetInteger("animation_id", (int)GS_ANIM_ID.Attack);
+                    FireLaser(new Vector2(transform.localScale.x,0));
                 }
                 else
                 {
@@ -84,7 +121,7 @@ public class Rifle : PlayerBase
     /// <param name="blink">ダッシュ入力</param>
     protected override void Move(float move, bool jump, bool blink)
     {
-        if (isSkill)
+        if (isSkill || isRailgun)
         {   // 銃変形中は動けないように
             m_Rigidbody2D.linearVelocity = Vector3.zero;
             return;
@@ -99,12 +136,15 @@ public class Rifle : PlayerBase
         }
 
         // 銃変形時の移動制限
-        if (isRailgun)
+        if (isFiring)
         {
-            var targetVelocity = new Vector2(move, m_Rigidbody2D.linearVelocity.y);
-            m_Rigidbody2D.linearVelocity = targetVelocity;
+            m_Rigidbody2D.linearVelocity = Vector2.zero;
         }
     }
+
+    #endregion
+
+    #region 攻撃・ダメージ関連
 
     /// <summary>
     /// ダメージを与える処理
@@ -125,7 +165,7 @@ public class Rifle : PlayerBase
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
 
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(power, playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(1, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
             else if (collidersEnemies[i].gameObject.tag == "Object")
@@ -154,7 +194,92 @@ public class Rifle : PlayerBase
         isSkill = false;
         isRailgun = true;
 
-        // Idleに戻る
-        animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+        // 発射準備へ
+        animator.SetInteger("animation_id", (int)GS_ANIM_ID.BeamReady);
     }
+
+    #endregion
+
+    #region ビーム関連
+
+    /// <summary>
+    /// 照射処理
+    /// </summary>
+    /// <param name="direction">プレイヤーの向き</param>
+    public void FireLaser(Vector2 direction)
+    {
+        if (isFiring) return;             // 多重発射防止
+        StartCoroutine(LaserRoutine(direction.normalized));
+    }
+
+    /// <summary>
+    /// 照射中処理
+    /// </summary>
+    /// <param name="dir">向き</param>
+    /// <returns></returns>
+    private IEnumerator LaserRoutine(Vector2 dir)
+    {
+        isFiring = true;
+
+        // ビームエフェクト表示
+        beamEffect.SetActive(true);
+
+        float laserTimer = 0f;   // 全体の照射時間
+        float tickTimer = 0f;    // ダメージ間隔計測
+
+#if UNITY_EDITOR
+        lr.enabled = true;
+
+        // LineRenderer の太さを当たり判定と合わせる
+        float lrWidth = beamRadius * 2f * beamWidthScale;
+        lr.startWidth = lrWidth;
+        lr.endWidth = lrWidth;
+#endif
+
+        while (laserTimer < duration)
+        {
+            laserTimer += Time.deltaTime;
+            tickTimer += Time.deltaTime;
+
+            // CircleCastAll で「太さ」を持った線判定
+            RaycastHit2D[] hits = Physics2D.CircleCastAll(
+                origin: firePoint.position,
+                radius: beamRadius,
+                direction: dir,
+                distance: maxDistance,
+                layerMask: targetLayers);
+
+            // レーザー可視長：最初に衝突した位置 or 最大距離
+            Vector3 endPos = firePoint.position + (Vector3)(dir * maxDistance);
+            if (hits.Length > 0) endPos = hits[0].point;
+
+            // 指定ダメージ間隔毎にダメージ
+            if (tickTimer >= damageInterval && hits.Length > 0)
+            {
+                foreach (var hit in hits)
+                {
+                    if (hit.collider == null) continue;
+
+                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage(this.Power, this.transform);
+                }
+                tickTimer = 0f;
+            }
+
+#if UNITY_EDITOR
+            // LineRenderer 更新
+            lr.SetPosition(0, firePoint.position);
+            lr.SetPosition(1, endPos);
+#endif
+
+            yield return null;
+        }
+
+        // ビームエフェクト非表示
+        beamEffect.SetActive(false);
+        animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+        isFiring = false;
+        canAttack = true;
+    }
+
+    #endregion
 }
