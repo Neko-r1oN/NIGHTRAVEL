@@ -27,19 +27,10 @@ public class GunParticleController : MonoBehaviour
     [Foldout("UŒ‚‘ÎÛ‚Ìİ’è")]
     [SerializeField]
     bool canAttackObject;
-    LayerMask attackTargetLayerMask;
     #endregion
 
     [SerializeField] GameObject owner;
     [SerializeField] int damageValue;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        if (canAttackEnemy) attackTargetLayerMask += LayerMask.GetMask("Enemy");
-        if (canAttackPlayer) attackTargetLayerMask += LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player");
-        attackTargetLayerMask += LayerMask.GetMask("Default");
-    }
 
     /// <summary>
     /// Œ‚‚¿n‚ß‚éˆ—
@@ -50,13 +41,10 @@ public class GunParticleController : MonoBehaviour
         StatusEffectController.EFFECT_TYPE? effectType = null;
         if (owner.tag == "Enemy")
         {
-            if (owner.GetComponent<EnemyBase>().IsElite)
-            {
-                effectType = owner.GetComponent<EnemyElite>().GetAddStatusEffectEnum();
-            }
+            effectType = owner.GetComponent<EnemyBase>().GetStatusEffectToApply();
         }
 
-        gunBulletParticle.Initialize(damageValue, attackTargetLayerMask, effectType);
+        gunBulletParticle.Initialize(owner.tag, damageValue, effectType);
         gunParticleParent.SetActive(true);
     }
 

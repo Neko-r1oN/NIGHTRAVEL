@@ -111,7 +111,7 @@ abstract public class EnemyBase : CharacterBase
     #region 状態管理
     protected List<Coroutine> cancellCoroutines = new List<Coroutine>();  // ヒット時にキャンセルするコルーチン
     protected bool isStun;
-    protected bool isInvincible;
+    protected bool isInvincible = true;
     protected bool doOnceDecision;
     protected bool isAttacking;
     protected bool isDead;
@@ -135,6 +135,7 @@ abstract public class EnemyBase : CharacterBase
     [Tooltip("判定を描画するかどうか")]
     [SerializeField]
     protected bool canDrawRay = false;
+    public bool CanDrawRay { get { return canDrawRay; } }
 
     [Foldout("その他")]
     [SerializeField]
@@ -217,7 +218,6 @@ abstract public class EnemyBase : CharacterBase
                 {
                     Flip();
                 }
-                StartCoroutine(HitTime());
             }
             collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
         }
@@ -241,19 +241,6 @@ abstract public class EnemyBase : CharacterBase
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
-    }
-
-    /// <summary>
-    /// エリート個体にする処理
-    /// </summary>
-    public void PromoteToElite(EnemyElite.ELITE_TYPE type)
-    {
-        if (!isElite)
-        {
-            isElite = true;
-            if (!enemyElite) enemyElite = GetComponent<EnemyElite>();
-            enemyElite.Init(type);
-        }
     }
 
     /// <summary>
@@ -290,15 +277,17 @@ abstract public class EnemyBase : CharacterBase
     /// 一番近いプレイヤーを取得する
     /// </summary>
     /// <returns></returns>
-    public GameObject GetNearPlayer()
+    public GameObject GetNearPlayer(Vector3? offset = null)
     {
+        Vector3 point = transform.position;
+        if (offset != null) point += (Vector3)offset; 
         GameObject nearPlayer = null;
         float dist = float.MaxValue;
         foreach (GameObject player in GetAlivePlayers())
         {
             if (player != null)
             {
-                float distToPlayer = Vector2.Distance(transform.position, player.transform.position);
+                float distToPlayer = Vector2.Distance(point, player.transform.position);
                 if (Mathf.Abs(distToPlayer) < dist)
                 {
                     nearPlayer = player;
@@ -312,14 +301,43 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// 一番近いプレイヤーをターゲットに設定する
     /// </summary>
-    public void SetNearTarget()
+    public void SetNearTarget(Vector3? offset = null)
     {
-        GameObject target = GetNearPlayer();
+        GameObject target = GetNearPlayer(offset);
         if (target != null)
         {
             this.target = target;
         }
     }
+
+    #region エリート個体・状態異常関連
+    /// <summary>
+    /// エリート個体にする処理
+    /// </summary>
+    public void PromoteToElite(EnemyElite.ELITE_TYPE type)
+    {
+        if (!isElite)
+        {
+            isElite = true;
+            if (!enemyElite) enemyElite = GetComponent<EnemyElite>();
+            enemyElite.Init(type);
+        }
+    }
+
+    /// <summary>
+    /// 適用させる状態異常の種類を取得する
+    /// </summary>
+    public StatusEffectController.EFFECT_TYPE? GetStatusEffectToApply()
+    {
+        bool isElite = this.isElite && enemyElite != null;
+        StatusEffectController.EFFECT_TYPE? applyEffect = null;
+        if (isElite)
+        {
+            applyEffect = enemyElite.GetAddStatusEffectEnum();
+        }
+        return applyEffect;
+    }
+    #endregion
 
     #region 移動処理関連
 
@@ -366,15 +384,27 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public void ApplyDamage(int power, Transform attacker = null, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    public virtual void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
     {
-        if (isInvincible || isDead) return;
-
         var damage = CalculationLibrary.CalcDamage(power, Defense);
-        var hitPoint = TransformUtils.GetHitPointToTarget(transform, attacker.position);
-        if (hitPoint == null) hitPoint = transform.position;
-        UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ダメージ表記
+
+        if (drawDmgText && !isInvincible)
+        {
+            // 被ダメージ量のUIを表示する
+            var attackerPoint = attacker ? attacker.position : transform.position;
+            var hitPoint = TransformUtils.GetHitPointToTarget(transform, attackerPoint);
+            if (hitPoint == null) hitPoint = transform.position;
+            UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ダメージ表記
+        }
+
+        if (isInvincible || isDead) return;
         hp -= Mathf.Abs(damage);
+
+        // 状態異常を付与する
+        if (effectTypes.Length > 0)
+        {
+            effectController.ApplyStatusEffect(effectTypes);
+        }
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
         if (attacker)
@@ -388,18 +418,12 @@ abstract public class EnemyBase : CharacterBase
                 }
             }
 
-            // 状態異常を付与する
-            if (effectTypes.Length > 0)
-            {
-                effectController.ApplyStatusEffect(effectTypes);
-            }
-
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
             
             DoKnokBack(damage);
 
-            if (hp > 0) StartCoroutine(HitTime());
+            if (hp > 0 && canCancelAttackOnHit) OnHit();
         }
 
         if (hp <= 0)
@@ -413,25 +437,10 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ダメージ適応時の無敵時間
-    /// </summary>
-    /// <returns></returns>
-    protected IEnumerator HitTime()
-    {
-        if (canCancelAttackOnHit)
-        {
-            isInvincible = true;
-            OnHit();
-            yield return new WaitForSeconds(hitTime);
-            isInvincible = false;
-        }
-    }
-
-    /// <summary>
     /// 死亡処理
     /// </summary>
     /// <returns></returns>
-    protected IEnumerator DestroyEnemy(PlayerBase player)
+    protected virtual IEnumerator DestroyEnemy(PlayerBase player)
     {
         if (!isDead)
         {
@@ -498,7 +507,7 @@ abstract public class EnemyBase : CharacterBase
         // 視線描画
         if (sightChecker != null)
         {
-            sightChecker.DrawSightLine(canChaseTarget);
+            sightChecker.DrawSightLine(canChaseTarget, target, players);
         }
 
         DrawDetectionGizmos();
@@ -570,7 +579,8 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     public void OnEndSpawnAnim()
     {
-        isSpawn = false;   // 行動できるようにする
+        isInvincible = false;
+        isSpawn = false;
     }
 
     /// <summary>

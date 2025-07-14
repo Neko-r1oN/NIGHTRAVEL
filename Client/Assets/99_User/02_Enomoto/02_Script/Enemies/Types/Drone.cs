@@ -36,10 +36,6 @@ public class Drone : EnemyBase
     [Foldout("ステータス")]
     [SerializeField]
     float patorolRange = 10f;
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    float aimRotetionSpeed = 3f;
     #endregion
 
     #region 攻撃関連
@@ -49,9 +45,6 @@ public class Drone : EnemyBase
     [Foldout("攻撃関連")]
     [SerializeField] 
     GunParticleController gunPsController;
-    [Foldout("攻撃関連")]
-    [SerializeField] 
-    float gunBulletWidth;
     #endregion
 
     #region チェック判定
@@ -85,7 +78,7 @@ public class Drone : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if (canAttack && projectileChecker.CanFireProjectile(gunBulletWidth, true) && !sightChecker.IsObstructed())
+        if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
         {
             chaseAI.Stop();
             Attack();
@@ -168,9 +161,8 @@ public class Drone : EnemyBase
                 if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
                     || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
-                Vector3 direction = target.transform.position - transform.position;
-                Quaternion quaternion = Quaternion.Euler(0, 0, projectileChecker.ClampAngleToTarget(direction));
-                aimTransform.rotation = Quaternion.RotateTowards(aimTransform.rotation, quaternion, aimRotetionSpeed);
+                Vector3 direction = (target.transform.position - transform.position).normalized;
+                projectileChecker.RotateAimTransform(direction);
             }
             yield return new WaitForSeconds(waitSec);
             time += waitSec;
@@ -317,7 +309,7 @@ public class Drone : EnemyBase
         // 射線
         if (projectileChecker != null)
         {
-            projectileChecker.DrawProjectileRayGizmo(gunBulletWidth, true);
+            projectileChecker.DrawProjectileRayGizmo(target);
         }
 
         // 壁の判定

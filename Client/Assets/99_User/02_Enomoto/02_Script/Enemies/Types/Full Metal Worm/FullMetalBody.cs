@@ -10,6 +10,17 @@ using UnityEngine;
 public class FullMetalBody : EnemyBase
 {
     /// <summary>
+    /// アニメーションID
+    /// </summary>
+    public enum ANIM_ID
+    {
+        None = 0,
+        Open,
+        Close,
+        Dead,
+    }
+
+    /// <summary>
     /// 役割の種別
     /// </summary>
     public enum ROLE_TYPE
@@ -23,18 +34,9 @@ public class FullMetalBody : EnemyBase
     ROLE_TYPE roleType;
     public ROLE_TYPE RoleType { get { return roleType; } }
 
+    #region コンポーネント関連
     FullMetalWorm worm;
-
-    /// <summary>
-    /// アニメーションID
-    /// </summary>
-    public enum ANIM_ID
-    {
-        None = 0,
-        Open,
-        Close,
-        Dead,
-    }
+    #endregion
 
     #region 攻撃関連
     [Foldout("攻撃関連")]
@@ -60,19 +62,6 @@ public class FullMetalBody : EnemyBase
         worm = transform.parent.GetComponent<FullMetalWorm>();
     }
 
-    private void OnValidate()
-    {
-        switch (roleType)
-        {
-            case ROLE_TYPE.None:
-                break;
-            case ROLE_TYPE.Spawner:
-                break;
-            case ROLE_TYPE.Attacker:
-                break;
-        }
-    }
-
     /// <summary>
     /// 行動パターン実行処理
     /// </summary>
@@ -82,9 +71,21 @@ public class FullMetalBody : EnemyBase
     /// ロールに応じた行動を実行するコルーチン
     /// </summary>
     /// <returns></returns>
-    public IEnumerator ActByRoleTypeCoroutine()
+    public void ActByRoleType()
     {
-        yield return null;
+        switch (roleType)
+        {
+            case ROLE_TYPE.None:
+                break;
+            case ROLE_TYPE.Spawner:
+                RunEnemySpawn();
+                break;
+            case ROLE_TYPE.Attacker:
+                Attack();
+                break;
+            default:
+                break;
+        }
     }
 
     #region 攻撃処理関連
@@ -92,11 +93,8 @@ public class FullMetalBody : EnemyBase
     /// <summary>
     /// 攻撃処理
     /// </summary>
-    public void Attack()
+    void Attack()
     {
-        doOnceDecision = false;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
         cancellCoroutines.Add(StartCoroutine(RangeAttack()));
     }
 
@@ -108,23 +106,30 @@ public class FullMetalBody : EnemyBase
     {
         gunPsControllerList.ForEach(item => { item.StartShooting(); });
 
+        Dictionary<Transform, GameObject> targetList = new Dictionary<Transform, GameObject>();
         float time = 0;
         float waitSec = 0.05f;
         while (time < shotsPerSecond)
         {
-            // ターゲットが追跡範囲外 || ターゲットが存在しない場合
-            if (target && disToTarget > trackingRange || !target) SetNearTarget();
-
-            // 追跡範囲内のターゲットのいる方向に向かってエイム
-            if (target && disToTarget <= trackingRange)
+            foreach (var aimTransform in aimTransformList)
             {
-                foreach (var aimTransform in aimTransformList)
+                EnemyProjectileChecker projectileChecker = aimTransform.GetComponent<EnemyProjectileChecker>();
+
+                // 初回時にのみ処理
+                if (!targetList.ContainsKey(aimTransform)) 
+                    targetList.Add(aimTransform, projectileChecker.GetNearPlayerInSight(Players, true));
+
+                // ターゲットを見失ったら、ターゲットを再設定
+                if (targetList[aimTransform] == null || !projectileChecker.IsTargetInSight(targetList[aimTransform]))
+                    targetList[aimTransform] = projectileChecker.GetNearPlayerInSight(Players, true);
+
+                if (targetList[aimTransform] != null)
                 {
-                    Vector3 direction = (target.transform.position - aimTransform.position).normalized;
-                    Quaternion quaternion = Quaternion.Euler(0, 0, aimTransform.GetComponent<EnemyProjectileChecker>().ClampAngleToTarget(direction));
-                    aimTransform.rotation = Quaternion.RotateTowards(aimTransform.rotation, quaternion, aimRotetionSpeed);
+                    Vector3 direction = (targetList[aimTransform].transform.position - aimTransform.position).normalized;
+                    projectileChecker.RotateAimTransform(direction, aimRotetionSpeed);
                 }
             }
+
             yield return new WaitForSeconds(waitSec);
             time += 0.1f;
         }
@@ -137,7 +142,7 @@ public class FullMetalBody : EnemyBase
             foreach (var aimTransform in aimTransformList)
             {
                 Quaternion resetQuaternion = Quaternion.Euler(0, 0, 0);
-                aimTransform.rotation = Quaternion.RotateTowards(aimTransform.rotation, resetQuaternion, aimRotetionSpeed * 2);
+                aimTransform.localRotation = Quaternion.RotateTowards(aimTransform.localRotation, resetQuaternion, aimRotetionSpeed * 2);
             }
             yield return new WaitForSeconds(waitSec);
         }
@@ -150,7 +155,7 @@ public class FullMetalBody : EnemyBase
     /// <summary>
     /// ザコ敵を複数生成するコルーチンの実行
     /// </summary>
-    public bool RunEnemySpawn()
+    bool RunEnemySpawn()
     {
         isAttacking = true;
         bool isGenerateSucsess = false;
@@ -168,7 +173,7 @@ public class FullMetalBody : EnemyBase
             && !Physics2D.OverlapCircle(transform.position, worm.TerrainCheckRane, terrainLayerMask))
         {
             isGenerateSucsess = true;
-            int maxEnemies = Random.Range(1, 4);
+            int maxEnemies = Random.Range(1, 3);
             if (generatedEnemiesCnt + maxEnemies > worm.GeneratedMax) maxEnemies = worm.GeneratedMax - generatedEnemiesCnt;
 
             cancellCoroutines.Add(StartCoroutine(GenerateEnemeiesCoroutine(maxEnemies)));
@@ -184,7 +189,7 @@ public class FullMetalBody : EnemyBase
     {
         for (int i = 0; i < maxEnemies; i++)
         {
-            Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
+            Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
             float time = Random.Range(0f, 0.5f);
             yield return new WaitForSeconds(time);
             if (worm.GeneratedEnemies.Count >= worm.GeneratedMax) yield break;  // 既に生成上限に達している場合
@@ -222,6 +227,36 @@ public class FullMetalBody : EnemyBase
         SetAnimId((int)ANIM_ID.Dead);
     }
 
+    /// <summary>
+    /// ダメージ適用処理
+    /// </summary>
+    /// <param name="power"></param>
+    /// <param name="attacker"></param>
+    /// <param name="effectTypes"></param>
+    public override void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    {
+        attacker = null;
+        base.ApplyDamage(power, attacker, true, effectTypes);
+
+        // 本体のHPも削る
+        worm.ApplyDamage(power, attacker, false, effectTypes);
+    }
+
+    /// <summary>
+    /// 死亡処理
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    protected override IEnumerator DestroyEnemy(PlayerBase player)
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            OnDead();
+            yield break;
+        }
+    }
+
     #endregion
 
     #region チェック処理関連
@@ -243,11 +278,19 @@ public class FullMetalBody : EnemyBase
         //}
 
         // 射線
-        SetNearTarget();
-        foreach (var aimTransform in aimTransformList)
-        {
-            aimTransform.GetComponent<EnemyProjectileChecker>().DrawProjectileRayGizmo(gunBulletWidth, true);
-        }
+        //SetNearTarget();
+        //foreach (var aimTransform in aimTransformList)
+        //{
+        //    aimTransform.GetComponent<EnemyProjectileChecker>().DrawProjectileRayGizmo(target);
+        //}
+
+        // 射線の可動域範囲内にプレイヤーがいるか
+        //foreach (var aimTransform in aimTransformList)
+        //{
+        //    var a = aimTransform.GetComponent<EnemyProjectileChecker>().GetNearPlayerInSight(Players);
+        //    string log = $"[{aimTransform.gameObject.name}] プレイヤーの視認：{a != null}";
+        //    Debug.Log(log);
+        //}
     }
 
     #endregion
