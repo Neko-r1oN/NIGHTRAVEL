@@ -142,12 +142,7 @@ public class CyberDog : EnemyBase
         m_rb2d.linearVelocity = jumpVec;
 
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-        bool isElite = this.isElite && enemyElite != null;
-        StatusEffectController.EFFECT_TYPE? applyEffect = null;
-        if (isElite)
-        {
-            applyEffect = enemyElite.GetAddStatusEffectEnum();
-        }
+        StatusEffectController.EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
 
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
         for (int i = 0; i < collidersEnemies.Length; i++)

@@ -10,6 +10,7 @@ using UnityEngine;
 public class GunBulletParticle : MonoBehaviour
 {
     StatusEffectController.EFFECT_TYPE? effectType = null;
+    string ownerTag;
     int damageValue;
 
     /// <summary>
@@ -17,11 +18,10 @@ public class GunBulletParticle : MonoBehaviour
     /// </summary>
     /// <param name="damageValue"></param>
     /// <param name="enemyTag"></param>
-    public void Initialize(int damageValue, LayerMask collisionLayer, StatusEffectController.EFFECT_TYPE? effectType)
+    public void Initialize(string ownerTag, int damageValue, StatusEffectController.EFFECT_TYPE? effectType)
     {
+        this.ownerTag = ownerTag;
         this.damageValue = damageValue;
-        var colision = GetComponent<ParticleSystem>().collision;    // 衝突のモジュール取得
-        colision.collidesWith = collisionLayer;     // 攻撃対象のレイヤーを設定
         this.effectType = effectType;
     }
 
@@ -31,12 +31,15 @@ public class GunBulletParticle : MonoBehaviour
     /// <param name="other"></param>
     private void OnParticleCollision(GameObject other)
     {
+        if (other.tag == ownerTag) return;
+
         if (other.tag == "Player")
         {
             other.GetComponent<PlayerBase>().ApplyDamage(damageValue, null, effectType);
         }
         else if (other.tag == "Enemy")
         {
+            Debug.Log(other.gameObject.name);
             other.GetComponent<EnemyBase>().ApplyDamage(damageValue);
         }
         else if (other.tag == "Object")

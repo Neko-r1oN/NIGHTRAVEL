@@ -84,10 +84,8 @@ public class EnemySightChecker : MonoBehaviour
     /// <param name="players"></param>
     /// <param name="target"></param>
     /// <param name="canChaseTarget"></param>
-    public void DrawSightLine(bool canChaseTarget)
+    public void DrawSightLine(bool canChaseTarget ,GameObject target, List<GameObject> players)
     {
-        List<GameObject> players = GetComponent<EnemyBase>().Players;
-        GameObject target = GetComponent<EnemyBase>().Target;
         if (players.Count > 0)
         {
             foreach (GameObject player in players)

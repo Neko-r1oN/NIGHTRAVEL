@@ -34608,7 +34608,8 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 0}
-  players: []
+  players:
+  - {fileID: 0}
   spriteRenderers:
   - {fileID: 4666127832742053817}
   bulletNum: 0
@@ -34629,10 +34630,8 @@ MonoBehaviour:
   canDrawRay: 0
   exp: 100
   patorolRange: 7
-  aimRotetionSpeed: 3
   aimTransform: {fileID: 3195488026561358393}
   gunPsController: {fileID: 7974167630358644758}
-  gunBulletWidth: 0.1
   wallCheck: {fileID: 3783518254967993462}
   wallCheckRadius: {x: 0, y: 0.7}
   disToTargetMin: 2.5
@@ -64207,7 +64206,7 @@ GameObject:
   - component: {fileID: 7164094016410724796}
   - component: {fileID: 6182988789213312009}
   - component: {fileID: 4887265396735060083}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67997,7 +67996,7 @@ ParticleSystem:
     radiusScale: 1.5
     collidesWith:
       serializedVersion: 2
-      m_Bits: 1081081919
+      m_Bits: 1048577
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -69174,6 +69173,8 @@ MonoBehaviour:
   aimTransform: {fileID: 3195488026561358393}
   leftFireRayPoint: {fileID: 2656463187502370756}
   rightFireRayPoint: {fileID: 2174345861939096868}
+  gunBulletWidth: 0.1
+  rotetionSpeed: 3
   maxAddAngleLeft: 65
   maxAddAngleRight: 0
   initialAngle: 270

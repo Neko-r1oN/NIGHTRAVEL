@@ -7,6 +7,8 @@ using NUnit.Framework;
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.Sqlite;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,11 +19,8 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     public enum ANIM_ID
     {
-        None = 0,
-        Idle,
+        Idle = 0,
         Attack,
-        Run,
-        Hit,
         Dead,
     }
 
@@ -44,13 +43,21 @@ public class FullMetalWorm : EnemyBase
     #endregion
 
     #region チェック判定
+    // 近くにプレイヤーがいるかチェックする範囲
+    [Foldout("チェック関連")]
+    [SerializeField]
+    Transform playerCheck;
+    [Foldout("チェック関連")]
+    [SerializeField]
+    float playerCheckRange;
+
     // 近距離攻撃の範囲
     [Foldout("チェック関連")]
     [SerializeField]
     Transform meleeAttackCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
-    float meleeAttackRange = 0.9f;
+    [SerializeField]
+    Vector2 meleeAttackRange = Vector2.zero;
 
     [Foldout("チェック関連")]
     [SerializeField]
@@ -82,10 +89,6 @@ public class FullMetalWorm : EnemyBase
     #endregion
 
     #region 敵の生成関連
-    [Foldout("敵の生成関連")]
-    [SerializeField]
-    List<Transform> enemySpawnPoints = new List<Transform>();   // 敵を生成する部位
-
     [Foldout("敵の生成関連")]
     [SerializeField]
     List<GameObject> enemyPrefabs = new List<GameObject>();
@@ -124,8 +127,9 @@ public class FullMetalWorm : EnemyBase
         doOnceDecision = false;
         endDecision = true;
         isSpawn = false;
-        bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));
-        //cancellCoroutines.Add(StartCoroutine(NextDecision()));
+        bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
+        cancellCoroutines.Add(StartCoroutine(NextDecision()));
+        MeleeAttack();
     }
 
     protected override void FixedUpdate()
@@ -165,52 +169,34 @@ public class FullMetalWorm : EnemyBase
         if (doOnceDecision)
         {
             doOnceDecision = false;
-            if (!isAttacking && randomDecision <= 1f)
+            if (!isAttacking && randomDecision <= 0.4f)
             {
                 // 既に死亡している生成済みの敵の要素を削除
-                //generatedEnemies.RemoveAll(item => item == null);
+                generatedEnemies.RemoveAll(item => item == null);
 
-                //if (generatedEnemies.Count < generatedMax)
-                //{
-                //    bool isGenerateSucsess = false;
-                //    foreach (var body in bodys)
-                //    {
-                //        if (body.HP > 0 && body.RoleType == FullMetalBody.ROLE_TYPE.Spawner)
-                //        {
-                //            bool result = body.RunEnemySpawn();
-                //            if (!isGenerateSucsess) isGenerateSucsess = result;
-                //        }
-                //    }
-                //    float time = isGenerateSucsess ? attackCoolTime : 0f;
-                //    cancellCoroutines.Add(StartCoroutine(AttackCooldown(time)));
-                //    return;
-                //}
-
-
-                foreach (var body in bodys)
+                // 範囲内にPlayerがいるかチェック
+                int layerNumber = 1 << LayerMask.NameToLayer("Player");
+                Collider2D hit = Physics2D.OverlapCircle(playerCheck.position, playerCheckRange, layerNumber);
+                if (hit)
                 {
-                    if (body.HP > 0 && body.RoleType == FullMetalBody.ROLE_TYPE.Attacker)
-                    {
-
-                    }
+                    // 全ての部位の行動を実行
+                    isAttacking = true;
+                    ExecuteAllPartActions();
+                    cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+                }
+                else
+                {
+                    StartCoroutine(NextDecision(0.5f));
                 }
             }
-            else
+            else if (randomDecision <= 0.8f)
             {
                 StopCoroutine("MoveGraduallyCoroutine");
                 cancellCoroutines.Add(StartCoroutine(MoveCoroutine()));
             }
-        }
-    }
-
-    [ContextMenu("CallAttackMethodTest")]
-    public void CallAttackMethodTest()
-    {
-        foreach (var body in bodys)
-        {
-            if (body.HP > 0 && body.RoleType == FullMetalBody.ROLE_TYPE.Attacker)
+            else
             {
-                body.Attack();
+                StartCoroutine(NextDecision());
             }
         }
     }
@@ -220,10 +206,10 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    IEnumerator NextDecision()
+    IEnumerator NextDecision(float time = 0)
     {
         SetNextTargetPosition();
-        float time = Mathf.Floor(Random.Range(decisionTimeMin, decisionTimeMax));
+        if (time == 0) time = Mathf.Floor(Random.Range(decisionTimeMin, decisionTimeMax));
         doOnceDecision = false;
         StartCoroutine("MoveGraduallyCoroutine");
         yield return new WaitForSeconds(time);
@@ -233,71 +219,52 @@ public class FullMetalWorm : EnemyBase
 
     #region 攻撃処理関連
 
+    [ContextMenu("ExecuteAllPartActions")]
     /// <summary>
-    /// 攻撃処理
+    /// 全ての部位の行動を実行
     /// </summary>
-    public void Attack()
+    public void ExecuteAllPartActions()
     {
-        doOnceDecision = false;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
+        foreach (var body in bodys)
+        {
+            if (body.HP > 0)
+            {
+                body.ActByRoleType();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 近接攻撃処理
+    /// </summary>
+    public void MeleeAttack()
+    {
+        cancellCoroutines.Add(StartCoroutine(MeleeAttackCoroutine()));
+    }
+
+    /// <summary>
+    /// 近接攻撃コルーチン
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator MeleeAttackCoroutine()
+    {
         SetAnimId((int)ANIM_ID.Attack);
+        while (!isDead)
+        {
+            // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+            StatusEffectController.EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
+
+            Collider2D[] collidersEnemies = Physics2D.OverlapBoxAll(meleeAttackCheck.position, meleeAttackRange, 0);
+            for (int i = 0; i < collidersEnemies.Length; i++)
+            {
+                if (collidersEnemies[i].gameObject.tag == "Player")
+                {
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
+                }
+            }
+            yield return null;
+        }
     }
-
-    /// <summary>
-    /// 一定時間、タレットで攻撃する処理
-    /// </summary>
-
-    public override void OnAttackAnimEvent()
-    {
-        //// 前に飛び込む
-        //Vector2 jumpVec = new Vector2(18 * TransformUtils.GetFacingDirection(transform), 10);
-        //m_rb2d.linearVelocity = jumpVec;
-
-        //// 自身がエリート個体の場合、付与する状態異常の種類を取得する
-        //bool isElite = this.isElite && enemyElite != null;
-        //StatusEffectController.EFFECT_TYPE? applyEffect = null;
-        //if (isElite)
-        //{
-        //    applyEffect = enemyElite.GetAddStatusEffectEnum();
-        //}
-
-        //Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
-        //for (int i = 0; i < collidersEnemies.Length; i++)
-        //{
-        //    if (collidersEnemies[i].gameObject.tag == "Player")
-        //    {
-        //        collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
-        //    }
-        //}
-
-        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
-    }
-
-    //IEnumerator RangeAttack()
-    //{
-    //    yield return new WaitForSeconds(0.25f);  // 攻撃開始を遅延
-    //    gunPsControllerList.StartShooting();
-
-    //    float time = 0;
-    //    while (time < shotsPerSecond)
-    //    {
-    //        // ターゲットのいる方向に向かってエイム
-    //        if (target)
-    //        {
-    //            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-    //                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-
-    //            Vector3 direction = target.transform.position - transform.position;
-    //            Quaternion quaternion = Quaternion.Euler(0, 0, projectileChecker.ClampAngleToTarget(direction));
-    //            aimTransformList.rotation = Quaternion.RotateTowards(aimTransformList.rotation, quaternion, aimRotetionSpeed);
-    //        }
-    //        yield return new WaitForSeconds(0.1f);
-    //        time += 0.1f;
-    //    }
-
-    //    cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
-    //}
 
     /// <summary>
     /// クールダウン処理
@@ -321,10 +288,6 @@ public class FullMetalWorm : EnemyBase
     /// <param name="direction"></param>
     void MoveTowardsTarget(float speed)
     {
-        //Vector2 direction = (targetPos - transform.position).normalized;
-        //m_rb2d.linearVelocity = direction * speed;
-        //RotateTowardsMovementDirection();
-
         m_rb2d.linearVelocity = transform.up.normalized * speed;
     }
 
@@ -351,6 +314,7 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     IEnumerator MoveCoroutine()
     {
+        SetNextTargetPosition(true);
         float currentSpeed = moveSpeed;
         bool isTargetPos = false;
 
@@ -398,21 +362,30 @@ public class FullMetalWorm : EnemyBase
     #region ヒット処理関連
 
     /// <summary>
-    /// ダメージを受けたときの処理
-    /// </summary>
-    protected override void OnHit()
-    {
-        base.OnHit();
-        SetAnimId((int)ANIM_ID.Hit);
-    }
-
-    /// <summary>
     /// 死亡するときに呼ばれる処理処理
     /// </summary>
     /// <returns></returns>
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+
+        // 全ての部位のコルーチン停止
+        foreach (var body in bodys)
+        {
+            body.StopAllCoroutines();
+        }
+    }
+
+    /// <summary>
+    /// ダメージ適用処理
+    /// </summary>
+    /// <param name="power"></param>
+    /// <param name="attacker"></param>
+    /// <param name="effectTypes"></param>
+    public override void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    {
+        attacker = null;
+        base.ApplyDamage(power, attacker, true, effectTypes);
     }
 
     #endregion
@@ -450,7 +423,7 @@ public class FullMetalWorm : EnemyBase
 
         if (target) targetPos = target.transform.position;
 
-        if (!target || target && rnd < 0.3f)
+        if (!target)
         {
             for (int i = 0; i < 100; i++)
             {
@@ -474,15 +447,18 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     protected override void DrawDetectionGizmos()
     {
-        // 攻撃開始距離
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, attackDist);
+        // Player検知範囲
+        if (playerCheck)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(playerCheck.transform.position, playerCheckRange);
+        }
 
         // 攻撃範囲
         if (meleeAttackCheck)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(meleeAttackCheck.transform.position, meleeAttackRange);
+            Gizmos.DrawWireCube(meleeAttackCheck.transform.position, meleeAttackRange);
         }
 
         // 移動範囲
@@ -492,8 +468,9 @@ public class FullMetalWorm : EnemyBase
             Gizmos.DrawWireSphere((Vector2)stageCenter.position, moveRange);
         }
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, terrainCheckRange);
+        // 障害物を検知する範囲
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawWireSphere(transform.position, terrainCheckRange);
     }
 
     #endregion
