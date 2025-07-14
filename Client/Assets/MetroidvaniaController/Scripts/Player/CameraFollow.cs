@@ -39,7 +39,7 @@ public class CameraFollow : MonoBehaviour
 		if (Target == null) return;
 
 		Vector3 newPosition = Target.position;
-		newPosition.z = -10;
+		newPosition.z = -12;
 		transform.position = Vector3.Slerp(transform.position, newPosition, FollowSpeed * Time.deltaTime);
 
 		if (shakeDuration > 0)

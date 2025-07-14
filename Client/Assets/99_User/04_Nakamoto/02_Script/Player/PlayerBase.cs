@@ -773,6 +773,11 @@ abstract public class PlayerBase : CharacterBase
     abstract public void DoDashDamage();
 
     /// <summary>
+    /// 被ダメ時各フラグをリセット
+    /// </summary>
+    abstract public void HitReset();
+
+    /// <summary>
     /// ブリンク終了処理
     /// </summary>
     public void BlinkEnd()
@@ -799,7 +804,7 @@ abstract public class PlayerBase : CharacterBase
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
-            if (position != null && canAttack) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
 

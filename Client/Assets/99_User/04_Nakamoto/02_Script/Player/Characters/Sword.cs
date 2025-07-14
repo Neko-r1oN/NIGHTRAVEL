@@ -23,11 +23,10 @@ public class Sword : PlayerBase
         Attack3,
         Skill
     }
-
     private bool isCombo = false;       // コンボ可能フラグ
-    private bool isCooldown = false;    // 攻撃のクールダウンフラグ
-
     private float plDirection = 0;      // プレイヤーの向き
+
+    #region ソード専用ステータス
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillForth = 45f;        // スキルの移動力
@@ -47,8 +46,22 @@ public class Sword : PlayerBase
     [Foldout("スキルエフェクト")]
     [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
 
+    #endregion
+
     //--------------------------
     // メソッド
+
+    /// <summary>
+    /// 被ダメ時各フラグをリセット
+    /// </summary>
+    public override void HitReset()
+    {
+        canAttack = true;
+        isCombo = false;
+        isSkill = false;
+    }
+
+    #region 更新関連処理
 
     /// <summary>
     /// 更新処理
@@ -61,7 +74,7 @@ public class Sword : PlayerBase
         {   // 通常攻撃
             int id = animator.GetInteger("animation_id");
 
-            if (isBlink || isSkill || isCooldown || id == 3 || m_IsZipline) return;
+            if (isBlink || isSkill || id == 3 || m_IsZipline) return;
 
             if (canAttack && !isCombo)
             {   // 攻撃1段目
@@ -70,7 +83,7 @@ public class Sword : PlayerBase
             }
             else if (isCombo)
             {   // 攻撃2,3段目
-                if(id != (int)S_ANIM_ID.Attack3) isCombo = false;
+                if (id != (int)S_ANIM_ID.Attack3) isCombo = false;
 
                 if (id == (int)S_ANIM_ID.Attack1)
                 {
@@ -145,6 +158,10 @@ public class Sword : PlayerBase
             m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
         }
     }
+
+    #endregion
+
+    #region 攻撃・ダメージ関連
 
     /// <summary>
     /// ダメージを与える処理
@@ -225,4 +242,6 @@ public class Sword : PlayerBase
         yield return new WaitForSeconds(skillCoolDown);
         canSkill = true;
     }
+
+    #endregion
 }
