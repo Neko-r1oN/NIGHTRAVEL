@@ -13,12 +13,13 @@ return new class extends Migration {
         //ターブルのカラム構成を指定
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();                                      //idカラム
-            $table->string('name', 20);          //nameカラム（20文字）
+            $table->string('account_name', 20);          //nameカラム（20文字）
             $table->string('password');                 //パスワード
             $table->timestamps();                              //created_atとupdated_at
 
             //$table->index('name');                     //nameにインデックス設定
-            $table->unique('name');                    //nameにユニーク制約設定
+            $table->unique('id');                    //idにユニーク制約設定
+            $table->unique('account_name');                    //nameにユニーク制約設定
         });
     }
 

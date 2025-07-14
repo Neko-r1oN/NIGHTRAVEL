@@ -13,11 +13,19 @@ class User extends Model
         'id',
     ];
 
-    //リレーショナル（多対多）
-    public function items()
+    //リレーショナル（1対多）
+    public function user_relics()
     {
-        return $this->belongsToMany(
-            Item::class, 'have_items', 'user_id', 'item_id')
-            ->withPivot('possession');
+        return $this->hasMany(UserRelic::class);
+    }
+
+    public function achivement_status()
+    {
+        return $this->hasMany(AchievementStatus::class);
+    }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class);
     }
 }
