@@ -5,6 +5,7 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,67 +17,71 @@ public class UIManager : MonoBehaviour
 
     #region 各UI
     [Foldout("キャンバス")]
-    [SerializeField] GameObject canvas;           // キャンバス
-
-    [Foldout("プレイヤーステータス関連)")]
-    [SerializeField] Slider playerHpBar;          // プレイヤーのHPバー
-    [Foldout("プレイヤーステータス関連")]
-    [SerializeField] Slider expBar;               // 経験値バー
-
+    [SerializeField] GameObject canvas;             // キャンバス
+                                                    
+    [Foldout("プレイヤーステータス関連")]          
+    [SerializeField] Slider playerHpBar;            // プレイヤーのHPバー
+    [Foldout("プレイヤーステータス関連")]           
+    [SerializeField] Slider expBar;                 // 経験値バー
+                                                    
+    [Foldout("テキスト")]                           
+    [SerializeField] Text playerSliderText;         // プレイヤーの最大HPテキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text bossSliderText;           // ボスの最大HPテキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text levelText;                // レベルテキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text pointText;                // ポイントテキスト
+    [SerializeField] List<Image> relicImages;       
+    [Foldout("テキスト")]                           
+    [SerializeField] List<Text> relicCntText;       // レリックを持ってる数を表示するテキスト
+    //[Foldout("UI(テキスト)")]                     
+    //[SerializeField] List<Text>  statusText;        // ステータスアップ説明テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text levelUpStock;             // レベルアップストックテキスト
     [Foldout("テキスト")]
-    [SerializeField] Text playerSliderText;       // プレイヤーの最大HPテキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text bossSliderText;         // ボスの最大HPテキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text levelText;              // レベルテキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text pointText;              // ポイントテキスト
-    [SerializeField] List<Image> relicImages;
-    [Foldout("テキスト")]
-    [SerializeField] List<Text> relicCntText;     // レリックを持ってる数を表示するテキスト
-    //[Foldout("UI(テキスト)")]
-    //[SerializeField] List<Text>  statusText;      // ステータスアップ説明テキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text levelUpStock;           // レベルアップストックテキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text levelUpText;            // 強化可能テキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text clashNumText;           // 撃破数テキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text tmText;                 // クリア条件テキスト
-    [Foldout("テキスト")]
-    [SerializeField] GameObject playerDmgText;    // プレイヤーダメージ表記
-    [Foldout("テキスト")]
-    [SerializeField] GameObject otherDmgText;     // その他ダメージ表記
-    [Foldout("テキスト")]
-    [SerializeField] Text relicName;              // その他ダメージ表記
-
-
-    [Foldout("フェードアウト")]
-    [SerializeField] Canvas parentCanvas;         // テキストが表示されるキャンバスを割り当ててください
-    [Foldout("フェードアウト")]
-    [SerializeField] float fadeDuration = 2f;     // テキストがフェードアウトにかかる時間（秒）
-    [Foldout("フェードアウト")]
-    [SerializeField] float displayDuration = 1f;  // テキストが完全に表示される時間（フェード開始まで）
+    [SerializeField] Text levelUpText;              // 強化可能テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text clashNumText;             // 撃破数テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text tmText;                   // クリア条件テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] GameObject playerDmgText;      // プレイヤーダメージ表記
+    [Foldout("テキスト")]                           
+    [SerializeField] GameObject otherDmgText;       // その他ダメージ表記
+    [Foldout("テキスト")]                           
+    [SerializeField] Text relicName;                // その他ダメージ表記
+    [Foldout("テキスト")]                           
+    [SerializeField] Text diffText;                 // 難易度テキスト
+                                                    
+                                                    
+    [Foldout("フェードアウト")]                     
+    [SerializeField] Canvas parentCanvas;           // テキストが表示されるキャンバスを割り当ててください
+    [Foldout("フェードアウト")]                     
+    [SerializeField] float fadeDuration = 2f;       // テキストがフェードアウトにかかる時間（秒）
+    [Foldout("フェードアウト")]                     
+    [SerializeField] float displayDuration = 1f;    // テキストが完全に表示される時間（フェード開始まで）
 
     [Foldout("ボスステータス関連")]
-    [SerializeField] Slider bossHpBar;            // ボスのHPバー
-    [Foldout("ボスステータス関連")]
-    [SerializeField] GameObject bossStatus;       // ボスのステータス
-
-    [Foldout("ウィンドウ関係")]
-    [SerializeField] GameObject statusUpWindow;   // ステータス強化ウィンドウ
-    [Foldout("ウィンドウ関係")]
-    [SerializeField] float windowTime;            // ウィンドウが表示される秒数
+    [SerializeField] Slider bossHpBar;              // ボスのHPバー
+    [Foldout("ボスステータス関連")]                 
+    [SerializeField] GameObject bossStatus;         // ボスのステータス
+                                                    
+    [Foldout("ウィンドウ関係")]                     
+    [SerializeField] GameObject statusUpWindow;     // ステータス強化ウィンドウ
+    [Foldout("ウィンドウ関係")]                     
+    [SerializeField] float windowTime;              // ウィンドウが表示される秒数
 
     [Foldout("バナー関係")]
-    [SerializeField] GameObject bossWindow;       // ボス出現UI
-    [Foldout("バナー関係")]
-    [SerializeField] GameObject termsBanner;      // クリア条件バナー
-    [Foldout("バナー関係")]
-    [SerializeField] GameObject relicBanner;      // 取得したレリックバナー
+    [SerializeField] GameObject bossWindow;         // ボス出現UI
+    [Foldout("バナー関係")]                         
+    [SerializeField] GameObject termsBanner;        // クリア条件バナー
+    [Foldout("バナー関係")]                         
+    [SerializeField] GameObject relicBanner;        // 取得したレリックバナー
 
-    [SerializeField] Image relicImg;              // レリックのイメージ
+    [SerializeField] List<GameObject> playerStatus; // 自分以外のプレイヤーのステータス
+
+    [SerializeField] Image relicImg;                // レリックのイメージ
 
     #endregion
 
@@ -172,6 +177,11 @@ public class UIManager : MonoBehaviour
 
         relicBanner.SetActive(false);
 
+        for (int i = 0; i < playerStatus.Count; i++)
+        {
+            playerStatus[i].SetActive(false);
+        }
+
         clashNumText.text = "条件:0/" + GameManager.Instance.KnockTermsNum;
 
         tmText.text = "クリア条件：5分間生き残る or 敵"
@@ -238,7 +248,7 @@ public class UIManager : MonoBehaviour
 
             bossStatus.SetActive(true);
 
-            if(GameManager.Instance.IsSpawnBoss)
+            if (GameManager.Instance.IsSpawnBoss)
             {
                 clashNumText.enabled = false;
             }
@@ -270,7 +280,7 @@ public class UIManager : MonoBehaviour
                     break;
                 }
             }
-        }   
+        }
     }
 
     /// <summary>
@@ -480,11 +490,11 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        if(bossWindow.activeSelf == true)
+        if (bossWindow.activeSelf == true)
         {
             bossWindow.SetActive(false);
         }
-        else if(relicBanner.activeSelf == true)
+        else if (relicBanner.activeSelf == true)
         {
             relicBanner.SetActive(false);
             isRelicGet = false;
@@ -550,9 +560,14 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void DeleteRelicBunnerImg()
     {
-        if(relicImg.sprite != null)
+        if (relicImg.sprite != null)
         {
             relicImg.sprite = null;
         }
+    }
+
+    public void UpGameLevelText()
+    {
+
     }
 }

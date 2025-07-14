@@ -2,9 +2,11 @@
 // レリック管理クラス
 // Author : Souma Ueno
 //----------------------------------------------------
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class RelicManager : MonoBehaviour
@@ -30,7 +32,9 @@ public class RelicManager : MonoBehaviour
         SPECIAL // 特殊
     }
 
-    //RELIC_RARITY relicType = RELIC_RARITY.NORMAL;
+    //RELIC_RARITY rarity = RELIC_RARITY.NORMAL;
+
+    float[] percentage;
 
     private static RelicManager instance;
 
@@ -54,6 +58,17 @@ public class RelicManager : MonoBehaviour
             // 既に存在していたら自身を消去する
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        percentage = new float[Enum.GetValues(typeof(RELIC_RARITY)).Length];
+
+        percentage[0] = 10;
+        percentage[1] = 45;
+        percentage[2] = 25;
+        percentage[3] = 15;
+        percentage[4] = 5;
     }
 
     /// <summary>

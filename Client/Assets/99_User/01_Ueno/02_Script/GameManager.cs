@@ -68,13 +68,15 @@ public class GameManager : MonoBehaviour
 
     public int SpawnCnt { get { return spawnCnt; } set { spawnCnt = value; } }
 
+    public int MaxSpawnCnt { get { return maxSpawnCnt; } }
+
     private static GameManager instance;
 
     //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
     #endregion
-    
-    
 
+    #region Instance
+    [Header("Instance")]
     public static GameManager Instance
     {
         get
@@ -95,6 +97,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    #endregion
 
     /// <summary>
     /// èâä˙ê›íË
@@ -102,7 +105,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         isBossDead = false;
-
+        Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
     }
 
@@ -159,7 +162,7 @@ public class GameManager : MonoBehaviour
 
                 if (spawnCnt < maxSpawnCnt / 2)
                 {// ìGÇ™100ëÃÇ¢Ç»Ç¢èÍçá
-                    SpawnManager.Instance.GenerateEnemy(Random.Range(1,2));
+                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,7));
                 }
                 else
                 {// Ç¢ÇÈèÍçá

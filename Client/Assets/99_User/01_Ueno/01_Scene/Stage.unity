@@ -1338,6 +1338,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1955433450106026678, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
   m_PrefabInstance: {fileID: 428971086}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &473139134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 473139136}
+  - component: {fileID: 473139135}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &473139135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473139134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee0d449211146a14eb5fea132392d37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &473139136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473139134}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.240719, y: -3.4006503, z: -0.51849544}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &632104103
 GameObject:
   m_ObjectHideFlags: 0
@@ -22982,8 +23026,8 @@ MonoBehaviour:
   player: {fileID: 7393988378002152513}
   plyers: []
   enemyList:
-  - {fileID: 3990445033763149966, guid: acfc106f02a80864cb8f73d440e607df, type: 3}
   - {fileID: 2774826985423659090, guid: 069b400acda88d64b9e9556f6fc2f8ac, type: 3}
+  - {fileID: 3990445033763149966, guid: acfc106f02a80864cb8f73d440e607df, type: 3}
   terminalSpawnList: []
   xRadius: 10
   yRadius: 6
@@ -24104,7 +24148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 7
+  spawnInterval: 5
   maxSpawnCnt: 50
   bossPrefab: {fileID: 2057467032305792167, guid: 99ef675ffdb865640a311e49275391c2, type: 3}
   minCameraPos: {fileID: 1980890281}
@@ -78528,3 +78572,4 @@ SceneRoots:
   - {fileID: 3644052783411525277}
   - {fileID: 231020318}
   - {fileID: 1877055303}
+  - {fileID: 473139136}

@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -27,18 +28,11 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    
-
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-        }
-        else
-        {
-            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
-            Destroy(gameObject);
         }
 
         DontDestroyOnLoad(gameObject);
@@ -51,6 +45,7 @@ public class LevelManager : MonoBehaviour
 
     public void UpGameLevel()
     {
-        gameLevel++;
+        gameLevel = gameLevel + 1;
+        Debug.Log(gameLevel.ToString());
     }
 }
