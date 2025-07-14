@@ -24,17 +24,54 @@ namespace Shared.Interfaces.StreamingHubs
         //ユーザーの退室通知
         void OnLeave(JoinedUser user);
 
-        //プレイヤーアニメーションの状態(列挙型)
-        public enum CaracterState
+        /// <summary>
+        /// プレイヤーアニメーションの状態(列挙型)
+        /// Author:Nishiura
+        /// </summary>
+        public enum CharacterState
         {
-            Idol = 0,
-            Wark,
-            Idol = 1,
-            Run
+            Idle = 0,
+            Walk,
+            Run,
+            Attack,
+            SecAttack,
+            Hit,
+            Dead,
         }
 
-        //プレイヤーの位置・回転・アニメーション同期
-        void OnMove(JoinedUser user, Vector3 pos, Quaternion rot, int anim);
+        /// <summary>
+        /// 敵アニメーションの状態(列挙型)
+        /// Author:Nishiura
+        /// </summary>
+        public enum EnemyAnimState
+        {
+            Idle = 0,
+            Walk,
+            Run,
+            Attack,
+            Hit,
+            Dead,
+        }
+
+        /// <summary>
+        /// プレイヤー動作通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="pos"></param>
+        /// <param name="rot"></param>
+        /// <param name="anim"></param>
+        void OnMovePlayer(JoinedUser user, Vector3 pos, Quaternion rot, CharacterState animID);
+
+        /// <summary>
+        /// 敵の動作通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID"></param>
+        /// <param name="pos"></param>
+        /// <param name="rot"></param>
+        /// <param name="anim"></param>
+        void OnMoveEnemy(int enemID, Vector3 pos, Quaternion rot, EnemyAnimState animID);
 
         ////敵のスポーン
         //void OnSpawn(string enemyName, Vector3 pos);
