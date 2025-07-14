@@ -31,7 +31,7 @@ public class SteelDoor : GimmickBase
         if (collision.CompareTag("Player"))
         {//「Player」タグが付いたものが触れたら
             //ドアを開く
-            doorObj.transform.DOMoveY(5f, 0.5f);
+            doorObj.transform.DOMoveY(this.transform.position.y+5f, 0.5f);
         }
     }
 

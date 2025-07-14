@@ -903,6 +903,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flame: {fileID: 930909881}
+  isFlame: 0
 --- !u!1 &931713956
 GameObject:
   m_ObjectHideFlags: 0
@@ -2623,7 +2624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7636227164766238284, guid: 5678d81e370ff0640babcf363425431e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8751237128694737222, guid: 5678d81e370ff0640babcf363425431e, type: 3}
       propertyPath: m_TagString

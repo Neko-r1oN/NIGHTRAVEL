@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6263639278934673465}
-  - component: {fileID: 5579662669443979349}
   - component: {fileID: 234184662751885803}
+  - component: {fileID: 3585336331271683452}
   m_Layer: 0
   m_Name: SteelDoor_Set
   m_TagString: Untagged
@@ -27,14 +27,28 @@ Transform:
   m_GameObject: {fileID: 7636227164766238284}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.42, y: -0.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 982242697905153081}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &5579662669443979349
+--- !u!114 &234184662751885803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7636227164766238284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9743790848570e14a8ed3a0a0864dd76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doorObj: {fileID: 8751237128694737222}
+  isPowerd: 0
+--- !u!61 &3585336331271683452
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -68,7 +82,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -4.0509157, y: -0.5983193}
+  m_Offset: {x: -0.031906366, y: -0.57829833}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -78,21 +92,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.6482983, y: 2.1966386}
+  m_Size: {x: 2.7229304, y: 2.1565976}
   m_EdgeRadius: 0
---- !u!114 &234184662751885803
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7636227164766238284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9743790848570e14a8ed3a0a0864dd76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  doorObj: {fileID: 8751237128694737222}
 --- !u!1 &8751237128694737222
 GameObject:
   m_ObjectHideFlags: 0
@@ -103,7 +104,6 @@ GameObject:
   m_Component:
   - component: {fileID: 982242697905153081}
   - component: {fileID: 9176947651450913520}
-  - component: {fileID: 8625362012949965230}
   - component: {fileID: 2193550966244367879}
   - component: {fileID: 3991024235940033214}
   - component: {fileID: 2827966679941530544}
@@ -123,7 +123,7 @@ Transform:
   m_GameObject: {fileID: 8751237128694737222}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.07, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -184,19 +184,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8625362012949965230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8751237128694737222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec80fa9afc11ece499ebbb677e21954a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DoorFragment: {fileID: 4839590852889957888, guid: 341b593dd8b7b79459f46d6e0654347d, type: 3}
 --- !u!61 &2193550966244367879
 BoxCollider2D:
   m_ObjectHideFlags: 0
