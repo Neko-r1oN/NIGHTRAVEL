@@ -20,7 +20,7 @@ namespace Shared.Interfaces.StreamingHubs
         //ここにクライアント～サーバー定義
 
         //ユーザー入室
-        Task<JoinedUser[]> JoinedAsync(string roomName, int userId);
+        Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId);
 
         //ユーザー退室
         Task LeavedAsync();

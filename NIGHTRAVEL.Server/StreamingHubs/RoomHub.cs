@@ -53,7 +53,6 @@ namespace StreamingHubs
         {
             //グループストレージからRoomData取得
             var roomStorage = this.roomContext.JoinedUserList;
-            var roomData = roomStorage.Get(this.ConnectionId);
 
             ////マスタークライアントだったら次の人に譲渡する
             //if (roomData.JoinedUser.IsMaster == true)
@@ -62,15 +61,15 @@ namespace StreamingHubs
             //}
 
             //グループデータから削除
-            this.room.GetInMemoryStorage<RoomData>().Remove(this.ConnectionId);
+            roomStorage.Remove(this.ConnectionId);
 
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
 
             //ルーム参加者全員に、ユーザーの退室通知を送信
-            this.Client(room).OnLeave(joinedUser);
+            this.Client.OnLeave(joinedUser);
 
-            //ルーム内のメンバーから自分を削除
-            await room.RemoveAsync(this.Context);
+            ////ルーム内のメンバーから自分を削除
+            //await roomStorage.Remove(this.Context);
 
         }
     }
