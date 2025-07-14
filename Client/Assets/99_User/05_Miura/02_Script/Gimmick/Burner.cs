@@ -8,15 +8,18 @@ using System.Collections;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
-public class Burner : MonoBehaviour
+public class Burner : GimmickBase
 {
     PlayerBase player;
     EnemyBase enemy;
     [SerializeField] GameObject flame;
+    bool isFlame;
 
     private void Start()
     {
-
+        //invokerepetingでIgnitionを呼ぶ
+        //3秒間隔で点いたり消えたりする
+        InvokeRepeating("Ignition", 0.1f, 3);
     }
 
     private void Update()
@@ -50,6 +53,28 @@ public class Burner : MonoBehaviour
     /// </summary>
     private void Ignition()
     {
+        if(isFlame==true)
+        {//isFlameがtrueだったら
+            //flameを非アクティブ状態にする
+            flame.SetActive(false);
+            isFlame = false;
+        }
+        else if(isFlame==false)
+        {//isFlameがfalseだったら
+            //flameをアクティブ状態にする
+            flame.SetActive(true); 
+            isFlame = true;
+        }
+    }
+
+    public override void TurnOnPower(int triggerID)
+    {
 
     }
+
+    public override void TruggerRequest()
+    {
+        throw new System.NotImplementedException();
+    }
+
 }
