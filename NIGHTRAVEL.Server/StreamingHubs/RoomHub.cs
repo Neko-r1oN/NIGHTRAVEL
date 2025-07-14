@@ -30,7 +30,7 @@ namespace StreamingHubs
 
             //DBからユーザー情報取得
             GameDbContext dbContext = new GameDbContext();
-            var user = dbContext.Users.Where(user => user.id == userId).First();
+            var user = dbContext.Users.Where(user => user.Id == userId).First();
 
             //グループストレージにユーザーデータを格納
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
@@ -42,36 +42,36 @@ namespace StreamingHubs
             this.roomContext.JoinedUserList[ConnectionId]=joinedUser;
 
             //通知
-            this.Client.Onjoin(joinedUser);
+            this.Client.Onjoin(roomContext.JoinedUserList);
 
             //参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
         }
 
-        ////退室
-        //public async Task LeavedAsync()
-        //{
-        //    //グループストレージからRoomData取得
-        //    var roomStorage = this.room.GetInMemoryStorage<RoomData>();
-        //    var roomData = roomStorage.Get(this.ConnectionId);
+        //退室
+        public async Task LeavedAsync()
+        {
+            //グループストレージからRoomData取得
+            var roomStorage = this.roomContext.JoinedUserList;
+            var roomData = roomStorage.Get(this.ConnectionId);
 
-        //    ////マスタークライアントだったら次の人に譲渡する
-        //    //if (roomData.JoinedUser.IsMaster == true)
-        //    //{
-        //    //    await MasterLostAsync();
-        //    //}
+            ////マスタークライアントだったら次の人に譲渡する
+            //if (roomData.JoinedUser.IsMaster == true)
+            //{
+            //    await MasterLostAsync();
+            //}
 
-        //    //グループデータから削除
-        //    this.room.GetInMemoryStorage<RoomData>().Remove(this.ConnectionId);
+            //グループデータから削除
+            this.room.GetInMemoryStorage<RoomData>().Remove(this.ConnectionId);
 
-        //    var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
+            var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
 
-        //    //ルーム参加者全員に、ユーザーの退室通知を送信
-        //    this.Broadcast(room).OnLeave(joinedUser);
+            //ルーム参加者全員に、ユーザーの退室通知を送信
+            this.Client(room).OnLeave(joinedUser);
 
-        //    //ルーム内のメンバーから自分を削除
-        //    await room.RemoveAsync(this.Context);
+            //ルーム内のメンバーから自分を削除
+            await room.RemoveAsync(this.Context);
 
-        //}
+        }
     }
 }

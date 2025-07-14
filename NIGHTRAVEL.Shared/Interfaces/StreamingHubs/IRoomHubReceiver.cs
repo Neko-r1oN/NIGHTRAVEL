@@ -24,17 +24,17 @@ namespace Shared.Interfaces.StreamingHubs
         //ユーザーの退室通知
         void OnLeave(JoinedUser user);
 
-        //////プレイヤーアニメーションの状態(列挙型)
-        ////public enum CaracterState
-        ////{
-        ////    Idol=0,
-        ////    Wark,
-        ////    Idol=1,
-        ////    Run
-        ////}
+        //プレイヤーアニメーションの状態(列挙型)
+        public enum CaracterState
+        {
+            Idol = 0,
+            Wark,
+            Idol = 1,
+            Run
+        }
 
-        ////プレイヤーの位置・回転・アニメーション同期
-        //void OnMove(JoinedUser user,Vector3 pos,Quaternion rot,int anim);
+        //プレイヤーの位置・回転・アニメーション同期
+        void OnMove(JoinedUser user, Vector3 pos, Quaternion rot, int anim);
 
         ////敵のスポーン
         //void OnSpawn(string enemyName, Vector3 pos);
