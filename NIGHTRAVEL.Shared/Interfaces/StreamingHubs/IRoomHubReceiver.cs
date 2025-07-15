@@ -13,6 +13,7 @@ using System.Text;
 using MagicOnion;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
+using NIGHTRAVEL.Shared.Unity;
 
 namespace Shared.Interfaces.StreamingHubs
 {
