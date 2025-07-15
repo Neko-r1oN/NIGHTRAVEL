@@ -5,7 +5,7 @@
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 
-namespace NIGHTRAVEL.Server.StreamingHubs
+namespace Shared.Interfaces.StreamingHubs
 {
     public class EnemyData
     {

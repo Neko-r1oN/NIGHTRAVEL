@@ -44,7 +44,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="rot">Pl回転値</param>
         /// <param name="anim">PLアニメーションID</param>
         /// <returns></returns>
-        Task MovePlayerAsync(Vector3 pos, Quaternion rot, CharacterState anim);
+        Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim);
 
         /// <summary>
         /// 敵動作、情報
@@ -55,16 +55,38 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="rot">敵回転値</param>
         /// <param name="anim">敵アニメーションID</param>
         /// <returns></returns>
-        Task MoveEnemyAsync(List<int> enemIDList, Vector3 pos, Quaternion rot, EnemyAnimState anim);
+        Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim);
 
-        ////敵の出現処理
-        //Task SpawnAsync(string enemyName, Vector3 pos);
+        /// <summary>
+        /// レリック位置
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="pos">位置</param>
+        /// <returns></returns>
+        Task SpawnRelicAsync(Vector2 pos);
+
+        /// <summary>
+        /// レリック取得
+        /// </summary>
+		/// <param name="relicID">レリックID</param>
+        /// <param name="relicName">レリック名</param>
+        /// <returns></returns>
+        Task GetRelicAsync(int relicID, string relicName);
+
+        /// <summary>
+        /// 敵生成
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="pos">位置</param>
+        /// <returns></returns>
+        Task SpawnEnemyAsync(int enemID, Vector2 pos);
 
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);
 
         ////敵の位置回転
-        //Task EnemyMoveAsync(string enemyName,Vector3 pos,Quaternion rot);
+        //Task EnemyMoveAsync(string enemyName,Vector2 pos,Quaternion rot);
 
         ////敵の撃破処理
         //Task EnemyExcusionAsync(string enemyName);
@@ -74,9 +96,9 @@ namespace Shared.Interfaces.StreamingHubs
 
 
         ////オブジェクトの生成同期
-        //Task ObjectSpawnAsync(Guid connectionId,string objectName,Vector3 pos,Quaternion rot, Vector3 fow);
+        //Task ObjectSpawnAsync(Guid connectionId,string objectName,Vector2 pos,Quaternion rot, Vector2 fow);
 
         ////オブジェクトの位置回転同期
-        //Task ObjectMoveAsync(string objectName,Vector3 pos,Quaternion rot);
+        //Task ObjectMoveAsync(string objectName,Vector2 pos,Quaternion rot);
     }
 }
