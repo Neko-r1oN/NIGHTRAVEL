@@ -1,7 +1,13 @@
+//--------------------------------------------------------------
+// ライフルキャラ [ Rifle.cs ]
+// Author：Kenta Nakamoto
+// 引用：https://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
+//--------------------------------------------------------------
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;   // HashSet 用
 using UnityEngine;
+using UnityEngine.UIElements;
 using static StatusEffectController;
 using static Sword;
 
@@ -24,24 +30,33 @@ public class Rifle : PlayerBase
     private bool isFiring = false;      // ビーム照射中フラグ
     private bool isRailgun = false;     // 銃変形フラグ
 
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private Transform firePoint;           // 発射地点
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private float maxDistance = 20f;       // ビームの長さ
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private float beamRadius = 0.15f;      // ビーム半径
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private float beamWidthScale = 1f;     // LineRenderer に乗算して見た目を調整したい場合
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private LayerMask targetLayers;        // 敵レイヤー
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private float duration = 2.5f;         // 照射時間
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private float damageInterval = 0.3f;   // ダメージ間隔
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private GameObject beamEffect;         // ビームエフェクト
-    [Foldout("キャラ別ステータス")]
+    [Foldout("ビーム関連")]
     [SerializeField] private LineRenderer lr;
+
+    [Foldout("通常攻撃")]
+    [SerializeField] private float bulletSpeed;
+    [Foldout("通常攻撃")]
+    [SerializeField] private float bulletAccele;
+    [Foldout("通常攻撃")]
+    [SerializeField] private GameObject bulletPrefab;
+    [Foldout("通常攻撃")]
+    [SerializeField] private GameObject bulletSpawnObj;
 
     //--------------------------
     // メソッド
@@ -175,7 +190,7 @@ public class Rifle : PlayerBase
                 //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
                 //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
 
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(1, playerPos);
+                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(Power, playerPos);
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
             else if (collidersEnemies[i].gameObject.tag == "Object")
@@ -194,6 +209,18 @@ public class Rifle : PlayerBase
 
         // Idleに戻る
         animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+    }
+
+    /// <summary>
+    /// 弾の発射
+    /// </summary>
+    public void FireBullet()
+    {
+        var bullet = Instantiate(bulletPrefab, bulletSpawnObj.transform.position, Quaternion.identity);
+        bullet.GetComponent<Bullet>().SetPlayer(m_Player);
+        bullet.GetComponent<Bullet>().Speed = bulletSpeed;
+        bullet.GetComponent<Bullet>().AcceleCoefficient = bulletAccele;
+        bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);
     }
 
     #endregion

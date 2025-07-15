@@ -131,6 +131,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_FacingRight = true;  // プレイヤーの向きの判定フラグ（trueで右向き）
     protected bool m_FallFlag = false;
     protected float limitFallSpeed = 25f; // 落下速度の制限
+    protected PlayerBase m_Player;
     #endregion
 
     #region パーティクル・エフェクト
@@ -193,6 +194,7 @@ abstract public class PlayerBase : CharacterBase
     {
         base.Awake();
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
+        m_Player = GetComponent<PlayerBase>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
@@ -623,7 +625,7 @@ abstract public class PlayerBase : CharacterBase
     protected void OnTriggerEnter2D(Collider2D collision)
     {
         // 落下処理
-        if (collision.gameObject.tag == "Abyss")
+        if (collision.gameObject.tag == "Gimmick/Abyss")
         {   // 最も近い復帰点に移動
             MoveCheckPoint();
         }
@@ -634,7 +636,7 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     /// <param name="tagName">取得したいtagName</param>
     /// <returns>最小距離の指定Obj</returns>
-    private Transform FetchNearObjectWithTag(string tagName)
+    public Transform FetchNearObjectWithTag(string tagName)
     {
         // 該当タグが1つしか無い場合はそれを返す
         var targets = GameObject.FindGameObjectsWithTag(tagName);
