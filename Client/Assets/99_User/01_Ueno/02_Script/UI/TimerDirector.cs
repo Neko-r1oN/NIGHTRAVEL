@@ -10,6 +10,8 @@ public class TimerDirector : MonoBehaviour
     [Header("初期設定")]
     [SerializeField] float minute;
     float second;
+    float elapsedTime = 0f; // 経過時間
+    float halfMinute;
 
     [SerializeField] GameObject timerObj; // タイマーテキストの親
     [SerializeField] Text timer;          // タイマーテキスト
@@ -31,9 +33,22 @@ public class TimerDirector : MonoBehaviour
             minute = span.Minutes;
             timer.text = span.ToString(@"mm\:ss");
 
-            if(minute == minute / 2)
+            elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
+            TimeSpan timeSpan = GetCurrentMinutesAndSeconds();
+
+            float currentTime = (float)timeSpan.TotalSeconds;
+
+            if (currentTime >= (minute * 60) / 2 && minute > 0)
             {
+                halfMinute = minute / 2;
                 LevelManager.Instance.UpGameLevel();
+                ResetTimer();
+            }
+            else if(currentTime >= (second) / 2)
+            {
+                halfMinute = minute / 2;
+                LevelManager.Instance.UpGameLevel();
+                ResetTimer();
             }
         }
 
@@ -47,5 +62,22 @@ public class TimerDirector : MonoBehaviour
         {
             timerObj.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// 現在の分と秒を取得します。
+    /// </summary>
+    /// <returns>現在の時間（分と秒）をTimeSpanで返します。</returns>
+    public TimeSpan GetCurrentMinutesAndSeconds()
+    {
+        return TimeSpan.FromSeconds(elapsedTime);
+    }
+
+    /// <summary>
+    /// タイマーをリセットします。
+    /// </summary>
+    public void ResetTimer()
+    {
+        elapsedTime = 0f;
     }
 }

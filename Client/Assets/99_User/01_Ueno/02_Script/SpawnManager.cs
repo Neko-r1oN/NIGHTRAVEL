@@ -17,12 +17,17 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] List<GameObject> terminalSpawnList; // 端末から生成された敵のリスト
     [SerializeField] float xRadius;                      // 生成範囲のx半径
     [SerializeField] float yRadius;                      // 生成範囲のy半径
-    
+
+    List<int> enemyIdList;
+
     GameObject enemy;
+
+    float[] item;
 
     public Transform RandRespawnA { get { return randRespawnA; } }
     public Transform RandRespawnB { get { return randRespawnB; } }
     public List<GameObject> TerminalSpawnList {  get { return terminalSpawnList; } }
+    public List<int> EnemyIdList { get { return enemyIdList; } }
 
     private static SpawnManager instance;
 
@@ -45,6 +50,15 @@ public class SpawnManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        item = new float[enemyList.Count];
+
+        // 割合
+        item[0] = 27; // ドローン
+        item[1] = 73; // いぬ
     }
 
     /// <summary>
@@ -128,7 +142,18 @@ public class SpawnManager : MonoBehaviour
     {
         for (int i = 0; i < num; i++)
         {
-            int listNum = Random.Range(0, enemyList.Count);
+            //int listNum = Random.Range(0, enemyList.Count);
+
+            int listNum = Choose(item);
+
+            if(listNum == 0)
+            {
+                Debug.Log("どろーん");
+            }
+            else
+            {
+                Debug.Log("いぬ");
+            }
 
             EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
 
@@ -154,7 +179,7 @@ public class SpawnManager : MonoBehaviour
 
                 int number = Random.Range(0, 100);
 
-                if(number < 50)
+                if(number < 5)
                 {
                     enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.ELITE_TYPE)Random.Range(1,4));
                 }
@@ -229,5 +254,37 @@ public class SpawnManager : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public int Choose(float[] probs)
+    {
+        float total = 0;
+
+        //配列の要素を代入して重みの計算
+        foreach (float elem in probs)
+        {
+            total += elem;
+        }
+
+        //重みの総数に0から1.0の乱数をかけて抽選を行う
+        float randomPoint = Random.value * total;
+
+        //iが配列の最大要素数になるまで繰り返す
+        for (int i = 0; i < probs.Length; i++)
+        {
+            //ランダムポイントが重みより小さいなら
+            if (randomPoint < probs[i])
+            {
+                return i;
+            }
+            else
+            {
+                //ランダムポイントが重みより大きいならその値を引いて次の要素へ
+                randomPoint -= probs[i];
+            }
+        }
+
+        //乱数が１の時、配列数の-１＝要素の最後の値をChoose配列に戻している
+        return probs.Length - 1;
     }
 }
