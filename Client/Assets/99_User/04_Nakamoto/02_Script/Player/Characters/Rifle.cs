@@ -17,7 +17,8 @@ public class Rifle : PlayerBase
     {
         Attack = 10,
         Skill,
-        BeamReady
+        BeamReady,
+        SkillAfter
     }
 
     private bool isFiring = false;      // ビーム照射中フラグ
@@ -46,9 +47,9 @@ public class Rifle : PlayerBase
     // メソッド
 
     /// <summary>
-    /// 被ダメ時各フラグをリセット
+    /// 動作フラグをリセット
     /// </summary>
-    public override void HitReset()
+    public override void ResetFlag()
     {
         canAttack = true;
         isFiring = false;
@@ -87,7 +88,10 @@ public class Rifle : PlayerBase
 
         if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
         {   // スキル
+            if (m_IsZipline) return;
+
             isSkill = true;
+            canAttack = true;
             animator.SetInteger("animation_id", (int)GS_ANIM_ID.Skill);
         }
 
@@ -121,9 +125,9 @@ public class Rifle : PlayerBase
     /// <param name="blink">ダッシュ入力</param>
     protected override void Move(float move, bool jump, bool blink)
     {
-        if (isSkill || isRailgun)
+        if (isSkill)
         {   // 銃変形中は動けないように
-            m_Rigidbody2D.linearVelocity = Vector3.zero;
+            m_Rigidbody2D.linearVelocity = new Vector2(0,m_Rigidbody2D.linearVelocityY);
             return;
         }
 
@@ -136,9 +140,15 @@ public class Rifle : PlayerBase
         }
 
         // 銃変形時の移動制限
+        if (isRailgun)
+        {
+            m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocityY);
+        }
+
+        // 発射時後ろに少しだけ後ろに
         if (isFiring)
         {
-            m_Rigidbody2D.linearVelocity = Vector2.zero;
+            m_Rigidbody2D.linearVelocity = new Vector2(-transform.localScale.x * 0.3f, m_Rigidbody2D.linearVelocityY);
         }
     }
 
@@ -186,21 +196,27 @@ public class Rifle : PlayerBase
         animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
     }
 
+    #endregion
+
+    #region ビーム関連
+
     /// <summary>
     /// スキル演出終了時
     /// </summary>
     public void SkillEnd()
     {
-        isSkill = false;
-        isRailgun = true;
-
         // 発射準備へ
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.BeamReady);
     }
 
-    #endregion
-
-    #region ビーム関連
+    /// <summary>
+    /// 発射準備完了
+    /// </summary>
+    public void ReadyToFire()
+    {
+        isSkill = false;
+        isRailgun = true;
+    }
 
     /// <summary>
     /// 照射処理
@@ -228,7 +244,7 @@ public class Rifle : PlayerBase
         float tickTimer = 0f;    // ダメージ間隔計測
 
 #if UNITY_EDITOR
-        lr.enabled = true;
+        //lr.enabled = true;
 
         // LineRenderer の太さを当たり判定と合わせる
         float lrWidth = beamRadius * 2f * beamWidthScale;
@@ -267,8 +283,8 @@ public class Rifle : PlayerBase
 
 #if UNITY_EDITOR
             // LineRenderer 更新
-            lr.SetPosition(0, firePoint.position);
-            lr.SetPosition(1, endPos);
+            //lr.SetPosition(0, firePoint.position);
+            //lr.SetPosition(1, endPos);
 #endif
 
             yield return null;
@@ -276,9 +292,17 @@ public class Rifle : PlayerBase
 
         // ビームエフェクト非表示
         beamEffect.SetActive(false);
-        animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
         isFiring = false;
-        canAttack = true;
+        animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
+    }
+
+    /// <summary>
+    /// スキル終了処理
+    /// </summary>
+    public void EndSkill()
+    {
+        ResetFlag();
+        animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
     }
 
     #endregion

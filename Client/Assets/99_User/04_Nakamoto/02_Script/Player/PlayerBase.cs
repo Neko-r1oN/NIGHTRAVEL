@@ -773,9 +773,9 @@ abstract public class PlayerBase : CharacterBase
     abstract public void DoDashDamage();
 
     /// <summary>
-    /// 被ダメ時各フラグをリセット
+    /// 動作フラグをリセット
     /// </summary>
-    abstract public void HitReset();
+    abstract public void ResetFlag();
 
     /// <summary>
     /// ブリンク終了処理
