@@ -103,22 +103,22 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         //OnJoinedUser(k);
     }
 
-    //‘ÞŽº
-    public async UniTask LeaveAsync()
-    {
-        await roomHub.LeavedAsync();
-    }
+    ////‘ÞŽº
+    //public async UniTask LeaveAsync()
+    //{
+    //    await roomHub.LeavedAsync();
+    //}
 
-    //‘ÞŽº’Ê’m
-    public void OnLeave(JoinedUser user)
-    {
-        OnLeavedUser(user);
-    }
+    ////‘ÞŽº’Ê’m
+    //public void OnLeave(JoinedUser user)
+    //{
+    //    OnLeavedUser(user);
+    //}
 
-    public void OnMasterClient(JoinedUser user)
-    {
-        OnMasteredClient(user);
-    }
+    //public void OnMasterClient(JoinedUser user)
+    //{
+    //    OnMasteredClient(user);
+    //}
 
     ////ˆÚ“®
     //public async Task MoveAsync(Vector3 pos, Quaternion rot, int anim)
