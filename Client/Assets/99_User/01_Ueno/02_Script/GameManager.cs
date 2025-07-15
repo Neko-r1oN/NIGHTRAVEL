@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
     [SerializeField] GameObject player;
-    //[SerializeField] List<GameObject> players;      // プレイヤーの情報
+    [SerializeField] List<GameObject> players;      // プレイヤーの情報
 
     float elapsedTime;
 
@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject Player { get { return player; } }
 
-    //public List<GameObject> Players { get { return players; } }
+    public List<GameObject> Players { get { return players; } }
 
     public GameObject Boss {  get { return boss; } }
 

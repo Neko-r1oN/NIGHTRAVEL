@@ -20,6 +20,8 @@ public class RelicManager : MonoBehaviour
 
     float elapsedTime;
 
+    RELIC_RARITY randomRarity;
+
     /// <summary>
     /// レリックのレアリティ
     /// </summary>
@@ -31,10 +33,6 @@ public class RelicManager : MonoBehaviour
         UNIQUE, // ユニーク
         SPECIAL // 特殊
     }
-
-    //RELIC_RARITY rarity = RELIC_RARITY.NORMAL;
-
-    float[] percentage;
 
     private static RelicManager instance;
 
@@ -60,16 +58,14 @@ public class RelicManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        percentage = new float[Enum.GetValues(typeof(RELIC_RARITY)).Length];
-
-        percentage[0] = 10;
-        percentage[1] = 45;
-        percentage[2] = 25;
-        percentage[3] = 15;
-        percentage[4] = 5;
-    }
+    private Dictionary<RELIC_RARITY, float> rarityWeight = new Dictionary<RELIC_RARITY, float>()
+    {   
+        {RELIC_RARITY.CURSE,3 },    // 確率：3%
+        {RELIC_RARITY.NORMAL,70 },  // 確率：70%
+        {RELIC_RARITY.RARE,20 },    // 確率：20%
+        {RELIC_RARITY.SPECIAL,6 },  // 確率：6%
+        {RELIC_RARITY.UNIQUE,1 }    // 確率：1%
+    };
 
     /// <summary>
     /// レリックを持ち物に追加する処理
@@ -86,7 +82,8 @@ public class RelicManager : MonoBehaviour
         }
 
         haveRelicList.Add(relic);
-        Debug.Log(haveRelicList[haveRelicList.Count - 1]);
+        //Debug.Log(haveRelicList[haveRelicList.Count - 1]);
+        Debug.Log(randomRarity);
     }
 
     /// <summary>
@@ -94,6 +91,10 @@ public class RelicManager : MonoBehaviour
     /// </summary>
     public void GenerateRelic(Vector3 bossPos)
     {
+        randomRarity = GetRandomRarity();
+
+        
+
         int rand = Random.Range(0, relicSprites.Count);
 
         GameObject relic = Instantiate(relicPrefab[rand],bossPos,Quaternion.identity);
@@ -108,6 +109,8 @@ public class RelicManager : MonoBehaviour
     [ContextMenu("GenerateRelicTest")]
     public void GenerateRelicTest()
     {
+        randomRarity = GetRandomRarity();
+
         int rand = Random.Range(0, relicSprites.Count);
 
         GameObject relic = Instantiate(relicPrefab[rand], new Vector3(0,0,0), Quaternion.identity);
@@ -148,5 +151,29 @@ public class RelicManager : MonoBehaviour
         }
 
         UIManager.Instance.totalRelics(relicSprites[id], relicCnt);
+    }
+
+    public RELIC_RARITY GetRandomRarity()
+    {
+        float totalWeight = 0;
+        float currentWeight = 0;
+
+        foreach(var pair in rarityWeight)
+        {
+            totalWeight += pair.Value;
+        }
+
+        float randomNum = Random.Range(0, totalWeight);
+
+        foreach(var pair in rarityWeight)
+        {
+            currentWeight += pair.Value;
+            if(randomNum < currentWeight)
+            {
+                return pair.Key;
+            }
+        }
+
+        return RELIC_RARITY.NORMAL;
     }
 }
