@@ -25,8 +25,14 @@ public class StatusEffectController : MonoBehaviour
 
     #region 各状態異常の効果時間
     readonly float maxBurnDuration = 6f;    // 炎上
-    readonly float maxFreezeDuration = 10f; // 霜焼け
+    readonly float maxFreezeDuration = 5f; // 霜焼け
     readonly float maxShockDuration = 1f; // 感電
+    #endregion
+
+    #region 各状態異常の効果値
+    readonly float burnEffect = 0.05f;
+    readonly float freezeEffect = 0.2f;
+    readonly float shockEffect = 0.5f;
     #endregion
 
     #region 状態異常の効果が発動する間隔
@@ -110,8 +116,8 @@ public class StatusEffectController : MonoBehaviour
                     ,
                     EFFECT_TYPE.Freeze => () =>
                     {
-                        // 移動速度・攻撃速度の50%分を現在のステータスから減算する
-                        float freezeRatio = -0.5f;
+                        // 移動速度・攻撃速度の20%分を現在のステータスから減算する
+                        float freezeRatio = -freezeEffect;
                         tmpMoveSpeedRates.Add(effectType, freezeRatio);
                         tmpMoveSpeedFactorRates.Add(effectType, freezeRatio);
                         tmpAttackSpeedFactorRates.Add(effectType, freezeRatio);
@@ -125,8 +131,8 @@ public class StatusEffectController : MonoBehaviour
                     ,
                     EFFECT_TYPE.Shock => () =>
                     {
-                        if (this.gameObject.tag == "Player") StartCoroutine(playerBase.AbnormalityStun(maxShockDuration));
-                        else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(maxShockDuration);
+                        if (this.gameObject.tag == "Player") StartCoroutine(playerBase.AbnormalityStun(shockEffect));
+                        else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(shockEffect);
                     }
                     ,
                     _ => null
@@ -158,7 +164,7 @@ public class StatusEffectController : MonoBehaviour
             ,
             EFFECT_TYPE.Freeze => () => {
                 // 移動速度・攻撃速度の減算されていた分の値をステータスに加算する
-                float freezeRatio = 0.5f;
+                float freezeRatio = freezeEffect;
                 characterBase.ApplyStatusModifierByRate(
                         freezeRatio,
                         CharacterBase.STATUS_TYPE.MoveSpeed,
@@ -245,7 +251,7 @@ public class StatusEffectController : MonoBehaviour
     void ActivateBurnEffect()
     {
         // 最大HPの5%のダメージを与える
-        int dmgValue = Mathf.CeilToInt((float)characterBase.MaxHP * 0.05f);
+        int dmgValue = Mathf.CeilToInt((float)characterBase.MaxHP * burnEffect);
         if (this.gameObject.tag == "Player") playerBase.ApplyDamage(dmgValue);
         else if (this.gameObject.tag == "Enemy") enemyBase.ApplyDamage(dmgValue);
     }
