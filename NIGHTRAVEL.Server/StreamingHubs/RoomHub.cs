@@ -63,7 +63,7 @@ namespace StreamingHubs
             this.roomContext.AddRoomData(this.ConnectionId);
 
             //通知
-            this.Client.Onjoin(roomContext.JoinedUserList);
+            this.Client.Onjoin(roomContext.JoinedUserList[ConnectionId]);
 
             //参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
@@ -190,7 +190,7 @@ namespace StreamingHubs
             var enemData = this.roomContext.GetEnemyData(enemID);
 
             // ルーム参加者全員に、取得したレリック名を送信
-            this.Client.OnSpawnEnemy(enemData);
+            //this.Client.OnSpawnEnemy(enemData);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// 敵の位置
         /// Author:Nishiura
         /// </summary>
-        public Vector3 Position { get; set; }
+        public Vector2 Position { get; set; }
 
         /// <summary>
         /// 敵の向き

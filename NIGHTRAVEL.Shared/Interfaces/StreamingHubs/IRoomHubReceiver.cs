@@ -54,7 +54,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Kida
         /// </summary>
         /// <param name="joindUserList">参加者リスト</param>
-        void Onjoin(Dictionary<Guid, JoinedUser> joindUserList);
+        void Onjoin(JoinedUser joindUser);
 
         /// <summary>
         /// ユーザーの退室通知
