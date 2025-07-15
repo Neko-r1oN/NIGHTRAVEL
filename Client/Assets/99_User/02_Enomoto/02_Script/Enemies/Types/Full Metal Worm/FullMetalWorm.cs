@@ -127,6 +127,7 @@ public class FullMetalWorm : EnemyBase
         doOnceDecision = false;
         endDecision = true;
         isSpawn = false;
+        isInvincible = false;
         bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
         cancellCoroutines.Add(StartCoroutine(NextDecision()));
         MeleeAttack();
@@ -140,15 +141,6 @@ public class FullMetalWorm : EnemyBase
         {
             // ターゲットを探す
             SetRandomTargetPlayer();
-        }
-
-        if (!target)
-        {
-            //if (canPatrol && !isPatrolPaused) Patorol();
-            //else Idle();
-            //return;
-
-            // ランダムな座標に向かって移動する
         }
 
         if (target)
@@ -208,7 +200,6 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     IEnumerator NextDecision(float time = 0)
     {
-        SetNextTargetPosition();
         if (time == 0) time = Mathf.Floor(Random.Range(decisionTimeMin, decisionTimeMax));
         doOnceDecision = false;
         StartCoroutine("MoveGraduallyCoroutine");
@@ -344,6 +335,7 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     IEnumerator MoveGraduallyCoroutine()
     {
+        SetNextTargetPosition(false);
         while (true)
         {
             RotateTowardsMovementDirection(targetPos, rotationSpeedMin);
@@ -351,7 +343,7 @@ public class FullMetalWorm : EnemyBase
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
             if (disToTargetPos <= disToTargetPosMin / 2)
             {
-                SetNextTargetPosition();
+                SetNextTargetPosition(false);
             }
             yield return null;
         }
@@ -369,10 +361,10 @@ public class FullMetalWorm : EnemyBase
     {
         SetAnimId((int)ANIM_ID.Dead);
 
-        // 全ての部位のコルーチン停止
+        // 全ての部位の死亡処理を呼び出し
         foreach (var body in bodys)
         {
-            body.StopAllCoroutines();
+            StartCoroutine(body.DestroyEnemy(null));
         }
     }
 
@@ -418,12 +410,14 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     void SetNextTargetPosition(bool isTargetLottery = true)
     {
-        if(isTargetLottery) SetRandomTargetPlayer();
-        float rnd = Random.Range(0f, 1f);
+        if (isTargetLottery)
+        {
+            SetRandomTargetPlayer();
+            float rnd = Random.Range(0f, 1f);
+            if (target) targetPos = target.transform.position;
+        }
 
-        if (target) targetPos = target.transform.position;
-
-        if (!target)
+        if (!target || !isTargetLottery)
         {
             for (int i = 0; i < 100; i++)
             {
