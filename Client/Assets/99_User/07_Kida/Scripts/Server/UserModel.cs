@@ -117,16 +117,15 @@ public class UserModel : BaseModel
     /// <summary>
     /// ƒ†[ƒU[‚Ì“o˜^
     /// </summary>
-    /// <param name="name"></param>
     /// <returns></returns>
-    public async UniTask<bool> RegistUserAsync(string name)
+    public async UniTask<bool> RegistUserAsync()
     {
         var handler = new YetAnotherHttpHandler() { Http2Only = true };
         var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
         var client = MagicOnionClient.Create<IUserService>(channel);
         try
         {//“o˜^¬Œ÷
-            userId = await client.RegistUserAsync(name);
+            userId = await client.RegistUserAsync();
             SaveUserData();
             Debug.Log("“o˜^¬Œ÷");
             return true;
