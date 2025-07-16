@@ -176,28 +176,7 @@ public class Rifle : PlayerBase
     /// </summary>
     public override void DoDashDamage()
     {
-        power = Mathf.Abs(power);
-        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
 
-        for (int i = 0; i < collidersEnemies.Length; i++)
-        {
-            if (collidersEnemies[i].gameObject.tag == "Enemy")
-            {
-                if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
-                {
-                    power = -power;
-                }
-                //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
-                //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(Power, playerPos);
-                cam.GetComponent<CameraFollow>().ShakeCamera();
-            }
-            else if (collidersEnemies[i].gameObject.tag == "Object")
-            {
-                collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
-            }
-        }
     }
 
     /// <summary>
@@ -221,6 +200,53 @@ public class Rifle : PlayerBase
         bullet.GetComponent<Bullet>().Speed = bulletSpeed;
         bullet.GetComponent<Bullet>().AcceleCoefficient = bulletAccele;
         bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);
+    }
+
+    #endregion
+
+    #region 被ダメ処理
+
+    public override void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
+    {
+        if (!invincible)
+        {
+            var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
+
+            UIManager.Instance.PopDamageUI(damage, transform.position, true);
+
+            var id = animator.GetInteger("animation_id");
+            if (position != null || id != 11 || id != 12) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+
+            hp -= damage;
+            Vector2 damageDir = Vector2.zero;
+
+            // ノックバック処理
+            if (position != null || id != 11 || id != 12)
+            {
+                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
+                m_Rigidbody2D.linearVelocity = Vector2.zero;
+                m_Rigidbody2D.AddForce(damageDir * 15);
+            }
+
+            if (type != null)
+            {
+                effectController.ApplyStatusEffect((StatusEffectController.EFFECT_TYPE)type);
+            }
+
+            if (hp <= 0)
+            {   // 死亡処理
+                m_Rigidbody2D.AddForce(damageDir * 10);
+                StartCoroutine(WaitToDead());
+            }
+            else
+            {   // 被ダメ硬直
+                if (position != null)
+                {
+                    StartCoroutine(Stun(0.35f));
+                    StartCoroutine(MakeInvincible(0.4f));
+                }
+            }
+        }
     }
 
     #endregion

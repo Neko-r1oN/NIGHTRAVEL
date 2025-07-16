@@ -4962,7 +4962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6470474938770394812
 Transform:
   m_ObjectHideFlags: 0
@@ -4999,9 +4999,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5d212abf86b5a4d8938c938e1d0519, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 150
+  baseHp: 1500
   baseDefense: 10
-  basePower: 10
+  basePower: 50
   baseJumpPower: 10
   baseMoveSpeed: 50
   hp: 0
@@ -5027,10 +5027,10 @@ MonoBehaviour:
   testExp: 10
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 16777269
+    m_Bits: 16781365
   ziplineLayer:
     serializedVersion: 2
-    m_Bits: 4194304
+    m_Bits: 1024
   m_GroundCheck: {fileID: 1200436926255245048}
   m_WallCheck: {fileID: 1419360543887614733}
   attackCheck: {fileID: 8822353285409597402}
@@ -5050,8 +5050,8 @@ MonoBehaviour:
   damageInterval: 0.05
   beamEffect: {fileID: 3090962919235560449}
   lr: {fileID: 6522089363274242335}
-  bulletSpeed: 15
-  bulletAccele: 2
+  bulletSpeed: 20
+  bulletAccele: 3
   bulletPrefab: {fileID: 11297972727251665, guid: 9276c139e5f7ddd4fb92a69ca2b6356d, type: 3}
   bulletSpawnObj: {fileID: 3115150242735003394}
 --- !u!120 &6522089363274242335

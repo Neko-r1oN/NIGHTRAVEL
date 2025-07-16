@@ -102,6 +102,9 @@ abstract public class PlayerBase : CharacterBase
 
     #region レイヤー・位置関連
     [Foldout("レイヤー・位置関連")]
+    [SerializeField] protected int enemyLayer = 6;
+
+    [Foldout("レイヤー・位置関連")]
     [SerializeField] protected LayerMask m_WhatIsGround;// どのレイヤーを地面と認識させるか
 
     [Foldout("レイヤー・位置関連")]
@@ -176,7 +179,7 @@ abstract public class PlayerBase : CharacterBase
 
     #region 判定係数
     protected const float k_GroundedRadius = .2f; // 接地確認用の円の半径
-    protected const float k_AttackRadius = .9f;   // 攻撃判定の円の半径
+    protected const float k_AttackRadius = 1.2f;   // 攻撃判定の円の半径
     #endregion
 
     //--------------------
@@ -427,7 +430,7 @@ abstract public class PlayerBase : CharacterBase
                 Vector3 targetVelocity = new Vector2();
                 if (!canAttack)
                 {
-                    targetVelocity = new Vector2(move, m_Rigidbody2D.linearVelocity.y);
+                    targetVelocity = new Vector2(move * 2f, m_Rigidbody2D.linearVelocity.y);
                 }
                 else
                 {
@@ -799,45 +802,7 @@ abstract public class PlayerBase : CharacterBase
     /// 被ダメ処理
     /// (ノックバックはposに応じて有無が変わる)
     /// </summary>
-    public void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
-    {
-        if (!invincible)
-        {
-            var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
-
-            UIManager.Instance.PopDamageUI(damage, transform.position, true);
-            if (position != null) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
-            hp -= damage;
-            Vector2 damageDir = Vector2.zero;
-
-            // ノックバック処理
-            if (position != null)
-            {
-                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
-                m_Rigidbody2D.linearVelocity = Vector2.zero;
-                m_Rigidbody2D.AddForce(damageDir * 15);
-            }
-
-            if(type != null)
-            {
-                effectController.ApplyStatusEffect((StatusEffectController.EFFECT_TYPE)type);
-            }
-
-            if (hp <= 0)
-            {   // 死亡処理
-                m_Rigidbody2D.AddForce(damageDir * 10);
-                StartCoroutine(WaitToDead());
-            }
-            else
-            {   // 被ダメ硬直
-                if (position != null)
-                {
-                    StartCoroutine(Stun(0.35f));
-                    StartCoroutine(MakeInvincible(0.4f));
-                }
-            }
-        }
-    }
+    abstract public void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null);
 
     /// <summary>
     /// 経験値獲得
