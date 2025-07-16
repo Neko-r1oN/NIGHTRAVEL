@@ -132,10 +132,30 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// 敵体力増減通知
+        /// Author:Nishiura
         /// </summary>
         /// <param name="enemID"></param>
         /// <param name="enemHP"></param>
         void OnEnemyHealth(int enemID, float enemHP);
+
+        /// <summary>
+        /// 敵死亡通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        void OnKilledEnemy(int enemID);
+
+        /// <summary>
+        /// 経験値通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="exp">経験値</param>
+        void OnEXP(int exp);
+
+        /// <summary>
+        /// レベルアップ通知
+        /// </summary>
+        void OnLevelUp();
 
         ////敵のID同期
         //void OnIdEnemy(int enemyId);

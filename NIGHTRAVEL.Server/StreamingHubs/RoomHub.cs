@@ -84,8 +84,6 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task LeavedAsync()
         {
-
-
             ////マスタークライアントだったら次の人に譲渡する
             //if (roomData.JoinedUser.IsMaster == true)
             //{
@@ -102,7 +100,6 @@ namespace StreamingHubs
 
             // ルームデータから自身のデータを削除
             roomContext.RemoveRoomData(this.ConnectionId);
-
         }
 
         /// <summary>
@@ -260,6 +257,41 @@ namespace StreamingHubs
         {
             // 参加者全員に受け取ったIDの敵が受け取ったHPになったことを通知
             this.Client.OnEnemyHealth(enemID, enemHP);
+        }
+
+        /// <summary>
+        /// 敵死亡同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <returns></returns>
+        public async Task KilledEnemyAsync(int enemID)
+        {
+            // 参加者全員に受け取ったIDの敵が死亡したことを通知
+            this.Client.OnKilledEnemy(enemID);
+        }
+
+        /// <summary>
+        /// 経験値同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="exp">経験値</param>
+        /// <returns></returns>
+        public async Task EXPAsync(int exp)
+        {
+            // 参加者全員に受け取ったEXPの値を通知
+            this.Client.OnEXP(exp);
+        }
+
+        /// <summary>
+        /// レベルアップ同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        public async Task LevelUpAsync()
+        {
+            // 参加者全員にレベルアップしたことを通知
+            this.Client.OnLevelUp();
         }
     }
 }

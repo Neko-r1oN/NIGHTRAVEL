@@ -106,17 +106,36 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// 敵体力増減
+        /// Author:Nishiura
         /// </summary>
         /// <param name="enemID">敵識別ID</param>
         /// <param name="enemHP">敵体力</param>
         /// <returns></returns>
         Task EnemyHealthAsync(int enemID, float enemHP);
 
+        /// <summary>
+        /// 敵死亡
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <returns></returns>
+        Task KilledEnemyAsync(int enemID);
+
+        /// <summary>
+        /// 経験値同期
+        /// </summary>
+        /// <param name="exp">経験値</param>
+        /// <returns></returns>
+        Task EXPAsync(int exp);
+
+        /// <summary>
+        /// レベルアップ同期
+        /// </summary>
+        /// <returns></returns>
+        Task LevelUpAsync();
+
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);
-
-        ////敵の撃破処理
-        //Task EnemyExcusionAsync(string enemyName);
 
         ////マスタークライアントが退室したときの処理
         //Task MasterLostAsync();

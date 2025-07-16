@@ -119,25 +119,19 @@ namespace NIGHTRAVEL.Server.Model.Context
             return gimmickDataList[gimID];
         }
 
-
         /// <summary>
         /// ユーザーの退出処理
-        /// Aughter:木田晃輔
+        /// Aughter:Kida
         /// </summary>
-        /// <param name="joinedUser"></param>
+        /// <param name="joinOrder">参加順</param>
         /// <returns></returns>
         public void RemoveUser(int joinOrder)
         {
-            if(JoinedUserList==null)
-            {
-
-            }
-            else
-            {
-                //退出したユーザーを特定して削除
+            if(JoinedUserList != null)
+            { //参加者リストが存在している場合
+                // 退出したユーザーを特定して削除
                 JoinedUserList.Where( value => value == JoinedUserList[joinOrder]).ToArray();
             }
-            
         }
     }
 }
