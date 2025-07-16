@@ -167,6 +167,7 @@ namespace StreamingHubs
 
         /// <summary>
         /// レリック取得
+        /// Author:Nishiura
         /// </summary>
 		/// <param name="relicID">レリックID</param>
         /// <param name="relicName">レリック名</param>
@@ -187,10 +188,23 @@ namespace StreamingHubs
         public async Task SpawnEnemyAsync(int enemID, Vector2 pos)
         {
             // ルームデータから接続IDを指定して自身のデータを取得
-            var enemData = this.roomContext.GetEnemyData(enemID);
+            EnemyData enemData = this.roomContext.GetEnemyData(enemID);
 
             // ルーム参加者全員に、取得したレリック名を送信
-            //this.Client.OnSpawnEnemy(enemData);
+            this.Client.OnSpawnEnemy(enemData, pos);
+        }
+
+        /// <summary>
+        /// ギミック起動
+        /// Autho:Nishiura
+        /// </summary>
+        /// <param name="gimID">ギミック識別ID</param>
+        /// <returns></returns>
+        public async Task BootGimmickAsync(int gimID)
+        {
+            GimmickData gimmickData = this.roomContext.GetGimmickData(gimID);
+
+            this.Client.OnBootGimmick(gimmickData);
         }
     }
 }
