@@ -44,5 +44,6 @@ public class MatchingManager : MonoBehaviour
     public void OnJoinedUser(JoinedUser joinedUser)
     {
 
+        Debug.Log(joinedUser.UserData.Name + "‚ª“üº‚µ‚Ü‚µ‚½B");
     }
 }

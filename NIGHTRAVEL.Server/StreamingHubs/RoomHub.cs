@@ -32,7 +32,7 @@ namespace StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<Dictionary<Guid,JoinedUser>> JoinedAsync(string roomName, int userId)
+        public async Task<JoinedUser[]> JoinedAsync(string roomName, int userId)
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
@@ -51,17 +51,27 @@ namespace StreamingHubs
             // グループストレージにユーザーデータを格納
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
 
-            ////1人目をマスタークライアントにする
-            //if (roomStorage.AllValues.Count == 0) { joinedUser.IsMaster = true; }
+            if(joinedUser.JoinOrder==null)
+            {//部屋を作った人だった場合
+
+                //参加人数の初期化
+                joinedUser.JoinOrder = 1;
+
+                //1人目をマスタークライアントにする
+                joinedUser.IsMaster = true;
+            }
+
+            //参加人数を足す
+            joinedUser.JoinOrder++;
 
             // ルームコンテキストに参加ユーザーを保存
-            this.roomContext.JoinedUserList[ConnectionId]=joinedUser;
+            this.roomContext.JoinedUserList[joinedUser.JoinOrder-1]=joinedUser;
 
             // ルームデータに追加
             this.roomContext.AddRoomData(this.ConnectionId);
 
             // 参加したことを全員に通知
-            this.Client.Onjoin(roomContext.JoinedUserList[ConnectionId]);
+            this.Client.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder-1]);
 
             // 参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
@@ -74,8 +84,7 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task LeavedAsync()
         {
-            // すでに自身のデータが場合、処理しない
-            if (roomContext.JoinedUserList[this.ConnectionId] == null) return;
+
 
             ////マスタークライアントだったら次の人に譲渡する
             //if (roomData.JoinedUser.IsMaster == true)
@@ -83,11 +92,13 @@ namespace StreamingHubs
             //    await MasterLostAsync();
             //}
 
-            // ルーム参加者全員に、ユーザーの退室通知を送信
-            this.Client.OnLeave(roomContext.JoinedUserList[this.ConnectionId]);
+            var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
 
-            // グループデータから自身を削除
-            roomContext.JoinedUserList.Remove(this.ConnectionId);
+            // ルーム参加者全員に、ユーザーの退室通知を送信
+            this.Client.OnLeave(joinedUser);
+
+            //コンテキストからユーザーを削除
+            roomContext.RemoveUser(joinedUser.JoinOrder);
 
             // ルームデータから自身のデータを削除
             roomContext.RemoveRoomData(this.ConnectionId);
