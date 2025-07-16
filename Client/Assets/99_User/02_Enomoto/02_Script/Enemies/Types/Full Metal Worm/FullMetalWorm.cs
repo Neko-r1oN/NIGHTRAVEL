@@ -91,12 +91,13 @@ public class FullMetalWorm : EnemyBase
     [Foldout("抽選関連")]
     [SerializeField]
     float decisionTimeMin = 2f;
+
+    float randomDecision;
+    bool endDecision;
     #endregion
 
     #region 状態管理
     readonly float disToTargetPosMin = 3f;
-    float randomDecision;
-    bool endDecision;
     #endregion
 
     #region 敵の生成関連
@@ -138,7 +139,7 @@ public class FullMetalWorm : EnemyBase
         // 実行していなければ、行動の抽選のコルーチンを開始
         if (!ContaintsManagedCoroutine(COROUTINE.NextDecision.ToString()))
         {
-            Coroutine coroutine = StartCoroutine(NextDecision());
+            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine());
             managedCoroutines.Add(COROUTINE.NextDecision.ToString(), coroutine);
         }
     }
@@ -195,13 +196,7 @@ public class FullMetalWorm : EnemyBase
                 }
                 else
                 {
-                    // 実行していなければ、行動の抽選のコルーチンを開始
-                    string key = COROUTINE.NextDecision.ToString();
-                    if (!ContaintsManagedCoroutine(key))
-                    {
-                        Coroutine coroutine = StartCoroutine(NextDecision(0.5f));
-                        managedCoroutines.Add(key, coroutine);
-                    }
+                    NextDecision(0.5f);
                 }
             }
             else if (randomDecision <= 0.8f)
@@ -218,14 +213,25 @@ public class FullMetalWorm : EnemyBase
             }
             else
             {
-                // 実行していなければ、行動の抽選のコルーチンを開始
-                string key = COROUTINE.NextDecision.ToString();
-                if (!ContaintsManagedCoroutine(key))
-                {
-                    Coroutine coroutine = StartCoroutine(NextDecision());
-                    managedCoroutines.Add(key, coroutine);
-                }
+                NextDecision();
             }
+        }
+    }
+
+    #region 抽選処理関連
+    /// <summary>
+    /// 次の行動パターン決定処理を呼ぶ
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    void NextDecision(float? time = null)
+    {
+        // 実行していなければ、行動の抽選のコルーチンを開始
+        string key = COROUTINE.NextDecision.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
         }
     }
 
@@ -234,7 +240,7 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    IEnumerator NextDecision(float? time = null, Action onFinished = null)
+    IEnumerator NextDecisionCoroutine(float? time = null, Action onFinished = null)
     {
         if (time == null) time = Mathf.Floor(UnityEngine.Random.Range(decisionTimeMin, decisionTimeMax));
         doOnceDecision = false;
@@ -252,6 +258,8 @@ public class FullMetalWorm : EnemyBase
         doOnceDecision = true;
         onFinished?.Invoke();
     }
+
+    #endregion
 
     #region 攻撃処理関連
 
@@ -317,14 +325,7 @@ public class FullMetalWorm : EnemyBase
     {
         yield return new WaitForSeconds(time);
         isAttacking = false;
-
-        // 実行していなければ、行動の抽選するコルーチンを開始
-        string key = COROUTINE.NextDecision.ToString();
-        if (!ContaintsManagedCoroutine(key))
-        {
-            Coroutine coroutine = StartCoroutine(NextDecision(null, () => { RemoveCoroutineByKey(key); }));
-            managedCoroutines.Add(key, coroutine);
-        }
+        NextDecision();
         onFinished?.Invoke();
     }
 
@@ -387,12 +388,7 @@ public class FullMetalWorm : EnemyBase
             yield return null;
         }
 
-        // 実行していなければ、行動の抽選するコルーチンを開始
-        if (!ContaintsManagedCoroutine(COROUTINE.NextDecision.ToString()))
-        {
-            Coroutine coroutine = StartCoroutine(NextDecision());
-            managedCoroutines.Add(COROUTINE.NextDecision.ToString(), coroutine);
-        }
+        NextDecision();
         onFinished?.Invoke();
     }
 

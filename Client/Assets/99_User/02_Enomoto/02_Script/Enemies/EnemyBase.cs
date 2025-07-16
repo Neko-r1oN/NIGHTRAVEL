@@ -38,6 +38,7 @@ abstract public class EnemyBase : CharacterBase
 
     #region チェック判定
     protected LayerMask terrainLayerMask; // 壁と地面のレイヤー
+    public LayerMask TerrainLayerMask { get { return terrainLayerMask; } }
     #endregion
 
     #region ステータス
@@ -170,7 +171,7 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void FixedUpdate()
     {
-        if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
+        if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
         // ターゲットが存在しない || 現在のターゲットが死亡している場合
         if (Players.Count > 0 && !target || target && target.GetComponent<CharacterBase>().HP <= 0)
@@ -187,15 +188,6 @@ abstract public class EnemyBase : CharacterBase
             {
                 Coroutine coroutine = StartCoroutine(CheckTargetObstructionCoroutine(() => {
                     RemoveCoroutineByKey(key);
-
-                    // 実行中でなければ、その場に待機するコルーチンを開始
-                    string waitingKey = "Waiting";
-                    float waitTime = 2f;
-                    if (!ContaintsManagedCoroutine(waitingKey))
-                    {
-                        Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveCoroutineByKey(waitingKey); }));
-                        managedCoroutines.Add(waitingKey, waitCoroutine);
-                    }
                 }));
                 managedCoroutines.Add(key, coroutine);
             }
@@ -285,7 +277,7 @@ abstract public class EnemyBase : CharacterBase
     /// <returns></returns>
     IEnumerator CheckTargetObstructionCoroutine(Action onFinished)
     {
-        float obstructionMaxTime = 3f;
+        float obstructionMaxTime = 4f;
         float currentTime = 0;
         float waitSec = 0.5f;
 
@@ -294,7 +286,7 @@ abstract public class EnemyBase : CharacterBase
         {
             yield return new WaitForSeconds(waitSec);
 
-            if (!sightChecker.IsTargetVisible())
+            if (sightChecker.IsObstructed())
             {
                 currentTime += waitSec;
             }
@@ -309,6 +301,15 @@ abstract public class EnemyBase : CharacterBase
         {
             target = null;
             if (chaseAI) chaseAI.Stop();
+        }
+
+        // 実行中でなければ、その場に待機するコルーチンを開始
+        string key = "Waiting";
+        float waitTime = 2f;
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, waitCoroutine);
         }
 
         onFinished?.Invoke();
@@ -424,11 +425,12 @@ abstract public class EnemyBase : CharacterBase
     /// ノックバック処理
     /// </summary>
     /// <param name="damage"></param>
-    protected void DoKnokBack(int damage)
+    protected void DoKnokBack(Transform attacker, int damage)
     {
-        int direction = damage / Mathf.Abs(damage);
+        float durationX = 130f + damage;
+        float durationY = 90f + damage;
         transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-        transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(direction * 200f, 100f));
+        transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-transform.localScale.x * durationX, durationY));
     }
 
     /// <summary>
@@ -438,6 +440,12 @@ abstract public class EnemyBase : CharacterBase
     {
         isAttacking = false;
         doOnceDecision = true;
+
+        // ヒット時に攻撃処理などを停止する
+        if (canCancelAttackOnHit)
+        {
+            StopAllManagedCoroutines();
+        }
     }
 
     /// <summary>
@@ -473,18 +481,12 @@ abstract public class EnemyBase : CharacterBase
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
         if (attacker)
         {
-            // ヒット時に攻撃処理などを停止する
-            if (canCancelAttackOnHit)
-            {
-                StopAllManagedCoroutines();
-            }
-
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
             || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
             
-            DoKnokBack(damage);
+            DoKnokBack(attacker, damage);
 
-            if (hp > 0 && canCancelAttackOnHit) OnHit();
+            if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
         }
 
         if (hp <= 0)
@@ -541,10 +543,10 @@ abstract public class EnemyBase : CharacterBase
     /// <param name="time"></param>
     public void ApplyStun(float time)
     {
-        if (!isStun)
-        {
-            StartCoroutine(StunTime(time));
-        }
+        isStun = true;
+        OnHit();
+        Coroutine coroutine = StartCoroutine(StunTime(time));
+        managedCoroutines.Add("StunTime", coroutine);
     }
 
     /// <summary>
@@ -553,8 +555,6 @@ abstract public class EnemyBase : CharacterBase
     /// <returns></returns>
     IEnumerator StunTime(float stunTime)
     {
-        isStun = true;
-        OnHit();
         yield return new WaitForSeconds(stunTime);
         isStun = false;
     }
@@ -564,9 +564,14 @@ abstract public class EnemyBase : CharacterBase
     #region テクスチャ・アニメーション関連
 
     /// <summary>
-    /// 攻撃アニメーションのイベント通知で攻撃処理を実行する
+    /// 攻撃アニメーションのイベント通知処理
     /// </summary>
     public virtual void OnAttackAnimEvent() { }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント通知処理
+    /// </summary>
+    public virtual void OnEndAttackAnimEvent() { }
 
     /// <summary>
     /// スプライトを透明にするときに呼ばれる処理
@@ -633,12 +638,10 @@ abstract public class EnemyBase : CharacterBase
     /// アニメーション設定処理
     /// </summary>
     /// <param name="id"></param>
-    public void SetAnimId(int id)
+    public virtual void SetAnimId(int id)
     {
-        if (animator != null)
-        {
-            animator.SetInteger("animation_id", id);
-        }
+        if (animator == null) return;
+        animator.SetInteger("animation_id", id);
     }
 
     /// <summary>
@@ -661,7 +664,7 @@ abstract public class EnemyBase : CharacterBase
     protected bool ContaintsManagedCoroutine(string key)
     {
         bool isHit = false;
-        if (managedCoroutines.ContainsKey(key))
+        if (managedCoroutines.Count > 0 && managedCoroutines.ContainsKey(key))
         {
             if (managedCoroutines[key] == null)
             {
@@ -683,6 +686,7 @@ abstract public class EnemyBase : CharacterBase
     {
         if (ContaintsManagedCoroutine(key))
         {
+            if (managedCoroutines[key] != null) StopCoroutine(managedCoroutines[key]);
             managedCoroutines.Remove(key);
         }
     }
@@ -692,32 +696,16 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     protected void StopAllManagedCoroutines()
     {
-        foreach(var coroutine in managedCoroutines)
+        if (managedCoroutines.Count > 0)
         {
-            if (coroutine.Value != null)
+            foreach (var coroutine in managedCoroutines.Values)
             {
-                StopCoroutine(coroutine.Value);
+                if (coroutine != null) StopCoroutine(coroutine);
             }
         }
+
         managedCoroutines.Clear();
     }
-
-    /// <summary>
-    /// 一つでもコルーチンが動いているか
-    /// </summary>
-    /// <returns></returns>
-    public bool IsAnyCoroutineRunning()
-    {
-        foreach (var coroutine in managedCoroutines)
-        {
-            if (coroutine.Value != null)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     #endregion
 
     #region Debug描画処理関連

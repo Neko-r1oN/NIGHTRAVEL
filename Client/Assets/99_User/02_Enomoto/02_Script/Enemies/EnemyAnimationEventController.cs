@@ -14,6 +14,14 @@ public class EnemyAnimationEventController : MonoBehaviour
     }
 
     /// <summary>
+    /// 攻撃のアニメーション終了時のイベント
+    /// </summary>
+    public void OnEndAttackEvent()
+    {
+        m_EnemyBase.OnEndAttackAnimEvent();
+    }
+
+    /// <summary>
     /// スポーンアニメのイベント
     /// </summary>
     public void OnSpawnEvent()
