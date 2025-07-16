@@ -116,11 +116,29 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="gimmickData">ギミックデータ</param>
         void OnBootGimmick(GimmickData gimmickData);
 
+        /// <summary>
+        /// 難易度上昇通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="difID">増加後難易度</param>
+        void OnAscendDifficulty(int difID);
+
+        /// <summary>
+        /// 次ステージ進行通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="stageID">次ステージID</param>
+        void OnAdanceNextStage(int stageID);
+
+        /// <summary>
+        /// 敵体力増減通知
+        /// </summary>
+        /// <param name="enemID"></param>
+        /// <param name="enemHP"></param>
+        void OnEnemyHealth(int enemID, float enemHP);
+
         ////敵のID同期
         //void OnIdEnemy(int enemyId);
-
-        ////敵の移動同期
-        //void OnMoveEnemy( string enemyName,Vector2 pos, Quaternion rot);
 
         ////敵の撃破処理
         //void OnExcusionEnemy(string enemyName);

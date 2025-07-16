@@ -1,15 +1,38 @@
-﻿using Cysharp.Runtime.Multicast;
+﻿//=============================
+// ルームコンテキストスクリプト
+// Author:木田晃輔
+//=============================
+using Cysharp.Runtime.Multicast;
 using NIGHTRAVEL.Server.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 
 namespace NIGHTRAVEL.Server.Model.Context
 {
     public class RoomContext
-    {
-        public Guid Id { get;} //コンテキストID
-        public string Name { get;} //ルーム名
+    {   
+        /// <summary>
+        /// コンテキストID
+        /// Author:Kida
+        /// </summary>
+        public Guid Id { get;}
+
+        /// <summary>
+        /// ルーム名
+        /// Author:Kida
+        /// </summary>
+        public string Name { get;}
+
+        /// <summary>
+        /// グループ
+        /// Author:Kida
+        /// </summary>
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group {  get;}
-        public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new(); //参加ユーザー一覧
+
+        /// <summary>
+        /// 参加者リスト
+        /// Author:Kida
+        /// </summary>
+        public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new();
 
         /// <summary>
         /// ルームデータリスト

@@ -1,6 +1,6 @@
 ﻿//=============================
 // ギミックデータスクリプト
-// Author:Nishiura Data:07/14
+// Author:Nishiura Data:07/16
 //=============================
 using System.Collections.Generic;
 using UnityEngine;

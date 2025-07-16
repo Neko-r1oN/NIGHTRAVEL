@@ -1,10 +1,7 @@
-﻿////////////////////////////////////////////////////////////////
-///
-/// クライアントからサーバーへの通信を管理するスクリプト
-/// 
-/// Aughter:木田晃輔
-///
-////////////////////////////////////////////////////////////////
+﻿//=============================
+// クライアントからサーバーへの通信を管理するスクリプト
+// Author:木田晃輔
+//=============================
 
 using MagicOnion;
 using System;
@@ -90,23 +87,38 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task BootGimmickAsync(int gimID);
 
+        /// <summary>
+        /// 難易度上昇
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="difID">難易度ID</param>
+        /// <returns></returns>
+        Task AscendDifficultyAsync(int difID);
+
+        /// <summary>
+        /// 次ステージ進行
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="stageID">ステージID</param>
+        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <returns></returns>
+        Task AdvanceNextStageAsync(int stageID, bool isBossStage);
+
+        /// <summary>
+        /// 敵体力増減
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="enemHP">敵体力</param>
+        /// <returns></returns>
+        Task EnemyHealthAsync(int enemID, float enemHP);
+
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);
-
-        ////敵の位置回転
-        //Task EnemyMoveAsync(string enemyName,Vector2 pos,Quaternion rot);
 
         ////敵の撃破処理
         //Task EnemyExcusionAsync(string enemyName);
 
         ////マスタークライアントが退室したときの処理
         //Task MasterLostAsync();
-
-
-        ////オブジェクトの生成同期
-        //Task ObjectSpawnAsync(Guid connectionId,string objectName,Vector2 pos,Quaternion rot, Vector2 fow);
-
-        ////オブジェクトの位置回転同期
-        //Task ObjectMoveAsync(string objectName,Vector2 pos,Quaternion rot);
     }
 }

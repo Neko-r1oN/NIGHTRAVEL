@@ -1,10 +1,7 @@
-﻿////////////////////////////////////////////////////////////////
-///
-/// クライアントからサーバーへの通信を管理するスクリプト
-/// 
-/// Aughter:木田晃輔
-///
-////////////////////////////////////////////////////////////////
+﻿//=============================
+// クライアントからサーバーへの通信を管理するスクリプト
+// Author:木田晃輔
+//=============================
 using MagicOnion.Server.Hubs;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.StreamingHubs;
@@ -38,11 +35,11 @@ namespace StreamingHubs
         public async Task<Dictionary<Guid,JoinedUser>> JoinedAsync(string roomName, int userId)
         {
             lock (roomContextRepository)
-            {//同時に生成しないように排他制御
-                //ルームに参加＆ルームを保持
+            { //同時に生成しないように排他制御
+                // ルームに参加＆ルームを保持
                 this.roomContext = roomContextRepository.GetContext(roomName);
                 if (this.roomContext == null)
-                {//無かったら生成
+                { //無かったら生成
                     this.roomContext = roomContextRepository.CreateContext(roomName);
                 }
             }
@@ -51,21 +48,22 @@ namespace StreamingHubs
             GameDbContext dbContext = new GameDbContext();
             var user = dbContext.Users.Where(user => user.Id == userId).First();
 
-            //グループストレージにユーザーデータを格納
+            // グループストレージにユーザーデータを格納
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
 
             ////1人目をマスタークライアントにする
             //if (roomStorage.AllValues.Count == 0) { joinedUser.IsMaster = true; }
 
-            //ルームコンテキストに参加ユーザーを保存
+            // ルームコンテキストに参加ユーザーを保存
             this.roomContext.JoinedUserList[ConnectionId]=joinedUser;
+
             // ルームデータに追加
             this.roomContext.AddRoomData(this.ConnectionId);
 
-            //通知
+            // 参加したことを全員に通知
             this.Client.Onjoin(roomContext.JoinedUserList[ConnectionId]);
 
-            //参加中のユーザー情報を返す
+            // 参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
         }
 
@@ -166,7 +164,7 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// レリック取得
+        /// レリック取得同期処理
         /// Author:Nishiura
         /// </summary>
 		/// <param name="relicID">レリックID</param>
@@ -179,7 +177,7 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// 敵生成
+        /// 敵生成同期処理
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemID">敵識別ID</param>
@@ -187,24 +185,70 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task SpawnEnemyAsync(int enemID, Vector2 pos)
         {
-            // ルームデータから接続IDを指定して自身のデータを取得
+            // ルームデータから敵のIDを指定して生成した敵データを取得
             EnemyData enemData = this.roomContext.GetEnemyData(enemID);
 
-            // ルーム参加者全員に、取得したレリック名を送信
+            enemData.Position = pos; // 敵の位置に渡された位置を代入
+
+            // ルーム参加者全員に、取得した敵情報と生成位置を送信
             this.Client.OnSpawnEnemy(enemData, pos);
         }
 
         /// <summary>
-        /// ギミック起動
+        /// ギミック起動同期処理
         /// Autho:Nishiura
         /// </summary>
         /// <param name="gimID">ギミック識別ID</param>
         /// <returns></returns>
         public async Task BootGimmickAsync(int gimID)
         {
+            // ルームデータからギミックのIDを指定してギミックデータを取得
             GimmickData gimmickData = this.roomContext.GetGimmickData(gimID);
 
+            // 参加者全員にギミック情報を通知？？？？
             this.Client.OnBootGimmick(gimmickData);
+        }
+
+        /// <summary>
+        /// 難易度上昇同期処理
+        /// Autho:Nishiura
+        /// </summary>
+        /// <param name="difID">難易度値</param>
+        /// <returns></returns>
+        public async Task AscendDifficultyAsync(int difID)
+        {
+            difID++; // 受け取った難易度に+1
+            // 参加者全員に難易度の上昇を通知
+            this.Client.OnAscendDifficulty(difID);
+        }
+
+        /// <summary>
+        /// 次ステージ進行同期処理
+        /// Autho:Nishiura
+        /// </summary>
+        /// <param name="stageID"></param>
+        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <returns></returns>
+        public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
+        {
+            if ((stageID == 3 && isBossStage) || stageID != 3) stageID++;   // ステージが3かつラスボスへ進む場合または通常ステージの場合、ステージIDを加算
+            else if (stageID == 3 && !isBossStage) stageID = 1;             // ラスボスへ進まない場合、ステージ1へ移動
+
+            // 参加者全員にステージの進行を通知
+            this.Client.OnAdanceNextStage(stageID);
+        }
+
+        /// <summary>
+        /// 敵体力増減同期処理
+        /// Autho:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="enemHP">敵体力</param>
+        /// <returns></returns>
+        public async Task EnemyHealthAsync(int enemID, float enemHP)
+        {
+            // 参加者全員に受け取ったIDの敵が受け取ったHPになったことを通知
+            this.Client.OnEnemyHealth(enemID, enemHP);
         }
     }
 }
