@@ -6,14 +6,17 @@ using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using ColorUtility = UnityEngine.ColorUtility;
 
 public class UIManager : MonoBehaviour
 {
     PlayerBase player;
     EnemyBase boss;
+    LevelManager level;
 
     #region 各UI
     [Foldout("キャンバス")]
@@ -90,6 +93,8 @@ public class UIManager : MonoBehaviour
     int statusStock = 0; // レベルアップストック数
     bool isStatusWindow; // ステータスウィンドウが開けるかどうか
     bool isHold;         // ステータスウィンドウロック用
+    string colorCode;    // カラーコード
+    Color color;
     private Renderer[] childRenderers; // 子オブジェクトのRendererを複数対応
     private Text[] childTexts; // 子オブジェクトの標準UI.Textを複数対応
     // 各RendererとTextの初期色を保存するためのリスト
@@ -153,6 +158,8 @@ public class UIManager : MonoBehaviour
     {
         player = GameManager.Instance.Player.GetComponent<PlayerBase>();
 
+        //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
+
         playerHpBar.maxValue = player.MaxHP;
         playerSliderText.text = "" + playerHpBar.maxValue;
         expBar.maxValue = player.NextLvExp;
@@ -186,6 +193,16 @@ public class UIManager : MonoBehaviour
 
         tmText.text = "クリア条件：5分間生き残る or 敵"
             + GameManager.Instance.KnockTermsNum + "体倒せ";
+
+        level = LevelManager.Instance;
+
+        diffText.text = level.LevelName[level.GameLevel].ToString();
+        colorCode = "#ffb6c1";
+
+        if(ColorUtility.TryParseHtmlString(colorCode,out color))
+        {
+            diffText.color = color;
+        }
     }
 
     /// <summary>
@@ -568,6 +585,58 @@ public class UIManager : MonoBehaviour
 
     public void UpGameLevelText()
     {
+        diffText.text = level.LevelName[level.GameLevel].ToString();
 
+        // textの色変更
+        switch (level.GameLevel)
+        {// Babyはstartで設定済みのため省く
+
+            case LevelManager.GAME_LEVEL.Easy:
+                diffText.text = level.LevelName[level.GameLevel].ToString();
+                colorCode = "#00ffff";
+
+                if (ColorUtility.TryParseHtmlString(colorCode, out color))
+                {
+                    diffText.color = color;
+                }
+
+                return;
+                
+            case LevelManager.GAME_LEVEL.Normal:
+
+                diffText.text = level.LevelName[level.GameLevel].ToString();
+                colorCode = "#66cdaa";
+
+                if (ColorUtility.TryParseHtmlString(colorCode, out color))
+                {
+                    diffText.color = color;
+                }
+
+                return;
+
+            case LevelManager.GAME_LEVEL.Hard:
+
+                diffText.text = level.LevelName[level.GameLevel].ToString();
+                colorCode = "#dc143c";
+
+                if (ColorUtility.TryParseHtmlString(colorCode, out color))
+                {
+                    diffText.color = color;
+                }
+
+                return;
+
+            case LevelManager.GAME_LEVEL.Berryhard:
+
+                diffText.text = level.LevelName[level.GameLevel].ToString();
+                colorCode = "#b22222";
+
+                if (ColorUtility.TryParseHtmlString(colorCode, out color))
+                {
+                    diffText.color = color;
+                }
+
+                return;
+        }
     }
 }
