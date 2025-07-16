@@ -11,8 +11,6 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] Transform randRespawnA;             // リスポーン範囲A
     [SerializeField] Transform randRespawnB;             // リスポーン範囲B
     [SerializeField] float distMinSpawnPos;              // 生成しない範囲
-    [SerializeField] GameObject player;                  // プレイヤーの情報
-    [SerializeField] List<GameObject> plyers;
     [SerializeField] List<GameObject> enemyList;         // エネミーリスト
     [SerializeField] List<GameObject> terminalSpawnList; // 端末から生成された敵のリスト
     [SerializeField] float xRadius;                      // 生成範囲のx半径
@@ -20,9 +18,12 @@ public class SpawnManager : MonoBehaviour
 
     List<int> enemyIdList;
 
+    GameObject player;
+    //List<GameObject> player;                  // プレイヤーの情報
     GameObject enemy;
 
     float[] item;
+    int eliteEnemyCnt;
 
     public Transform RandRespawnA { get { return randRespawnA; } }
     public Transform RandRespawnB { get { return randRespawnB; } }
@@ -54,6 +55,9 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
+        player = GameManager.Instance.Player;
+        //player = GameManager.Instance.Players;
+
         item = new float[enemyList.Count];
 
         // 割合
@@ -179,10 +183,17 @@ public class SpawnManager : MonoBehaviour
 
                 int number = Random.Range(0, 100);
 
-                if(number < 5)
+                int onePercentOfMaxEnemies = 
+                    Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
+
+                if (number < 5 * (int)LevelManager.Instance.GameLevel 
+                    && eliteEnemyCnt < onePercentOfMaxEnemies)
                 {
                     enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.ELITE_TYPE)Random.Range(1,4));
+                    eliteEnemyCnt++;
                 }
+
+                Debug.Log(eliteEnemyCnt);
 
                 enemy.GetComponent<EnemyBase>().Players.Add(player);
                 enemy.GetComponent<EnemyBase>().SetNearTarget();

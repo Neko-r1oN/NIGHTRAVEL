@@ -4,12 +4,15 @@ using UnityEngine;
 public class Relic : MonoBehaviour
 {
     [SerializeField] int id;
+    [SerializeField] int rarity;
 
     RelicDeta relicDeta;
 
+    public int Rarity { get { return rarity; } }
+
     private void Start()
     {
-        relicDeta = new RelicDeta(id);
+        relicDeta = new RelicDeta(id,rarity);
     }
 
     /// <summary>
