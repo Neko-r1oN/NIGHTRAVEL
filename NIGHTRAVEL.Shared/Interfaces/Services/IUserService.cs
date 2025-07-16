@@ -20,7 +20,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.Services
     public interface IUserService : IService<IUserService>
     {
         //ユーザーの登録
-        UnaryResult<int> RegistUserAsync();
+        UnaryResult<int> RegistUserAsync(string name);
 
         //ユーザーの全取得
         UnaryResult<User[]> GetAllUsersAsync();
