@@ -9,7 +9,8 @@ using UnityEngine;
 
 public class Window : GimmickBase
 {
-    AreaEffector2D areaEffector2D;
+    [SerializeField] GameObject windObj;
+    bool isWind;
 
     public enum Power_ID
     {
@@ -20,7 +21,8 @@ public class Window : GimmickBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        TurnOnPower(1);
+        InvokeRepeating("SendWind", 0.1f, 5);
     }
 
     // Update is called once per frame
@@ -29,21 +31,36 @@ public class Window : GimmickBase
 
     }
 
+    /// <summary>
+    /// ïóÇó¨ÇµÇΩÇËé~ÇﬂÇΩÇËÇ∑ÇÈèàóù
+    /// </summary>
+    public void SendWind()
+    {
+        if(isWind==true)
+        {
+            windObj.SetActive(false);
+            isWind=false;
+        }
+        else if(isWind==false)
+        { 
+            windObj.SetActive(true);
+            isWind=true;
+        }
+    }
+
     public override void TurnOnPower(int triggerID)
     {
         switch (triggerID)
         {
             case 0:
-                areaEffector2D = new AreaEffector2D();
-                areaEffector2D.gameObject.SetActive(true);
+                windObj.SetActive(true);
                 break;
 
             case 1:
-                areaEffector2D = new AreaEffector2D();
-                areaEffector2D.gameObject.SetActive(false);
+                windObj.SetActive(false);
                 break;
 
-            default: 
+            default:
                 break;
         }
     }

@@ -9,8 +9,17 @@ public class Burner : GimmickBase
 {
     PlayerBase player;
     EnemyBase enemy;
+    StatusEffectController statusEffectController;
     [SerializeField] GameObject flame;
     bool isFlame;
+
+    //オブジェクトの起動状態のID
+    //triggerIDが起動状態のIDになる
+    public enum Power_ID
+    {
+        ON = 0,
+        OFF
+    };
 
     private void Start()
     {
@@ -25,7 +34,7 @@ public class Burner : GimmickBase
     }
 
     /// <summary>
-    /// 触れたオブジェクトに炎上効果を付与する処理
+    /// 触れたプレイヤー/敵に炎上効果を付与する処理
     /// </summary>
     /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerEnter2D(Collider2D collision)
@@ -33,7 +42,8 @@ public class Burner : GimmickBase
         if (collision.CompareTag("Player"))
         {
             player = GetComponent<PlayerBase>();
-
+            statusEffectController = GetComponent<StatusEffectController>();
+            //statusEffectController.ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Burn); //プレイヤーに炎上状態を付与
             Debug.Log("プレイヤーに炎上状態を付与");
         }
 
