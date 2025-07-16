@@ -52,9 +52,9 @@ public class Sword : PlayerBase
     // メソッド
 
     /// <summary>
-    /// 被ダメ時各フラグをリセット
+    /// 動作フラグをリセット
     /// </summary>
-    public override void HitReset()
+    public override void ResetFlag()
     {
         canAttack = true;
         isCombo = false;
