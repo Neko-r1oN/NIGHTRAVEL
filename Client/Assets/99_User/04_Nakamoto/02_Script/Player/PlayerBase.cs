@@ -615,7 +615,7 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="collision"></param>
     protected void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Scaffold") m_IsScaffold = true;
+        if (collision.gameObject.tag == "Gimmick/Scaffold") m_IsScaffold = true;
     }
 
     /// <summary>
@@ -792,7 +792,7 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     public void MoveCheckPoint()
     {
-        playerPos.position = FetchNearObjectWithTag("ChecKPoint").position;
+        playerPos.position = FetchNearObjectWithTag("Gimmick/ChecKPoint").position;
     }
 
     /// <summary>

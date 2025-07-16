@@ -3,6 +3,7 @@
 // Author：Kenta Nakamoto
 // 引用：https://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
 //--------------------------------------------------------------
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -13,7 +14,8 @@ public class Bullet : MonoBehaviour
     private float timer;                    // 累計生存時間
     private bool orbitFlag;                 // 追尾フラグ
     private PlayerBase player;              // 発射キャラの情報
-    [SerializeField] private float trackingStart;            // 追尾開始時間
+    [SerializeField] private float trackingStart;           // 追尾開始時間
+    private HashSet<int> hitTargets = new HashSet<int>();   // 当たったobjIDを保存
 
     /// <summary>
     /// 弾の速さ
@@ -73,7 +75,8 @@ public class Bullet : MonoBehaviour
         {
             collision.gameObject.GetComponent<EnemyBase>().ApplyDamage(player.Power, player.transform);
             Destroy(gameObject);
-        }else if (collision.gameObject.tag == "Object")
+        }
+        else if (collision.gameObject.tag == "Object")
         {
             collision.gameObject.GetComponent<ObjectBase>().ApplyDamage();
         }
