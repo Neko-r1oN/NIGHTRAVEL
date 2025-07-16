@@ -32,7 +32,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// 参加者リスト
         /// Author:Kida
         /// </summary>
-        public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new();
+        public JoinedUser[] JoinedUserList { get; set; }
 
         /// <summary>
         /// ルームデータリスト
@@ -117,6 +117,27 @@ namespace NIGHTRAVEL.Server.Model.Context
         public GimmickData GetGimmickData(int gimID)
         {
             return gimmickDataList[gimID];
+        }
+
+
+        /// <summary>
+        /// ユーザーの退出処理
+        /// Aughter:木田晃輔
+        /// </summary>
+        /// <param name="joinedUser"></param>
+        /// <returns></returns>
+        public void RemoveUser(int joinOrder)
+        {
+            if(JoinedUserList==null)
+            {
+
+            }
+            else
+            {
+                //退出したユーザーを特定して削除
+                JoinedUserList.Where( value => value == JoinedUserList[joinOrder]).ToArray();
+            }
+            
         }
     }
 }
