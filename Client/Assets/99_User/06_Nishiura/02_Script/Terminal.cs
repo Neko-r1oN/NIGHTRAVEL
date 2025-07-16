@@ -147,7 +147,7 @@ public class Terminal : MonoBehaviour
         {
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
-                
+                isUsed = true;
                 break;
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合
