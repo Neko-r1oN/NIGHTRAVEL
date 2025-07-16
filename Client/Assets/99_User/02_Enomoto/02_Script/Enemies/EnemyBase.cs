@@ -59,11 +59,6 @@ abstract public class EnemyBase : CharacterBase
     [SerializeField]
     [Tooltip("攻撃を開始する距離")]
     protected float attackDist = 1.5f;
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    [Tooltip("追跡可能範囲")]
-    protected float trackingRange = 20f;
     
     [Foldout("ステータス")]
     [SerializeField]
@@ -182,18 +177,30 @@ abstract public class EnemyBase : CharacterBase
         {
             // 新しくターゲットを探す
             target = sightChecker.GetTargetInSight();
-            if (target && ContaintsManagedCoroutine("CheckTargetObstructionCoroutine"))
+        }
+
+        if (target)
+        {
+            // 実行中でなければ、ターゲットを監視するコルーチンを開始
+            string key = "CheckTargetObstructionCoroutine";
+            if (!ContaintsManagedCoroutine(key))
             {
-                // ターゲットを追跡できるかの監視を開始
+                Coroutine coroutine = StartCoroutine(CheckTargetObstructionCoroutine(() => {
+                    RemoveCoroutineByKey(key);
+
+                    // 実行中でなければ、その場に待機するコルーチンを開始
+                    string waitingKey = "Waiting";
+                    float waitTime = 2f;
+                    if (!ContaintsManagedCoroutine(waitingKey))
+                    {
+                        Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveCoroutineByKey(waitingKey); }));
+                        managedCoroutines.Add(waitingKey, waitCoroutine);
+                    }
+                }));
+                managedCoroutines.Add(key, coroutine);
             }
         }
-        //else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())
-        //{// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
-        //    target = null;
-        //    if (chaseAI) chaseAI.Stop();
-        //}
-
-        if (!target)
+        else
         {
             if (canPatrol && !isPatrolPaused) Patorol();
             else Idle();
@@ -261,12 +268,13 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     /// <param name="waitingTime"></param>
     /// <returns></returns>
-    protected IEnumerator Waiting(float waitingTime)
+    protected IEnumerator Waiting(float waitingTime, Action onFinished)
     {
         doOnceDecision = false;
         Idle();
         yield return new WaitForSeconds(waitingTime);
         doOnceDecision = true;
+        onFinished?.Invoke();
     }
 
     #region プレイヤー・ターゲット関連
@@ -275,16 +283,18 @@ abstract public class EnemyBase : CharacterBase
     /// ターゲットとの間に遮蔽物があるかを監視し続けるコルーチン
     /// </summary>
     /// <returns></returns>
-    IEnumerator CheckTargetObstructionCoroutine()
+    IEnumerator CheckTargetObstructionCoroutine(Action onFinished)
     {
         float obstructionMaxTime = 3f;
         float currentTime = 0;
-        float waitSec = 0.1f;
+        float waitSec = 0.5f;
+
+        // obstructionMaxTime以上経過でターゲットを見失ったことにする
         while (currentTime < obstructionMaxTime)
         {
             yield return new WaitForSeconds(waitSec);
 
-            if (sightChecker.IsObstructed())
+            if (!sightChecker.IsTargetVisible())
             {
                 currentTime += waitSec;
             }
@@ -300,6 +310,8 @@ abstract public class EnemyBase : CharacterBase
             target = null;
             if (chaseAI) chaseAI.Stop();
         }
+
+        onFinished?.Invoke();
     }
 
     /// <summary>
@@ -639,7 +651,7 @@ abstract public class EnemyBase : CharacterBase
     }
     #endregion
 
-    #region コルーチン関連
+    #region コルーチン管理関連
 
     /// <summary>
     /// 管理しているものの中で、起動中のコルーチンを検索する
@@ -721,10 +733,6 @@ abstract public class EnemyBase : CharacterBase
     private void OnDrawGizmos()
     {
         if (!canDrawRay) return;
-
-        // 追跡範囲
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position, trackingRange);
 
         // 視線描画
         if (sightChecker != null)

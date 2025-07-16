@@ -44,7 +44,6 @@ public class EnemySightChecker : MonoBehaviour
         float dist = dirToTarget.magnitude;
         float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, dist, targetLayerMask);
-
         return hit2D && !hit2D.collider.gameObject.CompareTag("Player");
     }
 
