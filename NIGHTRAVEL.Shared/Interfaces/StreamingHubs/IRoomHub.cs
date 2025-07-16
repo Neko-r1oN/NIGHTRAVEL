@@ -82,6 +82,14 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task SpawnEnemyAsync(int enemID, Vector2 pos);
 
+        /// <summary>
+        /// ギミック起動
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="gimID">ギミック識別ID</param>
+        /// <returns></returns>
+        Task BootGimmickAsync(int gimID);
+
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);
 

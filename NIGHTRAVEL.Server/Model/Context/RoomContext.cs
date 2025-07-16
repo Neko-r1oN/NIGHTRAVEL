@@ -10,16 +10,25 @@ namespace NIGHTRAVEL.Server.Model.Context
         public string Name { get;} //ルーム名
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group {  get;}
         public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new(); //参加ユーザー一覧
+
         /// <summary>
         /// ルームデータリスト
         /// Author:Nishiura
         /// </summary>
         public Dictionary<Guid, RoomData> roomDataList { get; } = new();
+
         /// <summary>
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
         public Dictionary<int, EnemyData> enemyDataList { get; } = new();
+
+        /// <summary>
+        /// ギミックデータリスト
+        /// Author:Nishiura
+        /// </summary>
+        public Dictionary<int, GimmickData> gimmickDataList { get; } = new();
+
         //[その他、ゲームのルームデータをフィールドに保存]
 
         public RoomContext(IMulticastGroupProvider groupProvider,string roomName)
@@ -57,7 +66,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         }
 
         /// <summary>
-        /// ユーザ情報渡す関数
+        /// ユーザ情報を渡す関数
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID"></param>
@@ -67,13 +76,24 @@ namespace NIGHTRAVEL.Server.Model.Context
         }
 
         /// <summary>
-        /// ユーザ情報渡す関数
+        /// 敵情報を渡す関数
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID"></param>
         public EnemyData GetEnemyData(int enemID)
         {
             return enemyDataList[enemID];
+        }
+
+        /// <summary>
+        /// ギミック情報を渡す関数
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="gimID"></param>
+        /// <returns></returns>
+        public GimmickData GetGimmickData(int gimID)
+        {
+            return gimmickDataList[gimID];
         }
     }
 }
