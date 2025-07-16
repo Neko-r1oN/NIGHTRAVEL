@@ -106,10 +106,27 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //}
 
+    /// <summary>
+    /// 入室
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask JoinAsync(string roomName,int userId)
+    {
+       JoinedUser[] users = await roomHub.JoinedAsync(roomName,userId);
+        foreach (var user in users)
+        {
+            if (user.UserData.Id == userId)
+            {
+                this.ConnectionId=user.ConnectionId;
+                OnJoinedUser(user);
+            }
+        }
+    }
+
     //入室通知(IRoomHubReceiverインターフェイスの実装)
     public void Onjoin(JoinedUser joinedUser)
     {
-        OnJoinedUser(joinedUser);
+        OnJoinedUser?.Invoke(joinedUser);
     }
 
     //退室
@@ -187,7 +204,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnSpawndEnemy(enemData, pos);
     }
-
 
 
     ////敵の出現通知

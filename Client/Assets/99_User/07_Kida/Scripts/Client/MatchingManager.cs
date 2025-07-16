@@ -11,13 +11,15 @@ using UnityEngine;
 
 public class MatchingManager : MonoBehaviour
 {
-
+    UserModel userModel;
+    [SerializeField] RoomModel roomModel;
     [SerializeField] GameObject userPrefab; 
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
     }
 
     // Update is called once per frame
@@ -26,8 +28,17 @@ public class MatchingManager : MonoBehaviour
         
     }
 
+
+    public async void JoinRoom()
+    {
+        string roomName="Sample";
+        await roomModel.JoinAsync(roomName, userModel.userId);
+
+
+    }
+
     /// <summary>
-    /// “üºˆ—
+    /// “üºŠ®—¹ˆ—
     /// Aughter:–Ø“cW•ã
     /// </summary>
     public void OnJoinedUser(JoinedUser joinedUser)
