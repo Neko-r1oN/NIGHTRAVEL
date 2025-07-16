@@ -3,8 +3,11 @@
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using static Drone;
 
 public class CyberDog : EnemyBase
 {
@@ -22,7 +25,15 @@ public class CyberDog : EnemyBase
         JumpOut,
     }
 
-    #region チェック判定
+    /// <summary>
+    /// 管理するコルーチンの種類
+    /// </summary>
+    public enum COROUTINE
+    {
+        AttackCooldown,
+    }
+
+    #region チェック関連
     // 近距離攻撃の範囲
     [Foldout("チェック関連")]
     [SerializeField] 
@@ -49,8 +60,8 @@ public class CyberDog : EnemyBase
     [SerializeField] 
     Transform fallCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
-    float fallCheckRange = 0.9f;
+    [SerializeField]
+    Vector2 fallCheckRange;
     #endregion
 
     #region ターゲットと離す距離
@@ -153,20 +164,30 @@ public class CyberDog : EnemyBase
             }
         }
 
-        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+        // 実行していなければ、クールダウンのコルーチンを開始
+        string key = COROUTINE.AttackCooldown.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
+                RemoveCoroutineByKey(key);
+            }));
+            managedCoroutines.Add(key, coroutine);
+        }
     }
 
     /// <summary>
     /// 攻撃時のクールダウン処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator AttackCooldown(float time)
+    IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        Debug.Log("つかれたっぴ");
         isAttacking = true;
         yield return new WaitForSeconds(time);
         isAttacking = false;
         doOnceDecision = true;
         Idle();
+        onFinished?.Invoke();
     }
 
     #endregion
@@ -258,7 +279,7 @@ public class CyberDog : EnemyBase
     /// <returns></returns>
     bool IsFall()
     {
-        return !Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
+        return !Physics2D.OverlapBox(fallCheck.position, fallCheckRange, terrainLayerMask);
     }
 
     /// <summary>
@@ -313,7 +334,7 @@ public class CyberDog : EnemyBase
         if (fallCheck)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
+            Gizmos.DrawWireCube(fallCheck.position, fallCheckRange);
         }
     }
 

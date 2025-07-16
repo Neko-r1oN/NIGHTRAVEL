@@ -3,6 +3,7 @@
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,15 @@ public class FullMetalBody : EnemyBase
         Open,
         Close,
         Dead,
+    }
+
+    /// <summary>
+    /// 管理するコルーチンの種類
+    /// </summary>
+    public enum COROUTINE
+    {
+        RangeAttack,
+        GenerateEnemeiesCoroutine,
     }
 
     /// <summary>
@@ -96,14 +106,20 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     void Attack()
     {
-        cancellCoroutines.Add(StartCoroutine(RangeAttack()));
+        // 実行していなければ、遠距離攻撃のコルーチンを開始
+        string key = COROUTINE.RangeAttack.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(RangeAttack(() => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
     }
 
     /// <summary>
     /// 遠距離攻撃開始
     /// </summary>
     /// <returns></returns>
-    IEnumerator RangeAttack()
+    IEnumerator RangeAttack(Action onFinished)
     {
         gunPsControllerList.ForEach(item => { item.StartShooting(); });
 
@@ -147,6 +163,8 @@ public class FullMetalBody : EnemyBase
             }
             yield return new WaitForSeconds(waitSec);
         }
+
+        onFinished?.Invoke();
     }
 
     #endregion
@@ -170,14 +188,20 @@ public class FullMetalBody : EnemyBase
 
         // 生成位置の近くにプレイヤーがいる && 生成位置がステージの範囲内 && 生成位置が壁に埋まっていない場合
         if (isPlayerNearby
-            && TransformUtils.IsWithinBounds(transform, worm.MinRange, worm.MaxRange)
+            && TransformUtils.IsWithinBounds(transform, SpawnManager.Instance.StageMinPoint, SpawnManager.Instance.StageMaxPoint)
             && !Physics2D.OverlapCircle(transform.position, worm.TerrainCheckRane, terrainLayerMask))
         {
             isGenerateSucsess = true;
-            int maxEnemies = Random.Range(1, 3);
+            int maxEnemies = UnityEngine.Random.Range(1, 3);
             if (generatedEnemiesCnt + maxEnemies > worm.GeneratedMax) maxEnemies = worm.GeneratedMax - generatedEnemiesCnt;
 
-            cancellCoroutines.Add(StartCoroutine(GenerateEnemeiesCoroutine(maxEnemies)));
+            // 実行していなければ、ザコ敵生成のコルーチンを開始
+            string key = COROUTINE.GenerateEnemeiesCoroutine.ToString();
+            if (!ContaintsManagedCoroutine(key))
+            {
+                Coroutine coroutine = StartCoroutine(GenerateEnemeiesCoroutine(maxEnemies, () => { RemoveCoroutineByKey(key); }));
+                managedCoroutines.Add(key, coroutine);
+            }
         }
 
         return isGenerateSucsess;
@@ -186,19 +210,20 @@ public class FullMetalBody : EnemyBase
     /// <summary>
     /// ザコ敵を複数生成するコルーチン
     /// </summary>
-    IEnumerator GenerateEnemeiesCoroutine(int maxEnemies)
+    IEnumerator GenerateEnemeiesCoroutine(int maxEnemies, Action onFinished)
     {
         for (int i = 0; i < maxEnemies; i++)
         {
-            Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
-            float time = Random.Range(0f, 0.5f);
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
+            float time = UnityEngine.Random.Range(0f, 0.5f);
             yield return new WaitForSeconds(time);
             if (worm.GeneratedEnemies.Count >= worm.GeneratedMax) yield break;  // 既に生成上限に達している場合
 
             // ここに生成する処理 && ハッチが開くアニメーション####################################
-            Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
             worm.GeneratedEnemies.Add(GenerateEnemy(transform.position));
         }
+        onFinished?.Invoke();
     }
 
     /// <summary>
@@ -206,10 +231,10 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     GameObject GenerateEnemy(Vector2 point)
     {
-        var enemyObj = Instantiate(worm.EnemyPrefabs[(int)Random.Range(0, worm.EnemyPrefabs.Count)], point, Quaternion.identity).gameObject;
+        var enemyObj = Instantiate(worm.EnemyPrefabs[(int)UnityEngine.Random.Range(0, worm.EnemyPrefabs.Count)], point, Quaternion.identity).gameObject;
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
 
-        if ((int)Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
+        if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
         enemy.TransparentSprites();
         enemy.Players = GetAlivePlayers();
         return enemyObj;
@@ -226,7 +251,7 @@ public class FullMetalBody : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
-        StopAllCoroutines();
+        StopAllManagedCoroutines();
         gunPsControllerList.ForEach(item => { item.StopShooting(); });
     }
 

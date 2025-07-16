@@ -3,7 +3,9 @@
 //  Author:r-enomoto
 //**************************************************
 using Grpc.Core;
+using NUnit.Framework;
 using Pixeye.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +14,12 @@ using UnityEngine;
 
 abstract public class EnemyBase : CharacterBase
 {
-    //  マネージャークラスからPlayerを取得できるのが理想(変数削除予定、またはSerializeField削除予定)
     #region プレイヤー・ターゲット
     [Header("プレイヤー・ターゲット")]
-    protected GameObject target;   // SerializeFieldはDebug用
+    protected GameObject target;
     public GameObject Target { get { return target; } set { target = value; } }
 
-    [SerializeField] List<GameObject> players = new List<GameObject>();
+    List<GameObject> players = new List<GameObject>();
     public List<GameObject> Players { get { return players; } set { players = value; } }
     #endregion
 
@@ -58,11 +59,6 @@ abstract public class EnemyBase : CharacterBase
     [SerializeField]
     [Tooltip("攻撃を開始する距離")]
     protected float attackDist = 1.5f;
-
-    [Foldout("ステータス")]
-    [SerializeField]
-    [Tooltip("追跡可能範囲")]
-    protected float trackingRange = 20f;
     
     [Foldout("ステータス")]
     [SerializeField]
@@ -106,11 +102,16 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("オプション")]
     [Tooltip("攻撃中にヒットした場合、攻撃をキャンセル可能")]
     [SerializeField]
-    protected bool canCancelAttackOnHit = true;
+    protected bool canCancelAttackOnHit = false;
+
+    [Foldout("オプション")]
+    [Tooltip("DeadZoneとの接触判定を消すことが可能")]
+    [SerializeField]
+    protected bool canIgnoreDeadZoneCollision = false;
     #endregion
 
     #region 状態管理
-    protected List<Coroutine> cancellCoroutines = new List<Coroutine>();  // ヒット時にキャンセルするコルーチン
+    protected Dictionary<string,Coroutine> managedCoroutines = new Dictionary<string,Coroutine>();  // 管理しているコルーチン
     protected bool isStun;
     protected bool isInvincible = true;
     protected bool doOnceDecision;
@@ -158,6 +159,7 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void Start()
     {
+        players = GameManager.Instance.Players;
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();
@@ -170,18 +172,35 @@ abstract public class EnemyBase : CharacterBase
     {
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !doOnceDecision || !sightChecker) return;
 
-        if (Players.Count > 0 && !target || Players.Count > 0 && target.GetComponent<CharacterBase>().HP <= 0)
+        // ターゲットが存在しない || 現在のターゲットが死亡している場合
+        if (Players.Count > 0 && !target || target && target.GetComponent<CharacterBase>().HP <= 0)
         {
             // 新しくターゲットを探す
             target = sightChecker.GetTargetInSight();
         }
-        else if (canChaseTarget && target && disToTarget > trackingRange || !canChaseTarget && target && !sightChecker.IsTargetVisible())
-        {// 追跡範囲外or追跡しない場合は視線が遮るとターゲットを見失う
-            target = null;
-            if (chaseAI) chaseAI.Stop();
-        }
 
-        if (!target)
+        if (target)
+        {
+            // 実行中でなければ、ターゲットを監視するコルーチンを開始
+            string key = "CheckTargetObstructionCoroutine";
+            if (!ContaintsManagedCoroutine(key))
+            {
+                Coroutine coroutine = StartCoroutine(CheckTargetObstructionCoroutine(() => {
+                    RemoveCoroutineByKey(key);
+
+                    // 実行中でなければ、その場に待機するコルーチンを開始
+                    string waitingKey = "Waiting";
+                    float waitTime = 2f;
+                    if (!ContaintsManagedCoroutine(waitingKey))
+                    {
+                        Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveCoroutineByKey(waitingKey); }));
+                        managedCoroutines.Add(waitingKey, waitCoroutine);
+                    }
+                }));
+                managedCoroutines.Add(key, coroutine);
+            }
+        }
+        else
         {
             if (canPatrol && !isPatrolPaused) Patorol();
             else Idle();
@@ -249,12 +268,50 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     /// <param name="waitingTime"></param>
     /// <returns></returns>
-    protected IEnumerator Waiting(float waitingTime)
+    protected IEnumerator Waiting(float waitingTime, Action onFinished)
     {
         doOnceDecision = false;
         Idle();
         yield return new WaitForSeconds(waitingTime);
         doOnceDecision = true;
+        onFinished?.Invoke();
+    }
+
+    #region プレイヤー・ターゲット関連
+
+    /// <summary>
+    /// ターゲットとの間に遮蔽物があるかを監視し続けるコルーチン
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator CheckTargetObstructionCoroutine(Action onFinished)
+    {
+        float obstructionMaxTime = 3f;
+        float currentTime = 0;
+        float waitSec = 0.5f;
+
+        // obstructionMaxTime以上経過でターゲットを見失ったことにする
+        while (currentTime < obstructionMaxTime)
+        {
+            yield return new WaitForSeconds(waitSec);
+
+            if (!sightChecker.IsTargetVisible())
+            {
+                currentTime += waitSec;
+            }
+            else
+            {
+                currentTime -= waitSec;
+                if (currentTime <= 0) currentTime = 0;
+            }        
+        }
+
+        if (target && currentTime >= obstructionMaxTime)
+        {
+            target = null;
+            if (chaseAI) chaseAI.Stop();
+        }
+
+        onFinished?.Invoke();
     }
 
     /// <summary>
@@ -281,7 +338,7 @@ abstract public class EnemyBase : CharacterBase
     public GameObject GetNearPlayer(Vector3? offset = null)
     {
         Vector3 point = transform.position;
-        if (offset != null) point += (Vector3)offset; 
+        if (offset != null) point += (Vector3)offset;
         GameObject nearPlayer = null;
         float dist = float.MaxValue;
         foreach (GameObject player in GetAlivePlayers())
@@ -310,6 +367,8 @@ abstract public class EnemyBase : CharacterBase
             this.target = target;
         }
     }
+
+    #endregion
 
     #region エリート個体・状態異常関連
     /// <summary>
@@ -417,10 +476,7 @@ abstract public class EnemyBase : CharacterBase
             // ヒット時に攻撃処理などを停止する
             if (canCancelAttackOnHit)
             {
-                foreach(Coroutine coroutine in cancellCoroutines)
-                {
-                    StopCoroutine(coroutine);
-                }
+                StopAllManagedCoroutines();
             }
 
             if (attacker.position.x < transform.position.x && transform.localScale.x > 0
@@ -461,6 +517,20 @@ abstract public class EnemyBase : CharacterBase
         }
     }
 
+    /// <summary>
+    /// トリガー接触判定
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // 範囲外にでたら破棄する
+        if (!canIgnoreDeadZoneCollision && collision.gameObject.tag == "Gimmick/Abyss")
+        {
+            GameManager.Instance.SpawnCnt--;
+            Destroy(gameObject);
+        }
+    }
+
     #endregion
 
     #region スタン処理関連
@@ -487,35 +557,6 @@ abstract public class EnemyBase : CharacterBase
         OnHit();
         yield return new WaitForSeconds(stunTime);
         isStun = false;
-    }
-
-    #endregion
-
-    #region Debug描画処理関連
-
-    /// <summary>
-    /// 他の検知範囲の描画処理
-    /// </summary>
-    abstract protected void DrawDetectionGizmos();
-
-    /// <summary>
-    /// [ デバック用 ] Gizmosを使用して検出範囲を描画
-    /// </summary>
-    private void OnDrawGizmos()
-    {
-        if (!canDrawRay) return;
-
-        // 追跡範囲
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position, trackingRange);
-
-        // 視線描画
-        if (sightChecker != null)
-        {
-            sightChecker.DrawSightLine(canChaseTarget, target, players);
-        }
-
-        DrawDetectionGizmos();
     }
 
     #endregion
@@ -608,5 +649,99 @@ abstract public class EnemyBase : CharacterBase
     {
         return animator != null ? animator.GetInteger("animation_id") : 0;
     }
+    #endregion
+
+    #region コルーチン管理関連
+
+    /// <summary>
+    /// 管理しているものの中で、起動中のコルーチンを検索する
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    protected bool ContaintsManagedCoroutine(string key)
+    {
+        bool isHit = false;
+        if (managedCoroutines.ContainsKey(key))
+        {
+            if (managedCoroutines[key] == null)
+            {
+                managedCoroutines.Remove(key);
+            }
+            else
+            {
+                isHit = true;
+            }            
+        }
+        return isHit;
+    }
+
+    /// <summary>
+    /// 指定したkeyのコルーチンの要素を削除
+    /// </summary>
+    /// <param name="key"></param>
+    protected void RemoveCoroutineByKey(string key)
+    {
+        if (ContaintsManagedCoroutine(key))
+        {
+            managedCoroutines.Remove(key);
+        }
+    }
+
+    /// <summary>
+    /// 管理している全てのコルーチンを停止する
+    /// </summary>
+    protected void StopAllManagedCoroutines()
+    {
+        foreach(var coroutine in managedCoroutines)
+        {
+            if (coroutine.Value != null)
+            {
+                StopCoroutine(coroutine.Value);
+            }
+        }
+        managedCoroutines.Clear();
+    }
+
+    /// <summary>
+    /// 一つでもコルーチンが動いているか
+    /// </summary>
+    /// <returns></returns>
+    public bool IsAnyCoroutineRunning()
+    {
+        foreach (var coroutine in managedCoroutines)
+        {
+            if (coroutine.Value != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    #endregion
+
+    #region Debug描画処理関連
+
+    /// <summary>
+    /// 他の検知範囲の描画処理
+    /// </summary>
+    abstract protected void DrawDetectionGizmos();
+
+    /// <summary>
+    /// [ デバック用 ] Gizmosを使用して検出範囲を描画
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (!canDrawRay) return;
+
+        // 視線描画
+        if (sightChecker != null)
+        {
+            sightChecker.DrawSightLine(canChaseTarget, target, players);
+        }
+
+        DrawDetectionGizmos();
+    }
+
     #endregion
 }

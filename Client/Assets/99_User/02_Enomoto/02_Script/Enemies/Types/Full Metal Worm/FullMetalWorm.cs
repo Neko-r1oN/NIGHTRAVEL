@@ -5,6 +5,7 @@
 using DG.Tweening;
 using NUnit.Framework;
 using Pixeye.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.Sqlite;
@@ -22,6 +23,18 @@ public class FullMetalWorm : EnemyBase
         Idle = 0,
         Attack,
         Dead,
+    }
+
+    /// <summary>
+    /// 管理するコルーチンの種類
+    /// </summary>
+    public enum COROUTINE
+    {
+        NextDecision,
+        MeleeAttackCoroutine,
+        AttackCooldown,
+        MoveCoroutine,
+        MoveGraduallyCoroutine,
     }
 
     #region コンポーネント
@@ -59,9 +72,7 @@ public class FullMetalWorm : EnemyBase
     [SerializeField]
     Vector2 meleeAttackRange = Vector2.zero;
 
-    [Foldout("チェック関連")]
-    [SerializeField]
-    Transform stageCenter;
+    // 移動可能範囲関連
     [Foldout("チェック関連")]
     [SerializeField]
     float moveRange;
@@ -107,13 +118,6 @@ public class FullMetalWorm : EnemyBase
     // 生成済みの敵
     List<GameObject> generatedEnemies = new List<GameObject>();
     public List<GameObject> GeneratedEnemies { get { return generatedEnemies; } set { generatedEnemies = value; } }
-
-    // あとで消す
-    [SerializeField] Transform minRange;
-    [SerializeField] Transform maxRange;
-    public Transform MinRange { get { return minRange; } }
-    public Transform MaxRange { get { return maxRange; } }
-
     #endregion
 
     #region その他メンバ変数
@@ -129,8 +133,14 @@ public class FullMetalWorm : EnemyBase
         isSpawn = false;
         isInvincible = false;
         bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
-        cancellCoroutines.Add(StartCoroutine(NextDecision()));
         MeleeAttack();
+
+        // 実行していなければ、行動の抽選のコルーチンを開始
+        if (!ContaintsManagedCoroutine(COROUTINE.NextDecision.ToString()))
+        {
+            Coroutine coroutine = StartCoroutine(NextDecision());
+            managedCoroutines.Add(COROUTINE.NextDecision.ToString(), coroutine);
+        }
     }
 
     protected override void FixedUpdate()
@@ -174,21 +184,47 @@ public class FullMetalWorm : EnemyBase
                     // 全ての部位の行動を実行
                     isAttacking = true;
                     ExecuteAllPartActions();
-                    cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+
+                    // 実行していなければ、クールダウンのコルーチンを開始
+                    string key = COROUTINE.AttackCooldown.ToString();
+                    if (!ContaintsManagedCoroutine(key))
+                    {
+                        Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => { RemoveCoroutineByKey(key); }));
+                        managedCoroutines.Add(key, coroutine);
+                    }
                 }
                 else
                 {
-                    StartCoroutine(NextDecision(0.5f));
+                    // 実行していなければ、行動の抽選のコルーチンを開始
+                    string key = COROUTINE.NextDecision.ToString();
+                    if (!ContaintsManagedCoroutine(key))
+                    {
+                        Coroutine coroutine = StartCoroutine(NextDecision(0.5f));
+                        managedCoroutines.Add(key, coroutine);
+                    }
                 }
             }
             else if (randomDecision <= 0.8f)
             {
-                StopCoroutine("MoveGraduallyCoroutine");
-                cancellCoroutines.Add(StartCoroutine(MoveCoroutine()));
+                RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+
+                // 実行していなければ、移動のコルーチンを開始
+                string key = COROUTINE.MoveCoroutine.ToString();
+                if (!ContaintsManagedCoroutine(key))
+                {
+                    Coroutine coroutine = StartCoroutine(MoveCoroutine(() => { RemoveCoroutineByKey(key); }));
+                    managedCoroutines.Add(key, coroutine);
+                }
             }
             else
             {
-                StartCoroutine(NextDecision());
+                // 実行していなければ、行動の抽選のコルーチンを開始
+                string key = COROUTINE.NextDecision.ToString();
+                if (!ContaintsManagedCoroutine(key))
+                {
+                    Coroutine coroutine = StartCoroutine(NextDecision());
+                    managedCoroutines.Add(key, coroutine);
+                }
             }
         }
     }
@@ -198,14 +234,23 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    IEnumerator NextDecision(float time = 0)
+    IEnumerator NextDecision(float? time = null, Action onFinished = null)
     {
-        if (time == 0) time = Mathf.Floor(Random.Range(decisionTimeMin, decisionTimeMax));
+        if (time == null) time = Mathf.Floor(UnityEngine.Random.Range(decisionTimeMin, decisionTimeMax));
         doOnceDecision = false;
-        StartCoroutine("MoveGraduallyCoroutine");
-        yield return new WaitForSeconds(time);
-        randomDecision = Random.Range(0f, 1f);
+
+        // 実行していなければ、ゆっくり移動するコルーチンを開始
+        string key = COROUTINE.MoveGraduallyCoroutine.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(MoveGraduallyCoroutine());
+            managedCoroutines.Add(key, coroutine);
+        }
+
+        yield return new WaitForSeconds((float)time);
+        randomDecision = UnityEngine.Random.Range(0f, 1f);
         doOnceDecision = true;
+        onFinished?.Invoke();
     }
 
     #region 攻撃処理関連
@@ -230,14 +275,20 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     public void MeleeAttack()
     {
-        cancellCoroutines.Add(StartCoroutine(MeleeAttackCoroutine()));
+        // 実行していなければ、ゆっくり移動するコルーチンを開始
+        string key = COROUTINE.MeleeAttackCoroutine.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(MeleeAttackCoroutine(() => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
     }
 
     /// <summary>
     /// 近接攻撃コルーチン
     /// </summary>
     /// <returns></returns>
-    IEnumerator MeleeAttackCoroutine()
+    IEnumerator MeleeAttackCoroutine(Action onFinished)
     {
         SetAnimId((int)ANIM_ID.Attack);
         while (!isDead)
@@ -255,17 +306,26 @@ public class FullMetalWorm : EnemyBase
             }
             yield return null;
         }
+        onFinished?.Invoke();
     }
 
     /// <summary>
     /// クールダウン処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator AttackCooldown(float time)
+    IEnumerator AttackCooldown(float time, Action onFinished)
     {
         yield return new WaitForSeconds(time);
         isAttacking = false;
-        cancellCoroutines.Add(StartCoroutine(NextDecision()));
+
+        // 実行していなければ、行動の抽選するコルーチンを開始
+        string key = COROUTINE.NextDecision.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(NextDecision(null, () => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
+        onFinished?.Invoke();
     }
 
     #endregion
@@ -303,7 +363,7 @@ public class FullMetalWorm : EnemyBase
     /// 目標地点まで移動する処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator MoveCoroutine()
+    IEnumerator MoveCoroutine(Action onFinished)
     {
         SetNextTargetPosition(true);
         float currentSpeed = moveSpeed;
@@ -320,13 +380,20 @@ public class FullMetalWorm : EnemyBase
             if (isTargetPos)
             {
                 if (currentSpeed <= moveSpeedMin) break;
-                else currentSpeed -= Time.deltaTime * moveSpeed * 0.7f;
+                else currentSpeed -= Time.deltaTime * moveSpeed;
             }
 
             MoveTowardsTarget(currentSpeed);
             yield return null;
         }
-        StartCoroutine(NextDecision());
+
+        // 実行していなければ、行動の抽選するコルーチンを開始
+        if (!ContaintsManagedCoroutine(COROUTINE.NextDecision.ToString()))
+        {
+            Coroutine coroutine = StartCoroutine(NextDecision());
+            managedCoroutines.Add(COROUTINE.NextDecision.ToString(), coroutine);
+        }
+        onFinished?.Invoke();
     }
 
     /// <summary>
@@ -390,18 +457,9 @@ public class FullMetalWorm : EnemyBase
     bool SetRandomTargetPlayer()
     {
         List<GameObject> alivePlayers = GetAlivePlayers();
-        if (alivePlayers.Count > 0) target = alivePlayers[Random.Range(0, alivePlayers.Count)];
+        if (alivePlayers.Count > 0) target = alivePlayers[UnityEngine.Random.Range(0, alivePlayers.Count)];
         else target = null;
         return target;
-    }
-
-    /// <summary>
-    /// ステージの中央の座標を設定
-    /// </summary>
-    /// <param name="stageCenter"></param>
-    public void SetStageCenterParam(Transform stageCenter)
-    {
-        this.stageCenter = stageCenter;
     }
 
     /// <summary>
@@ -413,7 +471,7 @@ public class FullMetalWorm : EnemyBase
         if (isTargetLottery)
         {
             SetRandomTargetPlayer();
-            float rnd = Random.Range(0f, 1f);
+            float rnd = UnityEngine.Random.Range(0f, 1f);
             if (target) targetPos = target.transform.position;
         }
 
@@ -422,9 +480,9 @@ public class FullMetalWorm : EnemyBase
             for (int i = 0; i < 100; i++)
             {
                 // ランダムな地点を抽選
-                Vector2 maxPos = (Vector2)stageCenter.position + Vector2.one * moveRange;
-                Vector2 minPos = (Vector2)stageCenter.position + Vector2.one * -moveRange;
-                targetPos = new Vector2(Random.Range(minPos.x, maxPos.x + 1), Random.Range(minPos.y, maxPos.y + 1));
+                Vector2 maxPos = SpawnManager.Instance.StageMaxPoint.position;
+                Vector2 minPos = SpawnManager.Instance.StageMinPoint.position;
+                targetPos = new Vector2(UnityEngine.Random.Range(minPos.x, maxPos.x + 1), UnityEngine.Random.Range(minPos.y, maxPos.y + 1));
 
                 // ランダムな目標地点との距離が一定以上離れていれば確定する
                 float distance = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
@@ -434,6 +492,24 @@ public class FullMetalWorm : EnemyBase
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// ステージの範囲を描画する
+    /// </summary>
+    void DrawRectGizmos()
+    {
+        Vector2 min = SpawnManager.Instance.StageMinPoint.position;
+        Vector2 max = SpawnManager.Instance.StageMaxPoint.position;
+        Vector2 bl = new Vector2(min.x, min.y);
+        Vector2 br = new Vector2(max.x, min.y);
+        Vector2 tr = new Vector2(max.x, max.y);
+        Vector2 tl = new Vector2(min.x, max.y);
+
+        Gizmos.DrawLine(bl, br);
+        Gizmos.DrawLine(br, tr);
+        Gizmos.DrawLine(tr, tl);
+        Gizmos.DrawLine(tl, bl);
     }
 
     /// <summary>
@@ -456,11 +532,7 @@ public class FullMetalWorm : EnemyBase
         }
 
         // 移動範囲
-        if (stageCenter != null)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere((Vector2)stageCenter.position, moveRange);
-        }
+        DrawRectGizmos();
 
         // 障害物を検知する範囲
         //Gizmos.color = Color.green;
