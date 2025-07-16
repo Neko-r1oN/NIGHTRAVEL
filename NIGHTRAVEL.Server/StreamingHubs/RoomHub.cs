@@ -63,7 +63,7 @@ namespace StreamingHubs
             this.roomContext.AddRoomData(this.ConnectionId);
 
             //通知
-            this.Client.Onjoin(roomContext.JoinedUserList);
+            this.Client.Onjoin(roomContext.JoinedUserList[ConnectionId]);
 
             //参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
@@ -104,7 +104,7 @@ namespace StreamingHubs
         /// <param name="rot"></param>
         /// <param name="anim"></param>
         /// <returns></returns>
-        public async Task MovePlayerAsync(Vector3 pos, Quaternion rot, CharacterState anim)
+        public async Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim)
         {
             // ルームデータから接続IDを指定して自身のデータを取得
             var roomData = this.roomContext.GetRoomData(this.ConnectionId);
@@ -126,7 +126,7 @@ namespace StreamingHubs
         /// <param name="rot">敵回転値</param>
         /// <param name="anim">敵アニメーションID</param>
         /// <returns></returns>
-        public async Task MoveEnemyAsync(List<int> enemIDList, Vector3 pos, Quaternion rot, EnemyAnimState anim)
+        public async Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim)
         {
             foreach (var enemID in enemIDList)
             {
@@ -140,6 +140,57 @@ namespace StreamingHubs
                 // ルーム参加者全員に、ユーザ情報通知を送信
                 this.Client.OnMoveEnemy(enemID, pos, rot, anim);
             }
+        }
+
+        /// <summary>
+        /// レリックID設定、位置同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="pos">位置</param>
+        /// <returns></returns>
+        public async Task SpawnRelicAsync(Vector2 pos)
+        {  
+            GameDbContext dbContext = new GameDbContext();
+            Random rand = new Random();
+
+            // レリックテーブルから全ての要素を取得し、その個数を取得する
+            int relicMax = dbContext.Relics.ToArray().Length;
+            int relicID = rand.Next(1, relicMax); // 取得するレリックのIDを乱数で指定
+
+            var relicFind = dbContext.Relics.Where(relic => relic.id == relicID);   // 生成した乱数で検索
+
+            if (relicFind.Count() <= 0) return; // 結果が空の場合処理しない
+
+            // ルーム参加者全員に、レリックのIDと生成位置を送信
+            this.Client.OnSpawnRelic(relicID, pos);
+        }
+
+        /// <summary>
+        /// レリック取得
+        /// </summary>
+		/// <param name="relicID">レリックID</param>
+        /// <param name="relicName">レリック名</param>
+        /// <returns></returns>
+        public async Task GetRelicAsync(int relicID, string relicName)
+        {
+            // ルーム参加者全員に、取得したレリック名を送信
+            this.Client.OnGetRelic(relicID, relicName);
+        }
+
+        /// <summary>
+        /// 敵生成
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="pos">位置</param>
+        /// <returns></returns>
+        public async Task SpawnEnemyAsync(int enemID, Vector2 pos)
+        {
+            // ルームデータから接続IDを指定して自身のデータを取得
+            var enemData = this.roomContext.GetEnemyData(enemID);
+
+            // ルーム参加者全員に、取得したレリック名を送信
+            //this.Client.OnSpawnEnemy(enemData);
         }
     }
 }

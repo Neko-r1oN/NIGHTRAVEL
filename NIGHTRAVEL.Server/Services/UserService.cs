@@ -33,7 +33,7 @@ namespace NIGHTRAVEL.Server.Services
             user.Updated_at = DateTime.Now;     //更新日時
             context.Users.Add(user);            //データベースに格納
             await context.SaveChangesAsync();   //データベースを保存する
-            return user.id;                     //ユーザーのidを返す
+            return user.Id;                     //ユーザーのidを返す
         }
 
         //全ユーザーの取得
@@ -68,7 +68,7 @@ namespace NIGHTRAVEL.Server.Services
             }
 
             //テーブルからレコードをidを指定して取得
-            user = context.Users.Where(user=>user.id==id).First();
+            user = context.Users.Where(user=>user.Id==id).First();
 
 
             //ユーザーのデータを返す

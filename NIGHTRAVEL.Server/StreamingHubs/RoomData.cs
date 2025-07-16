@@ -13,7 +13,7 @@ namespace NIGHTRAVEL.Server.StreamingHubs
         /// <summary>
         /// ユーザの位置
         /// </summary>
-        public Vector3 Position { get; set; }
+        public Vector2 Position { get; set; }
 
         /// <summary>
         /// ユーザの向き

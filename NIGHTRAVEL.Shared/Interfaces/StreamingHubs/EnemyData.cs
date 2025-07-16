@@ -5,7 +5,7 @@
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 
-namespace NIGHTRAVEL.Server.StreamingHubs
+namespace Shared.Interfaces.StreamingHubs
 {
     public class EnemyData
     {
@@ -18,7 +18,7 @@ namespace NIGHTRAVEL.Server.StreamingHubs
         /// 敵の位置
         /// Author:Nishiura
         /// </summary>
-        public Vector3 Position { get; set; }
+        public Vector2 Position { get; set; }
 
         /// <summary>
         /// 敵の向き

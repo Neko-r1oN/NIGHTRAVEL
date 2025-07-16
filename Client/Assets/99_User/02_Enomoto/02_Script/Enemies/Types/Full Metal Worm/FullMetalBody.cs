@@ -59,6 +59,7 @@ public class FullMetalBody : EnemyBase
         isAttacking = false;
         doOnceDecision = false;
         isSpawn = false;
+        isInvincible = false;
         worm = transform.parent.GetComponent<FullMetalWorm>();
     }
 
@@ -225,6 +226,8 @@ public class FullMetalBody : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+        StopAllCoroutines();
+        gunPsControllerList.ForEach(item => { item.StopShooting(); });
     }
 
     /// <summary>
@@ -239,7 +242,11 @@ public class FullMetalBody : EnemyBase
         base.ApplyDamage(power, attacker, true, effectTypes);
 
         // 本体のHPも削る
-        worm.ApplyDamage(power, attacker, false, effectTypes);
+        worm.ApplyDamage(power, attacker, false);
+
+        // 被ダメージ量を表示する
+        var damage = CalculationLibrary.CalcDamage(power, Defense);
+        DrawHitDamageUI(damage, attacker);
     }
 
     /// <summary>
@@ -247,7 +254,7 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     /// <param name="player"></param>
     /// <returns></returns>
-    protected override IEnumerator DestroyEnemy(PlayerBase player)
+    public override IEnumerator DestroyEnemy(PlayerBase player)
     {
         if (!isDead)
         {

@@ -62,6 +62,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6470474938770394812}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3115150242735003394
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2121066431073874060}
+  m_Layer: 20
+  m_Name: BulletSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2121066431073874060
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115150242735003394}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.1, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6470474938770394812}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4862366272127423377
 GameObject:
   m_ObjectHideFlags: 0
@@ -4953,6 +4984,7 @@ Transform:
   - {fileID: 3090962919235991585}
   - {fileID: 2286639536078759312}
   - {fileID: 31426185091301641}
+  - {fileID: 2121066431073874060}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9117906398229534111
@@ -4989,7 +5021,7 @@ MonoBehaviour:
   blinkCoolDown: 1
   m_ZipJumpForceX: 60
   m_ZipJumpForceY: 40
-  zipSpeed: 150
+  zipSpeed: 20
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 10
@@ -5015,9 +5047,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   duration: 2.5
-  damageInterval: 0.3
+  damageInterval: 0.05
   beamEffect: {fileID: 3090962919235560449}
   lr: {fileID: 6522089363274242335}
+  bulletSpeed: 15
+  bulletAccele: 2
+  bulletPrefab: {fileID: 11297972727251665, guid: 9276c139e5f7ddd4fb92a69ca2b6356d, type: 3}
+  bulletSpawnObj: {fileID: 3115150242735003394}
 --- !u!120 &6522089363274242335
 LineRenderer:
   serializedVersion: 2
@@ -10381,11 +10417,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4316839822185376087, guid: df4d84e97d73bb24fba4bcff68ab59ff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.977037
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4316839822185376087, guid: df4d84e97d73bb24fba4bcff68ab59ff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.64814824
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 4316839822185376087, guid: df4d84e97d73bb24fba4bcff68ab59ff, type: 3}
       propertyPath: m_LocalPosition.z

@@ -7,6 +7,7 @@ using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 abstract public class EnemyBase : CharacterBase
@@ -381,23 +382,27 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
+    /// 被ダメージを表示する
+    /// </summary>
+    protected void DrawHitDamageUI(int damage, Transform attacker = null)
+    {
+        // 被ダメージ量のUIを表示する
+        var attackerPoint = attacker ? attacker.position : transform.position;
+        var hitPoint = TransformUtils.GetHitPointToTarget(transform, attackerPoint);
+        if (hitPoint == null) hitPoint = transform.position;
+        UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ダメージ表記
+    }
+
+    /// <summary>
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
     public virtual void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
     {
-        var damage = CalculationLibrary.CalcDamage(power, Defense);
-
-        if (drawDmgText && !isInvincible)
-        {
-            // 被ダメージ量のUIを表示する
-            var attackerPoint = attacker ? attacker.position : transform.position;
-            var hitPoint = TransformUtils.GetHitPointToTarget(transform, attackerPoint);
-            if (hitPoint == null) hitPoint = transform.position;
-            UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ダメージ表記
-        }
-
         if (isInvincible || isDead) return;
+
+        var damage = CalculationLibrary.CalcDamage(power, Defense);
+        if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attacker);
         hp -= Mathf.Abs(damage);
 
         // 状態異常を付与する
@@ -440,7 +445,7 @@ abstract public class EnemyBase : CharacterBase
     /// 死亡処理
     /// </summary>
     /// <returns></returns>
-    protected virtual IEnumerator DestroyEnemy(PlayerBase player)
+    public virtual IEnumerator DestroyEnemy(PlayerBase player)
     {
         if (!isDead)
         {

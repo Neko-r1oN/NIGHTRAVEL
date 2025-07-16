@@ -10,6 +10,7 @@ using Cysharp.Net.Http;
 using Cysharp.Threading.Tasks;
 using Grpc.Net.Client;
 using MagicOnion.Client;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -18,6 +19,8 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
@@ -34,19 +37,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<JoinedUser> OnLeavedUser { get; set; }
 
     //位置回転同期
-    public Action<JoinedUser, Vector3, Quaternion, int> OnMoveCharacter { get; set; }
+    public Action<JoinedUser, Vector2, Quaternion, CharacterState> OnMovePlayerSyn { get; set; }
 
     //脱出通知
     public Action<JoinedUser> OnEscapeCharacter { get; set; }
 
     //敵の出現処理
-    public Action<string, Vector3> OnSpawnEnemy { get; set; }
+    public Action<List<EnemyData>, Vector3> OnSpawndEnemy { get; set; }
 
     //てきのId同期
     public Action<int> OnIdAsyncEnemy { get; set; }
 
     //敵の移動同期
-    public Action<string, Vector3, Quaternion> OnMovedEnemy { get; set; }
+    public Action<int , Vector2 , Quaternion , EnemyAnimState> OnMoveEnemySyn { get; set; }
 
     //敵の撃破同期
     public Action<string> OnExcusionedEnemy { get; set; }
@@ -59,6 +62,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //オブジェクトの移動回転同期
     public Action<string, Vector3, Quaternion> OnMovedObject { get; set; }
+
+    //レリックの生成同期
+    public Action<int, Vector2> OnSpawnedRelic {  get; set; }
+
+    //レリックの取得同期
+    public Action<int , string> OnGotRelic {  get; set; }
 
     //MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -98,9 +107,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //}
 
     //入室通知(IRoomHubReceiverインターフェイスの実装)
-    public void Onjoin(Dictionary<Guid, JoinedUser> keys)
+    public void Onjoin(JoinedUser joinedUser)
     {
-        //OnJoinedUser(k);
+        OnJoinedUser(joinedUser);
     }
 
     //退室
@@ -115,10 +124,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnLeavedUser(user);
     }
 
-    public void OnMasterClient(JoinedUser user)
-    {
-        OnMasteredClient(user);
-    }
+    //public void OnMasterClient(JoinedUser user)
+    //{
+    //    OnMasteredClient(user);
+    //}
 
     ////移動
     //public async Task MoveAsync(Vector3 pos, Quaternion rot, int anim)
@@ -126,17 +135,60 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //    await roomHub.MoveAsync(pos, rot, anim);
     //}
 
-    //移動通知
-    public void OnMovePlayer(JoinedUser user, Vector3 pos, Quaternion rot, CharacterState character)
+    /// <summary>
+    /// プレイヤーの移動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <param name="animID"></param>
+    public void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
     {
-        //OnMoveCharacter(user, pos, rot, anim);
+        OnMovePlayerSyn(user, pos, rot, animID);
     }
-    
-    //移動通知
-    public void OnMoveEnemy(int enemy, Vector3 pos, Quaternion rot, EnemyAnimState character)
+
+    /// <summary>
+    /// 敵の移動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemID"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <param name="animID"></param>
+    public void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID)
     {
-        //OnMoveCharacter(user, pos, rot, anim);
+        OnMoveEnemySyn(enemID, pos, rot, animID);
     }
+
+    /// <summary>
+    /// レリック生成
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="relicID"></param>
+    /// <param name="pos"></param>
+    public void OnSpawnRelic(int relicID, Vector2 pos)
+    {
+        OnSpawnedRelic(relicID, pos);
+    }
+
+    /// <summary>
+    /// レリック取得
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="relicID"></param>
+    /// <param name="rekicName"></param>
+    public void OnGetRelic(int relicID, string rekicName)
+    {
+        OnGotRelic(relicID, rekicName);
+    }
+
+    public void OnSpawnEnemy(List<EnemyData> enemData, Vector2 pos)
+    {
+        OnSpawndEnemy(enemData, pos);
+    }
+
+
 
     ////敵の出現通知
     //public void OnSpawn(string enemyName, Vector3 pos)
