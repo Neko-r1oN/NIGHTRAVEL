@@ -3,6 +3,7 @@
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
+using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -17,6 +18,16 @@ public class Drone : EnemyBase
         Spawn = 0,
         Idle,
         Dead,
+    }
+
+    /// <summary>
+    /// 管理するコルーチンの種類
+    /// </summary>
+    public enum COROUTINE
+    {
+        RangeAttack,
+        AttackCooldown,
+        PatorolCoroutine
     }
 
     /// <summary>
@@ -61,7 +72,6 @@ public class Drone : EnemyBase
     [SerializeField] float disToTargetMin = 2.5f;
     #endregion
 
-    Coroutine patorolCoroutine;
     Vector2? startPatorolPoint = null;
 
     protected override void Start()
@@ -115,8 +125,8 @@ public class Drone : EnemyBase
 
         // ランダムな場所に向かって少し移動
         float moveRange = 2f;
-        float posX = transform.position.x + Random.Range(-moveRange, moveRange);
-        float posY = transform.position.y + Random.Range(-moveRange, moveRange);
+        float posX = transform.position.x + UnityEngine.Random.Range(-moveRange, moveRange);
+        float posY = transform.position.y + UnityEngine.Random.Range(-moveRange, moveRange);
         Vector2 targetPoint = new Vector2(posX, posY);
         chaseAI.DoMove(targetPoint);
     }
@@ -140,13 +150,20 @@ public class Drone : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         chaseAI.Stop();
-        cancellCoroutines.Add(StartCoroutine(RangeAttack()));
+
+        // 実行していなければ、遠距離攻撃のコルーチンを開始
+        string key = COROUTINE.RangeAttack.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(RangeAttack(() => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
     }
 
     /// <summary>
     /// 遠距離攻撃処理
     /// </summary>
-    IEnumerator RangeAttack()
+    IEnumerator RangeAttack(Action onFinished)
     {
         yield return new WaitForSeconds(0.25f);  // 攻撃開始を遅延
         gunPsController.StartShooting();
@@ -168,14 +185,21 @@ public class Drone : EnemyBase
             time += waitSec;
         }
 
-        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+        // 実行していなければ、クールダウンのコルーチンを開始
+        string key = COROUTINE.AttackCooldown.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
+        onFinished?.Invoke();
     }
 
     /// <summary>
     /// 攻撃時のクールダウン処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator AttackCooldown(float time)
+    IEnumerator AttackCooldown(float time, Action onFinished)
     {
         gunPsController.StopShooting();
         isAttacking = true;
@@ -183,6 +207,7 @@ public class Drone : EnemyBase
         isAttacking = false;
         doOnceDecision = true;
         Idle();
+        onFinished?.Invoke();
     }
 
     #endregion
@@ -205,16 +230,20 @@ public class Drone : EnemyBase
     protected override void Patorol()
     {
         aimTransform.localEulerAngles = Vector3.back * 90f; // 銃の向きを初期化
-        if (patorolCoroutine == null)
+
+        // 実行していなければ、パトロールのコルーチンを開始
+        string key = COROUTINE.PatorolCoroutine.ToString();
+        if (!ContaintsManagedCoroutine(key))
         {
-            cancellCoroutines.Add(StartCoroutine(PatorolCoroutine()));
+            Coroutine coroutine = StartCoroutine(PatorolCoroutine(() => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
         }
     }
 
     /// <summary>
     /// 巡回する処理
     /// </summary>
-    IEnumerator PatorolCoroutine()
+    IEnumerator PatorolCoroutine(Action onFinished)
     {
         float pauseTime = 2f;
         if (startPatorolPoint == null)
@@ -250,7 +279,7 @@ public class Drone : EnemyBase
         Vector2 speedVec = Vector2.zero;
         speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
-        patorolCoroutine = null;
+        onFinished?.Invoke();
     }
 
     /// <summary>

@@ -24,8 +24,8 @@ public class SpawnManager : MonoBehaviour
 
     float[] item;
 
-    public Transform RandRespawnA { get { return randRespawnA; } }
-    public Transform RandRespawnB { get { return randRespawnB; } }
+    public Transform StageMinPoint { get { return randRespawnA; } }
+    public Transform StageMaxPoint { get { return randRespawnB; } }
     public List<GameObject> TerminalSpawnList {  get { return terminalSpawnList; } }
     public List<int> EnemyIdList { get { return enemyIdList; } }
 
