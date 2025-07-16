@@ -20,16 +20,18 @@ public class Mine : MonoBehaviour
         pos = this.gameObject.transform.position;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.tag == "Player")
         {
             Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
             Destroy(this.gameObject);   // 自身を破壊
             Debug.Log("Boomed Mine");
-        }else if (collision.transform.tag == "Enemy")
+        }
+        else if (collision.transform.tag == "Enemy")
         {
-            Destroy(this.gameObject);
+            Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
+            Destroy(this.gameObject);   // 自身を破壊
             Debug.Log("Boomed Mine");
         }
     }
