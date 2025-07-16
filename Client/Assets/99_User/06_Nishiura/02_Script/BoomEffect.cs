@@ -8,6 +8,8 @@ using UnityEngine;
 public class BoomEffect : MonoBehaviour
 {
     PlayerBase playerBase;
+    EnemyBase enemyBase;
+
     Vector2 pos;
 
     private void Start()
@@ -22,8 +24,18 @@ public class BoomEffect : MonoBehaviour
         {
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
             // プレイヤーの最大HP30%相当のダメージに設定
-            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.30f);
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.3f);
             playerBase.ApplyDamage(damage, pos);
+
+            Invoke("DeleteThis", 0.3f);
+        }
+        else if(collision.transform.tag =="Enemy")
+        {
+            enemyBase = collision.gameObject.GetComponent<EnemyBase>();
+
+            // 敵の最大HP30%相当のダメージに設定
+            int damage = Mathf.FloorToInt(enemyBase.MaxHP * 0.3f);
+            enemyBase.ApplyDamage(damage);
 
             Invoke("DeleteThis", 0.3f);
         }
