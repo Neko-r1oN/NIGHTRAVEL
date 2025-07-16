@@ -31,6 +31,7 @@ public class CyberDog : EnemyBase
     public enum COROUTINE
     {
         AttackCooldown,
+        MeleeAttack
     }
 
     #region チェック関連
@@ -72,7 +73,6 @@ public class CyberDog : EnemyBase
     {
         base.Start();
         isAttacking = false;
-        doOnceDecision = true;
     }
 
     /// <summary>
@@ -117,18 +117,6 @@ public class CyberDog : EnemyBase
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
-    /// <summary>
-    /// スプライトが透明になるときに呼ばれる処理
-    /// </summary>
-    protected override void OnTransparentSprites()
-    {
-        SetAnimId((int)ANIM_ID.JumpOut);
-
-        // 前に飛び込む
-        Vector2 jumpVec = new Vector2(jumpPower * TransformUtils.GetFacingDirection(transform), jumpPower / 2);
-        m_rb2d.linearVelocity = jumpVec;
-    }
-
     #region 攻撃処理関連
 
     /// <summary>
@@ -136,42 +124,68 @@ public class CyberDog : EnemyBase
     /// </summary>
     public void Attack()
     {
-        doOnceDecision = false;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack);
     }
 
     /// <summary>
-    /// 近接攻撃処理 [Animationイベントからの呼び出し]
+    /// [Animationイベントからの呼び出し] 近接攻撃処理
     /// </summary>
-    
+
     public override void OnAttackAnimEvent()
     {
         // 前に飛び出す
-        Vector2 jumpVec = new Vector2(jumpPower * 2 * TransformUtils.GetFacingDirection(transform), jumpPower);
+        Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
 
-        // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-        StatusEffectController.EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
-
-        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
-        for (int i = 0; i < collidersEnemies.Length; i++)
+        // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
+        string attackKey = COROUTINE.MeleeAttack.ToString();
+        if (!ContaintsManagedCoroutine(attackKey))
         {
-            if (collidersEnemies[i].gameObject.tag == "Player")
-            {
-                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
-            }
+            Coroutine coroutine = StartCoroutine(MeleeAttack());
+            managedCoroutines.Add(attackKey, coroutine);
         }
 
         // 実行していなければ、クールダウンのコルーチンを開始
-        string key = COROUTINE.AttackCooldown.ToString();
-        if (!ContaintsManagedCoroutine(key))
+        string cooldownKey = COROUTINE.AttackCooldown.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
         {
             Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
-                RemoveCoroutineByKey(key);
+                RemoveCoroutineByKey(cooldownKey);
             }));
-            managedCoroutines.Add(key, coroutine);
+            managedCoroutines.Add(cooldownKey, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
+    /// </summary>
+    public override void OnEndAttackAnimEvent()
+    {
+        RemoveCoroutineByKey(COROUTINE.MeleeAttack.ToString());
+    }
+
+    /// <summary>
+    /// 近接攻撃の判定を繰り返す
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator MeleeAttack()
+    {
+        while (true)
+        {
+            // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+            StatusEffectController.EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
+
+            Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
+            for (int i = 0; i < collidersEnemies.Length; i++)
+            {
+                if (collidersEnemies[i].gameObject.tag == "Player")
+                {
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, applyEffect);
+                }
+            }
+            yield return null;
         }
     }
 
@@ -181,11 +195,9 @@ public class CyberDog : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
-        Debug.Log("つかれたっぴ");
         isAttacking = true;
         yield return new WaitForSeconds(time);
         isAttacking = false;
-        doOnceDecision = true;
         Idle();
         onFinished?.Invoke();
     }
@@ -260,6 +272,40 @@ public class CyberDog : EnemyBase
         SetAnimId((int)ANIM_ID.Dead);
     }
 
+    #endregion
+
+    #region テクスチャ・アニメーション関連
+
+    /// <summary>
+    /// スプライトが透明になるときに呼ばれる処理
+    /// </summary>
+    protected override void OnTransparentSprites()
+    {
+        SetAnimId((int)ANIM_ID.JumpOut);
+
+        // 前に飛び込む
+        Vector2 jumpVec = new Vector2(moveSpeed * TransformUtils.GetFacingDirection(transform), jumpPower / 2);
+        m_rb2d.linearVelocity = jumpVec;
+    }
+
+    /// <summary>
+    /// アニメーション設定処理
+    /// </summary>
+    /// <param name="id"></param>
+    public override void SetAnimId(int id)
+    {
+        if (animator == null) return;
+        animator.SetInteger("animation_id", id);
+
+        switch (id)
+        {
+            case (int)ANIM_ID.Hit:
+                animator.Play("Hit Animation");
+                break;
+            default:
+                break;
+        }
+    }
     #endregion
 
     #region チェック処理関連

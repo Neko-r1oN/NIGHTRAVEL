@@ -944,7 +944,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4662945636719514942}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.14449047, w: 0.9895062}
+  m_LocalRotation: {x: -0, y: -0, z: 0.14449042, w: 0.9895062}
   m_LocalPosition: {x: 0.3612455, y: -0.0000000064300925, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1006,7 +1006,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4916264545386649800}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.86921686, w: 0.49443105}
+  m_LocalRotation: {x: 0, y: 0, z: -0.86921686, w: 0.49443108}
   m_LocalPosition: {x: -0.15520859, y: 1.6003609, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1289,7 +1289,7 @@ Transform:
   m_GameObject: {fileID: 5725950684661918366}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.38, y: -0.69100004, z: 0}
+  m_LocalPosition: {x: 1.38, y: -2.15, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1319,7 +1319,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6219075447242915247}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.26041353, w: 0.9654972}
+  m_LocalRotation: {x: -0, y: -0, z: 0.2604133, w: 0.9654973}
   m_LocalPosition: {x: 0.53410554, y: 0.000000048723905, z: 0}
   m_LocalScale: {x: 1.0000002, y: 1.0000002, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1476,7 +1476,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6509555801022238346}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.8363107, w: 0.54825586}
+  m_LocalRotation: {x: 0, y: 0, z: -0.83631057, w: 0.54825604}
   m_LocalPosition: {x: -0.78289044, y: 1.8445861, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1508,7 +1508,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6625629165898034938}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.9977821, w: 0.06656533}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9977821, w: 0.0665652}
   m_LocalPosition: {x: -0.5717491, y: 2.1093538, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1990,11 +1990,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3c588392de9b6a4db890f174a47c438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 10
+  baseHp: 30
   baseDefense: 10
   basePower: 10
-  baseJumpPower: 10
-  baseMoveSpeed: 10
+  baseJumpPower: 7
+  baseMoveSpeed: 8
   hp: 0
   defense: 0
   power: 0
@@ -2003,7 +2003,6 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 55089399200334659}
-  players: []
   spriteRenderers:
   - {fileID: 8821416632199840584}
   - {fileID: 7787955724384288438}
@@ -2016,9 +2015,8 @@ MonoBehaviour:
   bulletNum: 0
   shotsPerSecond: 0
   attackCoolTime: 1
-  attackDist: 2
-  trackingRange: 20
-  hitTime: 0.5
+  attackDist: 4
+  hitTime: 0.8
   isBoss: 0
   isElite: 0
   canDamageOnContact: 0
@@ -2027,17 +2025,18 @@ MonoBehaviour:
   canAttack: 1
   canJump: 0
   canCancelAttackOnHit: 1
+  canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 0.6
-  canDrawRay: 0
+  canDrawRay: 1
   exp: 100
   meleeAttackCheck: {fileID: 984287513036131797}
-  meleeAttackRange: 0.9
+  meleeAttackRange: 0.6
   wallCheck: {fileID: 4185119391643625501}
   wallCheckRadius: {x: 0, y: 1}
   groundCheck: {fileID: 7354982650931101042}
   groundCheckRadius: {x: 0.5, y: 0.2}
   fallCheck: {fileID: 533321887905579997}
-  fallCheckRange: 0.1
+  fallCheckRange: {x: 0.1, y: 3}
 --- !u!70 &261674902273001989
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

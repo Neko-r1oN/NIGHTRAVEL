@@ -10,13 +10,9 @@ public class EnemyChaseAI : MonoBehaviour
     EnemySightChecker sightChecker;
     NavMeshAgent agent;
     [SerializeField] Vector2 offset;
-
-    //------------------
-    // 試験用
-    //------------------
-    //[SerializeField] GameObject targetObj;
-    //[SerializeField] float distance = 0;
-    Vector3 previousDestination;
+    [SerializeField] bool canDrawGizmo = false;
+    [SerializeField] float checkRange = 1;
+    [SerializeField] float rndMoveRange = 3;
 
     void Start()
     {
@@ -46,8 +42,6 @@ public class EnemyChaseAI : MonoBehaviour
         {
             destinationOffset = new Vector3((float)offset.x * directionMultiplier, (float)offset.y);
         }
-
-        previousDestination = agent.destination;
         agent.destination = target.transform.position + destinationOffset;
     }
 
@@ -56,17 +50,32 @@ public class EnemyChaseAI : MonoBehaviour
     /// </summary>
     public void DoMove(Vector2 targetPos)
     {
+        agent.ResetPath();
         if (!agent) Start();
-        previousDestination = agent.destination;
         agent.destination = targetPos;
     }
 
     /// <summary>
-    /// 前回の地点に引き返す処理(保留中)
+    /// 障害物がないランダムな場所へ移動する
     /// </summary>
-    public void ReturnToPreviousDestination()
+    public void DoRndMove()
     {
-        //agent.destination = previousDestination;
+        LayerMask tarrainLayer = GetComponent<EnemyBase>().TerrainLayerMask;
+
+        for (int i = 0; i < 100; i++)
+        {
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
+            float rndX = Random.Range(-rndMoveRange, rndMoveRange);
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i + 1);  // 乱数のシード値を更新
+            float rndY = Random.Range(-rndMoveRange, rndMoveRange);
+
+            Vector2 targetPos = new Vector2(rndX, rndY) + (Vector2)transform.position;
+            if (!Physics2D.OverlapCircle(targetPos, checkRange, tarrainLayer))
+            {
+                DoMove(targetPos);
+                break;
+            }
+        }
     }
 
     /// <summary>
@@ -76,5 +85,18 @@ public class EnemyChaseAI : MonoBehaviour
     {
         agent.isStopped = true;
         agent.ResetPath();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!canDrawGizmo) return;
+
+        // 検出範囲
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, checkRange);
+
+        // 移動範囲
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, rndMoveRange);
     }
 }

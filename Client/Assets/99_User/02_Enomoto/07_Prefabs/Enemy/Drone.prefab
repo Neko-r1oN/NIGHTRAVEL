@@ -34583,6 +34583,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: -2, y: 2}
+  canDrawGizmo: 0
+  checkRange: 0.66
+  rndMoveRange: 3
 --- !u!114 &1365652372171678792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34595,7 +34598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86c6d2a67d0134d48b4ac4f34960d703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 10
+  baseHp: 25
   baseDefense: 10
   basePower: 10
   baseJumpPower: 10
@@ -34608,14 +34611,12 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 0}
-  players: []
   spriteRenderers:
   - {fileID: 4666127832742053817}
   bulletNum: 0
-  shotsPerSecond: 2
+  shotsPerSecond: 1.5
   attackCoolTime: 0.5
   attackDist: 6
-  trackingRange: 20
   hitTime: 0.5
   isBoss: 0
   isElite: 0
@@ -34624,7 +34625,8 @@ MonoBehaviour:
   canChaseTarget: 1
   canAttack: 1
   canJump: 0
-  canCancelAttackOnHit: 0
+  canCancelAttackOnHit: 1
+  canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 4
   canDrawRay: 0
   exp: 100

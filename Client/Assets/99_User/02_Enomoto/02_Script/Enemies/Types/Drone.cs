@@ -17,26 +17,32 @@ public class Drone : EnemyBase
     {
         Spawn = 0,
         Idle,
+        Hit,
         Dead,
     }
+
+    /// <summary>
+    /// 行動パターン
+    /// </summary>
+    public enum DECIDE_TYPE
+    {
+        Waiting = 1,
+        Attack,
+        Patrole,
+        Tracking,
+        RndMove,
+    }
+    DECIDE_TYPE nextDecide = DECIDE_TYPE.Waiting;
 
     /// <summary>
     /// 管理するコルーチンの種類
     /// </summary>
     public enum COROUTINE
     {
+        NextDecision,
         RangeAttack,
         AttackCooldown,
         PatorolCoroutine
-    }
-
-    /// <summary>
-    /// 攻撃方法
-    /// </summary>
-    public enum ATTACK_TYPE_ID
-    {
-        None,
-        RangeType,
     }
 
     #region コンポーネント
@@ -72,6 +78,12 @@ public class Drone : EnemyBase
     [SerializeField] float disToTargetMin = 2.5f;
     #endregion
 
+    #region 抽選関連
+    float decisionTimeMax = 2f;
+    float randomDecision;
+    bool endDecision;
+    #endregion
+
     Vector2? startPatorolPoint = null;
 
     protected override void Start()
@@ -80,6 +92,7 @@ public class Drone : EnemyBase
         projectileChecker = aimTransform.GetComponent<EnemyProjectileChecker>();
         isAttacking = false;
         doOnceDecision = true;
+        NextDecision();
     }
 
     /// <summary>
@@ -87,24 +100,55 @@ public class Drone : EnemyBase
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 行動パターン
-        if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
+        if (doOnceDecision)
         {
-            chaseAI.Stop();
-            Attack();
-        }
-        else if (moveSpeed > 0 && canChaseTarget && target)
-        {
-            Tracking();
-        }
-        else if (moveSpeed > 0 && canPatrol && !isPatrolPaused)
-        {
-            Patorol();
-        }
-        else
-        {
-            chaseAI.Stop();
-            Idle();
+            doOnceDecision = false;
+
+            switch (nextDecide)
+            {
+                case DECIDE_TYPE.Waiting:
+                    chaseAI.Stop();
+                    Idle();
+                    NextDecision();
+                    break;
+                case DECIDE_TYPE.Attack:
+                    chaseAI.Stop();
+                    Attack();
+                    break;
+                case DECIDE_TYPE.Patrole:
+                    Patorol();
+                    break;
+                case DECIDE_TYPE.Tracking:
+                    Tracking();
+                    NextDecision();
+                    break;
+                case DECIDE_TYPE.RndMove:
+                    chaseAI.DoRndMove();
+                    NextDecision(2f);
+                    break;
+            }
+
+            // 行動パターン
+            //if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
+            //{
+            //    chaseAI.Stop();
+            //    Attack();
+            //}
+            //else if (moveSpeed > 0 && canChaseTarget && target)
+            //{
+            //    Tracking();
+            //}
+            //else if (moveSpeed > 0 && canPatrol && !isPatrolPaused)
+            //{
+            //    Patorol();
+            //}
+            //else
+            //{
+            //    chaseAI.Stop();
+            //    Idle();
+            //}
+
+            SetAnimId((int)ANIM_ID.Idle);
         }
     }
 
@@ -115,6 +159,76 @@ public class Drone : EnemyBase
     {
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
+
+    #region 抽選処理関連
+
+    /// <summary>
+    /// 抽選処理を呼ぶ
+    /// </summary>
+    /// <param name="time"></param>
+    void NextDecision(float? rndMaxTime = null)
+    {
+        if (rndMaxTime == null) rndMaxTime = decisionTimeMax;
+        float time = UnityEngine.Random.Range(0.1f, (float)rndMaxTime);
+
+        // 実行していなければ、行動の抽選のコルーチンを開始
+        string key = COROUTINE.NextDecision.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// 次の行動パターン決定処理
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    IEnumerator NextDecisionCoroutine(float time, Action onFinished)
+    {
+        yield return new WaitForSeconds(time);
+
+        // 各行動パターンの重み
+        int waitingWeight = 0, attackWeight = 0, patorolWeight = 0, trackingWeight = 0, rndMoveWeight = 0;
+
+        // 攻撃が可能な場合
+        if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
+        {
+            attackWeight = 10;
+            rndMoveWeight = 5;
+        }
+        else if(target)
+        {
+            trackingWeight = 10;
+        }
+        else if (canPatrol && !isPatrolPaused)
+        {
+            patorolWeight = 10;
+        }
+        else
+        {
+            waitingWeight = 10;
+        }
+
+        // 全体の長さを使って抽選
+        int totalWeight = waitingWeight + attackWeight + patorolWeight + trackingWeight + rndMoveWeight;
+        randomDecision = UnityEngine.Random.Range(1, totalWeight + 1);
+
+        // 抽選した値で次の行動パターンを決定する
+        if (randomDecision <= waitingWeight) nextDecide = DECIDE_TYPE.Waiting;
+        else if (randomDecision <= attackWeight) nextDecide = DECIDE_TYPE.Attack;
+        else if (randomDecision <= patorolWeight) nextDecide = DECIDE_TYPE.Patrole;
+        else if (randomDecision <= trackingWeight) nextDecide = DECIDE_TYPE.Tracking;
+        else nextDecide = DECIDE_TYPE.RndMove;
+
+        doOnceDecision = true;
+        onFinished?.Invoke();
+    }
+
+    #endregion
+
+    #region テクスチャ・アニメーション関連
 
     /// <summary>
     /// スプライトが透明になるときに呼ばれる処理
@@ -138,6 +252,27 @@ public class Drone : EnemyBase
     {
         chaseAI.Stop();
     }
+
+    /// <summary>
+    /// アニメーション設定処理
+    /// </summary>
+    /// <param name="id"></param>
+    public override void SetAnimId(int id)
+    {
+        if (animator == null) return;
+        animator.SetInteger("animation_id", id);
+
+        switch (id)
+        {
+            case (int)ANIM_ID.Hit:
+                animator.Play("Hit");
+                break;
+            default:
+                break;
+        }
+    }
+
+    #endregion
 
     #region 攻撃処理関連
 
@@ -175,8 +310,9 @@ public class Drone : EnemyBase
             // ターゲットのいる方向に向かってエイム
             if (target)
             {
-                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+                // 強すぎので一旦コメントアウト
+                //if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                //    || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
 
                 Vector3 direction = (target.transform.position - transform.position).normalized;
                 projectileChecker.RotateAimTransform(direction);
@@ -207,6 +343,7 @@ public class Drone : EnemyBase
         isAttacking = false;
         doOnceDecision = true;
         Idle();
+        NextDecision();
         onFinished?.Invoke();
     }
 
@@ -279,6 +416,7 @@ public class Drone : EnemyBase
         Vector2 speedVec = Vector2.zero;
         speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed / 2, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
+        NextDecision();
         onFinished?.Invoke();
     }
 
@@ -300,7 +438,9 @@ public class Drone : EnemyBase
     protected override void OnHit()
     {
         base.OnHit();
+        SetAnimId((int)ANIM_ID.Hit);
         gunPsController.StopShooting();
+        if(hp > 0) NextDecision();
     }
 
     /// <summary>
