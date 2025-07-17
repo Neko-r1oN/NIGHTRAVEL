@@ -34,6 +34,20 @@ namespace Shared.Interfaces.StreamingHubs
         Task LeavedAsync();
 
         /// <summary>
+        /// 準備完了
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        Task ReadyAsync();
+
+        /// <summary>
+        /// ゲーム開始
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        //Task StartGameAsync();
+
+        /// <summary>
         /// プレイヤー動作、情報
         /// Author:Nishiura
         /// </summary>
@@ -105,6 +119,15 @@ namespace Shared.Interfaces.StreamingHubs
         Task AdvanceNextStageAsync(int stageID, bool isBossStage);
 
         /// <summary>
+        /// プレイヤー体力増減
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤー識別ID</param>
+        /// <param name="playerHP">プレイヤー体力</param>
+        /// <returns></returns>
+        Task PlayerHealthAsync(int playerID, float playerHP);
+
+        /// <summary>
         /// 敵体力増減
         /// Author:Nishiura
         /// </summary>
@@ -123,6 +146,7 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// 経験値同期
+        /// Author:Nishiura
         /// </summary>
         /// <param name="exp">経験値</param>
         /// <returns></returns>
@@ -130,9 +154,18 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// レベルアップ同期
+        /// Author:Nishiura
         /// </summary>
         /// <returns></returns>
         Task LevelUpAsync();
+
+        /// <summary>
+        /// プレイヤー死亡
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤーID</param>
+        /// <returns></returns>
+        Task PlayerDeadAsync(int playerID);
 
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);

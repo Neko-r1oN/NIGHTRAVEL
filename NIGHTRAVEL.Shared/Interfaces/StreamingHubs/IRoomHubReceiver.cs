@@ -65,6 +65,18 @@ namespace Shared.Interfaces.StreamingHubs
         void OnLeave(JoinedUser user);
 
         /// <summary>
+        /// 準備完了通知
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        void OnReady(Guid conID);
+
+        /// <summary>
+        /// ゲーム開始通知
+        /// Author:Nishiura
+        /// </summary>
+        void OnStartGame();
+
+        /// <summary>
         /// プレイヤー動作通知
         /// Author:Nishiura
         /// </summary>
@@ -131,6 +143,14 @@ namespace Shared.Interfaces.StreamingHubs
         void OnAdanceNextStage(int stageID);
 
         /// <summary>
+        /// プレイヤー体力増減通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤー識別ID</param>
+        /// <param name="playerHP">プレイヤー体力</param>
+        void OnPlayerHealth(int playerID, float playerHP);
+
+        /// <summary>
         /// 敵体力増減通知
         /// Author:Nishiura
         /// </summary>
@@ -156,6 +176,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// レベルアップ通知
         /// </summary>
         void OnLevelUp();
+
+        /// <summary>
+        /// プレイヤー死亡通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤーID</param>
+        void OnPlayerDead(int playerID);
 
         ////敵のID同期
         //void OnIdEnemy(int enemyId);

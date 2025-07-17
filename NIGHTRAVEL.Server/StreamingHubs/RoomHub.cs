@@ -68,10 +68,14 @@ namespace StreamingHubs
             this.roomContext.JoinedUserList[joinedUser.JoinOrder-1]=joinedUser;
 
             // ルームデータに追加
-            this.roomContext.AddRoomData(this.ConnectionId);
+            this.roomContext.AddPlayerData(this.ConnectionId);
 
             // 参加したことを全員に通知
             this.Client.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder-1]);
+
+            // ルームデータから接続IDを指定して自身のデータを取得
+            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
+            playerData.IsDead = false; // 死亡判定をfalseにする
 
             // 参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
@@ -85,7 +89,7 @@ namespace StreamingHubs
         public async Task LeavedAsync()
         {
             ////マスタークライアントだったら次の人に譲渡する
-            //if (roomData.JoinedUser.IsMaster == true)
+            //if (PlayerData.JoinedUser.IsMaster == true)
             //{
             //    await MasterLostAsync();
             //}
@@ -99,7 +103,32 @@ namespace StreamingHubs
             roomContext.RemoveUser(joinedUser.JoinOrder);
 
             // ルームデータから自身のデータを削除
-            roomContext.RemoveRoomData(this.ConnectionId);
+            roomContext.RemovePlayerData(this.ConnectionId);
+        }
+
+        /// <summary>
+        /// 準備完了
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        public async Task ReadyAsync()
+        {
+            bool canStartGame = true; // ゲーム開始可能判定変数
+
+            // 自身のデータを取得
+            var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
+            joinedUser.IsReady = true; // 準備完了にする
+
+            // ルーム参加者全員に、自分が準備完了した通知を送信
+            this.Client.OnReady(this.ConnectionId);
+
+            foreach (var user in this.roomContext.JoinedUserList)
+            { // 現在の参加者数分ループ
+                if (user.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
+            }
+
+            // ゲームが開始できる場合、開始通知をする
+            if (canStartGame) this.Client.OnStartGame();
         }
 
         /// <summary>
@@ -113,14 +142,14 @@ namespace StreamingHubs
         public async Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim)
         {
             // ルームデータから接続IDを指定して自身のデータを取得
-            var roomData = this.roomContext.GetRoomData(this.ConnectionId);
+            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
 
-            roomData.Position = pos; // 位置を渡す
-            roomData.Rotation = rot; // 回転を渡す
-            roomData.State = anim;   // アニメーションIDを渡す
+            playerData.Position = pos; // 位置を渡す
+            playerData.Rotation = rot; // 回転を渡す
+            playerData.State = anim;   // アニメーションIDを渡す
             
             // ルーム参加者全員に、ユーザ情報通知を送信
-            this.Client.OnMovePlayer(roomData.JoinedUser, pos, rot, anim);
+            this.Client.OnMovePlayer(playerData.JoinedUser, pos, rot, anim);
         }
 
         /// <summary>
@@ -247,6 +276,19 @@ namespace StreamingHubs
         }
 
         /// <summary>
+        /// プレイヤー体力増減同期処理
+        /// Autho:Nishiura
+        /// </summary>
+        /// <param name="playerID">敵識別ID</param>
+        /// <param name="playerHP">敵体力</param>
+        /// <returns></returns>
+        public async Task PlayerHealthAsync(int playerID, float playerHP)
+        {
+            // 参加者全員に受け取ったIDのプレイヤーが受け取ったHPになったことを通知
+            this.Client.OnPlayerHealth(playerID, playerHP);
+        }
+
+        /// <summary>
         /// 敵体力増減同期処理
         /// Autho:Nishiura
         /// </summary>
@@ -292,6 +334,22 @@ namespace StreamingHubs
         {
             // 参加者全員にレベルアップしたことを通知
             this.Client.OnLevelUp();
+        }
+
+        /// <summary>
+        /// プレイヤー死亡同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤーID</param>
+        /// <returns></returns>
+        public async Task PlayerDeadAsync(int playerID)
+        {
+            // ルームデータから接続IDを指定して自身のデータを取得
+            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
+            playerData.IsDead = false; // 死亡判定をtrueにする
+
+            // 参加者全員に対象者が死亡したことを通知
+            this.Client.OnPlayerDead(playerID);
         }
     }
 }
