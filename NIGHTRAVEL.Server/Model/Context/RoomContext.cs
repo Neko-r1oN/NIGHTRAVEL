@@ -38,7 +38,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// ルームデータリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<Guid, RoomData> roomDataList { get; } = new();
+        public Dictionary<Guid, PlayerData> playerDataList { get; } = new();
 
         /// <summary>
         /// エネミーデータリスト
@@ -67,10 +67,10 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID">自身の接続ID</param>
-        public void AddRoomData(Guid conID)
+        public void AddPlayerData(Guid conID)
         {
             // データリストに自身のデータを追加
-            roomDataList.Add(conID,new RoomData());
+            playerDataList.Add(conID,new PlayerData());
         }
 
         /// <summary>
@@ -78,10 +78,10 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID">自身の接続ID</param>
-        public void RemoveRoomData(Guid conID)
+        public void RemovePlayerData(Guid conID)
         {
             // データリストから自身のデータを消去
-            roomDataList.Remove(conID);
+            playerDataList.Remove(conID);
         }
 
         public void Dispose() { 
@@ -93,9 +93,9 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID"></param>
-        public RoomData GetRoomData(Guid conID)
+        public PlayerData GetPlayerData(Guid conID)
         {
-            return roomDataList[conID];
+            return playerDataList[conID];
         }
 
         /// <summary>
