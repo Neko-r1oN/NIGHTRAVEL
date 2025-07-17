@@ -1,29 +1,39 @@
-using MagicOnion.Client;
-using MessagePack;
+using Cysharp.Net.Http;
+using Grpc.Net.Client;
+using MagicOnion.Unity;
 using MessagePack.Resolvers;
-using MessagePack.Unity;
+using MessagePack;
+using UnityEngine;
 
-/// <summary>
-/// MagicOnion用インタフェースのコード生成
-/// </summary>
-[MagicOnionClientGeneration(typeof(Shared.Interfaces.StreamingHubs.IRoomHubReceiver))]
-partial class MagicOnionInitializer
+public class MagicOnionInitializer
 {
-    /// <summary>
-    /// Resolverの登録処理
-    /// </summary>
-    [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.BeforeSceneLoad)]
-    static void RegisterResolvers()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void OnRuntimeInitialize()
     {
-        StaticCompositeResolver.Instance.Register(
-            MagicOnionInitializer.Resolver,
-            MessagePackGeneratedResolver.Instance,
-            BuiltinResolver.Instance,
-            UnityResolver.Instance,
-            PrimitiveObjectResolver.Instance
-        );
+        // Initialize gRPC channel provider when the application is loaded.
+        GrpcChannelProviderHost.Initialize(new DefaultGrpcChannelProvider(() => new GrpcChannelOptions()
+        {
+            HttpHandler = new YetAnotherHttpHandler()
+            {
+                Http2Only = true,
+                SkipCertificateVerification = true
+            },
+            DisposeHttpClient = true,
+        }));
 
-        MessagePackSerializer.DefaultOptions = MessagePackSerializer.DefaultOptions
-            .WithResolver(StaticCompositeResolver.Instance);
+        // Set extensions to default resolver.
+        var resolver = MessagePack.Resolvers.CompositeResolver.Create(
+            // enable extension packages first
+            MessagePack.Unity.UnityResolver.Instance,
+
+            // finally use standard (default) resolver
+            StandardResolver.Instance
+        );
+        var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+
+        // Pass options every time or set as default
+        MessagePackSerializer.DefaultOptions = options;
     }
 }
+
+
