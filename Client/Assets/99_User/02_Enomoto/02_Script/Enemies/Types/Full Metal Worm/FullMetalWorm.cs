@@ -37,6 +37,17 @@ public class FullMetalWorm : EnemyBase
         MoveGraduallyCoroutine,
     }
 
+    /// <summary>
+    /// 行動パターン
+    /// </summary>
+    public enum DECIDE_TYPE
+    {
+        None = 0,
+        Move = 1,
+        Attack,
+    }
+    DECIDE_TYPE nextDecide = DECIDE_TYPE.None;
+
     #region コンポーネント
     List<FullMetalBody> bodys = new List<FullMetalBody>();
     #endregion
@@ -135,13 +146,7 @@ public class FullMetalWorm : EnemyBase
         isInvincible = false;
         bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
         MeleeAttack();
-
-        // 実行していなければ、行動の抽選のコルーチンを開始
-        if (!ContaintsManagedCoroutine(COROUTINE.NextDecision.ToString()))
-        {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine());
-            managedCoroutines.Add(COROUTINE.NextDecision.ToString(), coroutine);
-        }
+        NextDecision();
     }
 
     protected override void FixedUpdate()
@@ -172,44 +177,19 @@ public class FullMetalWorm : EnemyBase
         if (doOnceDecision)
         {
             doOnceDecision = false;
-            if (!isAttacking && randomDecision <= 0.4f)
+            RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+
+            if (nextDecide == DECIDE_TYPE.Attack)
             {
-                // 既に死亡している生成済みの敵の要素を削除
-                generatedEnemies.RemoveAll(item => item == null);
-
-                // 範囲内にPlayerがいるかチェック
-                int layerNumber = 1 << LayerMask.NameToLayer("Player");
-                Collider2D hit = Physics2D.OverlapCircle(playerCheck.position, playerCheckRange, layerNumber);
-                if (hit)
-                {
-                    // 全ての部位の行動を実行
-                    isAttacking = true;
-                    ExecuteAllPartActions();
-
-                    // 実行していなければ、クールダウンのコルーチンを開始
-                    string key = COROUTINE.AttackCooldown.ToString();
-                    if (!ContaintsManagedCoroutine(key))
-                    {
-                        Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => { RemoveCoroutineByKey(key); }));
-                        managedCoroutines.Add(key, coroutine);
-                    }
-                }
-                else
-                {
-                    NextDecision(0.5f);
-                }
-            }
-            else if (randomDecision <= 0.8f)
+                // 全ての部位の行動を実行
+                isAttacking = true;
+                ExecuteAllPartActions();
+                MoveGradually(true);
+                AttackCooldown();
+            }        
+            else if (nextDecide == DECIDE_TYPE.Move)
             {
-                RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
-
-                // 実行していなければ、移動のコルーチンを開始
-                string key = COROUTINE.MoveCoroutine.ToString();
-                if (!ContaintsManagedCoroutine(key))
-                {
-                    Coroutine coroutine = StartCoroutine(MoveCoroutine(() => { RemoveCoroutineByKey(key); }));
-                    managedCoroutines.Add(key, coroutine);
-                }
+                Move();
             }
             else
             {
@@ -218,9 +198,10 @@ public class FullMetalWorm : EnemyBase
         }
     }
 
-    #region 抽選処理関連
+    #region コルーチン呼び出し
+
     /// <summary>
-    /// 次の行動パターン決定処理を呼ぶ
+    /// 次の行動パターン抽選コルーチン呼び出し
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
@@ -236,6 +217,65 @@ public class FullMetalWorm : EnemyBase
     }
 
     /// <summary>
+    /// 近接攻撃のコルーチン呼び出し
+    /// </summary>
+    public void MeleeAttack()
+    {
+        // 実行していなければ、ゆっくり移動するコルーチンを開始
+        string key = COROUTINE.MeleeAttackCoroutine.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(MeleeAttackCoroutine(() => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// 攻撃クールダウンのコルーチン呼び出し
+    /// </summary>
+    void AttackCooldown()
+    {
+        // 実行していなければ、クールダウンのコルーチンを開始
+        string key = COROUTINE.AttackCooldown.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(AttackCooldownCoroutine(attackCoolTime, () => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// 移動のコルーチン呼び出し
+    /// </summary>
+    void Move()
+    {
+        // 実行していなければ、移動のコルーチンを開始
+        string key = COROUTINE.MoveCoroutine.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(MoveCoroutine(() => { RemoveCoroutineByKey(key); }));
+            managedCoroutines.Add(key, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// ゆっくり移動し続けるコルーチン呼び出し
+    /// </summary>
+    void MoveGradually(bool isTargetLottery = false)
+    {
+        // 実行していなければ、ゆっくり移動するコルーチンを開始
+        string key = COROUTINE.MoveGraduallyCoroutine.ToString();
+        if (!ContaintsManagedCoroutine(key))
+        {
+            Coroutine coroutine = StartCoroutine(MoveGraduallyCoroutine(isTargetLottery));
+            managedCoroutines.Add(key, coroutine);
+        }
+    }
+
+    #endregion
+
+    #region 抽選処理関連
+    /// <summary>
     /// 次の行動パターン決定処理
     /// </summary>
     /// <param name="time"></param>
@@ -244,17 +284,34 @@ public class FullMetalWorm : EnemyBase
     {
         if (time == null) time = Mathf.Floor(UnityEngine.Random.Range(decisionTimeMin, decisionTimeMax));
         doOnceDecision = false;
+        MoveGradually();
+        yield return new WaitForSeconds((float)time);
 
-        // 実行していなければ、ゆっくり移動するコルーチンを開始
-        string key = COROUTINE.MoveGraduallyCoroutine.ToString();
-        if (!ContaintsManagedCoroutine(key))
+        // 各行動パターンの重み
+        int attackWeight = 0, moveWeight = 5;
+
+        if (!isAttacking)
         {
-            Coroutine coroutine = StartCoroutine(MoveGraduallyCoroutine());
-            managedCoroutines.Add(key, coroutine);
+            // 既に死亡している生成済みの敵の要素を削除
+            generatedEnemies.RemoveAll(item => item == null);
+
+            // 範囲内にPlayerがいるかチェック
+            int layerNumber = 1 << LayerMask.NameToLayer("Player");
+            Collider2D hit = Physics2D.OverlapCircle(playerCheck.position, playerCheckRange, layerNumber);
+            if (hit)
+            {
+                attackWeight = 10;
+            }
         }
 
-        yield return new WaitForSeconds((float)time);
-        randomDecision = UnityEngine.Random.Range(0f, 1f);
+        // 全体の長さを使って抽選
+        int totalWeight = attackWeight + moveWeight;
+        randomDecision = UnityEngine.Random.Range(1, totalWeight + 1);
+
+        // 抽選した値で次の行動パターンを決定する
+        if (randomDecision <= attackWeight) nextDecide = DECIDE_TYPE.Attack;
+        else nextDecide = DECIDE_TYPE.Move;
+
         doOnceDecision = true;
         onFinished?.Invoke();
     }
@@ -275,20 +332,6 @@ public class FullMetalWorm : EnemyBase
             {
                 body.ActByRoleType();
             }
-        }
-    }
-
-    /// <summary>
-    /// 近接攻撃処理
-    /// </summary>
-    public void MeleeAttack()
-    {
-        // 実行していなければ、ゆっくり移動するコルーチンを開始
-        string key = COROUTINE.MeleeAttackCoroutine.ToString();
-        if (!ContaintsManagedCoroutine(key))
-        {
-            Coroutine coroutine = StartCoroutine(MeleeAttackCoroutine(() => { RemoveCoroutineByKey(key); }));
-            managedCoroutines.Add(key, coroutine);
         }
     }
 
@@ -321,7 +364,7 @@ public class FullMetalWorm : EnemyBase
     /// クールダウン処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator AttackCooldown(float time, Action onFinished)
+    IEnumerator AttackCooldownCoroutine(float time, Action onFinished)
     {
         yield return new WaitForSeconds(time);
         isAttacking = false;
@@ -396,19 +439,40 @@ public class FullMetalWorm : EnemyBase
     /// 外部から停止されるまでゆっくりと移動し続ける処理
     /// </summary>
     /// <returns></returns>
-    IEnumerator MoveGraduallyCoroutine()
+    IEnumerator MoveGraduallyCoroutine(bool isTargetLottery = false)
     {
-        SetNextTargetPosition(false);
+        Vector2 maxPos = SpawnManager.Instance.StageMaxPoint.position;
+        Vector2 minPos = SpawnManager.Instance.StageMinPoint.position;
+        SetNextTargetPosition(isTargetLottery);
         while (true)
         {
+            if (!isTargetLottery)
+            {
+                // プレイヤーとの距離がかけ離れている場合は、プレイヤーの座標に向かって移動
+                float distToNearPlayer = Vector2.Distance(GetNearPlayer().transform.position, transform.position);
+                if (Mathf.Abs(distToNearPlayer) > playerCheckRange * 1.5f)
+                {
+                    SetNextTargetPosition(true);
+                }
+            }
+
             RotateTowardsMovementDirection(targetPos, rotationSpeedMin);
             MoveTowardsTarget(moveSpeedMin);
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
             if (disToTargetPos <= disToTargetPosMin / 2)
             {
-                SetNextTargetPosition(false);
+                SetNextTargetPosition(isTargetLottery);
             }
             yield return null;
+
+            // 現在ステージ範囲外にいる場合は現在のコルーチンを終了し、MoveCoroutineを実行
+            if (transform.position.x < minPos.x || transform.position.x > maxPos.x
+                || transform.position.y < minPos.y || transform.position.y > maxPos.y)
+            {
+                Move();
+                RemoveCoroutineByKey(COROUTINE.NextDecision.ToString());
+                RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+            }
         }
     }
 
@@ -495,6 +559,7 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     void DrawRectGizmos()
     {
+        if (SpawnManager.Instance == null) return;
         Vector2 min = SpawnManager.Instance.StageMinPoint.position;
         Vector2 max = SpawnManager.Instance.StageMaxPoint.position;
         Vector2 bl = new Vector2(min.x, min.y);
@@ -531,8 +596,8 @@ public class FullMetalWorm : EnemyBase
         DrawRectGizmos();
 
         // 障害物を検知する範囲
-        //Gizmos.color = Color.green;
-        //Gizmos.DrawWireSphere(transform.position, terrainCheckRange);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, terrainCheckRange);
     }
 
     #endregion

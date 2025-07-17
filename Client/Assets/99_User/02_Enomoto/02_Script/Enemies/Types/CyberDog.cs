@@ -22,7 +22,6 @@ public class CyberDog : EnemyBase
         Run,
         Hit,
         Dead,
-        JumpOut,
     }
 
     /// <summary>
@@ -277,15 +276,25 @@ public class CyberDog : EnemyBase
     #region テクスチャ・アニメーション関連
 
     /// <summary>
-    /// スプライトが透明になるときに呼ばれる処理
+    /// スポーンアニメメーション開始時
     /// </summary>
-    protected override void OnTransparentSprites()
+    public override void OnSpawnAnimEvent()
     {
-        SetAnimId((int)ANIM_ID.JumpOut);
+        base.OnSpawnAnimEvent();
+        SetAnimId((int)ANIM_ID.Spawn);
 
         // 前に飛び込む
-        Vector2 jumpVec = new Vector2(moveSpeed * TransformUtils.GetFacingDirection(transform), jumpPower / 2);
+        Vector2 jumpVec = new Vector2(moveSpeed * 1.2f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
+    }
+
+    /// <summary>
+    /// スポーンアニメーションが終了したとき
+    /// </summary>
+    public override void OnEndSpawnAnimEvent()
+    {
+        base.OnEndSpawnAnimEvent();
+        ApplyStun(0.5f, false);
     }
 
     /// <summary>

@@ -235,8 +235,8 @@ public class FullMetalBody : EnemyBase
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
 
         if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // Šm—¦‚ÅŒü‚«‚ª•Ï‚í‚é
-        enemy.TransparentSprites();
         enemy.Players = GetAlivePlayers();
+        enemy.Target = GetNearPlayer(enemy.transform.position);
         return enemyObj;
     }
 

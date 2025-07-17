@@ -277,23 +277,22 @@ abstract public class EnemyBase : CharacterBase
     /// <returns></returns>
     IEnumerator CheckTargetObstructionCoroutine(Action onFinished)
     {
-        float obstructionMaxTime = 4f;
+        float obstructionMaxTime = 3f;
         float currentTime = 0;
-        float waitSec = 0.5f;
+        float waitSec = 0.01f;
 
         // obstructionMaxTime以上経過でターゲットを見失ったことにする
         while (currentTime < obstructionMaxTime)
         {
             yield return new WaitForSeconds(waitSec);
 
-            if (sightChecker.IsObstructed())
+            if (sightChecker.IsObstructed() || !sightChecker.IsTargetVisible())
             {
                 currentTime += waitSec;
             }
             else
             {
-                currentTime -= waitSec;
-                if (currentTime <= 0) currentTime = 0;
+                currentTime = 0;
             }        
         }
 
@@ -541,10 +540,10 @@ abstract public class EnemyBase : CharacterBase
     /// スタン処理
     /// </summary>
     /// <param name="time"></param>
-    public void ApplyStun(float time)
+    public void ApplyStun(float time, bool isHit = true)
     {
         isStun = true;
-        OnHit();
+        if(isHit) OnHit();
         Coroutine coroutine = StartCoroutine(StunTime(time));
         managedCoroutines.Add("StunTime", coroutine);
     }
@@ -574,61 +573,19 @@ abstract public class EnemyBase : CharacterBase
     public virtual void OnEndAttackAnimEvent() { }
 
     /// <summary>
-    /// スプライトを透明にするときに呼ばれる処理
+    /// スポーンアニメメーション開始時
     /// </summary>
-    protected virtual void OnTransparentSprites() { }
-
-    /// <summary>
-    /// フェードインが完了したときに呼ばれる処理
-    /// </summary>
-    protected virtual void OnFadeInComp() { }
-
-    /// <summary>
-    /// スプライトを透明にする
-    /// </summary>
-    public void TransparentSprites()
+    public virtual void OnSpawnAnimEvent()
     {
-        if (!isStartComp) Start();   // Startが実行されていない場合
+        if (!isStartComp) Start();
         isSpawn = false;
         isInvincible = true;    // 無敵状態にする & 本来の行動不可
-
-        foreach (var spriteRenderer in spriteRenderers)
-        {
-            Color color = spriteRenderer.color;
-            color.a = 0;
-            spriteRenderer.color = color;
-        }
-
-        InvokeRepeating("FadeIn", 0, 0.1f);
-        OnTransparentSprites();
     }
-
-    /// <summary>
-    /// フェードイン処理
-    /// </summary>
-    protected void FadeIn()
-    {
-        foreach (var spriteRenderer in spriteRenderers)
-        {
-            Color color = spriteRenderer.color;
-            color.a += 0.2f;
-            spriteRenderer.color = color;
-        }
-
-        // フェードインが完了したら、無敵状態解除
-        if (isInvincible && spriteRenderers[0].color.a >= 1)
-        {
-            isInvincible = false;
-            OnFadeInComp();
-            CancelInvoke("FadeIn");
-        }
-    }
-
 
     /// <summary>
     /// スポーンアニメーションが終了したとき
     /// </summary>
-    public void OnEndSpawnAnim()
+    public virtual void OnEndSpawnAnimEvent()
     {
         isInvincible = false;
         isSpawn = false;
