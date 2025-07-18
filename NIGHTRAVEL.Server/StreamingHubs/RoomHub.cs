@@ -17,6 +17,13 @@ namespace StreamingHubs
     {
         //コンテキスト定義
         private RoomContext roomContext;
+        RoomContextRepository roomContextRepos;
+
+        protected override ValueTask OnConnected()
+        {
+            roomContextRepos = roomContextRepository;
+            return default;
+        }
 
         // 切断された場合
         protected override ValueTask OnDisconnected()
@@ -99,11 +106,16 @@ namespace StreamingHubs
             // ルーム参加者全員に、ユーザーの退室通知を送信
             this.Client.OnLeave(joinedUser);
 
-            //コンテキストからユーザーを削除
-            roomContext.RemoveUser(joinedUser.JoinOrder);
+            if(joinedUser==null)
+            {
+                //コンテキストからユーザーを削除
+                roomContext.RemoveUser(joinedUser.JoinOrder);
+                // ルームデータから自身のデータを削除
+                roomContext.RemovePlayerData(this.ConnectionId);
+            }
+            
 
-            // ルームデータから自身のデータを削除
-            roomContext.RemovePlayerData(this.ConnectionId);
+            
         }
 
         /// <summary>

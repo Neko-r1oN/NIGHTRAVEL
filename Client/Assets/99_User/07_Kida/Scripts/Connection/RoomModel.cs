@@ -9,6 +9,7 @@
 using Cysharp.Net.Http;
 using Cysharp.Threading.Tasks;
 using Grpc.Net.Client;
+using MagicOnion;
 using MagicOnion.Client;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
@@ -81,9 +82,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //MagicOnionê⁄ë±èàóù
     public async UniTask ConnectAsync()
     {
-        var handler = new YetAnotherHttpHandler() { Http2Only = true };
-        channel = GrpcChannel.ForAddress(ServerURL,
-            new GrpcChannelOptions() { HttpHandler = handler });
+        var channel = GrpcChannelx.ForAddress(ServerURL);
         roomHub = await StreamingHubClient.ConnectAsync<IRoomHub, IRoomHubReceiver>(channel, this);
     }
 

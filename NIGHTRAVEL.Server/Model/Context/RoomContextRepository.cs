@@ -16,7 +16,15 @@ namespace NIGHTRAVEL.Server.Model.Context
         //ゲームコンテキストの取得
         public RoomContext GetContext(string roomName)
         {
-            return contexts[roomName];
+            if(contexts.ContainsKey(roomName))
+            {
+                return contexts[roomName];
+            }
+            else
+            {
+                return null;
+            }
+            
         }
         //ゲームコンテキストの削除
         public void RemoveContext(string roomName)
