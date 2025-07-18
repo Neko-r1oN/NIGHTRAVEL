@@ -146,18 +146,7 @@ public class SpawnManager : MonoBehaviour
     {
         for (int i = 0; i < num; i++)
         {
-            //int listNum = Random.Range(0, enemyList.Count);
-
             int listNum = Choose(item);
-
-            if(listNum == 0)
-            {
-                Debug.Log("どろーん");
-            }
-            else
-            {
-                Debug.Log("いぬ");
-            }
 
             EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
 
@@ -176,27 +165,7 @@ public class SpawnManager : MonoBehaviour
 
             if (spawnPos != null)
             {
-                GameManager.Instance.SpawnCnt++;
-
-                // 生成
-                enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
-
-                int number = Random.Range(0, 100);
-
-                int onePercentOfMaxEnemies = 
-                    Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
-
-                if (number < 5 * (int)LevelManager.Instance.GameLevel 
-                    && eliteEnemyCnt < onePercentOfMaxEnemies)
-                {
-                    enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.ELITE_TYPE)Random.Range(1,4));
-                    eliteEnemyCnt++;
-                }
-
-                Debug.Log(eliteEnemyCnt);
-
-                enemy.GetComponent<EnemyBase>().Players.Add(player);
-                enemy.GetComponent<EnemyBase>().SetNearTarget();
+                SpawnEnemyRequest(enemyList[listNum], (Vector3)spawnPos);
             }
         }
     }
@@ -229,13 +198,7 @@ public class SpawnManager : MonoBehaviour
 
             if (spawnPos != null)
             {
-                GameManager.Instance.SpawnCnt++;
-
-                // 生成
-                enemy = Instantiate(enemyList[listNum], (Vector3)spawnPos, Quaternion.identity);
-
-                enemy.GetComponent<EnemyBase>().Players.Add(player);
-                enemy.GetComponent<EnemyBase>().SetNearTarget();
+                SpawnEnemyRequest(enemyList[listNum], (Vector3)spawnPos);
 
                 // 端末から出た敵をリストに追加
                 terminalSpawnList.Add(enemy);
@@ -297,5 +260,35 @@ public class SpawnManager : MonoBehaviour
 
         //乱数が１の時、配列数の-１＝要素の最後の値をChoose配列に戻している
         return probs.Length - 1;
+    }
+
+    /// <summary>
+    /// 敵生成リクエスト
+    /// </summary>
+    /// <param name="spawnEnemy"></param>
+    /// <param name="spawnPos"></param>
+    public void SpawnEnemyRequest(GameObject spawnEnemy,Vector3 spawnPos)
+    {
+        GameManager.Instance.SpawnCnt++;
+
+        // 生成
+        enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
+
+        int number = Random.Range(0, 100);
+
+        // エリート敵生成限度を設定
+        int onePercentOfMaxEnemies =
+            Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
+
+        if (number < 5 * (int)LevelManager.Instance.GameLevel
+            && eliteEnemyCnt < onePercentOfMaxEnemies)
+        {// 5%(* 現在のゲームレベル)以下で、エリート敵生成限度に達していなかったら
+            // エリート敵生成
+            enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.ELITE_TYPE)Random.Range(1, 4));
+            eliteEnemyCnt++;
+        }
+
+        enemy.GetComponent<EnemyBase>().Players.Add(player);
+        enemy.GetComponent<EnemyBase>().SetNearTarget();
     }
 }
