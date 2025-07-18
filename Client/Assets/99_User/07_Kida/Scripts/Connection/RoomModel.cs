@@ -137,6 +137,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnLeavedUser(user);
     }
 
+    public void OnReady(Guid conID)
+    {
+
+    }
+
+    public void OnStartGame()
+    {
+
+    }
+
     /// <summary>
     /// プレイヤーの移動通知
     /// Aughter:木田晃輔
@@ -226,6 +236,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnAdanceNextStageSyn(stageID);
     }
 
+    public void OnPlayerHealth(int playerID, float playerHP)
+    {
+
+    }
+
     /// <summary>
     /// 敵体力増減
     /// Aughter:木田晃輔
@@ -261,6 +276,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// レベルアップ通知
     /// </summary>
     public void OnLevelUp()
+    {
+
+    }
+
+    public void OnPlayerDead(int playerID)
     {
 
     }
