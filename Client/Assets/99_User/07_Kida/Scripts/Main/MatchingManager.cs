@@ -8,18 +8,23 @@
 
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MatchingManager : MonoBehaviour
 {
     UserModel userModel;
     [SerializeField] RoomModel roomModel;
-    [SerializeField] GameObject userPrefab; 
+    [SerializeField] GameObject userPrefab;
+    [SerializeField] Text inputFieldRoomId;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    async void Start()
     {
-        userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
+        //userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
+
+        //ê⁄ë±èàóù
+        await roomModel.ConnectAsync();
     }
 
     // Update is called once per frame
@@ -28,11 +33,17 @@ public class MatchingManager : MonoBehaviour
         
     }
 
-
+    /// <summary>
+    /// ì¸é∫èàóù
+    /// Aughter:ñÿìcçWï„
+    /// </summary>
     public async void JoinRoom()
     {
+
+        int roomId;
+        int.TryParse(inputFieldRoomId.text, out roomId);
         string roomName="Sample";
-        await roomModel.JoinAsync(roomName, userModel.userId);
+        await roomModel.JoinAsync(roomName,roomId );
 
 
     }
