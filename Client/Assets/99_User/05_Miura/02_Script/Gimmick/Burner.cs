@@ -23,8 +23,7 @@ public class Burner : GimmickBase
 
     private void Start()
     {
-        //invokerepetingでIgnitionを呼ぶ
-        //3秒間隔で点いたり消えたりする
+        //3秒間隔で点火と消火を繰り返す
         InvokeRepeating("Ignition", 0.1f, 3);
     }
 
@@ -40,16 +39,18 @@ public class Burner : GimmickBase
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
-        {
+        {//触れたオブジェクトのタグが「Player」だったら
             player = GetComponent<PlayerBase>();
-            statusEffectController = GetComponent<StatusEffectController>();
-            //statusEffectController.ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Burn); //プレイヤーに炎上状態を付与
+            statusEffectController = collision.gameObject.GetComponent<StatusEffectController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
+
+            statusEffectController.ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Burn); //プレイヤーに炎上状態を付与
             Debug.Log("プレイヤーに炎上状態を付与");
         }
 
         if (collision.CompareTag("Enemy"))
-        {
+        {//触れたオブジェクトのタグが「Enemy」だったら
             enemy = GetComponent<EnemyBase>();
+            statusEffectController = collision.gameObject.GetComponent<StatusEffectController>(); //触れたオブジェクトのStatusEffectControllerを取得する
 
             Debug.Log("敵に炎上状態を付与");
         }
