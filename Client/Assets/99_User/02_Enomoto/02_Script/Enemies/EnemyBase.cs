@@ -33,6 +33,10 @@ abstract public class EnemyBase : CharacterBase
     #region テクスチャ・アニメーション関連
     [Foldout("テクスチャ・アニメーション")]
     [SerializeField]
+    float destroyWaitSec = 1f;
+
+    [Foldout("テクスチャ・アニメーション")]
+    [SerializeField]
     List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
     #endregion
 
@@ -509,11 +513,10 @@ abstract public class EnemyBase : CharacterBase
             isDead = true;
             if (player) player.GetExp(exp);
             OnDead();
-            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
-            yield return new WaitForSeconds(0.25f);
+            //if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(destroyWaitSec);
             Destroy(gameObject);
         }
     }

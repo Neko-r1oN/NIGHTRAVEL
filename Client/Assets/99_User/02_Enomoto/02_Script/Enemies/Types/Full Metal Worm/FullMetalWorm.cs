@@ -124,7 +124,7 @@ public class FullMetalWorm : EnemyBase
 
     [Foldout("敵の生成関連")]
     [SerializeField]
-    float distToPlayerMin = 6;
+    float distToPlayerMin = 8;
     public float DistToPlayerMin { get { return distToPlayerMin; } }
 
     // 生成済みの敵
@@ -142,11 +142,7 @@ public class FullMetalWorm : EnemyBase
         isAttacking = false;
         doOnceDecision = false;
         endDecision = true;
-        isSpawn = false;
-        isInvincible = false;
         bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
-        MeleeAttack();
-        NextDecision();
     }
 
     protected override void FixedUpdate()
@@ -459,7 +455,7 @@ public class FullMetalWorm : EnemyBase
             RotateTowardsMovementDirection(targetPos, rotationSpeedMin);
             MoveTowardsTarget(moveSpeedMin);
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
-            if (disToTargetPos <= disToTargetPosMin / 2)
+            if (disToTargetPos <= disToTargetPosMin)
             {
                 SetNextTargetPosition(isTargetLottery);
             }
@@ -493,6 +489,12 @@ public class FullMetalWorm : EnemyBase
         {
             StartCoroutine(body.DestroyEnemy(null));
         }
+
+        // 生成したザコ敵を破棄する
+        foreach (var enemy in generatedEnemies)
+        {
+            StartCoroutine(enemy.GetComponent<EnemyBase>().DestroyEnemy(null));
+        }
     }
 
     /// <summary>
@@ -505,6 +507,41 @@ public class FullMetalWorm : EnemyBase
     {
         attacker = null;
         base.ApplyDamage(power, attacker, true, effectTypes);
+    }
+
+    #endregion
+
+    #region アニメーションイベント関連
+
+    /// <summary>
+    /// 死亡アニメーション再生中に呼ばれる
+    /// </summary>
+    public void OnDeathAnimEvent()
+    {
+        // 全ての部位のデスポーンアニメーション再生
+        foreach (var body in bodys)
+        {
+            body.Despown();
+        }
+    }
+
+    /// <summary>
+    /// スポーンアニメメーション開始時
+    /// </summary>
+    public void OnSpawnAnimEventByHead()
+    {
+        OnSpawnAnimEvent();
+    }
+
+    /// <summary>
+    /// スポーンアニメーションが終了したとき
+    /// </summary>
+    public void OnEndSpawnAnimEventByHead()
+    {
+        OnEndSpawnAnimEvent();
+
+        MeleeAttack();
+        NextDecision();
     }
 
     #endregion
