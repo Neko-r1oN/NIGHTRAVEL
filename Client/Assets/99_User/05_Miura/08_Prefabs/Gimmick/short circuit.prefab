@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4194956174638472883}
   - component: {fileID: 5333606568334041516}
   - component: {fileID: 5501259420152816821}
-  m_Layer: 0
+  - component: {fileID: -3442203701430900374}
+  m_Layer: 13
   m_Name: short circuit
   m_TagString: Short circuit
   m_Icon: {fileID: 0}
@@ -195,6 +196,38 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.99, y: 0.5040734}
   m_EdgeRadius: 0
+--- !u!114 &-3442203701430900374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7653943884488102352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.016666668
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 0}
+  m_BuildHeightMesh: 0
 --- !u!1001 &1372627891780483757
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -203,9 +236,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 202406192348240676}
     m_Modifications:
+    - target: {fileID: 103226, guid: 2736bbc2f2c78a949957b0719c2992bd, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 156244, guid: 2736bbc2f2c78a949957b0719c2992bd, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 178460, guid: 2736bbc2f2c78a949957b0719c2992bd, type: 3}
       propertyPath: m_Name
       value: SimpleLightningBoltAnimatedPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 178460, guid: 2736bbc2f2c78a949957b0719c2992bd, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 430986, guid: 2736bbc2f2c78a949957b0719c2992bd, type: 3}
       propertyPath: m_LocalScale.x

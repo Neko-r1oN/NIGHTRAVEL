@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3599589326981222554}
   - component: {fileID: 4334373905370633319}
   - component: {fileID: 3083359572080773874}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: BurnerTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,7 +207,8 @@ GameObject:
   - component: {fileID: 8580205773512931822}
   - component: {fileID: 4840249548952696180}
   - component: {fileID: 175752488884854108}
-  m_Layer: 0
+  - component: {fileID: -1142321317798425995}
+  m_Layer: 13
   m_Name: Burner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -308,6 +309,38 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-1142321317798425995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3265239049086608187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.016666668
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 0}
+  m_BuildHeightMesh: 0
 --- !u!1 &4610231415506906581
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,7 +351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6664241516395833143}
   - component: {fileID: 5986673636387339334}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: BurnerGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -366,7 +399,7 @@ GameObject:
   - component: {fileID: 9115206883736647723}
   - component: {fileID: 8993025251795648281}
   - component: {fileID: 5105756759004799592}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Flame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
