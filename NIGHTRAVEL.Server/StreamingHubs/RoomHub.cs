@@ -58,7 +58,7 @@ namespace StreamingHubs
             // グループストレージにユーザーデータを格納
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
 
-            if(joinedUser.JoinOrder==null)
+            if(joinedUser.JoinOrder==0)
             {//部屋を作った人だった場合
 
                 //参加人数の初期化
@@ -67,18 +67,20 @@ namespace StreamingHubs
                 //1人目をマスタークライアントにする
                 joinedUser.IsMaster = true;
             }
-
-            //参加人数を足す
-            joinedUser.JoinOrder++;
-
+            else
+            {
+                //参加人数を足す
+                joinedUser.JoinOrder++;
+            }
+          
             // ルームコンテキストに参加ユーザーを保存
-            this.roomContext.JoinedUserList[joinedUser.JoinOrder-1]=joinedUser;
+            this.roomContext.JoinedUserList[joinedUser.JoinOrder]=joinedUser;
 
             // ルームデータに追加
             this.roomContext.AddPlayerData(this.ConnectionId);
 
             // 参加したことを全員に通知
-            this.Client.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder-1]);
+            this.Client.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder]);
 
             // ルームデータから接続IDを指定して自身のデータを取得
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);

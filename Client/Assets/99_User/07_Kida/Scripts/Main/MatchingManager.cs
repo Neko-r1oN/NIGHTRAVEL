@@ -40,10 +40,10 @@ public class MatchingManager : MonoBehaviour
     public async void JoinRoom()
     {
 
-        int roomId;
-        int.TryParse(inputFieldRoomId.text, out roomId);
+        int userId;
+        int.TryParse(inputFieldRoomId.text, out userId);
         string roomName="Sample";
-        await roomModel.JoinAsync(roomName,roomId );
+        await roomModel.JoinAsync(roomName,userId );
 
 
     }
