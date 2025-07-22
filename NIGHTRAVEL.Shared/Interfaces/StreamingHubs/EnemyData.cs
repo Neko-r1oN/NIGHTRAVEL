@@ -32,31 +32,31 @@ namespace Shared.Interfaces.StreamingHubs
         /// 体力
         /// Author:Nishiura
         /// </summary>
-        public float Health { get; set; }
+        public double Health { get; set; }
 
         /// <summary>
         /// 攻撃力
         /// Author:Nishiura
         /// </summary>
-        public float Attack {  get; set; }
+        public double Attack {  get; set; }
 
         /// <summary>
         /// 攻撃速度
         /// Author:Nishiura
         /// </summary>
-        public float AttackSpeed { get; set; }
+        public double AttackSpeed { get; set; }
 
         /// <summary>
         /// 防御力
         /// Author:Nishiura
         /// </summary>
-        public float Defense {  get; set; }
+        public double Defense {  get; set; }
 
         /// <summary>
         /// 移動速度
         /// Author:Nishiura
         /// </summary>
-        public float Speed { get; set; }
+        public double Speed { get; set; }
 
         /// <summary>
         /// 敵の位置

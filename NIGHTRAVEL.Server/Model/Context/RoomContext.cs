@@ -4,6 +4,7 @@
 //=============================
 using Cysharp.Runtime.Multicast;
 using NIGHTRAVEL.Server.StreamingHubs;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 
 namespace NIGHTRAVEL.Server.Model.Context
@@ -106,6 +107,17 @@ namespace NIGHTRAVEL.Server.Model.Context
         public EnemyData GetEnemyData(int enemID)
         {
             return enemyDataList[enemID];
+        }
+
+        public void SetEnemyData(Enemy enemData)
+        {
+            EnemyData setData = new EnemyData();
+            setData.Attack = enemData.attack;
+            setData.Health = enemData.hp;
+            setData.Defense = enemData.defence;
+            setData.Speed = enemData.move_speed;
+
+            enemyDataList.Add(enemData.id);
         }
 
         /// <summary>

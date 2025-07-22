@@ -236,6 +236,10 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task SpawnEnemyAsync(int enemID, Vector2 pos)
         {
+            // DBからIDを指定して敵の情報を取得する
+            GameDbContext dbContext = new GameDbContext();
+            var enemies = dbContext.Enemies.Where(enemies => enemies.id == enemID).First();
+
             // ルームデータから敵のIDを指定して生成した敵データを取得
             EnemyData enemData = this.roomContext.GetEnemyData(enemID);
 
