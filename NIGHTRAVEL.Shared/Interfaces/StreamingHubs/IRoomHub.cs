@@ -167,6 +167,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task PlayerDeadAsync(int playerID);
 
+        /// <summary>
+        /// ダメージ表記
+        /// </summary>
+        /// <param name="dmg">ダメージ</param>
+        /// <returns></returns>
+        Task DamageAsync(int dmg);
+
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);
 

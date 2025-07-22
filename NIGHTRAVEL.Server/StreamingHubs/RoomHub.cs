@@ -376,5 +376,16 @@ namespace StreamingHubs
             // 参加者全員に対象者が死亡したことを通知
             this.roomContext.Group.All.OnPlayerDead(playerID);
         }
+
+        /// <summary>
+        /// ダメージ表記同期処理
+        /// </summary>
+        /// <param name="dmg"></param>
+        /// <returns></returns>
+        public async Task DamageAsync(int dmg)
+        {
+            // 参加者全員に与えたダメージを通知
+            this.roomContext.Group.All.OnDamage(dmg);
+        }
     }
 }
