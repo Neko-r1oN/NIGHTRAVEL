@@ -12,25 +12,20 @@ using UnityEngine.UI;
 
 public class MatchingManager : MonoBehaviour
 {
-    UserModel userModel;
-    [SerializeField] RoomModel roomModel;
-    [SerializeField] GameObject userPrefab;
-    [SerializeField] Text inputFieldRoomId;
+    UserModel userModel;                    //ユーザーModel
+    [SerializeField] RoomModel roomModel;   //ルームの情報
+    [SerializeField] GameObject userPrefab; //ユーザーの情報
+    [SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Start()
     {
+        //実装時にはこの変数でユーザーを判断する
         //userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
 
         //接続処理
         await roomModel.ConnectAsync();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     /// <summary>
@@ -41,8 +36,10 @@ public class MatchingManager : MonoBehaviour
     {
 
         int userId;
-        int.TryParse(inputFieldRoomId.text, out userId);
+        int.TryParse(inputFieldUserId.text, out userId);
         string roomName="Sample";
+
+        //RoomModelの入室同期を呼び出す
         await roomModel.JoinAsync(roomName,userId );
 
 
@@ -54,7 +51,7 @@ public class MatchingManager : MonoBehaviour
     /// </summary>
     public void OnJoinedUser(JoinedUser joinedUser)
     {
-
+        //入室したときの処理を書く
         Debug.Log(joinedUser.UserData.Name + "が入室しました。");
     }
 }

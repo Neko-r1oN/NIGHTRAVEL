@@ -25,12 +25,15 @@ using static UnityEngine.Rendering.DebugUI.Table;
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
-    private GrpcChannel channel;
-    private IRoomHub roomHub;
+    private GrpcChannel channel;  //サーバーURL
+    private IRoomHub roomHub;     //roomHubの関数を呼び出す時に使う
+
+    //マスタークライアントかどうか
     public bool IsMaster { get; set; }
 
     //接続ID
     public Guid ConnectionId { get; set; }
+
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
 
@@ -97,14 +100,22 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //プレイヤーダウン通知
     public Action<int> OnPlayerDeadSyn {  get; set; }
 
-    //MagicOnion接続処理
+    /// <summary>
+    /// MagicOnion接続処理
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
     public async UniTask ConnectAsync()
     {
         var channel = GrpcChannelx.ForAddress(ServerURL);
         roomHub = await StreamingHubClient.ConnectAsync<IRoomHub, IRoomHubReceiver>(channel, this);
     }
 
-    //MagicOnion切断処理
+    /// <summary>
+    /// MagicOnion切断処理
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
     public async UniTask DisconnectAsync()
     {
         if (roomHub != null) await roomHub.DisposeAsync();
@@ -112,7 +123,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         roomHub = null; channel = null;
     }
 
-    //破棄処理
+    /// <summary>
+    /// 破棄処理
+    /// Aughter:木田晃輔
+    /// </summary>
     async void OnDestroy()
     {
         DisconnectAsync();
@@ -136,19 +150,31 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         }
     }
 
-    //入室通知(IRoomHubReceiverインターフェイスの実装)
+    /// <summary>
+    /// 入室通知(IRoomHubReceiverインターフェイスの実装)
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="joinedUser"></param>
     public void Onjoin(JoinedUser joinedUser)
     {
         OnJoinedUser?.Invoke(joinedUser);
     }
 
-    //退室
+    /// <summary>
+    /// 退室の同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
     public async UniTask LeaveAsync()
     {
         await roomHub.LeavedAsync();
     }
 
-    //退室通知
+    /// <summary>
+    /// 退室通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="user"></param>
     public void OnLeave(JoinedUser user)
     {
         OnLeavedUser(user);
@@ -230,7 +256,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnSpawnedRelic(relicID, pos);
     }
-
 
     /// <summary>
     /// レリック取得同期
@@ -467,75 +492,4 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnPlayerDeadSyn(playerID);
     }
 
-    ////敵の出現
-    //public async UniTask SpawnEnemyAsync(string enemyName, Vector3 pos)
-    //{
-    //    await roomHub.SpawnAsync(enemyName, pos);
-    //}
-
-    ////てきのId送信
-    //public async UniTask EnemyIdAsync(int enemyId)
-    //{
-    //    await roomHub.EnemyIdAsync(enemyId);
-    //}
-
-    ////敵のID通知
-    //public void OnIdEnemy(int enemyId)
-    //{
-    //    OnIdAsyncEnemy(enemyId);
-    //}
-
-    ////敵の移動回転
-    //public void OnMoveEnemy(string enemyName, Vector3 pos, Quaternion rot)
-    //{
-    //    OnMovedEnemy(enemyName, pos, rot);
-    //}
-
-    ////敵の移動回転同期
-    //public async UniTask MoveEnemyAsync(string enemyName, Vector3 pos, Quaternion rot)
-    //{
-    //    await roomHub.EnemyMoveAsync(enemyName, pos, rot);
-    //}
-
-    ////敵の撃破
-    //public void OnExcusionEnemy(string enemyName)
-    //{
-    //    OnExcusionedEnemy(enemyName);
-    //}
-
-    ////敵の撃破同期
-    //public async UniTask ExcusionEnemyAsync(string enemyName)
-    //{
-    //    await roomHub.EnemyExcusionAsync(enemyName);
-    //}
-
-    ////マスタークライアント譲渡
-    //public async UniTask MasterLostAsync()
-    //{
-    //    await roomHub.MasterLostAsync();
-    //}
-
-    ////オブジェクトの生成同期
-    //public async UniTask ObjectSpawnAsync(string objectName, Vector3 pos, Quaternion rot, Vector3 fow)
-    //{
-    //    await roomHub.ObjectSpawnAsync(ConnectionId, objectName, pos, rot, fow);
-    //}
-
-    ////オブジェクトの生成
-    //public void OnObjectSpawn(Guid connectionId, string objectName, Vector3 pos, Quaternion rot, Vector3 fow)
-    //{
-    //    OnSpawnObject(connectionId, objectName, pos, rot, fow);
-    //}
-
-    ////オブジェクトの移動同期
-    //public async UniTask ObjectMoveAsync(string objectName, Vector3 pos, Quaternion rot)
-    //{
-    //    await roomHub.ObjectMoveAsync(objectName, pos, rot);
-    //}
-
-    ////オブジェクトの移動
-    //public void OnObjectMove(string objectName, Vector3 pos, Quaternion rot)
-    //{
-    //    OnMovedObject(objectName, pos, rot);
-    //}
 }
