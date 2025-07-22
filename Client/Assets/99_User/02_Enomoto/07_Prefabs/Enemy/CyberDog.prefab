@@ -1977,7 +1977,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewAngleMax: 65
-  viewDistMax: 6
+  viewDistMax: 8
 --- !u!114 &3136978941888288294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1990,9 +1990,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3c588392de9b6a4db890f174a47c438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 30
-  baseDefense: 10
-  basePower: 10
+  baseHp: 100
+  baseDefense: 15
+  basePower: 35
   baseJumpPower: 7
   baseMoveSpeed: 8
   hp: 0
@@ -2003,6 +2003,7 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 55089399200334659}
+  destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 8821416632199840584}
   - {fileID: 7787955724384288438}

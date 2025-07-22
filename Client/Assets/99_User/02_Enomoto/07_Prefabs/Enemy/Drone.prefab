@@ -34598,9 +34598,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86c6d2a67d0134d48b4ac4f34960d703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 25
-  baseDefense: 10
-  basePower: 10
+  baseHp: 40
+  baseDefense: 40
+  basePower: 0
   baseJumpPower: 10
   baseMoveSpeed: 5
   hp: 0
@@ -34611,12 +34611,13 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 0}
+  destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 4666127832742053817}
   bulletNum: 0
-  shotsPerSecond: 1.5
+  shotsPerSecond: 1
   attackCoolTime: 0.5
-  attackDist: 6
+  attackDist: 8
   hitTime: 0.5
   isBoss: 0
   isElite: 0
@@ -44789,7 +44790,7 @@ MonoBehaviour:
   canAttackPlayer: 1
   canAttackObject: 0
   owner: {fileID: 3047601142500118110}
-  damageValue: 1
+  damageValue: 2
 --- !u!1 &5357934579754950075
 GameObject:
   m_ObjectHideFlags: 0
@@ -64241,7 +64242,7 @@ ParticleSystem:
   m_GameObject: {fileID: 7287706319061890216}
   serializedVersion: 8
   lengthInSec: 0.1
-  simulationSpeed: 1
+  simulationSpeed: 0.6
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0

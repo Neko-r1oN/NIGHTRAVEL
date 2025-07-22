@@ -50,8 +50,8 @@ public class EnemyChaseAI : MonoBehaviour
     /// </summary>
     public void DoMove(Vector2 targetPos)
     {
-        agent.ResetPath();
         if (!agent) Start();
+        agent.ResetPath();
         agent.destination = targetPos;
     }
 

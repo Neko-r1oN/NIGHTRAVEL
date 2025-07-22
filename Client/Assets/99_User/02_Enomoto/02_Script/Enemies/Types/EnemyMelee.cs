@@ -117,7 +117,7 @@
 //                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
 //            }
 //        }
-//        cancellCoroutines.Add(StartCoroutine(AttackCooldown(attackCoolTime)));
+//        cancellCoroutines.Add(StartCoroutine(AttackCooldownCoroutine(attackCoolTime)));
 //    }
 
 //    /// <summary>
@@ -179,7 +179,7 @@
 //    /// 攻撃時のクールダウン処理
 //    /// </summary>
 //    /// <returns></returns>
-//    IEnumerator AttackCooldown(float time)
+//    IEnumerator AttackCooldownCoroutine(float time)
 //    {
 //        isAttacking = true;
 //        yield return new WaitForSeconds(time);

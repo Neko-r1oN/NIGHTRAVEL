@@ -128,26 +128,6 @@ public class Drone : EnemyBase
                     break;
             }
 
-            // 行動パターン
-            //if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
-            //{
-            //    chaseAI.Stop();
-            //    Attack();
-            //}
-            //else if (moveSpeed > 0 && canChaseTarget && target)
-            //{
-            //    Tracking();
-            //}
-            //else if (moveSpeed > 0 && canPatrol && !isPatrolPaused)
-            //{
-            //    Patorol();
-            //}
-            //else
-            //{
-            //    chaseAI.Stop();
-            //    Idle();
-            //}
-
             SetAnimId((int)ANIM_ID.Idle);
         }
     }
@@ -231,26 +211,23 @@ public class Drone : EnemyBase
     #region テクスチャ・アニメーション関連
 
     /// <summary>
-    /// スプライトが透明になるときに呼ばれる処理
+    /// スポーンアニメメーション開始時
     /// </summary>
-    protected override void OnTransparentSprites()
+    public override void OnSpawnAnimEvent()
     {
+        base.OnSpawnAnimEvent();
         SetAnimId((int)ANIM_ID.Idle);
-
-        // ランダムな場所に向かって少し移動
-        float moveRange = 2f;
-        float posX = transform.position.x + UnityEngine.Random.Range(-moveRange, moveRange);
-        float posY = transform.position.y + UnityEngine.Random.Range(-moveRange, moveRange);
-        Vector2 targetPoint = new Vector2(posX, posY);
-        chaseAI.DoMove(targetPoint);
+        chaseAI.DoRndMove();
     }
 
     /// <summary>
-    /// フェードインが完了したときに呼ばれる処理
+    /// スポーンアニメーションが終了したとき
     /// </summary>
-    protected override void OnFadeInComp()
+    public override void OnEndSpawnAnimEvent()
     {
+        base.OnEndSpawnAnimEvent();
         chaseAI.Stop();
+        ApplyStun(0.5f, false);
     }
 
     /// <summary>

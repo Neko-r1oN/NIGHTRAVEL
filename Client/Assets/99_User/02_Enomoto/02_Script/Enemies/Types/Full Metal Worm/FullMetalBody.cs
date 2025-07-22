@@ -19,6 +19,7 @@ public class FullMetalBody : EnemyBase
         Open,
         Close,
         Dead,
+        Despown
     }
 
     /// <summary>
@@ -45,7 +46,8 @@ public class FullMetalBody : EnemyBase
     public ROLE_TYPE RoleType { get { return roleType; } }
 
     #region コンポーネント関連
-    FullMetalWorm worm;
+    [Foldout("コンポーネント")]
+    [SerializeField] FullMetalWorm worm;
     #endregion
 
     #region 攻撃関連
@@ -63,14 +65,16 @@ public class FullMetalBody : EnemyBase
     float aimRotetionSpeed = 3f;
     #endregion
 
+    #region テクスチャ・アニメーション関連
+    [Foldout("テクスチャ・アニメーション")]
+    [SerializeField] Animator selfJointAnimator;    // 自身に付いている歯車のAnimator
+    #endregion
+
     protected override void Start()
     {
         base.Start();
         isAttacking = false;
         doOnceDecision = false;
-        isSpawn = false;
-        isInvincible = false;
-        worm = transform.parent.GetComponent<FullMetalWorm>();
     }
 
     /// <summary>
@@ -199,7 +203,10 @@ public class FullMetalBody : EnemyBase
             string key = COROUTINE.GenerateEnemeiesCoroutine.ToString();
             if (!ContaintsManagedCoroutine(key))
             {
-                Coroutine coroutine = StartCoroutine(GenerateEnemeiesCoroutine(maxEnemies, () => { RemoveCoroutineByKey(key); }));
+                Coroutine coroutine = StartCoroutine(GenerateEnemeiesCoroutine(maxEnemies, () => {
+                    SetAnimId((int)ANIM_ID.Close);  // ハッチが閉じるアニメーション
+                    RemoveCoroutineByKey(key); 
+                }));
                 managedCoroutines.Add(key, coroutine);
             }
         }
@@ -212,12 +219,15 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     IEnumerator GenerateEnemeiesCoroutine(int maxEnemies, Action onFinished)
     {
+        SetAnimId((int)ANIM_ID.Open);  // ハッチが開くアニメーション
         for (int i = 0; i < maxEnemies; i++)
         {
             UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
             float time = UnityEngine.Random.Range(0f, 0.5f);
             yield return new WaitForSeconds(time);
-            if (worm.GeneratedEnemies.Count >= worm.GeneratedMax) yield break;  // 既に生成上限に達している場合
+
+            // 既に生成上限に達している場合は生成を終了
+            if (worm.GeneratedEnemies.Count >= worm.GeneratedMax) break;
 
             // ここに生成する処理 && ハッチが開くアニメーション####################################
             UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
@@ -235,8 +245,8 @@ public class FullMetalBody : EnemyBase
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
 
         if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
-        enemy.TransparentSprites();
         enemy.Players = GetAlivePlayers();
+        enemy.Target = GetNearPlayer(enemy.transform.position);
         return enemyObj;
     }
 
@@ -250,6 +260,7 @@ public class FullMetalBody : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        selfJointAnimator.SetInteger("animation_id", (int)ANIM_ID.Dead);
         SetAnimId((int)ANIM_ID.Dead);
         StopAllManagedCoroutines();
         gunPsControllerList.ForEach(item => { item.StopShooting(); });
@@ -287,6 +298,35 @@ public class FullMetalBody : EnemyBase
             OnDead();
             yield break;
         }
+    }
+
+    /// <summary>
+    /// デスポーンさせる
+    /// </summary>
+    public void Despown()
+    {
+        selfJointAnimator.SetInteger("animation_id", (int)ANIM_ID.Despown);
+        SetAnimId((int)ANIM_ID.Despown);
+    }
+
+    #endregion
+
+    #region テクスチャ・アニメーション関連
+
+    /// <summary>
+    /// スポーンアニメメーション開始時
+    /// </summary>
+    public void OnSpawnAnimEventByBody()
+    {
+        OnSpawnAnimEvent();
+    }
+
+    /// <summary>
+    /// スポーンアニメーションが終了したとき
+    /// </summary>
+    public void OnEndSpawnAnimEventByBody()
+    {
+        OnEndSpawnAnimEvent();
     }
 
     #endregion

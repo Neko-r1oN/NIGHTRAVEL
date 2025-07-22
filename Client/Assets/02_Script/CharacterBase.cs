@@ -132,12 +132,19 @@ abstract public class CharacterBase : MonoBehaviour
     #region 現在のステータス関連
     // インスペクター上で見るためのpublic
     // 後でpublicを消す
+    [Foldout("[Debug用] 現在のステータス")]
     public int hp;
+    [Foldout("[Debug用] 現在のステータス")]
     public int defense;
+    [Foldout("[Debug用] 現在のステータス")]
     public int power;
+    [Foldout("[Debug用] 現在のステータス")]
     public float jumpPower;
+    [Foldout("[Debug用] 現在のステータス")]
     public float moveSpeed;
+    [Foldout("[Debug用] 現在のステータス")]
     public float moveSpeedFactor;
+    [Foldout("[Debug用] 現在のステータス")]
     public float attackSpeedFactor;
 
     protected StatusEffectController effectController;

@@ -3,7 +3,9 @@
 //  Author:r-enomoto
 //**************************************************
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class EnemySightChecker : MonoBehaviour
 {
@@ -26,7 +28,7 @@ public class EnemySightChecker : MonoBehaviour
         GameObject target = GetComponent<EnemyBase>().Target;
         if (!target) return false;
 
-        Vector2 dirToTarget = target.transform.position - transform.position;
+        Vector2 dirToTarget = (target.transform.position - transform.position).normalized;
         Vector2 angleVec = new Vector2(TransformUtils.GetFacingDirection(transform), 0);
         float angle = Vector2.Angle(dirToTarget, angleVec);
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, viewDistMax, targetLayerMask);
@@ -40,10 +42,11 @@ public class EnemySightChecker : MonoBehaviour
     public bool IsObstructed()
     {
         GameObject target = GetComponent<EnemyBase>().Target;
-        Vector2 dirToTarget = target.transform.position - transform.position;
-        float dist = dirToTarget.magnitude;
+        Vector2 dirToTarget = (target.transform.position - transform.position).normalized;
+        float dist = (target.transform.position - transform.position).magnitude;
         float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
         RaycastHit2D hit2D = Physics2D.Raycast(transform.position, dirToTarget, dist, targetLayerMask);
+
         return hit2D && !hit2D.collider.gameObject.CompareTag("Player");
     }
 
