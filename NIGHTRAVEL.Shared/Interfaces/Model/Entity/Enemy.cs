@@ -19,8 +19,10 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
     {
         public int id { get; set; }                        //敵のID
         public string name { get; set; }                    //敵の名前
+        public bool isBoss { get; set; }                    //ボスかどうか
         public double hp { get; set; }                      //敵のHP
         public double attack { get; set; }                  //敵の攻撃力
+        public double attack_speed {  get; set; }           //敵の攻撃速度
         public double defence { get; set; }                 //敵の防御力
         public double move_speed { get; set; }              //敵の移動速度
         public string stage_id { get; set; }                //ステージのID(識別用)
