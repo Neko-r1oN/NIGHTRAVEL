@@ -4,6 +4,8 @@
 // Date:2025/07/07
 //===================
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Burner : GimmickBase
 {
@@ -63,12 +65,18 @@ public class Burner : GimmickBase
     {
         if(isFlame==true)
         {//isFlameがtrueだったら
+            //NavMeshObstacleコンポーネントを非アクティブ状態にする
+            GetComponent<NavMeshObstacle>().enabled = false;
+
             //flameを非アクティブ状態にする
             flame.SetActive(false);
             isFlame = false;
         }
         else if(isFlame==false)
         {//isFlameがfalseだったら
+         //NavMeshObstacleコンポーネントをアクティブ状態にする
+            GetComponent<NavMeshObstacle>().enabled = true;
+
             //flameをアクティブ状態にする
             flame.SetActive(true); 
             isFlame = true;
