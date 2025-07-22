@@ -117,7 +117,7 @@ namespace NIGHTRAVEL.Server.Model.Context
             setData.Defense = enemData.defence;
             setData.Speed = enemData.move_speed;
 
-            enemyDataList.Add(enemData.id);
+            //enemyDataList.Add(enemData.id);
         }
 
         /// <summary>
