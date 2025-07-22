@@ -184,6 +184,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="playerID">プレイヤーID</param>
         void OnPlayerDead(int playerID);
 
+        /// <summary>
+        /// ダメージ表記通知
+        /// </summary>
+        /// <param name="dmg">ダメージ</param>
+        void OnDamage(int dmg);
+
         ////敵のID同期
         //void OnIdEnemy(int enemyId);
 

@@ -287,7 +287,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="pos"></param>
     /// <returns></returns>
-    public async Task SpawnEnemyAsync(int enemID, Vector2 pos)
+    public async Task SpawnEnemyAsync(List<int> enemID, Vector2 pos)
     {
         await roomHub.SpawnEnemyAsync(enemID, pos);
     }
