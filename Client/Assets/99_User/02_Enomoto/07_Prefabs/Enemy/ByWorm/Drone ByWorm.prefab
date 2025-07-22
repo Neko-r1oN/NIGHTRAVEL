@@ -29675,9 +29675,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHp: 20
-  baseDefense: 10
-  basePower: 10
-  baseJumpPower: 10
+  baseDefense: 20
+  basePower: 0
+  baseJumpPower: 0
   baseMoveSpeed: 5
   hp: 0
   defense: 0
@@ -29687,6 +29687,7 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 0}
+  destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 3326093757011905295}
   bulletNum: 0
@@ -35117,7 +35118,7 @@ ParticleSystem:
   m_GameObject: {fileID: 4274010938057447293}
   serializedVersion: 8
   lengthInSec: 0.1
-  simulationSpeed: 1
+  simulationSpeed: 0.6
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -73937,7 +73938,7 @@ MonoBehaviour:
   canAttackPlayer: 1
   canAttackObject: 0
   owner: {fileID: 3488628306998136812}
-  damageValue: 1
+  damageValue: 2
 --- !u!1 &8850494501944022170
 GameObject:
   m_ObjectHideFlags: 0
