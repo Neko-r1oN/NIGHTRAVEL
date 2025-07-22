@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -93,8 +94,6 @@ public class RelicManager : MonoBehaviour
     /// </summary>
     public void GenerateRelic(Vector3 bossPos)
     {
-
-
         randomRarity = GetRandomRarity();
 
         List<GameObject> filteredRelics = relicPrefab.
@@ -159,11 +158,14 @@ public class RelicManager : MonoBehaviour
     public void ShuffleRelic()
     {
         int count = haveRelicList.Count;
+
         haveRelicList.Clear();
         UIManager.Instance.ClearRelic();
+
         for (int i = 0; i < count; i++)
         {
             int relicnum = Random.Range(0, relicSprites.Count);
+
             relicPrefab[relicnum].GetComponent<Relic>().AddRelic();
         }
     }
