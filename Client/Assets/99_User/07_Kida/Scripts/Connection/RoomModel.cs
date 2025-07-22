@@ -100,6 +100,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //プレイヤーダウン通知
     public Action<int> OnPlayerDeadSyn {  get; set; }
 
+    //ダメージ表記通知
+    public Action<int> OnDamaged {  get; set; }
+
     /// <summary>
     /// MagicOnion接続処理
     /// Aughter:木田晃輔
@@ -220,6 +223,21 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
     {
         OnMovePlayerSyn(user, pos, rot, animID);
+    }
+
+
+    /// <summary>
+    /// 敵の位置同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemIDList"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <param name="anim"></param>
+    /// <returns></returns>
+    public async Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim)
+    {
+        await roomHub.MoveEnemyAsync(enemIDList, pos, rot, anim);
     }
 
     /// <summary>
@@ -490,6 +508,27 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnPlayerDead(int playerID)
     {
         OnPlayerDeadSyn(playerID);
+    }
+
+    /// <summary>
+    /// ダメージ表記同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="dmg"></param>
+    /// <returns></returns>
+    public async Task DamageAsync(int dmg)
+    {
+        await roomHub.DamageAsync(dmg);
+    }
+
+    /// <summary>
+    /// ダメージ表記通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="dmg"></param>
+    public void OnDamage(int dmg)
+    {
+        OnDamaged(dmg);
     }
 
 }
