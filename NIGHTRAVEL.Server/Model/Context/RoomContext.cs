@@ -112,12 +112,16 @@ namespace NIGHTRAVEL.Server.Model.Context
         public void SetEnemyData(Enemy enemData)
         {
             EnemyData setData = new EnemyData();
-            setData.Attack = enemData.attack;
+
+            // 受け取ったデータをエネミーデータに格納
+            setData.EnemyName = enemData.name;
             setData.Health = enemData.hp;
+            setData.Attack = enemData.attack;
             setData.Defense = enemData.defence;
             setData.Speed = enemData.move_speed;
+            setData.AttackSpeed = enemData.attack_speed;
 
-            //enemyDataList.Add(enemData.id);
+            enemyDataList.Add(enemData.id, setData);
         }
 
         /// <summary>

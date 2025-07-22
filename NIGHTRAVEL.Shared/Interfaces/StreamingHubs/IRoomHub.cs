@@ -91,7 +91,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        Task SpawnEnemyAsync(int enemID, Vector2 pos);
+        Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos);
 
         /// <summary>
         /// ギミック起動

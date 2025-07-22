@@ -80,7 +80,7 @@ namespace StreamingHubs
             this.roomContext.AddPlayerData(this.ConnectionId);
 
             // 参加したことを全員に通知
-            this.Client.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder]);
+            this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder]);
 
             // ルームデータから接続IDを指定して自身のデータを取得
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
@@ -106,7 +106,7 @@ namespace StreamingHubs
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
 
             // ルーム参加者全員に、ユーザーの退室通知を送信
-            this.Client.OnLeave(joinedUser);
+            this.roomContext.Group.All.OnLeave(joinedUser);
 
             if(joinedUser==null)
             {
@@ -134,7 +134,7 @@ namespace StreamingHubs
             joinedUser.IsReady = true; // 準備完了にする
 
             // ルーム参加者全員に、自分が準備完了した通知を送信
-            this.Client.OnReady(this.ConnectionId);
+            this.roomContext.Group.All.OnReady(this.ConnectionId);
 
             foreach (var user in this.roomContext.JoinedUserList)
             { // 現在の参加者数分ループ
@@ -142,7 +142,7 @@ namespace StreamingHubs
             }
 
             // ゲームが開始できる場合、開始通知をする
-            if (canStartGame) this.Client.OnStartGame();
+            if (canStartGame) this.roomContext.Group.All.OnStartGame();
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace StreamingHubs
             playerData.State = anim;   // アニメーションIDを渡す
             
             // ルーム参加者全員に、ユーザ情報通知を送信
-            this.Client.OnMovePlayer(playerData.JoinedUser, pos, rot, anim);
+            this.roomContext.Group.All.OnMovePlayer(playerData.JoinedUser, pos, rot, anim);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace StreamingHubs
                 enemData.State = anim;   // アニメーションIDを渡す
 
                 // ルーム参加者全員に、ユーザ情報通知を送信
-                this.Client.OnMoveEnemy(enemID, pos, rot, anim);
+                this.roomContext.Group.All.OnMoveEnemy(enemID, pos, rot, anim);
             }
         }
 
@@ -211,7 +211,7 @@ namespace StreamingHubs
             if (relicFind.Count() <= 0) return; // 結果が空の場合処理しない
 
             // ルーム参加者全員に、レリックのIDと生成位置を送信
-            this.Client.OnSpawnRelic(relicID, pos);
+            this.roomContext.Group.All.OnSpawnRelic(relicID, pos);
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace StreamingHubs
         public async Task GetRelicAsync(int relicID, string relicName)
         {
             // ルーム参加者全員に、取得したレリック名を送信
-            this.Client.OnGetRelic(relicID, relicName);
+            this.roomContext.Group.All.OnGetRelic(relicID, relicName);
         }
 
         /// <summary>
@@ -234,19 +234,26 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        public async Task SpawnEnemyAsync(int enemID, Vector2 pos)
+        public async Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos)
         {
-            // DBからIDを指定して敵の情報を取得する
-            GameDbContext dbContext = new GameDbContext();
-            var enemies = dbContext.Enemies.Where(enemies => enemies.id == enemID).First();
+            // 受け取った敵ID数分ループ
+            foreach (var enemID in enemIDList)
+            {
+                // DBからIDを指定して敵の情報を取得する
+                GameDbContext dbContext = new GameDbContext();
+                var enemies = dbContext.Enemies.Where(enemies => enemies.id == enemID).First();
 
-            // ルームデータから敵のIDを指定して生成した敵データを取得
-            EnemyData enemData = this.roomContext.GetEnemyData(enemID);
+                // 取得したものをエネミーデータに格納する
+                this.roomContext.SetEnemyData(enemies);
 
-            enemData.Position = pos; // 敵の位置に渡された位置を代入
+                // ルームデータから敵のIDを指定して生成した敵データを取得
+                EnemyData enemData = this.roomContext.GetEnemyData(enemID);
 
-            // ルーム参加者全員に、取得した敵情報と生成位置を送信
-            this.Client.OnSpawnEnemy(enemData, pos);
+                enemData.Position = pos; // 敵の位置に渡された位置を代入
+
+                // ルーム参加者全員に、取得した敵情報と生成位置を送信
+                this.roomContext.Group.All.OnSpawnEnemy(enemData, pos);
+            }
         }
 
         /// <summary>
@@ -261,7 +268,7 @@ namespace StreamingHubs
             GimmickData gimmickData = this.roomContext.GetGimmickData(gimID);
 
             // 参加者全員にギミック情報を通知？？？？
-            this.Client.OnBootGimmick(gimmickData);
+            this.roomContext.Group.All.OnBootGimmick(gimmickData);
         }
 
         /// <summary>
@@ -274,7 +281,7 @@ namespace StreamingHubs
         {
             difID++; // 受け取った難易度に+1
             // 参加者全員に難易度の上昇を通知
-            this.Client.OnAscendDifficulty(difID);
+            this.roomContext.Group.All.OnAscendDifficulty(difID);
         }
 
         /// <summary>
@@ -290,7 +297,7 @@ namespace StreamingHubs
             else if (stageID == 3 && !isBossStage) stageID = 1;             // ラスボスへ進まない場合、ステージ1へ移動
 
             // 参加者全員にステージの進行を通知
-            this.Client.OnAdanceNextStage(stageID);
+            this.roomContext.Group.All.OnAdanceNextStage(stageID);
         }
 
         /// <summary>
@@ -303,7 +310,7 @@ namespace StreamingHubs
         public async Task PlayerHealthAsync(int playerID, float playerHP)
         {
             // 参加者全員に受け取ったIDのプレイヤーが受け取ったHPになったことを通知
-            this.Client.OnPlayerHealth(playerID, playerHP);
+            this.roomContext.Group.All.OnPlayerHealth(playerID, playerHP);
         }
 
         /// <summary>
@@ -316,7 +323,7 @@ namespace StreamingHubs
         public async Task EnemyHealthAsync(int enemID, float enemHP)
         {
             // 参加者全員に受け取ったIDの敵が受け取ったHPになったことを通知
-            this.Client.OnEnemyHealth(enemID, enemHP);
+            this.roomContext.Group.All.OnEnemyHealth(enemID, enemHP);
         }
 
         /// <summary>
@@ -328,7 +335,7 @@ namespace StreamingHubs
         public async Task KilledEnemyAsync(int enemID)
         {
             // 参加者全員に受け取ったIDの敵が死亡したことを通知
-            this.Client.OnKilledEnemy(enemID);
+            this.roomContext.Group.All.OnKilledEnemy(enemID);
         }
 
         /// <summary>
@@ -340,7 +347,7 @@ namespace StreamingHubs
         public async Task EXPAsync(int exp)
         {
             // 参加者全員に受け取ったEXPの値を通知
-            this.Client.OnEXP(exp);
+            this.roomContext.Group.All.OnEXP(exp);
         }
 
         /// <summary>
@@ -351,7 +358,7 @@ namespace StreamingHubs
         public async Task LevelUpAsync()
         {
             // 参加者全員にレベルアップしたことを通知
-            this.Client.OnLevelUp();
+            this.roomContext.Group.All.OnLevelUp();
         }
 
         /// <summary>
@@ -367,7 +374,7 @@ namespace StreamingHubs
             playerData.IsDead = false; // 死亡判定をtrueにする
 
             // 参加者全員に対象者が死亡したことを通知
-            this.Client.OnPlayerDead(playerID);
+            this.roomContext.Group.All.OnPlayerDead(playerID);
         }
     }
 }
