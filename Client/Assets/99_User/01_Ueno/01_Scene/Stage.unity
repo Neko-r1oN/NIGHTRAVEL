@@ -9886,7 +9886,7 @@ MonoBehaviour:
   m_BuildHeightMesh: 0
   m_MinRegionArea: 0
   m_HideEditorLogs: 0
-  m_NavMeshData: {fileID: 23800000, guid: 83b514ddbe43e4f4aab29d729bf7140f, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: ae135c08e6f39e5458fffb721963a904, type: 2}
 --- !u!4 &1125976889 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1955433450106026678, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
@@ -24181,7 +24181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 5
+  spawnInterval: 2000
   maxSpawnCnt: 100
   bossPrefab: {fileID: 2057467032305792167, guid: 99ef675ffdb865640a311e49275391c2, type: 3}
   minCameraPos: {fileID: 1980890281}
@@ -24189,7 +24189,7 @@ MonoBehaviour:
   xRadius: 10
   yRadius: 6
   distMinSpawnPos: 3
-  knockTermsNum: 5
+  knockTermsNum: 100
   player: {fileID: 7393988378002152513}
   players: []
 --- !u!4 &2102152737
@@ -78445,7 +78445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 5000
   baseDefense: 10
-  basePower: 15
+  basePower: 50
   baseJumpPower: 10
   baseMoveSpeed: 60
   hp: 150

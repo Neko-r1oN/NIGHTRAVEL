@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static CharacterBase;
 using ColorUtility = UnityEngine.ColorUtility;
 
 public class UIManager : MonoBehaviour
@@ -363,12 +364,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    [ContextMenu("UpStatusChange")]
     /// <summary>
     /// ステータス変更項目を変更
     /// </summary>
     public void UpStatusChange()
     {
-
+        player.ApplyStatusModifierByRate(0.15f, STATUS_TYPE.Power);
     }
 
     /// <summary>

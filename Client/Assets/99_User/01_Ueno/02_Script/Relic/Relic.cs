@@ -20,6 +20,8 @@ public class Relic : MonoBehaviour
     /// </summary>
     public void AddRelic()
     {
+        relicDeta = new RelicDeta(id, rarity);
+
         RelicManager.Instance.AddRelic(relicDeta);
     }
 

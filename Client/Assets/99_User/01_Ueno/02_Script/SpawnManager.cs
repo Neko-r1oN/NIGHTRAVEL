@@ -61,8 +61,8 @@ public class SpawnManager : MonoBehaviour
         item = new float[enemyList.Count];
 
         // 割合
-        item[0] = 27; // ドローン
-        item[1] = 73; // いぬ
+        item[0] = 24; // ドローン
+        item[1] = 76; // いぬ
     }
 
     /// <summary>
@@ -146,6 +146,7 @@ public class SpawnManager : MonoBehaviour
     {
         for (int i = 0; i < num; i++)
         {
+            // 確率の計算
             int listNum = Choose(item);
 
             EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
@@ -280,7 +281,7 @@ public class SpawnManager : MonoBehaviour
         int onePercentOfMaxEnemies =
             Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
 
-        if (number < 5 * (int)LevelManager.Instance.GameLevel
+        if (number < 5 * ((int)LevelManager.Instance.GameLevel + 1) 
             && eliteEnemyCnt < onePercentOfMaxEnemies)
         {// 5%(* 現在のゲームレベル)以下で、エリート敵生成限度に達していなかったら
             // エリート敵生成
