@@ -15,6 +15,7 @@ public class MatchingManager : MonoBehaviour
     UserModel userModel;                    //ユーザーModel
     [SerializeField] RoomModel roomModel;   //ルームの情報
     [SerializeField] GameObject userPrefab; //ユーザーの情報
+    [SerializeField] Text inputFieldRoomId; //ルームのID(デバッグ用)
     [SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
 
 
@@ -26,6 +27,10 @@ public class MatchingManager : MonoBehaviour
 
         //接続処理
         await roomModel.ConnectAsync();
+        //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
+        roomModel.OnJoinedUser += this.OnJoinedUser;
+        //ユーザーが退室した時にOnLeavedUserメソッドを実行するよう、モデルに登録
+        roomModel.OnLeavedUser += this.OnLeavedUser;
     }
 
     /// <summary>
@@ -37,7 +42,7 @@ public class MatchingManager : MonoBehaviour
 
         int userId;
         int.TryParse(inputFieldUserId.text, out userId);
-        string roomName="Sample";
+        string roomName=inputFieldRoomId.text;
 
         //RoomModelの入室同期を呼び出す
         await roomModel.JoinAsync(roomName,userId );
@@ -46,7 +51,16 @@ public class MatchingManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 入室完了処理
+    /// 退室処理
+    /// </summary>
+    public async void LeaveRoom()
+    {
+        //RoomHubの退室同期を呼び出す
+        await roomModel.LeaveAsync();
+    }
+
+    /// <summary>
+    /// 入室完了通知
     /// Aughter:木田晃輔
     /// </summary>
     public void OnJoinedUser(JoinedUser joinedUser)
@@ -54,4 +68,14 @@ public class MatchingManager : MonoBehaviour
         //入室したときの処理を書く
         Debug.Log(joinedUser.UserData.Name + "が入室しました。");
     }
+
+    /// <summary>
+    /// 退室完了通知
+    /// </summary>
+    public void OnLeavedUser(JoinedUser joinedUser)
+    {
+        //退室したときの処理を書く
+        Debug.Log(joinedUser.UserData.Name + "が退室しました。");
+    }
+
 }

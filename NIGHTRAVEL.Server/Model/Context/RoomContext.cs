@@ -6,34 +6,36 @@ using Cysharp.Runtime.Multicast;
 using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
+using System.Numerics;
+using UnityEngine;
 
 namespace NIGHTRAVEL.Server.Model.Context
 {
     public class RoomContext
-    {   
+    {
         /// <summary>
         /// コンテキストID
         /// Author:Kida
         /// </summary>
-        public Guid Id { get;}
+        public Guid Id { get; }
 
         /// <summary>
         /// ルーム名
         /// Author:Kida
         /// </summary>
-        public string Name { get;}
+        public string Name { get; }
 
         /// <summary>
         /// グループ
         /// Author:Kida
         /// </summary>
-        public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group {  get;}
+        public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; }
 
         /// <summary>
         /// 参加者リスト
         /// Author:Kida
         /// </summary>
-        public JoinedUser[] JoinedUserList { get; set; }
+        public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new();
 
         /// <summary>
         /// ルームデータリスト
@@ -55,7 +57,7 @@ namespace NIGHTRAVEL.Server.Model.Context
 
         //[その他、ゲームのルームデータをフィールドに保存]
 
-        public RoomContext(IMulticastGroupProvider groupProvider,string roomName)
+        public RoomContext(IMulticastGroupProvider groupProvider, string roomName)
         {
             Id = Guid.NewGuid();
             Name = roomName;
@@ -70,8 +72,24 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// <param name="conID">自身の接続ID</param>
         public void AddPlayerData(Guid conID)
         {
+            PlayerData playerSetData = new PlayerData();
+
+            //初期データを設定
+            playerSetData.JoinedUser = new JoinedUser();
+            playerSetData.PlayerID = 0;
+            playerSetData.Health = 0;
+            playerSetData.Attack = 0;
+            playerSetData.AttackSpeed = 0;
+            playerSetData.Defense = 0;
+            playerSetData.Speed = 0;
+            playerSetData.Position = new UnityEngine.Vector2(0, 0);
+            playerSetData.Rotation = new UnityEngine.Quaternion(0, 0, 0, 0);
+            playerSetData.State = 0;
+            playerSetData.DebuffList = new List<int> { 0, 0, 0 };
+            playerSetData.IsDead = false;
+
             // データリストに自身のデータを追加
-            playerDataList.Add(conID,new PlayerData());
+            playerDataList.Add(conID, playerSetData);
         }
 
         /// <summary>
@@ -85,7 +103,7 @@ namespace NIGHTRAVEL.Server.Model.Context
             playerDataList.Remove(conID);
         }
 
-        public void Dispose() { 
+        public void Dispose() {
             Group.Dispose();
         }
 
@@ -139,14 +157,13 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// ユーザーの退出処理
         /// Aughter:Kida
         /// </summary>
-        /// <param name="joinOrder">参加順</param>
         /// <returns></returns>
-        public void RemoveUser(int joinOrder)
+        public void RemoveUser(Guid guid)
         {
-            if(JoinedUserList != null)
+            if (JoinedUserList != null)
             { //参加者リストが存在している場合
                 // 退出したユーザーを特定して削除
-                JoinedUserList.Where( value => value == JoinedUserList[joinOrder]).ToArray();
+                JoinedUserList.Remove(guid);
             }
         }
     }
