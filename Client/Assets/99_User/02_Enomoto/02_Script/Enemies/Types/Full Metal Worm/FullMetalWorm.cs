@@ -307,7 +307,7 @@ public class FullMetalWorm : EnemyBase
         // 抽選した値で次の行動パターンを決定する
         if (randomDecision <= attackWeight) nextDecide = DECIDE_TYPE.Attack;
         else nextDecide = DECIDE_TYPE.Move;
-        nextDecide = DECIDE_TYPE.Move;
+
         doOnceDecision = true;
         onFinished?.Invoke();
     }
