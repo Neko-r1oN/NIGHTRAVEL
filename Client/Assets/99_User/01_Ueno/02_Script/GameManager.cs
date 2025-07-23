@@ -136,10 +136,8 @@ public class GameManager : MonoBehaviour
             if (spawnPos != null)
             {// •Ô‚è’l‚ªnull‚¶‚á‚È‚¢‚Æ‚«
                 boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
-                boss.GetComponent<EnemyBase>().IsBoss = true;
-
-                boss.GetComponent<EnemyBase>().Players.Add(player);
-                boss.GetComponent<EnemyBase>().SetNearTarget();
+ 
+                //boss.GetComponent<EnemyBase>().SetNearTarget();
             }
 
             isSpawnBoss = true;
@@ -153,20 +151,23 @@ public class GameManager : MonoBehaviour
             Invoke(nameof(ChengScene), 15f);
         }
 
-        if (spawnCnt < maxSpawnCnt  && !isBossDead)
+        if (spawnCnt < maxSpawnCnt && !isBossDead)
         {// ƒXƒ|[ƒ“‰ñ”‚ªŒÀŠE‚É’B‚µ‚Ä‚¢‚é‚©
             elapsedTime += Time.deltaTime;
             if (elapsedTime > spawnInterval)
             {
                 elapsedTime = 0;
 
-                if (spawnCnt < maxSpawnCnt / 2)
-                {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
-                    SpawnManager.Instance.GenerateEnemy(Random.Range(3,7));
-                }
-                else
-                {// ‚¢‚éê‡
-                    SpawnManager.Instance.GenerateEnemy(1);
+                if (!IsSpawnBoss)
+                {
+                    if (spawnCnt < maxSpawnCnt / 2)
+                    {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
+                        SpawnManager.Instance.GenerateEnemy(Random.Range(1, 2));
+                    }
+                    else
+                    {// ‚¢‚éê‡
+                        SpawnManager.Instance.GenerateEnemy(1);
+                    }
                 }
             }
         }

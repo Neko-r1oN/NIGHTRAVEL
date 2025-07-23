@@ -245,17 +245,13 @@ public class UIManager : MonoBehaviour
                     bossWindow.SetActive(true);
                 }
 
-                if (boss == null)
-                {// ボスがnullのとき
-                    boss = GameManager.Instance.Boss.GetComponent<EnemyBase>();
-                    // ボスステータスUI
-                    bossHpBar.maxValue = boss.HP;
-                    bossHpBar.value = boss.HP;
-                    bossSliderText.text = "" + bossHpBar.maxValue;
-                }
+                boss = GameManager.Instance.Boss.GetComponent<EnemyBase>();
+                // ボスステータスUI
+                bossHpBar.maxValue = boss.HP;
             }
-
+            
             bossHpBar.value = boss.HP;
+            bossSliderText.text = "" + bossHpBar.maxValue;
 
             if (boss.HP <= 0)
             {// ボスのHP表示がマイナスにならないようにする
@@ -266,10 +262,7 @@ public class UIManager : MonoBehaviour
 
             bossStatus.SetActive(true);
 
-            if (GameManager.Instance.IsSpawnBoss)
-            {
-                clashNumText.enabled = false;
-            }
+            clashNumText.enabled = false;
         }
     }
 
