@@ -24181,17 +24181,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 2000
+  spawnInterval: 7
   maxSpawnCnt: 100
-  bossPrefab: {fileID: 2057467032305792167, guid: 99ef675ffdb865640a311e49275391c2, type: 3}
+  bossPrefab: {fileID: 701214258927684306, guid: 5c137769bc9c627459b522cab9d01ae1, type: 3}
   minCameraPos: {fileID: 1980890281}
   maxCameraPos: {fileID: 1873303072}
   xRadius: 10
   yRadius: 6
   distMinSpawnPos: 3
-  knockTermsNum: 100
+  knockTermsNum: 1
   player: {fileID: 7393988378002152513}
-  players: []
+  players:
+  - {fileID: 7393988378002152513}
 --- !u!4 &2102152737
 Transform:
   m_ObjectHideFlags: 0
