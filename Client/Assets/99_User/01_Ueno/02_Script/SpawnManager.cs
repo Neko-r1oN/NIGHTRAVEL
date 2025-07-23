@@ -267,12 +267,13 @@ public class SpawnManager : MonoBehaviour
     /// </summary>
     /// <param name="spawnEnemy"></param>
     /// <param name="spawnPos"></param>
-    public void SpawnEnemyRequest(GameObject spawnEnemy,Vector3 spawnPos)
+    public GameObject SpawnEnemyRequest(GameObject spawnEnemy,Vector3 spawnPos, bool canPromoteToElite = true)
     {
         GameManager.Instance.SpawnCnt++;
 
         // ê∂ê¨
         enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
+        if (!canPromoteToElite) return enemy;
 
         int number = Random.Range(0, 100);
 
@@ -288,7 +289,6 @@ public class SpawnManager : MonoBehaviour
             eliteEnemyCnt++;
         }
 
-        enemy.GetComponent<EnemyBase>().Players.Add(player);
-        enemy.GetComponent<EnemyBase>().SetNearTarget();
+        return enemy;
     }
 }

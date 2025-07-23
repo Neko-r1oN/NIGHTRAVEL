@@ -241,7 +241,8 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     GameObject GenerateEnemy(Vector2 point)
     {
-        var enemyObj = Instantiate(worm.EnemyPrefabs[(int)UnityEngine.Random.Range(0, worm.EnemyPrefabs.Count)], point, Quaternion.identity).gameObject;
+        var emitPrefab = worm.EnemyPrefabs[(int)UnityEngine.Random.Range(0, worm.EnemyPrefabs.Count)];
+        var enemyObj = SpawnManager.Instance.SpawnEnemyRequest(emitPrefab, point);
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
 
         if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // Šm—¦‚ÅŒü‚«‚ª•Ï‚í‚é
