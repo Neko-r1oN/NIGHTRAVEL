@@ -184,6 +184,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
+    /// €”õŠ®—¹“¯Šú
+    /// </summary>
+    /// <returns></returns>
+    public async Task ReadyAsync()
+    {
+        await roomHub.ReadyAsync();
+    }
+
+    /// <summary>
     /// €”õŠ®—¹’Ê’m
     /// Aughter:–Ø“cW•ã
     /// </summary>
