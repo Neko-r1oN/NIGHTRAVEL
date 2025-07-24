@@ -268,7 +268,8 @@ public class UIManager : MonoBehaviour
         if(player.HP <= 0)
         {
             playerHpBar.value = 0;
-            SceneManager.LoadScene("Title ueno");
+            playerSliderText.text = "0";
+            ChangTitleScene();
         }
     }
 
@@ -523,8 +524,12 @@ public class UIManager : MonoBehaviour
             termsBanner.SetActive(false); // 完全に透明になったらUIパネルを非表示にする
         }
     }
+    
 
-    // Standardシェーダーで透明度を扱うための設定ヘルパーメソッド
+    /// <summary>
+    /// Standardシェーダーで透明度を扱うための設定ヘルパーメソッド
+    /// </summary>
+    /// <param name="material"></param>
     private void SetMaterialFadeMode(Material material)
     {
         if (material == null) return;
