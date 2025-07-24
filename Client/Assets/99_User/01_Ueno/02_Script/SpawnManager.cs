@@ -231,6 +231,11 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// “G‚ÌoŒ»Šm—¦‚Ì’Šo
+    /// </summary>
+    /// <param name="probs"></param>
+    /// <returns></returns>
     public int Choose(float[] probs)
     {
         float total = 0;
