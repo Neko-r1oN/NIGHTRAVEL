@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
     {
         isBossDead = false;
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
-        //UIManager.Instance.ShowUIAndFadeOut();
+        UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (spawnCnt < maxSpawnCnt / 2)
                     {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
-                        SpawnManager.Instance.GenerateEnemy(Random.Range(1, 2));
+                        SpawnManager.Instance.GenerateEnemy(Random.Range(3, 7));
                     }
                     else
                     {// ‚¢‚éê‡

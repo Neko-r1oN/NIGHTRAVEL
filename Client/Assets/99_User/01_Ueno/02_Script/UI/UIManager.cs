@@ -3,6 +3,7 @@
 // Author : Souma Ueno
 //----------------------------------------------------
 using Pixeye.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static CharacterBase;
 using ColorUtility = UnityEngine.ColorUtility;
+using Random = UnityEngine.Random;
 
 public class UIManager : MonoBehaviour
 {
@@ -39,7 +41,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] List<Image> relicImages;       
     [Foldout("テキスト")]                           
     [SerializeField] List<Text> relicCntText;       // レリックを持ってる数を表示するテキスト
-    //[Foldout("UI(テキスト)")]                     
+    //[Foldout("テキスト")]                     
     //[SerializeField] List<Text>  statusText;        // ステータスアップ説明テキスト
     [Foldout("テキスト")]                           
     [SerializeField] Text levelUpStock;             // レベルアップストックテキスト
@@ -356,6 +358,11 @@ public class UIManager : MonoBehaviour
     public void UpPlayerStatus(int statusID)
     {
         //ステータス変更
+        UpStatusChange();
+
+        statusStock--;
+
+        levelUpStock.text = "残り強化数：" + statusStock;
 
         if (statusStock <= 0)
         {// 強化ストックが0の場合
@@ -370,7 +377,15 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpStatusChange()
     {
-        player.ApplyStatusModifierByRate(0.15f, STATUS_TYPE.Power);
+        int maxCnt = Enum.GetNames(typeof(STATUS_TYPE)).Length;
+
+        int random = Random.Range(0, maxCnt);
+
+        STATUS_TYPE type = (STATUS_TYPE)Enum.ToObject(typeof(STATUS_TYPE), random);
+
+        Debug.Log(type);
+
+        player.ApplyStatusModifierByRate(0.15f, type);
     }
 
     /// <summary>
