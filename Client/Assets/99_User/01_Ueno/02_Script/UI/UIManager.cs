@@ -2,6 +2,7 @@
 // UIä«óùÉNÉâÉX
 // Author : Souma Ueno
 //----------------------------------------------------
+using MessagePack;
 using Pixeye.Unity;
 using System;
 using System.Collections;
@@ -314,6 +315,12 @@ public class UIManager : MonoBehaviour
             {
                 image.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 image.sprite = null;
+                
+                for(int i= 0; i < relicCntText.Count; i++)
+                {
+                    relicCntText[i].text = "" + 0;
+                    relicCntText[i].enabled = false;
+                }
             }
             else
             {
