@@ -15,25 +15,33 @@ public class Title : MonoBehaviour
         
     }
 
-    // タイトルからSinglePlaytSceneに移動
+    /// <summary>
+    /// タイトルからソロプレイに移動
+    /// </summary>
     public void SinglePlayButton()
     {
         SceneManager.LoadScene("SinglePlayScene");
     }
 
-    // タイトルからOnlinetSceneに移動
+    /// <summary>
+    /// タイトルからオンラインマルチに移動
+    /// </summary>
     public void OnlineButton()
     {
-        SceneManager.LoadScene("lineScene");
+        SceneManager.LoadScene("OnlineMultiScene");
     }
 
-    // タイトルからDataListSceneに移動
+    /// <summary>
+    /// タイトルからデータリストに移動
+    /// </summary>
     public void DataListButton()
     {
         SceneManager.LoadScene("DataListScene");
     }
 
-    // タイトルからSettingSceneに移動
+    /// <summary>
+    /// タイトルからオプション設定に移動
+    /// </summary>
     public void SettingButton()
     {
         SceneManager.LoadScene("SettingScene");

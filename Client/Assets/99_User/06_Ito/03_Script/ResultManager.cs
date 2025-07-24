@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DataList : MonoBehaviour
+public class ResultManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,6 +15,9 @@ public class DataList : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// リザルト画面からタイトルに移動
+    /// </summary>
     public void BackTitleButton()
     {
         SceneManager.LoadScene("TitleScene");

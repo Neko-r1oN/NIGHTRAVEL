@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Option : MonoBehaviour
+public class OptionManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,6 +15,9 @@ public class Option : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// İ’è‰æ–Ê‚©‚çƒ^ƒCƒgƒ‹‚ÉˆÚ“®
+    /// </summary>
     public void BackTitleButton()
     {
         SceneManager.LoadScene("TitleScene");
