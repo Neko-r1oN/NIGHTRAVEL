@@ -10,9 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7271525344348514187}
   - component: {fileID: 3768464901708438896}
-  - component: {fileID: 1095953577803607402}
   - component: {fileID: 4170804916470269672}
-  - component: {fileID: 7088805996495267941}
+  - component: {fileID: -8137759664298615105}
   m_Layer: 0
   m_Name: SawBlade
   m_TagString: Untagged
@@ -28,8 +27,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935818327519944749}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.12, y: -2.35, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.013958, y: -0.95464325, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -90,21 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1095953577803607402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935818327519944749}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 556c5392fc3bc3d4ba2e5fdd457159f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  addPower: 7
-  moveSpeed: 0
-  isPowerd: 1
 --- !u!70 &4170804916470269672
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -142,19 +126,18 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.2714286, y: 1.26}
   m_Direction: 0
---- !u!208 &7088805996495267941
-NavMeshObstacle:
+--- !u!114 &-8137759664298615105
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935818327519944749}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556c5392fc3bc3d4ba2e5fdd457159f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  addPower: 7
+  moveSpeed: 0
+  isPowerd: 1
