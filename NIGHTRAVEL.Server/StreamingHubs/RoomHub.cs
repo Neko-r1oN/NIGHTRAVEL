@@ -39,7 +39,7 @@ namespace StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<JoinedUser[]> JoinedAsync(string roomName, int userId)
+        public async Task<Dictionary<Guid,JoinedUser>> JoinedAsync(string roomName, int userId)
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
@@ -74,13 +74,16 @@ namespace StreamingHubs
             }
           
             // ルームコンテキストに参加ユーザーを保存
-            this.roomContext.JoinedUserList[joinedUser.JoinOrder]=joinedUser;
+            this.roomContext.JoinedUserList[this.ConnectionId]=joinedUser;
 
             // ルームデータに追加
             this.roomContext.AddPlayerData(this.ConnectionId);
 
+            //　ルームに参加
+            this.roomContext.Group.Add(this.ConnectionId, Client);
+
             // 参加したことを全員に通知
-            this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[joinedUser.JoinOrder]);
+            this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
             // ルームデータから接続IDを指定して自身のデータを取得
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
@@ -103,21 +106,19 @@ namespace StreamingHubs
             //    await MasterLostAsync();
             //}
 
-            var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
+            var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
 
             // ルーム参加者全員に、ユーザーの退室通知を送信
             this.roomContext.Group.All.OnLeave(joinedUser);
 
-            if(joinedUser==null)
-            {
-                //コンテキストからユーザーを削除
-                roomContext.RemoveUser(joinedUser.JoinOrder);
-                // ルームデータから自身のデータを削除
-                roomContext.RemovePlayerData(this.ConnectionId);
-            }
-            
+            //　ルームから退室
+            this.roomContext.Group.Remove(this.ConnectionId);
 
-            
+            //コンテキストからユーザーを削除
+            roomContext.RemoveUser(this.ConnectionId);
+            // ルームデータから自身のデータを削除
+            roomContext.RemovePlayerData(this.ConnectionId);
+          
         }
 
         /// <summary>
@@ -138,7 +139,7 @@ namespace StreamingHubs
 
             foreach (var user in this.roomContext.JoinedUserList)
             { // 現在の参加者数分ループ
-                if (user.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
+                if (user.Value.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
             }
 
             // ゲームが開始できる場合、開始通知をする

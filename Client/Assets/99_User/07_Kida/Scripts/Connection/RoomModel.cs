@@ -142,13 +142,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask JoinAsync(string roomName,int userId)
     {
-       JoinedUser[] users = await roomHub.JoinedAsync(roomName,userId);
+       Dictionary<Guid,JoinedUser> users = await roomHub.JoinedAsync(roomName,userId);
         foreach (var user in users)
         {
-            if (user.UserData.Id == userId)
+            if (user.Value.UserData.Id == userId)
             {
-                this.ConnectionId=user.ConnectionId;
-                OnJoinedUser(user);
+                this.ConnectionId=user.Value.ConnectionId;
             }
         }
     }
@@ -160,7 +159,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="joinedUser"></param>
     public void Onjoin(JoinedUser joinedUser)
     {
-        OnJoinedUser?.Invoke(joinedUser);
+        //OnJoinedUser?.Invoke(joinedUser);
+        OnJoinedUser(joinedUser);
     }
 
     /// <summary>
