@@ -105,8 +105,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         isBossDead = false;
-        Debug.Log(LevelManager.Instance.GameLevel.ToString());
-        UIManager.Instance.ShowUIAndFadeOut();
+        //Debug.Log(LevelManager.Instance.GameLevel.ToString());
+        //UIManager.Instance.ShowUIAndFadeOut();
     }
 
     /// <summary>
