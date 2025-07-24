@@ -61,6 +61,9 @@ public class RelicManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// レアリティの確率の設定
+    /// </summary>
     private Dictionary<RELIC_RARITY, float> rarityWeight = new Dictionary<RELIC_RARITY, float>()
     {   
         {RELIC_RARITY.CURSE,3 },    // 確率：3%
@@ -170,6 +173,10 @@ public class RelicManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 同じレリックを持っている数を数える
+    /// </summary>
+    /// <param name="id"></param>
     public void CountRelic(int id)
     {
         int relicCnt = 0;
@@ -185,6 +192,10 @@ public class RelicManager : MonoBehaviour
         UIManager.Instance.totalRelics(relicSprites[id], relicCnt);
     }
 
+    /// <summary>
+    /// レアリティ抽出
+    /// </summary>
+    /// <returns></returns>
     public RELIC_RARITY GetRandomRarity()
     {
         float totalWeight = 0;
