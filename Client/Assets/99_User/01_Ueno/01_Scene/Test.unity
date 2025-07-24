@@ -2568,6 +2568,50 @@ Transform:
   - {fileID: 2121771366}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &736648788
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 736648790}
+  - component: {fileID: 736648789}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &736648789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736648788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee0d449211146a14eb5fea132392d37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &736648790
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736648788}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 21.240723, y: -3.4006348, z: -0.51849544}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &761241043
 GameObject:
   m_ObjectHideFlags: 0
@@ -4388,9 +4432,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 314144298554032736}
   - {fileID: 475836955}
   - {fileID: 761241044}
+  - {fileID: 2034061239}
   m_Father: {fileID: 765016929}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1910255093
@@ -4424,11 +4468,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   randRespawnA: {fileID: 475836955}
   randRespawnB: {fileID: 761241044}
+  minTerminalRespawn: {fileID: 475836955}
+  maxTerminalRespawn: {fileID: 761241044}
   distMinSpawnPos: 2
-  player: {fileID: 2593164853972597923}
   enemyList:
-  - {fileID: 7210549400569271725, guid: 7ef10320a1d8cef45b65b581d02f19af, type: 3}
-  - {fileID: 916580131304402255, guid: 030d7aec2d6ce5a4b8c16aeb9f64340e, type: 3}
+  - {fileID: 3047601142500118110, guid: b28eaadd96b2d8949bfad3ed29cd502c, type: 3}
+  - {fileID: 9004236794111217968, guid: b36c3dd8d7a217b4ab63fe5a6c393b3d, type: 3}
+  terminalSpawnList: []
   xRadius: 10
   yRadius: 6
 --- !u!4 &1910255095
@@ -4446,6 +4492,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 964907467}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &2034061239 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5456761640289825916, guid: 46c33974bb1c9eb46a38075773112bad, type: 3}
+  m_PrefabInstance: {fileID: 6804790027744455669}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2084636995
 GameObject:
   m_ObjectHideFlags: 0
@@ -4572,6 +4623,7 @@ MonoBehaviour:
   distMinSpawnPos: 3
   knockTermsNum: 100
   player: {fileID: 2593164853972597923}
+  players: []
 --- !u!4 &2121771366
 Transform:
   m_ObjectHideFlags: 0
@@ -9395,11 +9447,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8643034682087921279}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &314144298554032736 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3113316253109364147, guid: 46c33974bb1c9eb46a38075773112bad, type: 3}
-  m_PrefabInstance: {fileID: 6804790027744455669}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &317684338364700005
 Transform:
   m_ObjectHideFlags: 0
@@ -43932,12 +43979,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHp: 10
-  baseDefence: 10
+  baseDefense: 10
   basePower: 10
   baseJumpPower: 10
   baseMoveSpeed: 60
   hp: 150
-  defence: 20
+  defense: 0
   power: 50
   jumpPower: 50
   moveSpeed: 1
@@ -43971,7 +44018,6 @@ MonoBehaviour:
   particleJumpUp: {fileID: 198341621129356860, guid: 6cc4fbe9cea41a246b09c2c4f97fa702, type: 3}
   particleJumpDown: {fileID: 198668599249397950, guid: 33f986fbee565ce4c9e2dce4c9086fb1, type: 3}
   ziplineSpark: {fileID: 0}
-  attackCoolDown: 0.8
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
@@ -49615,6 +49661,8 @@ MonoBehaviour:
   risePow: 12.8
   descentPow: 12.8
   moveSpeed: 3
+  isBroken: 0
+  wire: {fileID: 0}
 --- !u!1 &7953244532923564468
 GameObject:
   m_ObjectHideFlags: 0
@@ -59782,3 +59830,4 @@ SceneRoots:
   - {fileID: 1810726371}
   - {fileID: 813228172}
   - {fileID: 1637626072}
+  - {fileID: 736648790}
