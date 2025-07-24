@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 4344805799358504283}
   - component: {fileID: 950273658374815426}
   - component: {fileID: 7255548361817199555}
-  m_Layer: 0
+  - component: {fileID: -5228424572662064361}
+  m_Layer: 13
   m_Name: Belt Conveyor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 586456602314187147, guid: 80929cba308bcd4468752e1062f3a6b1, type: 3}
+  m_Sprite: {fileID: 8819464699966627172, guid: 4c1b2406c1c90fb43b5160efdb71c247, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 8.173333, y: 1.8666667}
+  m_Size: {x: 4.904, y: 1.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -145,11 +146,27 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4.768, y: 1.12}
-    newSize: {x: 8.173333, y: 1.8666667}
+    oldSize: {x: 4.904, y: 1.12}
+    newSize: {x: 4.904, y: 1.12}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 4.904, y: 1.12}
   m_EdgeRadius: 0
+--- !u!208 &-5228424572662064361
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8150912360689980974}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 2.4520001, y: 0.56, z: 0.1}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
