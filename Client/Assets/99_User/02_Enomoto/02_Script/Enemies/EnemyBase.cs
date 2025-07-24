@@ -513,7 +513,7 @@ abstract public class EnemyBase : CharacterBase
             isDead = true;
             if (player) player.GetExp(exp);
             OnDead();
-            //if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
+            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // ƒvƒŒƒCƒ„[‚Æ‚Ì”»’è‚ğÁ‚·
             m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
             yield return new WaitForSeconds(destroyWaitSec);
