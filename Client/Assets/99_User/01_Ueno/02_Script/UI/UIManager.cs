@@ -264,6 +264,12 @@ public class UIManager : MonoBehaviour
 
             clashNumText.enabled = false;
         }
+
+        if(player.HP <= 0)
+        {
+            playerHpBar.value = 0;
+            SceneManager.LoadScene("Title ueno");
+        }
     }
 
     private void ChangTitleScene()
