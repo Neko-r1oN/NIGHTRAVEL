@@ -16,6 +16,7 @@ using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -33,6 +34,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //接続ID
     public Guid ConnectionId { get; set; }
+
+    public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
 
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
@@ -103,6 +106,22 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ダメージ表記通知
     public Action<int> OnDamaged {  get; set; }
 
+    private static RoomModel instance;
+    public static RoomModel Instance
+    {
+        get
+        {
+            // GETプロパティを呼ばれたときにインスタンスを作成する(初回のみ)
+            if (instance == null)
+            {
+                GameObject gameObj = new GameObject("RoomModel");
+                instance = gameObj.AddComponent<RoomModel>();
+                DontDestroyOnLoad(gameObj);
+            }
+            return instance;
+        }
+    }
+
     /// <summary>
     /// MagicOnion接続処理
     /// Aughter:木田晃輔
@@ -142,12 +161,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask JoinAsync(string roomName,int userId)
     {
-       Dictionary<Guid,JoinedUser> users = await roomHub.JoinedAsync(roomName,userId);
-        foreach (var user in users)
+        joinedUserList = await roomHub.JoinedAsync(roomName,userId);
+        foreach (var user in joinedUserList)
         {
             if (user.Value.UserData.Id == userId)
             {
-                this.ConnectionId=user.Value.ConnectionId;
+                this.ConnectionId =user.Value.ConnectionId;
             }
         }
     }
@@ -160,7 +179,13 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void Onjoin(JoinedUser joinedUser)
     {
         //OnJoinedUser?.Invoke(joinedUser);
+        
+        if(!joinedUserList.ContainsKey(joinedUser.ConnectionId))
+        joinedUserList.Add(joinedUser.ConnectionId,joinedUser);
+       
+        //入室通知
         OnJoinedUser(joinedUser);
+        
     }
 
     /// <summary>
@@ -171,6 +196,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask LeaveAsync()
     {
         await roomHub.LeavedAsync();
+        joinedUserList.Clear();
     }
 
     /// <summary>
@@ -178,9 +204,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="user"></param>
-    public void OnLeave(JoinedUser user)
+    public void OnLeave(JoinedUser joinedUser)
     {
-        OnLeavedUser(user);
+        if (joinedUserList.ContainsKey(joinedUser.ConnectionId))
+        joinedUserList.Remove(joinedUser.ConnectionId);
+        OnLeavedUser(joinedUser);
     }
 
     /// <summary>
