@@ -285,11 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f401e095afe38aa4d8a459945e25b086, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomModel: {fileID: 2091921018}
   userPrefab: {fileID: 5986724507402775928, guid: fcd668481e043d44eaf068d9b2ecc753, type: 3}
-  joinButton: {fileID: 0}
-  leaveButton: {fileID: 0}
-  readyButton: {fileID: 0}
   inputFieldRoomId: {fileID: 1649429148}
   inputFieldUserId: {fileID: 1315918829}
 --- !u!4 &600266651
@@ -1725,50 +1721,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &2091921017
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2091921019}
-  - component: {fileID: 2091921018}
-  m_Layer: 0
-  m_Name: RoomModel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2091921018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091921017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba5d2572b8542a940833c043bfdb6177, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &2091921019
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091921017}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 927.98065, y: 243.96112, z: -4.8970194}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1777,4 +1729,3 @@ SceneRoots:
   - {fileID: 2001515267}
   - {fileID: 600266651}
   - {fileID: 683385833}
-  - {fileID: 2091921019}

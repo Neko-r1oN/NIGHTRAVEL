@@ -82,8 +82,10 @@ namespace StreamingHubs
             //　ルームに参加
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
-            // 参加したことを全員に通知
-            this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
+            // 参加したことを自分以外に通知
+            //this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[this.ConnectionId],
+            //    roomContext.JoinedUserList);
+            this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
             // ルームデータから接続IDを指定して自身のデータを取得
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
@@ -131,7 +133,7 @@ namespace StreamingHubs
             bool canStartGame = true; // ゲーム開始可能判定変数
 
             // 自身のデータを取得
-            var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId };
+            var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
             joinedUser.IsReady = true; // 準備完了にする
 
             // ルーム参加者全員に、自分が準備完了した通知を送信
