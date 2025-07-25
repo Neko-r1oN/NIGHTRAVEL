@@ -159,7 +159,7 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void Start()
     {
-        players = GameManager.Instance.Players;
+        players = new List<GameObject>(CharacterManager.Instance.PlayerObjs.Values);
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();

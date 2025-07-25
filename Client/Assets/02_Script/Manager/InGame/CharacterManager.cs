@@ -25,6 +25,11 @@ public class CharacterManager : MonoBehaviour
     /// 自分の操作キャラ
     /// </summary>
     public GameObject PlayerObjSelf { get { return playerObjSelf; } }
+
+    /// <summary>
+    /// プレイヤーのリスト
+    /// </summary>
+    public Dictionary<Guid, GameObject> PlayerObjs { get {  return playerObjs; } }
     #endregion
 
     #region 敵関連
@@ -54,7 +59,11 @@ public class CharacterManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
-        if (RoomModel.Instance.ConnectionId == Guid.Empty) return;
+        if (RoomModel.Instance.ConnectionId == Guid.Empty) 
+        {
+            playerObjs.Add(Guid.Empty, playerObjSelf);
+            return;
+        }
         DestroyExistingPlayer();
         GenerateCharacters();
         StartCoroutine("UpdateCoroutine");
