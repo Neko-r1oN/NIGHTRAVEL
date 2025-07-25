@@ -216,11 +216,14 @@ public class GameManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (player != null)
+        if (players != null)
         {
-            Gizmos.DrawWireCube(player.transform.position, new Vector3(distMinSpawnPos * 2, yRadius * 2));
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireCube(player.transform.position, new Vector3(xRadius * 2, yRadius * 2));
+            foreach(GameObject array in players)
+            {
+                Gizmos.DrawWireCube(array.transform.position, new Vector3(distMinSpawnPos * 2, yRadius * 2));
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireCube(array.transform.position, new Vector3(xRadius * 2, yRadius * 2));
+            }
         }
     }
 

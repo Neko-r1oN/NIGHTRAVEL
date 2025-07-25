@@ -21,7 +21,7 @@ public class SpawnManager : MonoBehaviour
     List<int> enemyIdList;
 
     GameObject player;
-    //List<GameObject> player;                  // プレイヤーの情報
+    //List<GameObject> players;                  // プレイヤーの情報
     GameObject enemy;
 
     float[] item;
@@ -178,6 +178,9 @@ public class SpawnManager : MonoBehaviour
     /// </summary>
     public void GenerateEnemy(int num)
     {
+        Vector2 minPlayer = new Vector2();
+        Vector2 maxPlayer = new Vector2();
+
         for (int i = 0; i < num; i++)
         {
             // 確率の計算
@@ -185,13 +188,46 @@ public class SpawnManager : MonoBehaviour
 
             EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
 
-            Vector2 minPlayer =
-                        new Vector2(player.transform.position.x - xRadius,
-                        player.transform.position.y - yRadius);
+            List<GameObject> distPlayers = GameManager.Instance.Players;
 
-            Vector2 maxPlayer =
+            GameObject distMinPlayer = null;
+            GameObject distMaxPlayer = null;
+
+            for (int n = 0; n < distPlayers.Count; n++)
+            {
+                if (n <= 0)
+                {
+                    distMinPlayer = distPlayers[n];
+                    distMaxPlayer = distPlayers[n];
+                }
+
+                if (distPlayers[n].transform.position.x > distMinPlayer.transform.position.x
+                    && distPlayers[n].transform.position.y > distMinPlayer.transform.position.y)
+                {
+                    distMinPlayer = distPlayers[n];
+
+                    minPlayer =
+                        new Vector2(distPlayers[n + 1].transform.position.x - xRadius,
+                        distPlayers[n + 1].transform.position.y - yRadius);
+                }
+                else if (distPlayers[n].transform.position.x < distMaxPlayer.transform.position.x
+                    && distPlayers[n].transform.position.y < distMaxPlayer.transform.position.y)
+                {
+                    distMaxPlayer = distPlayers[n];
+
+                    maxPlayer =
+                        new Vector2(player.transform.position.x + xRadius,
+                        player.transform.position.y + yRadius);
+                }
+            }
+
+            /*Vector2 minPlayer =
+                        new Vector2(player.transform.position.x - xRadius,
+                        player.transform.position.y - yRadius);*/
+
+            /*Vector2 maxPlayer =
                 new Vector2(player.transform.position.x + xRadius,
-                player.transform.position.y + yRadius);
+                player.transform.position.y + yRadius);*/
 
             // ランダムな位置を生成
             var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
