@@ -10,6 +10,8 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField] Transform randRespawnA;             // リスポーン範囲A
     [SerializeField] Transform randRespawnB;             // リスポーン範囲B
+    //[SerializeField] Transform minTerminalRespawn;       // ターミナルリスポーン範囲
+    //[SerializeField] Transform maxTerminalRespawn;       // ターミナルリスポーン範囲
     [SerializeField] float distMinSpawnPos;              // 生成しない範囲
     [SerializeField] List<GameObject> enemyList;         // エネミーリスト
     [SerializeField] List<GameObject> terminalSpawnList; // 端末から生成された敵のリスト
@@ -96,6 +98,38 @@ public class SpawnManager : MonoBehaviour
 
         return (minRange, maxRange);
     }
+
+    /// <summary>
+    /// 敵のスポーン可能範囲判定処理
+    /// </summary>
+    /// <param name="minPoint"></param>
+    /// <param name="maxPoint"></param>
+    /// <returns></returns>
+    /*public (Vector3 minRange, Vector3 maxRange) CreateEnemyTerminalSpawnPosition(Vector3 minPoint, Vector3 maxPoint)
+    {
+        Vector3 minRange = minPoint, maxRange = maxPoint;
+        if (minPoint.y < minTerminalRespawn.position.y)
+        {
+            minRange.y = minTerminalRespawn.position.y;
+        }
+
+        if (minPoint.x < minTerminalRespawn.position.x)
+        {
+            minRange.x = minTerminalRespawn.position.x;
+        }
+
+        if (maxPoint.y > maxTerminalRespawn.position.y)
+        {
+            maxRange.y = maxTerminalRespawn.position.y;
+        }
+
+        if (maxPoint.x > maxTerminalRespawn.position.x)
+        {
+            maxRange.x = maxTerminalRespawn.position.x;
+        }
+
+        return (minRange, maxRange);
+    }*/
 
     /// <summary>
     /// 敵生成の位置決定処理
@@ -193,7 +227,7 @@ public class SpawnManager : MonoBehaviour
                 player.transform.position.y + yRadius);
 
             // ランダムな位置を生成
-            var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
+            /*var spawnPostions = CreateEnemyTerminalSpawnPosition(minPlayer, maxPlayer);
 
             Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
@@ -205,7 +239,7 @@ public class SpawnManager : MonoBehaviour
                 terminalSpawnList.Add(enemy);
 
                 enemyCnt++;
-            }
+            }*/
         }
     }
 
