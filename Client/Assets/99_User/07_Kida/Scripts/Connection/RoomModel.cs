@@ -35,7 +35,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public bool IsMaster { get; set; }
 
     //接続ID
-    public Guid ConnectionId { get; set; }
+    public Guid ConnectionId { get; set; } = Guid.Empty;
 
     #region 通知定義一覧
 
@@ -183,6 +183,17 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
+    /// マスタークライアントの更新同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="masterClient"></param>
+    /// <returns></returns>
+    public async UniTask UpdateMasterClientAsync(MasterClientData masterClient)
+    {
+        await roomHub.UpdateMasterClientAsync(masterClient);
+    }
+
+    /// <summary>
     /// 退室の同期
     /// Aughter:木田晃輔
     /// </summary>
@@ -190,7 +201,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask LeaveAsync()
     {
         await roomHub.LeavedAsync();
+        //自分をリストから消す
         joinedUserList.Clear();
+        ConnectionId=Guid.Empty;
     }
 
     /// <summary>

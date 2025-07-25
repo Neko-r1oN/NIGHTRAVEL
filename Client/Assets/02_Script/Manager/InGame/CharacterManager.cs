@@ -176,6 +176,7 @@ public class CharacterManager : MonoBehaviour
         };
 
         // マスタクライアント情報更新リクエスト
+        await RoomModel.Instance.UpdateMasterClientAsync(masterClientData);
     }
 
     /// <summary>
@@ -186,6 +187,7 @@ public class CharacterManager : MonoBehaviour
         var playerData = GetPlayerData();
 
         // プレイヤー情報更新リクエスト
+        await RoomModel.Instance.MovePlayerAsync(playerData);
     }
 
     /// <summary>
@@ -198,5 +200,25 @@ public class CharacterManager : MonoBehaviour
         {
             enemies.Add(enemies.Count, enemy);
         }
+    }
+
+    /// <summary>
+    /// プレイヤーの更新の通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="playerData"></param>
+    void OnMovePlayer(PlayerData playerData)
+    {
+        
+    }
+
+    /// <summary>
+    /// マスタークライアントの更新通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="masterClientData"></param>
+    void OnUpdateMasterClient(MasterClientData masterClientData)
+    {
+
     }
 }
