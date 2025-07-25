@@ -2,6 +2,8 @@
 // クライアントからサーバーへの通信を管理するスクリプト
 // Author:木田晃輔
 //=============================
+
+#region using一覧
 using MagicOnion.Server.Hubs;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.StreamingHubs;
@@ -10,6 +12,7 @@ using Shared.Interfaces.StreamingHubs;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
+#endregion
 
 namespace StreamingHubs
 {
@@ -19,6 +22,8 @@ namespace StreamingHubs
         private RoomContext roomContext;
         RoomContextRepository roomContextRepos;
 
+        #region 接続・切断処理
+        //接続した場合
         protected override ValueTask OnConnected()
         {
             roomContextRepos = roomContextRepository;
@@ -31,7 +36,9 @@ namespace StreamingHubs
             // 退室処理を実行
             LeavedAsync(); return CompletedTask;
         }
+        #endregion
 
+        #region マッチングしてからゲーム開始までの処理
         /// <summary>
         /// 入室処理
         /// Author:Kida
@@ -39,7 +46,7 @@ namespace StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<Dictionary<Guid,JoinedUser>> JoinedAsync(string roomName, int userId)
+        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId)
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
@@ -58,10 +65,10 @@ namespace StreamingHubs
             // グループストレージにユーザーデータを格納
             var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
 
-            if(joinedUser.JoinOrder==0)
-            {//部屋を作った人だった場合
+            if (roomContext.JoinedUserList.Count == 0)
+            {//roomContext内の参加人数が0である場合
 
-                //参加人数の初期化
+                //参加順番の初期化
                 joinedUser.JoinOrder = 1;
 
                 //1人目をマスタークライアントにする
@@ -69,12 +76,12 @@ namespace StreamingHubs
             }
             else
             {
-                //参加人数を足す
-                joinedUser.JoinOrder++;
+                //参加順番の設定
+                joinedUser.JoinOrder = roomContext.JoinedUserList.Count + 1;
             }
-          
+
             // ルームコンテキストに参加ユーザーを保存
-            this.roomContext.JoinedUserList[this.ConnectionId]=joinedUser;
+            this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
 
             // ルームデータに追加
             this.roomContext.AddPlayerData(this.ConnectionId);
@@ -102,13 +109,14 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task LeavedAsync()
         {
-            ////マスタークライアントだったら次の人に譲渡する
-            //if (PlayerData.JoinedUser.IsMaster == true)
-            //{
-            //    await MasterLostAsync(this.ConnectionId);
-            //}
-
+            //　退室するユーザーを取得
             var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
+
+            ////マスタークライアントだったら次の人に譲渡する
+            if (joinedUser.IsMaster == true)
+            {
+                await MasterLostAsync(this.ConnectionId);
+            }
 
             // ルーム参加者全員に、ユーザーの退室通知を送信
             this.roomContext.Group.All.OnLeave(joinedUser);
@@ -120,29 +128,6 @@ namespace StreamingHubs
             roomContext.RemoveUser(this.ConnectionId);
             // ルームデータから自身のデータを削除
             roomContext.RemovePlayerData(this.ConnectionId);
-        }
-
-        /// <summary>
-        /// マスタ譲渡処理
-        /// </summary>
-        /// <param name="conID"></param>
-        /// <returns></returns>
-        public async Task MasterLostAsync(Guid conID)
-        {
-            // マスタを剥奪
-            this.roomContext.JoinedUserList[conID].IsMaster = false;
-
-            // 参加者リストをループ
-            foreach (var user in this.roomContext.JoinedUserList)
-            {
-                // 対象がマスタでない場合
-                if(user.Value.IsMaster == false)
-                {
-                    // その対象をマスタとし、ループを抜ける
-                    user.Value.IsMaster = true;
-                    break;
-                }
-            }
         }
 
         /// <summary>
@@ -169,7 +154,9 @@ namespace StreamingHubs
             // ゲームが開始できる場合、開始通知をする
             if (canStartGame) this.roomContext.Group.All.OnStartGame();
         }
+        #endregion
 
+        #region ゲーム内での処理
         /// <summary>
         /// プレイヤー位置、回転、アニメーション同期処理
         /// Author:Nishiura
@@ -186,7 +173,7 @@ namespace StreamingHubs
             playerData.Position = pos; // 位置を渡す
             playerData.Rotation = rot; // 回転を渡す
             playerData.State = anim;   // アニメーションIDを渡す
-            
+
             // ルーム参加者全員に、ユーザ情報通知を送信
             this.roomContext.Group.All.OnMovePlayer(playerData.JoinedUser, pos, rot, anim);
         }
@@ -223,7 +210,7 @@ namespace StreamingHubs
         /// <param name="pos">位置</param>
         /// <returns></returns>
         public async Task SpawnRelicAsync(Vector2 pos)
-        {  
+        {
             GameDbContext dbContext = new GameDbContext();
             Random rand = new Random();
 
@@ -412,5 +399,33 @@ namespace StreamingHubs
             // 参加者全員に与えたダメージを通知
             this.roomContext.Group.All.OnDamage(dmg);
         }
+
+        #endregion
+
+        /// <summary>
+        /// マスタークライアント譲渡処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID"></param>
+        /// <returns></returns>
+        public async Task MasterLostAsync(Guid conID)
+        {
+            // 参加者リストをループ
+            foreach (var user in this.roomContext.JoinedUserList)
+            {
+                // 対象がマスタークライアントでない場合
+                if (user.Value.IsMaster == false)
+                {
+                    // その対象をマスタークライアントとし、ループを抜ける
+                    user.Value.IsMaster = true;
+                    break;
+                }
+            }
+
+            // マスタークライアントを剥奪
+            this.roomContext.JoinedUserList[conID].IsMaster = false;
+        }
+
+
     }
 }

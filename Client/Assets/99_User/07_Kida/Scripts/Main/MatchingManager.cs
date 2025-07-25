@@ -6,18 +6,22 @@
 ///
 ////////////////////////////////////////////////////////////////
 
+#region using一覧
 using Shared.Interfaces.StreamingHubs;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#endregion
 
 public class MatchingManager : MonoBehaviour
 {
-    UserModel userModel;                    //ユーザーModel
+    #region [SerializeField]：木田晃輔
     [SerializeField] GameObject userPrefab; //ユーザーの情報
     [SerializeField] Text inputFieldRoomId; //ルームのID(デバッグ用)
     [SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
+    #endregion
+    UserModel userModel;                    //ユーザーModel
     JoinedUser joinedUser;                  //このクライアントユーザーの情報
 
 
@@ -27,6 +31,7 @@ public class MatchingManager : MonoBehaviour
         //実装時にはこの変数でユーザーを判断する
         //userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
 
+        #region RoomModel定義
         //接続処理
         await RoomModel.Instance.ConnectAsync();
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
@@ -37,8 +42,10 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnReadySyn += this.OnReadySyn;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnStartedGame += this.OnStartedGame;
+        #endregion
     }
 
+    #region 同期処理一覧：木田晃輔
     /// <summary>
     /// 入室処理
     /// Aughter:木田晃輔
@@ -74,7 +81,8 @@ public class MatchingManager : MonoBehaviour
     {
         await RoomModel.Instance.ReadyAsync();
     }
-
+    #endregion
+    #region 通知一覧：木田晃輔
     /// <summary>
     /// 入室完了通知
     /// Aughter:木田晃輔
@@ -88,7 +96,6 @@ public class MatchingManager : MonoBehaviour
         }
       
     }
-
 
     /// <summary>
     /// 退室完了通知
@@ -123,4 +130,5 @@ public class MatchingManager : MonoBehaviour
 
         SceneManager.LoadScene("PreGameScene");
     }
+    #endregion
 }

@@ -6,6 +6,7 @@
 ///
 ////////////////////////////////////////////////////////////////
 
+#region using一覧
 using Cysharp.Net.Http;
 using Cysharp.Threading.Tasks;
 using Grpc.Net.Client;
@@ -23,6 +24,7 @@ using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
 using static UnityEditor.PlayerSettings;
 using static UnityEngine.Rendering.DebugUI.Table;
+#endregion
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
@@ -34,6 +36,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //接続ID
     public Guid ConnectionId { get; set; }
+
+    #region 通知定義一覧
 
     public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
 
@@ -105,7 +109,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //ダメージ表記通知
     public Action<int> OnDamaged {  get; set; }
+    #endregion
 
+    #region RoomModelインスタンス生成
     private static RoomModel instance;
     public static RoomModel Instance
     {
@@ -121,7 +127,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             return instance;
         }
     }
+    #endregion
 
+    #region MagicOnion接続・切断処理
     /// <summary>
     /// MagicOnion接続処理
     /// Aughter:木田晃輔
@@ -144,6 +152,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         if (channel != null) await channel.ShutdownAsync();
         roomHub = null; channel = null;
     }
+    #endregion
 
     /// <summary>
     /// 破棄処理
@@ -154,38 +163,23 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         DisconnectAsync();
     }
 
+    #region 同期の処理
+    #region 入室・退室・準備完了同期
     /// <summary>
     /// 入室同期
     /// Aughter:木田晃輔
     /// </summary>
     /// <returns></returns>
-    public async UniTask JoinAsync(string roomName,int userId)
+    public async UniTask JoinAsync(string roomName, int userId)
     {
-        joinedUserList = await roomHub.JoinedAsync(roomName,userId);
+        joinedUserList = await roomHub.JoinedAsync(roomName, userId);
         foreach (var user in joinedUserList)
         {
             if (user.Value.UserData.Id == userId)
             {
-                this.ConnectionId =user.Value.ConnectionId;
+                this.ConnectionId = user.Value.ConnectionId;
             }
         }
-    }
-
-    /// <summary>
-    /// 入室通知(IRoomHubReceiverインターフェイスの実装)
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="joinedUser"></param>
-    public void Onjoin(JoinedUser joinedUser)
-    {
-        //OnJoinedUser?.Invoke(joinedUser);
-        
-        if(!joinedUserList.ContainsKey(joinedUser.ConnectionId))
-        joinedUserList.Add(joinedUser.ConnectionId,joinedUser);
-       
-        //入室通知
-        OnJoinedUser(joinedUser);
-        
     }
 
     /// <summary>
@@ -200,18 +194,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// 退室通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="user"></param>
-    public void OnLeave(JoinedUser joinedUser)
-    {
-        if (joinedUserList.ContainsKey(joinedUser.ConnectionId))
-        joinedUserList.Remove(joinedUser.ConnectionId);
-        OnLeavedUser(joinedUser);
-    }
-
-    /// <summary>
     /// 準備完了同期
     /// </summary>
     /// <returns></returns>
@@ -219,26 +201,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         await roomHub.ReadyAsync();
     }
-
-    /// <summary>
-    /// 準備完了通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="conID"></param>
-    public void OnReady(Guid conID)
-    {
-        OnReadySyn(conID);
-    }
-
-    /// <summary>
-    /// ゲーム開始通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    public void OnStartGame()
-    {
-        OnStartedGame();
-    }
-
+    #endregion
+    #region プレイヤー同期関連
     /// <summary>
     /// プレイヤーの移動同期
     /// Aughter:木田晃輔
@@ -247,176 +211,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim)
     {
         await roomHub.MovePlayerAsync(pos, rot, anim);
-    }
-
-    /// <summary>
-    /// プレイヤーの移動通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="user"></param>
-    /// <param name="pos"></param>
-    /// <param name="rot"></param>
-    /// <param name="animID"></param>
-    public void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
-    {
-        OnMovePlayerSyn(user, pos, rot, animID);
-    }
-
-
-    /// <summary>
-    /// 敵の位置同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemIDList"></param>
-    /// <param name="pos"></param>
-    /// <param name="rot"></param>
-    /// <param name="anim"></param>
-    /// <returns></returns>
-    public async Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim)
-    {
-        await roomHub.MoveEnemyAsync(enemIDList, pos, rot, anim);
-    }
-
-    /// <summary>
-    /// 敵の移動通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="pos"></param>
-    /// <param name="rot"></param>
-    /// <param name="animID"></param>
-    public void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID)
-    {
-        OnMoveEnemySyn(enemID, pos, rot, animID);
-    }
-
-    /// <summary>
-    /// レリック生成同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    public async Task SpawnRelicAsync(Vector2 pos)
-    {
-       await roomHub.SpawnRelicAsync(pos);
-    }
-
-    /// <summary>
-    /// レリック生成通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="relicID"></param>
-    /// <param name="pos"></param>
-    public void OnSpawnRelic(int relicID, Vector2 pos)
-    {
-        OnSpawnedRelic(relicID, pos);
-    }
-
-    /// <summary>
-    /// レリック取得同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="relicID"></param>
-    /// <param name="relicName"></param>
-    /// <returns></returns>
-    public async Task GetRelicAsync(int relicID, string relicName)
-    {
-        await roomHub.GetRelicAsync(relicID, relicName);
-    }
-
-    /// <summary>
-    /// レリック取得
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="relicID"></param>
-    /// <param name="rekicName"></param>
-    public void OnGetRelic(int relicID, string rekicName)
-    {
-        OnGotRelic(relicID, rekicName);
-    }
-
-    /// <summary>
-    /// 敵の生成同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    public async Task SpawnEnemyAsync(List<int> enemID, Vector2 pos)
-    {
-        await roomHub.SpawnEnemyAsync(enemID, pos);
-    }
-
-    /// <summary>
-    /// 敵の生成通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemData"></param>
-    /// <param name="pos"></param>
-    public void OnSpawnEnemy(EnemyData enemData, Vector2 pos)
-    {
-        OnSpawndEnemy(enemData, pos);
-    }
-
-    /// <summary>
-    /// ギミックの起動同期
-    ///  Aughter:木田晃輔
-    /// </summary>
-    /// <param name="gimID"></param>
-    /// <returns></returns>
-    public async Task BootGimmickAsync(int gimID)
-    {
-        await roomHub.BootGimmickAsync(gimID);
-    }
-
-    /// <summary>
-    /// ギミックの起動通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="gimmickData"></param>
-    public void OnBootGimmick(GimmickData gimmickData)
-    {
-        OnBootedGimmick(gimmickData);
-    }
-
-    /// <summary>
-    /// 難易度上昇の同期
-    /// </summary>
-    /// <param name="difID"></param>
-    /// <returns></returns>
-    public async Task AscendDifficultyAsync(int difID)
-    {
-        await roomHub.AscendDifficultyAsync(difID);
-    }
-
-    /// <summary>
-    /// 難易度上昇の通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="difID"></param>
-    public void OnAscendDifficulty(int difID)
-    {
-        OnAscendDifficultySyn(difID);
-    }
-
-    /// <summary>
-    /// 次ステージ進行の同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="stageID"></param>
-    public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
-    {
-        await roomHub.AdvanceNextStageAsync(stageID, isBossStage);
-    }
-
-    /// <summary>
-    /// 次ステージ進行の通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="stageID"></param>
-    public void OnAdanceNextStage(int stageID)
-    {
-        OnAdanceNextStageSyn(stageID);
     }
 
     /// <summary>
@@ -432,14 +226,63 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// プレイヤーの体力増減通知
+    /// プレイヤーのレベルアップ同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public async Task LevelUpAsync()
+    {
+        await roomHub.LevelUpAsync();
+    }
+
+    /// <summary>
+    /// プレイヤーダウン同期
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="playerID"></param>
-    /// <param name="playerHP"></param>
-    public void OnPlayerHealth(int playerID, float playerHP)
+    /// <returns></returns>
+    public async Task PlayerDeadAsync(int playerID)
     {
-        OnPlayerHealthSyn(playerID, playerHP);
+        await roomHub.PlayerDeadAsync(playerID);
+    }
+
+    /// <summary>
+    /// 経験値同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="exp"></param>
+    /// <returns></returns>
+    public async Task EXPAsync(int exp)
+    {
+        await roomHub.EXPAsync(exp);
+    }
+
+    #endregion
+    #region 敵同期関連
+    /// <summary>
+    /// 敵の位置同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemIDList"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <param name="anim"></param>
+    /// <returns></returns>
+    public async Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim)
+    {
+        await roomHub.MoveEnemyAsync(enemIDList, pos, rot, anim);
+    }
+
+    /// <summary>
+    /// 敵の生成同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemID"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public async Task SpawnEnemyAsync(List<int> enemID, Vector2 pos)
+    {
+        await roomHub.SpawnEnemyAsync(enemID, pos);
     }
 
     /// <summary>
@@ -455,17 +298,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// 敵体力増減通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="enemHP"></param>
-    public void OnEnemyHealth(int enemID, float enemHP)
-    {
-        OnEnemyHealthSyn(enemID, enemHP);
-    }
-
-    /// <summary>
     /// 敵死亡同期
     /// Aughter:木田晃輔
     /// </summary>
@@ -475,76 +307,61 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         await roomHub?.KilledEnemyAsync(enemID);
     }
-
+    #endregion
+    #region レリック同期関連
     /// <summary>
-    /// 敵死亡通知
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="enemID">敵識別ID</param>
-    public void OnKilledEnemy(int enemID)
-    {
-        OnKilledEnemySyn(enemID);
-    }
-
-    /// <summary>
-    /// 経験値同期
+    /// レリック生成同期
     /// Aughter:木田晃輔
     /// </summary>
-    /// <param name="exp"></param>
+    /// <param name="pos"></param>
     /// <returns></returns>
-    public async Task EXPAsync(int exp)
+    public async Task SpawnRelicAsync(Vector2 pos)
     {
-        await roomHub.EXPAsync(exp);
+        await roomHub.SpawnRelicAsync(pos);
     }
 
     /// <summary>
-    /// 経験値通知
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="exp">経験値</param>
-    public void OnEXP(int exp)
-    {
-        OnEXPSyn(exp);
-    }
-
-    /// <summary>
-    /// レベルアップ同期
+    /// レリック取得同期
     /// Aughter:木田晃輔
     /// </summary>
+    /// <param name="relicID"></param>
+    /// <param name="relicName"></param>
     /// <returns></returns>
-    public async Task LevelUpAsync()
+    public async Task GetRelicAsync(int relicID, string relicName)
     {
-        await roomHub.LevelUpAsync();
+        await roomHub.GetRelicAsync(relicID, relicName);
     }
-
+    #endregion
+    #region ゲーム内UI・仕様の同期関連
     /// <summary>
-    /// レベルアップ通知
-    /// Aughter:木田晃輔
+    /// ギミックの起動同期
+    ///  Aughter:木田晃輔
     /// </summary>
-    public void OnLevelUp()
-    {
-        OnLevelUpSyn();
-    }
-
-    /// <summary>
-    /// プレイヤーダウン同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="playerID"></param>
+    /// <param name="gimID"></param>
     /// <returns></returns>
-    public async Task PlayerDeadAsync(int playerID)
+    public async Task BootGimmickAsync(int gimID)
     {
-        await roomHub.PlayerDeadAsync(playerID);
+        await roomHub.BootGimmickAsync(gimID);
     }
 
     /// <summary>
-    /// プレイヤーダウン通知
+    /// 難易度上昇の同期
+    /// </summary>
+    /// <param name="difID"></param>
+    /// <returns></returns>
+    public async Task AscendDifficultyAsync(int difID)
+    {
+        await roomHub.AscendDifficultyAsync(difID);
+    }
+
+    /// <summary>
+    /// 次ステージ進行の同期
     /// Aughter:木田晃輔
     /// </summary>
-    /// <param name="playerID"></param>
-    public void OnPlayerDead(int playerID)
+    /// <param name="stageID"></param>
+    public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
     {
-        OnPlayerDeadSyn(playerID);
+        await roomHub.AdvanceNextStageAsync(stageID, isBossStage);
     }
 
     /// <summary>
@@ -558,6 +375,214 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         await roomHub.DamageAsync(dmg);
     }
 
+    #endregion
+    #endregion
+
+    #region 通知の処理
+    #region 入室・退室・準備完了通知
+    /// <summary>
+    /// 入室通知(IRoomHubReceiverインターフェイスの実装)
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="joinedUser"></param>
+    public void Onjoin(JoinedUser joinedUser)
+    {
+        //OnJoinedUser?.Invoke(joinedUser);
+
+        if (!joinedUserList.ContainsKey(joinedUser.ConnectionId))
+            joinedUserList.Add(joinedUser.ConnectionId, joinedUser);
+
+        //入室通知
+        OnJoinedUser(joinedUser);
+
+    }
+
+    /// <summary>
+    /// 退室通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="user"></param>
+    public void OnLeave(JoinedUser joinedUser)
+    {
+        if (joinedUserList.ContainsKey(joinedUser.ConnectionId))
+            joinedUserList.Remove(joinedUser.ConnectionId);
+        OnLeavedUser(joinedUser);
+    }
+
+    /// <summary>
+    /// 準備完了通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="conID"></param>
+    public void OnReady(Guid conID)
+    {
+        OnReadySyn(conID);
+    }
+    #endregion
+    #region プレイヤー通知関連
+    /// <summary>
+    /// プレイヤーの移動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <param name="animID"></param>
+    public void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
+    {
+        OnMovePlayerSyn(user, pos, rot, animID);
+    }
+
+    /// <summary>
+    /// プレイヤーの体力増減通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="playerID"></param>
+    /// <param name="playerHP"></param>
+    public void OnPlayerHealth(int playerID, float playerHP)
+    {
+        OnPlayerHealthSyn(playerID, playerHP);
+    }
+
+    /// <summary>
+    /// プレイヤーダウン通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="playerID"></param>
+    public void OnPlayerDead(int playerID)
+    {
+        OnPlayerDeadSyn(playerID);
+    }
+
+
+    /// <summary>
+    /// プレイヤーの経験値通知
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="exp">経験値</param>
+    public void OnEXP(int exp)
+    {
+        OnEXPSyn(exp);
+    }
+
+    /// <summary>
+    /// プレイヤーのレベルアップ通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnLevelUp()
+    {
+        OnLevelUpSyn();
+    }
+    #endregion
+    #region 敵通知関連
+    /// <summary>
+    /// 敵の移動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemID"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <param name="animID"></param>
+    public void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID)
+    {
+        OnMoveEnemySyn(enemID, pos, rot, animID);
+    }
+
+    /// <summary>
+    /// 敵の生成通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemData"></param>
+    /// <param name="pos"></param>
+    public void OnSpawnEnemy(EnemyData enemData, Vector2 pos)
+    {
+        OnSpawndEnemy(enemData, pos);
+    }
+
+    /// <summary>
+    /// 敵体力増減通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemID"></param>
+    /// <param name="enemHP"></param>
+    public void OnEnemyHealth(int enemID, float enemHP)
+    {
+        OnEnemyHealthSyn(enemID, enemHP);
+    }
+
+    /// <summary>
+    /// 敵死亡通知
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="enemID">敵識別ID</param>
+    public void OnKilledEnemy(int enemID)
+    {
+        OnKilledEnemySyn(enemID);
+    }
+    #endregion
+    #region レリック通知関連
+    /// <summary>
+    /// レリック生成通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="relicID"></param>
+    /// <param name="pos"></param>
+    public void OnSpawnRelic(int relicID, Vector2 pos)
+    {
+        OnSpawnedRelic(relicID, pos);
+    }
+
+    /// <summary>
+    /// レリック取得
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="relicID"></param>
+    /// <param name="rekicName"></param>
+    public void OnGetRelic(int relicID, string rekicName)
+    {
+        OnGotRelic(relicID, rekicName);
+    }
+    #endregion
+    #region ゲーム内UI・仕様の同期関連
+    /// <summary>
+    /// ゲーム開始通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnStartGame()
+    {
+        OnStartedGame();
+    }
+
+    /// <summary>
+    /// ギミックの起動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="gimmickData"></param>
+    public void OnBootGimmick(GimmickData gimmickData)
+    {
+        OnBootedGimmick(gimmickData);
+    }
+
+    /// <summary>
+    /// 難易度上昇の通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="difID"></param>
+    public void OnAscendDifficulty(int difID)
+    {
+        OnAscendDifficultySyn(difID);
+    }
+
+    /// <summary>
+    /// 次ステージ進行の通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="stageID"></param>
+    public void OnAdanceNextStage(int stageID)
+    {
+        OnAdanceNextStageSyn(stageID);
+    }
+
     /// <summary>
     /// ダメージ表記通知
     /// Aughter:木田晃輔
@@ -567,5 +592,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnDamaged(dmg);
     }
-
+    #endregion
+    #endregion
 }
