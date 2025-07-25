@@ -30,8 +30,27 @@ public class CharacterManager : MonoBehaviour
     const float updateSec = 0.1f;
     bool isAwake = false;
 
+    static CharacterManager instance;
+    public static CharacterManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
+            Destroy(gameObject);
+        }
+
         if (RoomModel.Instance.ConnectionId == Guid.Empty) return;
         DestroyExistingPlayer();
         GenerateCharacters();
