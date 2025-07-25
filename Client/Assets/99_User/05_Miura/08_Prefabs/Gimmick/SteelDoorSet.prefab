@@ -172,8 +172,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8411314388858160972}
   - component: {fileID: 949877934087953311}
-  - component: {fileID: 7655014825060177600}
   - component: {fileID: 2197395733755891764}
+  - component: {fileID: 7700897785131832753}
   m_Layer: 0
   m_Name: SteelDoorSet
   m_TagString: Untagged
@@ -243,20 +243,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4.072108, y: 2.1479976}
   m_EdgeRadius: 0
---- !u!114 &7655014825060177600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7735085867166721943}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9743790848570e14a8ed3a0a0864dd76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  doorObj: {fileID: 564996714146327080}
-  isPowerd: 0
 --- !u!208 &2197395733755891764
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -273,3 +259,17 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &7700897785131832753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7735085867166721943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9743790848570e14a8ed3a0a0864dd76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doorObj: {fileID: 564996714146327080}
+  isPowerd: 0
