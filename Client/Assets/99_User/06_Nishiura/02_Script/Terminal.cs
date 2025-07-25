@@ -50,7 +50,7 @@ public class Terminal : MonoBehaviour
         }
 
 
-        if (SpawnManager.Instance.TerminalSpawnList.Count <= 0)
+        if (SpawnManager.Instance.EnemiesByTerminal.Count <= 0)
         {
 
         }

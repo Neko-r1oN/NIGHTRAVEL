@@ -8,30 +8,43 @@ using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] Transform randRespawnA;             // リスポーン範囲A
-    [SerializeField] Transform randRespawnB;             // リスポーン範囲B
+    #region 敵生成条件
+    [SerializeField] Vector2 spawnRange;
+    [SerializeField] float spawnRangeOffset;
+    #endregion
+
+    #region ステージ情報
+    [SerializeField] Transform stageMin;             // リスポーン範囲A
+    [SerializeField] Transform stageMax;             // リスポーン範囲B
     //[SerializeField] Transform minTerminalRespawn;       // ターミナルリスポーン範囲
     //[SerializeField] Transform maxTerminalRespawn;       // ターミナルリスポーン範囲
-    [SerializeField] float distMinSpawnPos;              // 生成しない範囲
-    [SerializeField] List<GameObject> enemyList;         // エネミーリスト
-    [SerializeField] List<GameObject> terminalSpawnList; // 端末から生成された敵のリスト
-    [SerializeField] float xRadius;                      // 生成範囲のx半径
-    [SerializeField] float yRadius;                      // 生成範囲のy半径
 
-    List<int> enemyIdList;
+    #region 外部参照
+    public Transform StageMinPoint { get { return stageMin; } }
+    public Transform StageMaxPoint { get { return stageMax; } }
+    #endregion
 
-    GameObject player;
-    //List<GameObject> player;                  // プレイヤーの情報
-    GameObject enemy;
+    #endregion
 
-    float[] item;
+    #region 敵関連
+    [SerializeField] List<GameObject> enemyPrefabs;      // エネミーリスト
+    [SerializeField] List<GameObject> enemiesByTerminal; // 端末から生成された敵のリスト
+    float[] enemyWeights;
     int eliteEnemyCnt;
 
-    public Transform StageMinPoint { get { return randRespawnA; } }
-    public Transform StageMaxPoint { get { return randRespawnB; } }
-    public List<GameObject> TerminalSpawnList {  get { return terminalSpawnList; } }
-    public List<int> EnemyIdList { get { return enemyIdList; } }
+    #region 外部参照
+    public List<GameObject> EnemiesByTerminal { get { return enemiesByTerminal; } }
+    #endregion
 
+    #endregion
+
+    #region TMP
+    [SerializeField] float distMinSpawnPos;              // 生成しない範囲
+    [SerializeField] float xRadius;                      // 生成範囲のx半径
+    [SerializeField] float yRadius;                      // 生成範囲のy半径
+    #endregion
+
+    [SerializeField] GameObject player;
     private static SpawnManager instance;
 
     public static SpawnManager Instance
@@ -58,13 +71,11 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         player = GameManager.Instance.Player;
-        //player = GameManager.Instance.Players;
-
-        item = new float[enemyList.Count];
+        enemyWeights = new float[enemyPrefabs.Count];
 
         // 割合
-        item[0] = 24; // ドローン
-        item[1] = 76; // いぬ
+        enemyWeights[0] = 24; // ドローン
+        enemyWeights[1] = 76; // いぬ
     }
 
     /// <summary>
@@ -76,24 +87,24 @@ public class SpawnManager : MonoBehaviour
     public (Vector3 minRange, Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint, Vector3 maxPoint)
     {
         Vector3 minRange = minPoint, maxRange = maxPoint;
-        if (minPoint.y < randRespawnA.position.y)
+        if (minPoint.y < stageMin.position.y)
         {
-            minRange.y = randRespawnA.position.y;
+            minRange.y = stageMin.position.y;
         }
 
-        if (minPoint.x < randRespawnA.position.x)
+        if (minPoint.x < stageMin.position.x)
         {
-            minRange.x = randRespawnA.position.x;
+            minRange.x = stageMin.position.x;
         }
 
-        if (maxPoint.y > randRespawnB.position.y)
+        if (maxPoint.y > stageMax.position.y)
         {
-            maxRange.y = randRespawnB.position.y;
+            maxRange.y = stageMax.position.y;
         }
 
-        if (maxPoint.x > randRespawnB.position.x)
+        if (maxPoint.x > stageMax.position.x)
         {
-            maxRange.x = randRespawnB.position.x;
+            maxRange.x = stageMax.position.x;
         }
 
         return (minRange, maxRange);
@@ -180,28 +191,23 @@ public class SpawnManager : MonoBehaviour
     {
         for (int i = 0; i < num; i++)
         {
+            int seed = System.DateTime.Now.Millisecond + i;
+            Random.InitState(seed);  // Unityの乱数にシードを設定
+
             // 確率の計算
-            int listNum = Choose(item);
+            int listNum = Choose(enemyWeights);
 
-            EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
-
-            Vector2 minPlayer =
-                        new Vector2(player.transform.position.x - xRadius,
-                        player.transform.position.y - yRadius);
-
-            Vector2 maxPlayer =
-                new Vector2(player.transform.position.x + xRadius,
-                player.transform.position.y + yRadius);
+            EnemyBase enemyBase = enemyPrefabs[listNum].GetComponent<EnemyBase>();
 
             // ランダムな位置を生成
-            var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
+            //var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
 
-            Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
+            //Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
-            if (spawnPos != null)
-            {
-                SpawnEnemyRequest(enemyList[listNum], (Vector3)spawnPos);
-            }
+            //if (spawnPos != null)
+            //{
+            //    SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
+            //}
         }
     }
 
@@ -214,9 +220,9 @@ public class SpawnManager : MonoBehaviour
 
         while (enemyCnt < num)
         {
-            int listNum = Random.Range(0, enemyList.Count);
+            int listNum = Random.Range(0, enemyPrefabs.Count);
 
-            EnemyBase enemyBase = enemyList[listNum].GetComponent<EnemyBase>();
+            EnemyBase enemyBase = enemyPrefabs[listNum].GetComponent<EnemyBase>();
 
             Vector2 minPlayer =
                         new Vector2(player.transform.position.x - xRadius,
@@ -233,10 +239,10 @@ public class SpawnManager : MonoBehaviour
 
             if (spawnPos != null)
             {
-                SpawnEnemyRequest(enemyList[listNum], (Vector3)spawnPos);
+                SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
 
                 // 端末から出た敵をリストに追加
-                terminalSpawnList.Add(enemy);
+                enemiesByTerminal.Add(enemy);
 
                 enemyCnt++;
             }*/
@@ -312,7 +318,7 @@ public class SpawnManager : MonoBehaviour
         GameManager.Instance.SpawnCnt++;
 
         // 生成
-        enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
+        GameObject enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
         if (!canPromoteToElite) return enemy;
 
         int number = Random.Range(0, 100);
@@ -330,5 +336,11 @@ public class SpawnManager : MonoBehaviour
         }
 
         return enemy;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // 右
+        Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.left * spawnRangeOffset, spawnRange);   // 左
     }
 }
