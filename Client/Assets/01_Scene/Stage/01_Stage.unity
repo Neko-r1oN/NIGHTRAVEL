@@ -6182,7 +6182,7 @@ Transform:
   m_GameObject: {fileID: 378844474}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.34, y: -3.6, z: 0}
+  m_LocalPosition: {x: -2.34, y: -2.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6633,6 +6633,7 @@ MonoBehaviour:
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 20
+  enemyLayer: 6
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 53
@@ -6650,6 +6651,7 @@ MonoBehaviour:
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
+  atkGravityCoefficient: 1.8
   skillEffect1: {fileID: 1077725224}
   skillEffect2: {fileID: 1473653667}
   skillEffect3: {fileID: 1063848279}
@@ -82493,7 +82495,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1877055302
 MonoBehaviour:
   m_ObjectHideFlags: 0

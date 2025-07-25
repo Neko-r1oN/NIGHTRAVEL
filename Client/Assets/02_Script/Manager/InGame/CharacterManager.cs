@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shared;
 using Shared.Interfaces.StreamingHubs;
+using System.Drawing;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -50,7 +51,6 @@ public class CharacterManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
-
         if (RoomModel.Instance.ConnectionId == Guid.Empty) return;
         DestroyExistingPlayer();
         GenerateCharacters();
@@ -81,7 +81,7 @@ public class CharacterManager : MonoBehaviour
             var point = startPoints[0];
             startPoints.RemoveAt(0);
 
-            var playerObj = Instantiate(charaSwordPrefab, point);
+            var playerObj = Instantiate(charaSwordPrefab, point.position, Quaternion.identity);
             playerObjs.Add(key, playerObj);
 
             if (key == RoomModel.Instance.ConnectionId) playerObjSelf = playerObj;
