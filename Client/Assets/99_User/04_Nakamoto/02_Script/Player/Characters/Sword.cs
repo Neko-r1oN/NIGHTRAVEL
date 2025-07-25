@@ -7,6 +7,8 @@ using UnityEngine;
 using System.Collections;
 using Pixeye.Unity;
 using static StatusEffectController;
+using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public class Sword : PlayerBase
 {
@@ -36,6 +38,9 @@ public class Sword : PlayerBase
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
+
+    [Foldout("キャラ別ステータス")]
+    [SerializeField] private float atkGravityCoefficient = 1.8f;   // 攻撃中の落下速度係数
 
     [Foldout("スキルエフェクト")]
     [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
@@ -157,6 +162,12 @@ public class Sword : PlayerBase
         {   // クールダウンに入るまで加速
             m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
         }
+
+        if (!canAttack)
+        {
+            // 攻撃中は落下速度減少
+            m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, m_Rigidbody2D.linearVelocity.y / atkGravityCoefficient);
+        }
     }
 
     #endregion
@@ -166,23 +177,62 @@ public class Sword : PlayerBase
     /// <summary>
     /// ダメージを与える処理
     /// </summary>
+    //public override void DoDashDamage()
+    //{
+    //    Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius,enemyLayer);
+
+    //    for (int i = 0; i < collidersEnemies.Length; i++)
+    //    {
+    //        if (collidersEnemies[i].gameObject.tag == "Enemy")
+    //        {
+    //            //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
+    //            //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
+
+    //            collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(Power, playerPos);
+    //            cam.GetComponent<CameraFollow>().ShakeCamera();
+    //        }
+    //        else if (collidersEnemies[i].gameObject.tag == "Object")
+    //        {
+    //            collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
+    //        }
+    //    }
+    //}
+
     public override void DoDashDamage()
     {
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
+        HashSet<EnemyBase> processedEnemies = new HashSet<EnemyBase>();
 
         for (int i = 0; i < collidersEnemies.Length; i++)
         {
-            if (collidersEnemies[i].gameObject.tag == "Enemy")
+            if(collidersEnemies[i].gameObject.tag == "Enemy")
             {
-                //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
-                //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
+                var enemyComponent = collidersEnemies[i].gameObject.GetComponent<EnemyBase>();
+                if (enemyComponent == null) continue; // EnemyBaseが付いていないオブジェクトをスキップ
 
-                collidersEnemies[i].gameObject.GetComponent<EnemyBase>().ApplyDamage(Power, playerPos);
+                // 既にダメージ処理済みの敵かどうかチェック
+                if (processedEnemies.Contains(enemyComponent))
+                    continue;
+
+                // 敵にダメージを与える
+                enemyComponent.ApplyDamage(Power, playerPos);
+                processedEnemies.Add(enemyComponent); // 処理済みリストに追加
+
+                // カメラのシェイク処理
                 cam.GetComponent<CameraFollow>().ShakeCamera();
             }
-            else if (collidersEnemies[i].gameObject.tag == "Object")
+        }
+
+        // Objectタグの処理
+        for (int i = 0; i < collidersEnemies.Length; i++)
+        {
+            if (collidersEnemies[i].gameObject.tag == "Object")
             {
-                collidersEnemies[i].gameObject.GetComponent<ObjectBase>().ApplyDamage();
+                var objectComponent = collidersEnemies[i].gameObject.GetComponent<ObjectBase>();
+                if (objectComponent != null)
+                {
+                    objectComponent.ApplyDamage();
+                }
             }
         }
     }
@@ -244,4 +294,55 @@ public class Sword : PlayerBase
     }
 
     #endregion
+
+    #region 被ダメ処理
+
+    public override void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
+    {
+        if (!invincible)
+        {
+            var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
+
+            UIManager.Instance.PopDamageUI(damage, transform.position, true);
+            if (position != null) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            hp -= damage;
+            Vector2 damageDir = Vector2.zero;
+
+            // ノックバック処理
+            if (position != null)
+            {
+                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
+                m_Rigidbody2D.linearVelocity = Vector2.zero;
+                m_Rigidbody2D.AddForce(damageDir * 15);
+            }
+
+            if (type != null)
+            {
+                effectController.ApplyStatusEffect((StatusEffectController.EFFECT_TYPE)type);
+            }
+
+            if (hp <= 0)
+            {   // 死亡処理
+                m_Rigidbody2D.AddForce(damageDir * 10);
+                StartCoroutine(WaitToDead());
+            }
+            else
+            {   // 被ダメ硬直
+                if (position != null)
+                {
+                    StartCoroutine(Stun(0.35f));
+                    StartCoroutine(MakeInvincible(0.4f));
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    void OnDrawGizmos()
+    {
+        //　CircleCastのレイを可視化
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(attackCheck.position, k_AttackRadius);
+    }
 }

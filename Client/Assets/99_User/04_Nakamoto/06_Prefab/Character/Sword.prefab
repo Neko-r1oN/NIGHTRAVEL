@@ -9802,7 +9802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5712522905003491261
 Transform:
   m_ObjectHideFlags: 0
@@ -9867,10 +9867,10 @@ MonoBehaviour:
   testExp: 20
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 16777269
+    m_Bits: 16781365
   ziplineLayer:
     serializedVersion: 2
-    m_Bits: 4194304
+    m_Bits: 1024
   m_GroundCheck: {fileID: 5757720620569769409}
   m_WallCheck: {fileID: 7517902147752491613}
   attackCheck: {fileID: 6555329001652359662}
@@ -9882,6 +9882,7 @@ MonoBehaviour:
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
+  atkGravity: 5
   skillEffect1: {fileID: 6263195172226639990}
   skillEffect2: {fileID: 5592272234982887123}
   skillEffect3: {fileID: 2161620717427457088}
