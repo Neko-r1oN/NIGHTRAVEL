@@ -57,31 +57,6 @@ public class PressMachine : GimmickBase
             Debug.Log(isPowerd);
             return;
         }
-
-        //switch (isPowerd)
-        //{
-        //    case true:
-        //        Debug.Log(isPowerd);
-
-        //        //Sequenceのインスタンスを作成
-        //        var sequence = DOTween.Sequence();
-
-        //        //Appendで動作を追加していく
-        //        sequence.Append(this.transform.DOMoveY(-addPow, 1))
-        //                 .AppendInterval(1)
-        //                 .Append(this.transform.DOMoveY(pullPow, 2));
-
-        //        //Playで実行
-        //        sequence.Play()
-        //                .AppendInterval(1)
-        //                .SetLoops(-1);
-        //        break;
-
-        //    case false:
-        //        break;
-
-        //    default:
-        //}
     }
 
     public override void TurnOnPower(int t)

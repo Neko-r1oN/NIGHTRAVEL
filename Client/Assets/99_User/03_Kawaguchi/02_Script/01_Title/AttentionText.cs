@@ -69,7 +69,7 @@ public class AttentionText : MonoBehaviour
     public void StartTitleScene()
     {
         // ƒV[ƒ“‘JˆÚ
-        SceneManager.LoadScene("TitleScene");
-        //Initiate.Fade("TitleScene", new Color(0, 0, 0, 0), 2.0f);
+        //SceneManager.LoadScene("TitleScene");
+        Initiate.Fade("TitleScene", new Color(0, 0, 0, 0), 2.0f);
     }
 }
