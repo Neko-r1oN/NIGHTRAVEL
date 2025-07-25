@@ -6,6 +6,8 @@ namespace NIGHTRAVEL.Server.Model.Context
     public class RoomContextRepository(IMulticastGroupProvider groupProvider)
     {
         private readonly ConcurrentDictionary<string, RoomContext> contexts = new();
+
+        #region ゲームコンテキストを使用するための関数一覧
         //ゲームコンテキストの作成
         public RoomContext CreateContext(string roomName)
         {
@@ -34,5 +36,6 @@ namespace NIGHTRAVEL.Server.Model.Context
                 roomContext?.Dispose();
             }
         }
+        #endregion
     }
 }

@@ -21,6 +21,7 @@ namespace Shared.Interfaces.StreamingHubs
     {
         //ここにサーバー～クライアントの定義
 
+        #region アニメーション設定(列挙型)
         /// <summary>
         /// プレイヤーアニメーションの状態(列挙型)
         /// Author:Nishiura
@@ -49,7 +50,9 @@ namespace Shared.Interfaces.StreamingHubs
             Hit,
             Dead,
         }
+        #endregion
 
+        #region 入室からゲーム開始まで
         /// <summary>
         /// ユーザーの入室通知
         /// Author:Kida
@@ -76,6 +79,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         void OnStartGame();
 
+        #endregion
+
+        #region ゲーム内
+        #region プレイヤー関連
         /// <summary>
         /// プレイヤー動作通知
         /// Author:Nishiura
@@ -86,16 +93,69 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="animID">アニメーションID</param>
         void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID);
 
-		/// <summary>
-		/// 敵の動作通知
-		/// Author:Nishiura
-		/// </summary>
-		/// <param name="enemID">対象敵ID</param>
-		/// <param name="pos">位置</param>
-		/// <param name="rot">回転</param>
-		/// <param name="animID">アニメーションID</param>
-		void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID);
+        /// <summary>
+        /// プレイヤー体力増減通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤー識別ID</param>
+        /// <param name="playerHP">プレイヤー体力</param>
+        void OnPlayerHealth(int playerID, float playerHP);
 
+        /// <summary>
+        /// 経験値通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="exp">経験値</param>
+        void OnEXP(int exp);
+
+        /// <summary>
+        /// レベルアップ通知
+        /// </summary>
+        void OnLevelUp();
+
+        /// <summary>
+        /// プレイヤー死亡通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤーID</param>
+        void OnPlayerDead(int playerID);
+        #endregion
+        #region 敵関連
+        /// <summary>
+        /// 敵の動作通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">対象敵ID</param>
+        /// <param name="pos">位置</param>
+        /// <param name="rot">回転</param>
+        /// <param name="animID">アニメーションID</param>
+        void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID);
+
+        /// <summary>
+        /// 敵生成通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemData">敵情報</param>
+        /// <param name="pos">位置</param>
+        void OnSpawnEnemy(EnemyData enemData, Vector2 pos);
+
+        /// <summary>
+        /// 敵体力増減通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID"></param>
+        /// <param name="enemHP"></param>
+        void OnEnemyHealth(int enemID, float enemHP);
+
+        /// <summary>
+        /// 敵死亡通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        void OnKilledEnemy(int enemID);
+
+        #endregion
+        #region レリック関連
         /// <summary>
         /// レリック生成通知
         /// Author:Nishiura
@@ -107,20 +167,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// レリック取得通知
         /// Author:Nishiura
-		/// </summary>
+        /// </summary>
         /// <param name="relicID">レリックID</param>
         /// <param name="rekicName">レリック名</param>
         /// </summary>
         void OnGetRelic(int relicID, string rekicName);
-
-        /// <summary>
-        /// 敵生成通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemData">敵情報</param>
-        /// <param name="pos">位置</param>
-        void OnSpawnEnemy(EnemyData enemData, Vector2 pos);
-
+        #endregion
+        #region ゲーム内UI、仕様
         /// <summary>
         /// ギミック起動通知
         /// Author:Nishiura
@@ -143,66 +196,11 @@ namespace Shared.Interfaces.StreamingHubs
         void OnAdanceNextStage(int stageID);
 
         /// <summary>
-        /// プレイヤー体力増減通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-        void OnPlayerHealth(int playerID, float playerHP);
-
-        /// <summary>
-        /// 敵体力増減通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID"></param>
-        /// <param name="enemHP"></param>
-        void OnEnemyHealth(int enemID, float enemHP);
-
-        /// <summary>
-        /// 敵死亡通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        void OnKilledEnemy(int enemID);
-
-        /// <summary>
-        /// 経験値通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="exp">経験値</param>
-        void OnEXP(int exp);
-
-        /// <summary>
-        /// レベルアップ通知
-        /// </summary>
-        void OnLevelUp();
-
-        /// <summary>
-        /// プレイヤー死亡通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤーID</param>
-        void OnPlayerDead(int playerID);
-
-        /// <summary>
         /// ダメージ表記通知
         /// </summary>
         /// <param name="dmg">ダメージ</param>
         void OnDamage(int dmg);
-
-        ////敵のID同期
-        //void OnIdEnemy(int enemyId);
-
-        ////敵の撃破処理
-        //void OnExcusionEnemy(string enemyName);
-
-        ////マスタークライアント譲渡処理
-        //void OnMasterClient(JoinedUser joinedUser);
-
-        ////オブジェクトの生成同期
-        //void OnObjectSpawn(Guid connectionId,string objectName, Vector2 pos,Quaternion rot,Vector2 fow);
-
-        ////オブジェクトの移動回転同期
-        //void OnObjectMove(string objectName, Vector2 pos, Quaternion rot);
+        #endregion
+        #endregion
     }
 }

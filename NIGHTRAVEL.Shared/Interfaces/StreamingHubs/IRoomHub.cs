@@ -17,6 +17,7 @@ namespace Shared.Interfaces.StreamingHubs
     {
         //ここにクライアント～サーバー定義
 
+        #region 入室からゲーム開始まで
         /// <summary>
         /// ユーザー入室
         /// Author:Kida
@@ -24,7 +25,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<Dictionary<Guid,JoinedUser>> JoinedAsync(string roomName, int userId);
+        Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId);
 
         /// <summary>
         /// ユーザー退室
@@ -40,13 +41,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task ReadyAsync();
 
-        /// <summary>
-        /// ゲーム開始
-        /// Author:Nishiura
-        /// </summary>
-        /// <returns></returns>
-        //Task StartGameAsync();
+        #endregion
 
+        #region ゲーム内
+        #region プレイヤー関連
         /// <summary>
         /// プレイヤー動作、情報
         /// Author:Nishiura
@@ -57,6 +55,39 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim);
 
+        /// <summary>
+        /// プレイヤー体力増減
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤー識別ID</param>
+        /// <param name="playerHP">プレイヤー体力</param>
+        /// <returns></returns>
+        Task PlayerHealthAsync(int playerID, float playerHP);
+
+        /// <summary>
+        /// 経験値同期
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="exp">経験値</param>
+        /// <returns></returns>
+        Task EXPAsync(int exp);
+
+        /// <summary>
+        /// レベルアップ同期
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        Task LevelUpAsync();
+
+        /// <summary>
+        /// プレイヤー死亡
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤーID</param>
+        /// <returns></returns>
+        Task PlayerDeadAsync(int playerID);
+        #endregion
+        #region 敵関連
         /// <summary>
         /// 敵動作、情報
         /// Author:Nishiura
@@ -69,6 +100,33 @@ namespace Shared.Interfaces.StreamingHubs
         Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim);
 
         /// <summary>
+        /// 敵生成
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="pos">位置</param>
+        /// <returns></returns>
+        Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos);
+
+        /// <summary>
+        /// 敵体力増減
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="enemHP">敵体力</param>
+        /// <returns></returns>
+        Task EnemyHealthAsync(int enemID, float enemHP);
+
+        /// <summary>
+        /// 敵死亡
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <returns></returns>
+        Task KilledEnemyAsync(int enemID);
+        #endregion
+        #region レリック関連
+        /// <summary>
         /// レリック位置
         /// Author:Nishiura
         /// </summary>
@@ -78,21 +136,14 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// レリック取得
+        /// Author:Nishiura
         /// </summary>
 		/// <param name="relicID">レリックID</param>
         /// <param name="relicName">レリック名</param>
         /// <returns></returns>
         Task GetRelicAsync(int relicID, string relicName);
-
-        /// <summary>
-        /// 敵生成
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        /// <param name="pos">位置</param>
-        /// <returns></returns>
-        Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos);
-
+        #endregion
+        #region ゲーム内UI、仕様関連
         /// <summary>
         /// ギミック起動
         /// Author:Nishiura
@@ -119,63 +170,14 @@ namespace Shared.Interfaces.StreamingHubs
         Task AdvanceNextStageAsync(int stageID, bool isBossStage);
 
         /// <summary>
-        /// プレイヤー体力増減
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-        /// <returns></returns>
-        Task PlayerHealthAsync(int playerID, float playerHP);
-
-        /// <summary>
-        /// 敵体力増減
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        /// <param name="enemHP">敵体力</param>
-        /// <returns></returns>
-        Task EnemyHealthAsync(int enemID, float enemHP);
-
-        /// <summary>
-        /// 敵死亡
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        /// <returns></returns>
-        Task KilledEnemyAsync(int enemID);
-
-        /// <summary>
-        /// 経験値同期
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="exp">経験値</param>
-        /// <returns></returns>
-        Task EXPAsync(int exp);
-
-        /// <summary>
-        /// レベルアップ同期
-        /// Author:Nishiura
-        /// </summary>
-        /// <returns></returns>
-        Task LevelUpAsync();
-
-        /// <summary>
-        /// プレイヤー死亡
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤーID</param>
-        /// <returns></returns>
-        Task PlayerDeadAsync(int playerID);
-
-        /// <summary>
         /// ダメージ表記
+        ///  Author:Nishiura
         /// </summary>
         /// <param name="dmg">ダメージ</param>
         /// <returns></returns>
         Task DamageAsync(int dmg);
-
-        ////敵のID同期
-        //Task EnemyIdAsync(int enemyid);
+        #endregion
+        #endregion
 
         /// <summary>
         /// マスタークライアントが退室したときの処理

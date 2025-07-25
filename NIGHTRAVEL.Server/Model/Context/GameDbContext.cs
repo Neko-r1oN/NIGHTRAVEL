@@ -17,6 +17,8 @@ namespace NIGHTRAVEL.Server.Model.Context
     /// </summary>
     public class GameDbContext : DbContext
     {
+
+        #region データベース設定一覧
         //アカウントのデータベース設定
         public DbSet<Account> Accounts { get; set; }
 
@@ -43,8 +45,7 @@ namespace NIGHTRAVEL.Server.Model.Context
 
         //ユーザーの実績進捗のデータベース設定
         public DbSet<AchievementStatus> Achievement_Statuses { get; set; }
-
-        
+        #endregion
 
         //server名;ユーザー名;パスワード指定
         readonly string connectionString = "server=localhost;database=admin_console;user=jobi;password=jobi;";

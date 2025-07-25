@@ -13,6 +13,7 @@ namespace NIGHTRAVEL.Server.Model.Context
 {
     public class RoomContext
     {
+        #region RoomContext基本構造
         /// <summary>
         /// コンテキストID
         /// Author:Kida
@@ -30,7 +31,9 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Kida
         /// </summary>
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; }
+        #endregion
 
+        #region コンテキストに保存する情報のリスト一覧
         /// <summary>
         /// 参加者リスト
         /// Author:Kida
@@ -56,7 +59,9 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<int, GimmickData> gimmickDataList { get; } = new();
 
         //[その他、ゲームのルームデータをフィールドに保存]
+        #endregion
 
+        //RoomContextの定義
         public RoomContext(IMulticastGroupProvider groupProvider, string roomName)
         {
             Id = Guid.NewGuid();
@@ -65,6 +70,7 @@ namespace NIGHTRAVEL.Server.Model.Context
                 groupProvider.GetOrAddSynchronousGroup<Guid, IRoomHubReceiver>(roomName);
         }
 
+        #region 独自関数
         /// <summary>
         /// データ追加処理
         /// Author:Nishiura
@@ -103,7 +109,12 @@ namespace NIGHTRAVEL.Server.Model.Context
             playerDataList.Remove(conID);
         }
 
-        public void Dispose() {
+        /// <summary>
+        /// グループ退室処理
+        /// Author:木田晃輔
+        /// </summary>
+        public void Dispose()
+        {
             Group.Dispose();
         }
 
@@ -127,6 +138,11 @@ namespace NIGHTRAVEL.Server.Model.Context
             return enemyDataList[enemID];
         }
 
+        /// <summary>
+        /// 敵の情報を渡す関数
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemData"></param>
         public void SetEnemyData(Enemy enemData)
         {
             EnemyData setData = new EnemyData();
@@ -166,5 +182,7 @@ namespace NIGHTRAVEL.Server.Model.Context
                 JoinedUserList.Remove(guid);
             }
         }
+        #endregion
+
     }
 }
