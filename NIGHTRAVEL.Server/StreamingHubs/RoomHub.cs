@@ -105,7 +105,7 @@ namespace StreamingHubs
             ////マスタークライアントだったら次の人に譲渡する
             //if (PlayerData.JoinedUser.IsMaster == true)
             //{
-            //    await MasterLostAsync();
+            //    await MasterLostAsync(this.ConnectionId);
             //}
 
             var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
@@ -120,7 +120,29 @@ namespace StreamingHubs
             roomContext.RemoveUser(this.ConnectionId);
             // ルームデータから自身のデータを削除
             roomContext.RemovePlayerData(this.ConnectionId);
-          
+        }
+
+        /// <summary>
+        /// マスタ譲渡処理
+        /// </summary>
+        /// <param name="conID"></param>
+        /// <returns></returns>
+        public async Task MasterLostAsync(Guid conID)
+        {
+            // マスタを剥奪
+            this.roomContext.JoinedUserList[conID].IsMaster = false;
+
+            // 参加者リストをループ
+            foreach (var user in this.roomContext.JoinedUserList)
+            {
+                // 対象がマスタでない場合
+                if(user.Value.IsMaster == false)
+                {
+                    // その対象をマスタとし、ループを抜ける
+                    user.Value.IsMaster = true;
+                    break;
+                }
+            }
         }
 
         /// <summary>

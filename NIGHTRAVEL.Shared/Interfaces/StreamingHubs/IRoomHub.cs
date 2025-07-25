@@ -177,7 +177,12 @@ namespace Shared.Interfaces.StreamingHubs
         ////敵のID同期
         //Task EnemyIdAsync(int enemyid);
 
-        ////マスタークライアントが退室したときの処理
-        //Task MasterLostAsync();
+        /// <summary>
+        /// マスタークライアントが退室したときの処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        /// <returns></returns>
+        Task MasterLostAsync(Guid conID);
     }
 }
