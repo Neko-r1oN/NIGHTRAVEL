@@ -204,12 +204,16 @@ abstract public class CharacterBase : MonoBehaviour
         if (!animator) animator = GetComponent<Animator>();
         effectController = GetComponent<StatusEffectController>();
 
-        // リアルタイム中&&マスタークライアントではない場合はスクリプトを非アクティブにする
+        // リアルタイム中&&マスタークライアントではない場合
         if (RoomModel.Instance.ConnectionId != Guid.Empty && !RoomModel.Instance.IsMaster)
         {
-            var rb2d = GetComponent<Rigidbody2D>();
-            rb2d.bodyType = RigidbodyType2D.Kinematic;
-            this.enabled = false;
+            // 自身が敵 || 操作キャラではない場合はスクリプトを非アクティブにする
+            if (gameObject.tag == "Enemy" || CharacterManager.Instance.PlayerObjSelf != this.gameObject)
+            {
+                var rb2d = GetComponent<Rigidbody2D>();
+                rb2d.bodyType = RigidbodyType2D.Kinematic;
+                this.enabled = false;
+            }
         }
     }
 

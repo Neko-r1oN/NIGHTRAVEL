@@ -48,6 +48,15 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// シーン遷移したときに通知関数呼び出しを止める
+    /// </summary>
+    private void OnDisable()
+    {
+        RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
+        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
+    }
+
     private void Awake()
     {
         if (instance == null)
@@ -66,7 +75,6 @@ public class CharacterManager : MonoBehaviour
         }
         DestroyExistingPlayer();
         GenerateCharacters();
-        StartCoroutine("UpdateCoroutine");
         isAwake = true;
 
         //プレイヤーの更新通知時に呼ぶ
@@ -75,14 +83,22 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
     }
 
-    /// <summary>
-    /// シーン遷移したときに通知関数呼び出しを止める
-    /// </summary>
-    private void OnDisable()
+    private void Start()
     {
-        RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
-        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
+        StartCoroutine("UpdateCoroutine");
     }
+
+    /// <summary>
+    /// キャラクターの情報更新呼び出し用コルーチン
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator UpdateCoroutine()
+    {
+        if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
+        else UpdatePlayerDataRequest();
+        yield return new WaitForSeconds(updateSec);
+    }
+
 
     /// <summary>
     /// 既にシーン上に存在しているプレイヤーを破棄する
@@ -115,14 +131,12 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// キャラクターの情報更新呼び出し用コルーチン
+    /// 新たな敵をリストに追加する
     /// </summary>
-    /// <returns></returns>
-    public IEnumerator UpdateCoroutine()
+    /// <param name="newEnemies"></param>
+    public void AddEnemies(int id, GameObject newEnemies)
     {
-        if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
-        else UpdatePlayerDataRequest();
-        yield return new WaitForSeconds(updateSec);
+        enemies.Add(id, newEnemies);
     }
 
     /// <summary>
@@ -163,6 +177,7 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     PlayerData GetPlayerData()
     {
+        if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
         var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
         var statusEffectController = player.GetComponent<StatusEffectController>();
         return new PlayerData()
@@ -246,18 +261,6 @@ public class CharacterManager : MonoBehaviour
 
         // プレイヤー情報更新リクエスト
         await RoomModel.Instance.MovePlayerAsync(playerData);
-    }
-
-    /// <summary>
-    /// 新たな敵をリストに追加する
-    /// </summary>
-    /// <param name="newEnemies"></param>
-    public void AddEnemies(params GameObject[] newEnemies)
-    {
-        foreach (GameObject enemy in newEnemies)
-        {
-            enemies.Add(enemies.Count, enemy);
-        }
     }
 
     /// <summary>

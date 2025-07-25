@@ -363,6 +363,20 @@ public class SpawnManager : MonoBehaviour
         return enemy;
     }
 
+    /// <summary>
+    /// ìGê∂ê¨Çé¿çsÇ∑ÇÈ
+    /// </summary>
+    /// <param name="spawnEnemy"></param>
+    /// <param name="spawnPos"></param>
+    /// <param name="canPromoteToElite"></param>
+    /// <returns></returns>
+    void DoSwawnEnemy(GameObject spawnEnemy, Vector3 spawnPos, EnemyElite.ELITE_TYPE eliteType)
+    {
+        GameObject enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
+        enemy.GetComponent<EnemyBase>().PromoteToElite(eliteType);
+        //CharacterManager.Instance.AddEnemies(GameManager.Instance.SpawnCnt, );
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // âE
