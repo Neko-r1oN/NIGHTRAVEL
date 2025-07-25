@@ -80,11 +80,6 @@ abstract public class EnemyBase : CharacterBase
 
     #region オプション
     [Foldout("オプション")]
-    [Tooltip("接触でダメージを与えることが可能")]
-    [SerializeField] 
-    protected bool canDamageOnContact;
-
-    [Foldout("オプション")]
     [Tooltip("常に動き回ることが可能")]
     [SerializeField] 
     protected bool canPatrol;
@@ -215,28 +210,6 @@ abstract public class EnemyBase : CharacterBase
         }
 
         DecideBehavior();
-    }
-
-    /// <summary>
-    /// 触れてきたプレイヤーにダメージを適応させる
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (canDamageOnContact && collision.gameObject.tag == "Player" && hp > 0 && !isInvincible)
-        {
-            if (!target)
-            {
-                // ターゲットを設定し、ターゲットの方向を向く
-                target = collision.gameObject;
-                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0)
-                {
-                    Flip();
-                }
-            }
-            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
-        }
     }
 
     /// <summary>

@@ -9,6 +9,9 @@ using UnityEngine;
 using Shared;
 using Shared.Interfaces.StreamingHubs;
 using System.Drawing;
+using DG.Tweening;
+using UnityEditor.MemoryProfiler;
+using UnityEngine.Playables;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -56,6 +59,20 @@ public class CharacterManager : MonoBehaviour
         GenerateCharacters();
         StartCoroutine("UpdateCoroutine");
         isAwake = true;
+
+        //プレイヤーの更新通知時に呼ぶ
+        RoomModel.Instance.OnMovePlayerSyn += this.OnMovePlayer;
+        //マスタークライアントの更新通知時に呼ぶ
+        RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
+    }
+
+    /// <summary>
+    /// シーン遷移したときに通知関数呼び出しを止める
+    /// </summary>
+    private void OnDisable()
+    {
+        RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
+        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
     }
 
     /// <summary>
@@ -94,9 +111,41 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator UpdateCoroutine()
     {
-        if (RoomModel.Instance.IsMaster) UpdateMasterData();
-        else UpdatePlayerData();
+        if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
+        else UpdatePlayerDataRequest();
         yield return new WaitForSeconds(updateSec);
+    }
+
+    /// <summary>
+    /// キャラクターの情報を更新する
+    /// </summary>
+    /// <param name="characterData"></param>
+    /// <param name="character"></param>
+    void UpdateCharacter(CharacterData characterData, CharacterBase character)
+    {
+        var statusData = new CharacterStatusData(
+            characterData.Health,
+            characterData.Defense,
+            characterData.AttackPower,
+            characterData.MoveSpeed,
+            characterData.MoveSpeedFactor,
+            characterData.AttackSpeedFactor,
+            characterData.JumpPower
+            );
+
+        character.OverridCurrentStatus(statusData);
+        character.gameObject.SetActive(characterData.IsActiveSelf);
+        character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
+        character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
+        character.SetAnimId(characterData.AnimationId);
+        character.gameObject.GetComponent<StatusEffectController>().ApplyStatusEffect(false, characterData.DebuffList);
+
+        // マスタークライアントの場合、キャラクターが動けるようにする
+        if (RoomModel.Instance.IsMaster && !character.enabled)
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            character.enabled = true;
+        }
     }
 
     /// <summary>
@@ -167,7 +216,7 @@ public class CharacterManager : MonoBehaviour
     /// <summary>
     /// マスタークライアント用の情報更新
     /// </summary>
-    async void UpdateMasterData()
+    async void UpdateMasterDataRequest()
     {
         var masterClientData = new MasterClientData()
         {
@@ -176,16 +225,18 @@ public class CharacterManager : MonoBehaviour
         };
 
         // マスタクライアント情報更新リクエスト
+        await RoomModel.Instance.UpdateMasterClientAsync(masterClientData);
     }
 
     /// <summary>
     /// プレイヤーの情報更新
     /// </summary>
-    async void UpdatePlayerData()
+    async void UpdatePlayerDataRequest()
     {
         var playerData = GetPlayerData();
 
         // プレイヤー情報更新リクエスト
+        await RoomModel.Instance.MovePlayerAsync(playerData);
     }
 
     /// <summary>
@@ -197,6 +248,42 @@ public class CharacterManager : MonoBehaviour
         foreach (GameObject enemy in newEnemies)
         {
             enemies.Add(enemies.Count, enemy);
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーの更新の通知
+    /// </summary>
+    /// <param name="playerData"></param>
+    void OnMovePlayer(PlayerData playerData)
+    {
+        if (!playerObjs.ContainsKey(playerData.ConnectionId)) return;
+
+        // プレイヤーの情報更新
+        var player = playerObjs[playerData.ConnectionId].GetComponent<PlayerBase>();
+        UpdateCharacter(playerData, player);
+    }
+
+    /// <summary>
+    /// マスタークライアントの更新通知
+    /// </summary>
+    /// <param name="masterClientData"></param>
+    void OnUpdateMasterClient(MasterClientData masterClientData)
+    {
+        if (!playerObjs.ContainsKey(masterClientData.PlayerData.ConnectionId)) return;
+
+        // プレイヤーの情報更新
+        var player = playerObjs[masterClientData.PlayerData.ConnectionId].GetComponent<PlayerBase>();
+        UpdateCharacter(masterClientData.PlayerData, player);
+
+        // 敵の情報更新
+        foreach(var enemyData in masterClientData.EnemyDatas)
+        {
+            if (enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID] != null)
+            {
+                var enemy = enemies[enemyData.EnemyID].GetComponent<EnemyBase>();
+                UpdateCharacter(enemyData, enemy);
+            }
         }
     }
 }

@@ -101,12 +101,33 @@ public class StatusEffectController : MonoBehaviour
     }
 
     /// <summary>
-    /// 状態異常を付与する処理
+    /// 状態異常を付与する処理 (フラグ省略)
     /// </summary>
     /// <param name="effectTypes"></param>
     public void ApplyStatusEffect(params EFFECT_TYPE[] effectTypes)
     {
         ApplyStatusEffect(true, effectTypes);
+    }
+
+    /// <summary>
+    /// 状態異常を付与する処理
+    /// </summary>
+    /// <param name="effectTypes"></param>
+    public void ApplyStatusEffect(bool canUpdateDuration, List<int> effectTypeIds)
+    {
+        List<EFFECT_TYPE> effectTypes = new List<EFFECT_TYPE>();
+        foreach(int id in effectTypeIds)
+        {
+            foreach (EFFECT_TYPE type in Enum.GetValues(typeof(EFFECT_TYPE)))
+            {
+                if ((int)type == id)
+                {
+                    effectTypes.Add(type);
+                    break;
+                }
+            }
+        }
+        ApplyStatusEffect(canUpdateDuration, effectTypes.ToArray());
     }
 
     /// <summary>

@@ -53,7 +53,15 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="rot">Pl回転値</param>
         /// <param name="anim">PLアニメーションID</param>
         /// <returns></returns>
-        Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim);
+        Task MovePlayerAsync(PlayerData playerData);
+
+        /// <summary>
+        /// マスタークライアントの更新
+        /// Author:木田晃輔
+        /// </summary>
+        /// <param name="masterClientData"></param>
+        /// <returns></returns>
+        Task UpdateMasterClientAsync(MasterClientData masterClientData);
 
         /// <summary>
         /// プレイヤー体力増減

@@ -165,17 +165,32 @@ namespace StreamingHubs
         /// <param name="rot"></param>
         /// <param name="anim"></param>
         /// <returns></returns>
-        public async Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim)
+        public async Task MovePlayerAsync(PlayerData playerData)
         {
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
+            //// ルームデータから接続IDを指定して自身のデータを取得
+            //var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
 
-            playerData.Position = pos; // 位置を渡す
-            playerData.Rotation = rot; // 回転を渡す
-            playerData.State = anim;   // アニメーションIDを渡す
+            //playerData.Position = pos; // 位置を渡す
+            //playerData.Rotation = rot; // 回転を渡す
+            //playerData.State = anim;   // アニメーションIDを渡す
 
             // ルーム参加者全員に、ユーザ情報通知を送信
-            this.roomContext.Group.All.OnMovePlayer(playerData.JoinedUser, pos, rot, anim);
+            //this.roomContext.Group.All.OnMovePlayer(playerData);
+
+            //ルームの自分以外に、ユーザ情報通知を送信
+            this.roomContext.Group.Except([this.ConnectionId]).OnMovePlayer(playerData);
+        }
+
+        /// <summary>
+        /// マスタークライアントの更新
+        /// Author:木田晃輔
+        /// </summary>
+        /// <param name="masterClientData"></param>
+        /// <returns></returns>
+        public async Task UpdateMasterClientAsync(MasterClientData masterClientData)
+        {
+            // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
+            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateMasterClient(masterClientData);
         }
 
         /// <summary>
@@ -194,9 +209,9 @@ namespace StreamingHubs
                 // ルームデータから接続IDを指定して自身のデータを取得
                 var enemData = this.roomContext.GetEnemyData(enemID);
 
-                enemData.Position = pos; // 位置を渡す
-                enemData.Rotation = rot; // 回転を渡す
-                enemData.State = anim;   // アニメーションIDを渡す
+                //enemData.Position = pos; // 位置を渡す
+                //enemData.Rotation = rot; // 回転を渡す
+                //enemData.State = anim;   // アニメーションIDを渡す
 
                 // ルーム参加者全員に、ユーザ情報通知を送信
                 this.roomContext.Group.All.OnMoveEnemy(enemID, pos, rot, anim);

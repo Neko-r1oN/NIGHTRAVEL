@@ -35,7 +35,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public bool IsMaster { get; set; }
 
     //接続ID
-    public Guid ConnectionId { get; set; }
+    public Guid ConnectionId { get; set; } = Guid.Empty;
 
     #region 通知定義一覧
 
@@ -54,7 +54,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnStartedGame { get; set; }
 
     //プレイヤー位置回転通知
-    public Action<JoinedUser, Vector2, Quaternion, CharacterState> OnMovePlayerSyn { get; set; }
+    public Action<PlayerData> OnMovePlayerSyn { get; set; }
+
+    //マスタークライアントの更新通知
+    public Action<MasterClientData> OnUpdateMasterClientSyn { get; set; }
 
     //脱出通知
     public Action<JoinedUser> OnEscapeCharacter { get; set; }
@@ -183,6 +186,17 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
+    /// マスタークライアントの更新同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="masterClient"></param>
+    /// <returns></returns>
+    public async UniTask UpdateMasterClientAsync(MasterClientData masterClient)
+    {
+        await roomHub.UpdateMasterClientAsync(masterClient);
+    }
+
+    /// <summary>
     /// 退室の同期
     /// Aughter:木田晃輔
     /// </summary>
@@ -190,7 +204,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask LeaveAsync()
     {
         await roomHub.LeavedAsync();
+        //自分をリストから消す
         joinedUserList.Clear();
+        ConnectionId=Guid.Empty;
     }
 
     /// <summary>
@@ -208,9 +224,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <returns></returns>
-    public async Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim)
+    public async Task MovePlayerAsync(PlayerData playerData)
     {
-        await roomHub.MovePlayerAsync(pos, rot, anim);
+        await roomHub.MovePlayerAsync(playerData);
     }
 
     /// <summary>
@@ -428,9 +444,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="pos"></param>
     /// <param name="rot"></param>
     /// <param name="animID"></param>
-    public void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
+    public void OnMovePlayer(PlayerData playerData)
     {
-        OnMovePlayerSyn(user, pos, rot, animID);
+        OnMovePlayerSyn(playerData);
+    }
+
+    /// <summary>
+    /// マスタークライアントの更新通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="masterClientData"></param>
+    public void OnUpdateMasterClient(MasterClientData masterClientData)
+    {
+        OnUpdateMasterClientSyn(masterClientData);
     }
 
     /// <summary>

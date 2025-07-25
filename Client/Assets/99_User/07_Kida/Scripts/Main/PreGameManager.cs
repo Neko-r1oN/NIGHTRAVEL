@@ -23,7 +23,7 @@ public class PreGameManager : MonoBehaviour
         //ユーザーが退室した時にOnLeavedUserメソッドを実行するよう、モデルに登録(デバッグ用)
         roomModel.OnLeavedUser += this.OnLeavedUser;
         //ユーザーが移動した時にOnMoveUserメソッドを実行するよう、モデルに登録
-        roomModel.OnMovePlayerSyn += this.OnMoveCharacterSyn;
+        //roomModel.OnMovePlayerSyn += this.OnMoveCharacterSyn;
         //敵が移動した時にOnMoveUserメソッドを実行するよう、モデルに登録
         roomModel.OnMoveEnemySyn += this.OnMoveEnemySyn;
     }
@@ -39,7 +39,7 @@ public class PreGameManager : MonoBehaviour
     /// </summary>
     public async　void PlayerUpdate()
     {
-        await roomModel.MovePlayerAsync(player.transform.position,player.transform.rotation,(CharacterState)anim);
+        //await roomModel.MovePlayerAsync(playerData);
     }
 
     /// <summary>

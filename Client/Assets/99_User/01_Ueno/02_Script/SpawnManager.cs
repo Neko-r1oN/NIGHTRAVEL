@@ -155,28 +155,24 @@ public class SpawnManager : MonoBehaviour
 
         for (int i = 0; i < loopMax; i++)
         {
+            int seed = System.DateTime.Now.Millisecond + i;
+            Random.InitState(seed);  // Unityの乱数にシードを設定
+
             Vector3 spawnPos = new Vector3
                  (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
 
-            Vector3 distToPlayer =
-                player.transform.position - spawnPos;
-
-            if (Mathf.Abs(distToPlayer.x) > distMinSpawnPos
-                && Mathf.Abs(distToPlayer.y) > distMinSpawnPos)
+            Vector2? pos = IsGroundCheck(spawnPos);
+            if (pos != null)
             {
-                Vector2? pos = IsGroundCheck(spawnPos);
-                if (pos != null)
+                LayerMask mask = LayerMask.GetMask("Default");
+
+                Vector2 result = (Vector2)pos;
+
+                result.y += enemyBase.SpawnGroundOffset;
+
+                if (!Physics2D.OverlapCircle(new Vector2(result.x, result.y + 1), 0.8f, mask))
                 {
-                    LayerMask mask = LayerMask.GetMask("Default");
-
-                    Vector2 result = (Vector2)pos;
-
-                    result.y += enemyBase.SpawnGroundOffset;
-
-                    if (!Physics2D.OverlapCircle(new Vector2(result.x, result.y + 1), 0.8f, mask))
-                    {
-                        return result;
-                    }
+                    return result;
                 }
             }
         }
@@ -191,23 +187,52 @@ public class SpawnManager : MonoBehaviour
     {
         for (int i = 0; i < num; i++)
         {
-            int seed = System.DateTime.Now.Millisecond + i;
-            Random.InitState(seed);  // Unityの乱数にシードを設定
-
             // 確率の計算
             int listNum = Choose(enemyWeights);
 
             EnemyBase enemyBase = enemyPrefabs[listNum].GetComponent<EnemyBase>();
 
+            Vector2 spawnRight = (Vector2)player.transform.position + Vector2.right * spawnRangeOffset;
+            Vector2 spawnLeft = (Vector2)player.transform.position + Vector2.left * spawnRangeOffset;
+
+            Vector2 minSpawnRight = spawnRight - spawnRight / 2;
+            Vector2 maxSpawnRight = spawnRight + spawnRight / 2;
+
+            Vector2 minSpawnLeft = spawnLeft - spawnLeft / 2;
+            Vector2 maxSpawnLeft = spawnLeft + spawnLeft / 2;
+
             // ランダムな位置を生成
-            //var spawnPostions = CreateEnemySpawnPosition(minPlayer, maxPlayer);
+            var spawnPostions = CreateEnemySpawnPosition(minSpawnRight, maxSpawnRight);
 
             //Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
-            //if (spawnPos != null)
-            //{
-            //    SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
-            //}
+            Vector3? spawnRightPosCandidate, spawnLeftPosCandidate,spawnPos;
+
+            spawnRightPosCandidate = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight, enemyBase);
+            spawnLeftPosCandidate = GenerateEnemySpawnPosition(minSpawnLeft, maxSpawnLeft, enemyBase);
+
+            if(spawnLeftPosCandidate != null && spawnRightPosCandidate != null)
+            {
+                int rand = Random.Range(0, 2);
+
+                if(rand == 0)
+                {
+                    SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnRightPosCandidate);
+                }
+                else
+                {
+                    SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnLeftPosCandidate);
+                }
+            }
+            else
+            {
+                spawnPos = spawnRightPosCandidate == null ? spawnLeftPosCandidate : spawnRightPosCandidate;
+
+                SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
+            }
+
+            //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight,enemyBase);
+            //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnLeft, maxSpawnLeft, enemyBase);
         }
     }
 
