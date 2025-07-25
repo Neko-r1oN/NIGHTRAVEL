@@ -82,6 +82,7 @@ public class MatchingManager : MonoBehaviour
         await RoomModel.Instance.ReadyAsync();
     }
     #endregion
+
     #region 通知一覧：木田晃輔
     /// <summary>
     /// 入室完了通知
@@ -128,7 +129,7 @@ public class MatchingManager : MonoBehaviour
         //ゲーム開始の時の処理を書く
         Debug.Log("ゲームを開始します");
 
-        SceneManager.LoadScene("PreGameScene");
+        SceneManager.LoadScene("01_Stage");
     }
     #endregion
 }

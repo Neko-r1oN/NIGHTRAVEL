@@ -91,7 +91,15 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="pos">位置</param>
         /// <param name="rot">回転</param>
         /// <param name="animID">アニメーションID</param>
-        void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID);
+        //void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
+        void OnMovePlayer(PlayerData playerData);
+
+        /// <summary>
+        /// マスタークライアントの更新通知
+        /// Author:木田晃輔
+        /// </summary>
+        /// <param name="masterClientData"></param>
+        void OnUpdateMasterClient(MasterClientData masterClientData);
 
         /// <summary>
         /// プレイヤー体力増減通知
