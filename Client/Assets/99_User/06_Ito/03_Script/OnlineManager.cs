@@ -20,7 +20,7 @@ public class OnlineManager : MonoBehaviour
     /// </summary>
     public void BackTitleButton()
     {
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("Title Ueno");
     }
 
     

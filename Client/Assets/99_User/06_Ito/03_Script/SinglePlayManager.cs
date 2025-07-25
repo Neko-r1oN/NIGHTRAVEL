@@ -20,8 +20,11 @@ public class SinglePlayManager : MonoBehaviour
     /// </summary>
     public void BackTitleButton()
     {
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("Title Ueno");
     }
 
-    
+    public void ChangeGameButton()
+    {
+        SceneManager.LoadScene("Stage");
+    }
 }

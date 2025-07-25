@@ -20,6 +20,6 @@ public class DataListManager : MonoBehaviour
     /// </summary>
     public void BackTitleButton()
     {
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("Title Ueno");
     }
 }
