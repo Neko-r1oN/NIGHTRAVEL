@@ -71,10 +71,11 @@ namespace Shared.Interfaces.StreamingHubs
         public Quaternion Rotation { get; set; }
 
         /// <summary>
-        /// アニメーション状態
+        /// アニメーションID
         /// Author:Nishiura
         /// </summary>
-        public IRoomHubReceiver.EnemyAnimState State { get; set; }
+        //public IRoomHubReceiver.EnemyAnimState State { get; set; }
+        public int animationId { get; set; }
 
         /// <summary>
         /// 状態異常リスト
