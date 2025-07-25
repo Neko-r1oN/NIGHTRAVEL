@@ -70,7 +70,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
-        player = GameManager.Instance.Player;
+        player = CharacterManager.Instance.PlayerObjSelf;
         enemyWeights = new float[enemyPrefabs.Count];
 
         // Š„‡

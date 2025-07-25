@@ -160,7 +160,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        player = GameManager.Instance.Player.GetComponent<PlayerBase>();
+        player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
         //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
 

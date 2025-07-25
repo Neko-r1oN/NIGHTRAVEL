@@ -42,8 +42,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] float yRadius;          // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
-    [SerializeField] GameObject player;
-    [SerializeField] List<GameObject> players;      // プレイヤーの情報
 
     float elapsedTime;
 
@@ -53,11 +51,6 @@ public class GameManager : MonoBehaviour
     #region 各プロパティ
     [Header("各プロパティ")]
     public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
-
-    public GameObject Player { get { return player; } }
-
-    public List<GameObject> Players { get { return players; } }
-
     public GameObject Boss {  get { return boss; } }
 
     public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
