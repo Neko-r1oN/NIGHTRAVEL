@@ -1,13 +1,16 @@
 ﻿//=============================
 // プレイヤーデータスクリプト
 // Author:木田晃輔
+//
+//  削除予定のスクリプト
+//
 //=============================
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 
 namespace NIGHTRAVEL.Server.StreamingHubs
 {
-    public class PlayerData
+    public class PlayerData_TMP
     {
         /// <summary>
         /// ユーザーのデータ

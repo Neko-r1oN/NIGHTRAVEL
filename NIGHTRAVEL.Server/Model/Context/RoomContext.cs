@@ -81,18 +81,18 @@ namespace NIGHTRAVEL.Server.Model.Context
             PlayerData playerSetData = new PlayerData();
 
             //初期データを設定
-            playerSetData.JoinedUser = new JoinedUser();
-            playerSetData.PlayerID = 0;
-            playerSetData.Health = 0;
-            playerSetData.Attack = 0;
-            playerSetData.AttackSpeed = 0;
-            playerSetData.Defense = 0;
-            playerSetData.Speed = 0;
-            playerSetData.Position = new UnityEngine.Vector2(0, 0);
-            playerSetData.Rotation = new UnityEngine.Quaternion(0, 0, 0, 0);
-            playerSetData.State = 0;
-            playerSetData.DebuffList = new List<int> { 0, 0, 0 };
-            playerSetData.IsDead = false;
+            //playerSetData.JoinedUser = new JoinedUser();
+            //playerSetData.PlayerID = 0;
+            //playerSetData.Health = 0;
+            //playerSetData.Attack = 0;
+            //playerSetData.AttackSpeed = 0;
+            //playerSetData.Defense = 0;
+            //playerSetData.Speed = 0;
+            //playerSetData.Position = new UnityEngine.Vector2(0, 0);
+            //playerSetData.Rotation = new UnityEngine.Quaternion(0, 0, 0, 0);
+            //playerSetData.State = 0;
+            //playerSetData.DebuffList = new List<int> { 0, 0, 0 };
+            //playerSetData.IsDead = false;
 
             // データリストに自身のデータを追加
             playerDataList.Add(conID, playerSetData);
@@ -149,11 +149,11 @@ namespace NIGHTRAVEL.Server.Model.Context
 
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
-            setData.Health = enemData.hp;
-            setData.Attack = enemData.attack;
-            setData.Defense = enemData.defence;
-            setData.Speed = enemData.move_speed;
-            setData.AttackSpeed = enemData.attack_speed;
+            setData.Health = (int)enemData.hp;
+            setData.AttackPower = (int)enemData.attack;
+            setData.Defense = (int)enemData.defence;
+            setData.MoveSpeed = (float)enemData.move_speed;
+            setData.AttackSpeedFactor = (float)enemData.attack_speed;
 
             enemyDataList.Add(enemData.id, setData);
         }

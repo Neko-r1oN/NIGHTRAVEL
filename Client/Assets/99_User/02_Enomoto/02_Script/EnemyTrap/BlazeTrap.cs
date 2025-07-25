@@ -1,3 +1,7 @@
+//**************************************************
+//  エリート個体(ブレイズ)な敵による炎のトラップのスクリプト
+//  Author:r-enomoto
+//**************************************************
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;

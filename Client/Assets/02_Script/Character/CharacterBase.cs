@@ -11,18 +11,6 @@ using UnityEngine;
 
 abstract public class CharacterBase : MonoBehaviour
 {
-    public enum STATUS_TYPE
-    {
-        All,
-        HP,
-        Defense,
-        Power,
-        JumpPower,
-        MoveSpeed,
-        MoveSpeedFactor,
-        AttackSpeedFactor
-    }
-
     #region 初期ステータス関連
     [Foldout("ステータス")]
     [SerializeField]
@@ -198,6 +186,18 @@ abstract public class CharacterBase : MonoBehaviour
     protected Animator animator;
     #endregion
 
+    public enum STATUS_TYPE
+    {
+        All,
+        HP,
+        Defense,
+        Power,
+        JumpPower,
+        MoveSpeed,
+        MoveSpeedFactor,
+        AttackSpeedFactor
+    }
+
     protected virtual void Awake()
     {
         ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
@@ -312,6 +312,8 @@ abstract public class CharacterBase : MonoBehaviour
         OverrideAnimaterParam();
     }
 
+    #region アニメーション関連
+
     /// <summary>
     /// アニメーターのパラメーターを上書きする
     /// </summary>
@@ -323,4 +325,25 @@ abstract public class CharacterBase : MonoBehaviour
             animator.SetFloat("move_speed", moveSpeedFactor);
         }
     }
+
+    /// <summary>
+    /// アニメーション設定処理
+    /// </summary>
+    /// <param name="id"></param>
+    public virtual void SetAnimId(int id)
+    {
+        if (animator == null) return;
+        animator.SetInteger("animation_id", id);
+    }
+
+    /// <summary>
+    /// アニメーションID取得処理
+    /// </summary>
+    /// <returns></returns>
+    public int GetAnimId()
+    {
+        return animator != null ? animator.GetInteger("animation_id") : 0;
+    }
+
+    #endregion
 }

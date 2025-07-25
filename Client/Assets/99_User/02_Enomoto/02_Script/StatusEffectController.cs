@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StatusEffectController;
 using static UnityEngine.Rendering.DebugUI;
 
 public class StatusEffectController : MonoBehaviour
@@ -16,7 +17,7 @@ public class StatusEffectController : MonoBehaviour
     /// </summary>
     public enum EFFECT_TYPE
     {
-        None,
+        None = 0,
         Burn,       // 炎上状態
         Freeze,     // 霜焼け状態
         Shock       // 感電状態
@@ -52,7 +53,6 @@ public class StatusEffectController : MonoBehaviour
     [SerializeField] GameObject shockPS;
     #endregion
 
-    // 各状態異常を適用させたときの効果値
     CapsuleCollider2D capsule2D;
     CharacterBase characterBase;
     PlayerBase playerBase;
@@ -87,10 +87,33 @@ public class StatusEffectController : MonoBehaviour
     }
 
     /// <summary>
+    /// 適用済みの状態異常を取得する
+    /// </summary>
+    /// <returns></returns>
+    public List<int> GetAppliedStatusEffects()
+    {
+        List<int> result = new List<int>();
+        foreach (EFFECT_TYPE effectType in currentEffects.Keys)
+        {
+            result.Add((int)effectType);
+        }
+        return result;
+    }
+
+    /// <summary>
     /// 状態異常を付与する処理
     /// </summary>
-    /// <param name="effectType"></param>
+    /// <param name="effectTypes"></param>
     public void ApplyStatusEffect(params EFFECT_TYPE[] effectTypes)
+    {
+        ApplyStatusEffect(true, effectTypes);
+    }
+
+    /// <summary>
+    /// 状態異常を付与する処理
+    /// </summary>
+    /// <param name="effectTypes"></param>
+    public void ApplyStatusEffect(bool canUpdateDuration, params EFFECT_TYPE[] effectTypes)
     {
         foreach (EFFECT_TYPE effectType in effectTypes)
         {
@@ -142,7 +165,7 @@ public class StatusEffectController : MonoBehaviour
             }
             else
             {
-                if (effectType != EFFECT_TYPE.Shock)
+                if (effectType != EFFECT_TYPE.Shock && canUpdateDuration)
                 {
                     currentEffects[effectType] = effectDuration;    // 効果時間をリセット
                 }
