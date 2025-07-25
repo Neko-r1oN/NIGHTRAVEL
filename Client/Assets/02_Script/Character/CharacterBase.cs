@@ -203,6 +203,29 @@ abstract public class CharacterBase : MonoBehaviour
         ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
         if (!animator) animator = GetComponent<Animator>();
         effectController = GetComponent<StatusEffectController>();
+
+        // リアルタイム中&&マスタークライアントではない場合はスクリプトを非アクティブにする
+        if (RoomModel.Instance.ConnectionId != Guid.Empty && !RoomModel.Instance.IsMaster)
+        {
+            var rb2d = GetComponent<Rigidbody2D>();
+            rb2d.bodyType = RigidbodyType2D.Kinematic;
+            this.enabled = false;
+        }
+    }
+
+    /// <summary>
+    /// 現在のステータスを上書きする
+    /// </summary>
+    public void OverridCurrentStatus(CharacterStatusData statusData)
+    {
+        hp = statusData.hp;
+        defense = statusData.defence;
+        power = statusData.power;
+        jumpPower = statusData.jumpPower;
+        moveSpeed = statusData.moveSpeed;
+        moveSpeedFactor = statusData.moveSpeedFactor;
+        attackSpeedFactor = statusData.attackSpeedFactor;
+        OverrideAnimaterParam();
     }
 
     /// <summary>
@@ -305,8 +328,8 @@ abstract public class CharacterBase : MonoBehaviour
     {
         hp = maxHp;
         power = maxPower;
-        moveSpeed = maxMoveSpeed;
         jumpPower = maxJumpPower;
+        moveSpeed = maxMoveSpeed;
         moveSpeedFactor = maxMoveSpeedFactor;
         attackSpeedFactor = maxAttackSpeedFactor;
         OverrideAnimaterParam();
