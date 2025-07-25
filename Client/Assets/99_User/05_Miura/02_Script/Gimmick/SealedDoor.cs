@@ -27,7 +27,7 @@ public class SealedDoor : ObjectBase
         }
 
         isBroken = true;
-        player=GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
+        player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
         GameObject fragment; //破片のオブジェクト
         fragment = Instantiate(DoorFragment, new Vector2(this.transform.position.x, this.transform.position.y - 1.5f), this.transform.rotation); //破片オブジェクトを生成(position.xはドアの位置、yはドアより少し下の位置)

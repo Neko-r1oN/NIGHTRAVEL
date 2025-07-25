@@ -45,7 +45,7 @@ public class Box : ObjectBase
         }
 
         isBroken = true;
-        player = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
+        player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
         GameObject fragment; //破片のオブジェクト
 
