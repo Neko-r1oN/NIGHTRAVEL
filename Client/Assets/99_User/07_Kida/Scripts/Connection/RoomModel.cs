@@ -56,6 +56,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //プレイヤー位置回転通知
     public Action<PlayerData> OnMovePlayerSyn { get; set; }
 
+    //マスタークライアントの更新通知
+    public Action<MasterClientData> OnUpdateMasterClientSyn { get; set; }
+
     //脱出通知
     public Action<JoinedUser> OnEscapeCharacter { get; set; }
 
@@ -453,7 +456,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="masterClientData"></param>
     public void OnUpdateMasterClient(MasterClientData masterClientData)
     {
-        OnUpdateMasterClient(masterClientData);
+        OnUpdateMasterClientSyn(masterClientData);
     }
 
     /// <summary>

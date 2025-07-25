@@ -59,6 +59,20 @@ public class CharacterManager : MonoBehaviour
         GenerateCharacters();
         StartCoroutine("UpdateCoroutine");
         isAwake = true;
+
+        //プレイヤーの更新通知時に呼ぶ
+        RoomModel.Instance.OnMovePlayerSyn += this.OnMovePlayer;
+        //マスタークライアントの更新通知時に呼ぶ
+        RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
+    }
+
+    /// <summary>
+    /// シーン遷移したときに通知関数呼び出しを止める
+    /// </summary>
+    private void OnDisable()
+    {
+        RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
+        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
     }
 
     /// <summary>

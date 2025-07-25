@@ -45,6 +45,15 @@ public class MatchingManager : MonoBehaviour
         #endregion
     }
 
+    private void OnDisable()
+    {
+        //シーン遷移した場合に通知関数をモデルから解除
+        RoomModel.Instance.OnJoinedUser -= this.OnJoinedUser;
+        RoomModel.Instance.OnLeavedUser -= this.OnLeavedUser;
+        RoomModel.Instance.OnReadySyn -= this.OnReadySyn;
+        RoomModel.Instance.OnStartedGame -= this.OnStartedGame;
+    }
+
     #region 同期処理一覧：木田晃輔
     /// <summary>
     /// 入室処理
