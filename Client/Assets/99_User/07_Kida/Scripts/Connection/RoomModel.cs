@@ -54,7 +54,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnStartedGame { get; set; }
 
     //プレイヤー位置回転通知
-    public Action<JoinedUser, Vector2, Quaternion, CharacterState> OnMovePlayerSyn { get; set; }
+    public Action<PlayerData> OnMovePlayerSyn { get; set; }
 
     //脱出通知
     public Action<JoinedUser> OnEscapeCharacter { get; set; }
@@ -208,9 +208,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <returns></returns>
-    public async Task MovePlayerAsync(Vector2 pos, Quaternion rot, CharacterState anim)
+    public async Task MovePlayerAsync(PlayerData playerData)
     {
-        await roomHub.MovePlayerAsync(pos, rot, anim);
+        await roomHub.MovePlayerAsync(playerData);
     }
 
     /// <summary>
@@ -428,9 +428,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="pos"></param>
     /// <param name="rot"></param>
     /// <param name="animID"></param>
-    public void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
+    public void OnMovePlayer(PlayerData playerData)
     {
-        OnMovePlayerSyn(user, pos, rot, animID);
+        OnMovePlayerSyn(playerData);
+    }
+
+    /// <summary>
+    /// マスタークライアントの更新通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="masterClientData"></param>
+    public void OnUpdateMasterClient(MasterClientData masterClientData)
+    {
+        OnUpdateMasterClient(masterClientData);
     }
 
     /// <summary>
