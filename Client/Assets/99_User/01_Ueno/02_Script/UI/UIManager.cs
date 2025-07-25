@@ -200,13 +200,13 @@ public class UIManager : MonoBehaviour
 
         level = LevelManager.Instance;
 
-        diffText.text = level.LevelName[level.GameLevel].ToString();
+        //diffText.text = level.LevelName[level.GameLevel].ToString();
         colorCode = "#ffb6c1";
 
-        if(ColorUtility.TryParseHtmlString(colorCode,out color))
-        {
-            diffText.color = color;
-        }
+        //if(ColorUtility.TryParseHtmlString(colorCode,out color))
+        //{
+        //    diffText.color = color;
+        //}
     }
 
     /// <summary>
