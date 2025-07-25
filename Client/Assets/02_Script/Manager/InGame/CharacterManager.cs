@@ -127,7 +127,11 @@ public class CharacterManager : MonoBehaviour
         character.gameObject.GetComponent<StatusEffectController>().ApplyStatusEffect(false, characterData.DebuffList);
 
         // マスタークライアントの場合、キャラクターが動けるようにする
-        if (RoomModel.Instance.IsMaster) character.enabled = true;
+        if (RoomModel.Instance.IsMaster && !character.enabled)
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            character.enabled = true;
+        }
     }
 
     /// <summary>
