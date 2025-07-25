@@ -9,6 +9,11 @@ public class StartFade : MonoBehaviour
 {
     [SerializeField] Renderer fade;
 
+    [Header("フェード関連")]
+    [SerializeField] float startFade;
+    [SerializeField] float fadeNum;
+    float time = 0;
+
     [Header("ループ開始時の色")]
     [SerializeField]
     Color32 startColor = new Color32(255, 255, 255, 255);
@@ -25,6 +30,7 @@ public class StartFade : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        fade.material.color = Color.Lerp(fade.material.color, new Color(1, 1, 1.0f, 0), 0.1f * Time.deltaTime);
+        time += Time.deltaTime;
+        if (startFade < time) fade.material.color = Color.Lerp(fade.material.color, new Color(1, 1, 1.0f, 0), fadeNum * Time.deltaTime);
     }
 }

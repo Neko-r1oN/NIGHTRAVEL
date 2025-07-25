@@ -30,7 +30,7 @@ public class TitleManagerk : MonoBehaviour
         //BGM再生
         BGMManager.Instance.Play(
             audioPath: BGMPath.TITLE, //再生したいオーディオのパス
-            volumeRate: 0.5f,                //音量の倍率
+            volumeRate: 0.55f,                //音量の倍率
             delay: 1.0f,                //再生されるまでの遅延時間
             pitch: 1,                //ピッチ
             isLoop: true,             //ループ再生するか
@@ -39,7 +39,7 @@ public class TitleManagerk : MonoBehaviour
 
         SEManager.Instance.Play(
            audioPath: SEPath.TITLE_WIND, //再生したいオーディオのパス
-           volumeRate: 0.4f,                //音量の倍率
+           volumeRate: 0.1f,                //音量の倍率
            delay: 0,                //再生されるまでの遅延時間
            pitch: 1,                //ピッチ
            isLoop: true,             //ループ再生するか
@@ -48,7 +48,7 @@ public class TitleManagerk : MonoBehaviour
 
         SEManager.Instance.Play(
            audioPath: SEPath.TITLE_NOISE, //再生したいオーディオのパス
-           volumeRate: 0.4f,                //音量の倍率
+           volumeRate: 0.1f,                //音量の倍率
            delay: 0,                //再生されるまでの遅延時間
            pitch: 1,                //ピッチ
            isLoop: true,             //ループ再生するか
@@ -63,8 +63,6 @@ public class TitleManagerk : MonoBehaviour
 
     public void OpenOptionButton()
     {
-        ClickSE();
-
        // menu.SetActive(true);
         isMenuFlag = true;
         
@@ -93,7 +91,6 @@ public class TitleManagerk : MonoBehaviour
 
     public void OnClickStart()
     {
-        ClickSE();
 
         //全てのBGMをフェードアウト
         BGMManager.Instance.FadeOut(BGMPath.TITLE, 3, () => {
@@ -106,21 +103,5 @@ public class TitleManagerk : MonoBehaviour
             Debug.Log("BGMフェードアウト終了");
         });
     }
-
-    /// <summary>
-    /// クリック音再生関数
-    /// </summary>
-    public void ClickSE()
-    {
-        SEManager.Instance.Play(
-            audioPath: SEPath.SYSTEM20, //再生したいオーディオのパス
-            volumeRate: 1,                //音量の倍率
-            delay: 0,                //再生されるまでの遅延時間
-            pitch: 1,                //ピッチ
-            isLoop: false,             //ループ再生するか
-            callback: null              //再生終了後の処理
-        );
-    }
-
 }
 
