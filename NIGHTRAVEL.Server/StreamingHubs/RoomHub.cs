@@ -181,6 +181,12 @@ namespace StreamingHubs
             this.roomContext.Group.Except([this.ConnectionId]).OnMovePlayer(playerData);
         }
 
+        public async Task UpdatePlayerAsync(PlayerData playerData)
+        {
+            //ルームの自分以外に、ユーザ情報通知を送信
+            this.roomContext.Group.Except([this.ConnectionId]).OnMovePlayer(playerData);
+        }
+
         /// <summary>
         /// マスタークライアントの更新
         /// Author:木田晃輔

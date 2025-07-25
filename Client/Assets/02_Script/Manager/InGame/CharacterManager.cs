@@ -94,9 +94,12 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator UpdateCoroutine()
     {
-        if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
-        else UpdatePlayerDataRequest();
-        yield return new WaitForSeconds(updateSec);
+        while (true)
+        {
+            if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
+            else UpdatePlayerDataRequest();
+            yield return new WaitForSeconds(updateSec);
+        }
     }
 
 
@@ -178,6 +181,7 @@ public class CharacterManager : MonoBehaviour
     PlayerData GetPlayerData()
     {
         if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
+        Debug.Log("キャラクター："+RoomModel.Instance.ConnectionId);
         var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
         var statusEffectController = player.GetComponent<StatusEffectController>();
         return new PlayerData()
@@ -197,6 +201,7 @@ public class CharacterManager : MonoBehaviour
 
             // 以下は専用変数
             PlayerID = 0,   // ######################################################### とりあえず0固定
+            ConnectionId = RoomModel.Instance.ConnectionId,
             IsDead = false
         };
     }
@@ -260,7 +265,7 @@ public class CharacterManager : MonoBehaviour
         var playerData = GetPlayerData();
 
         // プレイヤー情報更新リクエスト
-        await RoomModel.Instance.MovePlayerAsync(playerData);
+        await RoomModel.Instance.UpdatePlayerAsync(playerData);
     }
 
     /// <summary>

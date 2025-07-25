@@ -35,7 +35,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public bool IsMaster { get; set; }
 
     //接続ID
-    public Guid ConnectionId { get; set; } = Guid.Empty;
+    public Guid ConnectionId { get; private set; }
 
     #region 通知定義一覧
 
@@ -118,19 +118,43 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     private static RoomModel instance;
     public static RoomModel Instance
     {
-        get
+        get { return instance; }
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
         {
-            // GETプロパティを呼ばれたときにインスタンスを作成する(初回のみ)
-            if (instance == null)
-            {
-                GameObject gameObj = new GameObject("RoomModel");
-                instance = gameObj.AddComponent<RoomModel>();
-                DontDestroyOnLoad(gameObj);
-            }
-            return instance;
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
+            Destroy(gameObject);
         }
     }
+
+    //public static RoomModel Instance
+    //{
+    //    get
+    //    {
+    //        // GETプロパティを呼ばれたときにインスタンスを作成する(初回のみ)
+    //        if (instance == null)
+    //        {
+    //            GameObject gameObj = new GameObject("RoomModel"+DateTime.Now.ToString());
+    //            instance = gameObj.AddComponent<RoomModel>();
+    //            DontDestroyOnLoad(gameObj);
+    //        }
+    //        return instance;
+    //    }
+    //}
     #endregion
+
+    private void OnDisable()
+    {
+        Debug.Log("死にました");
+    }
 
     #region MagicOnion接続・切断処理
     /// <summary>
@@ -181,6 +205,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             if (user.Value.UserData.Id == userId)
             {
                 this.ConnectionId = user.Value.ConnectionId;
+                Debug.Log("モデル：" + RoomModel.Instance.ConnectionId);
             }
         }
     }
@@ -206,7 +231,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         await roomHub.LeavedAsync();
         //自分をリストから消す
         joinedUserList.Clear();
-        ConnectionId=Guid.Empty;
     }
 
     /// <summary>
@@ -227,6 +251,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async Task MovePlayerAsync(PlayerData playerData)
     {
         await roomHub.MovePlayerAsync(playerData);
+    }
+
+    public async Task UpdatePlayerAsync(PlayerData playerData)
+    {
+        await roomHub.UpdatePlayerAsync(playerData);
     }
 
     /// <summary>

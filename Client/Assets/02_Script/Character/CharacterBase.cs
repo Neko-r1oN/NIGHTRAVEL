@@ -204,6 +204,11 @@ abstract public class CharacterBase : MonoBehaviour
         if (!animator) animator = GetComponent<Animator>();
         effectController = GetComponent<StatusEffectController>();
 
+        
+    }
+
+    protected virtual void Start()
+    {
         // リアルタイム中&&マスタークライアントではない場合
         if (RoomModel.Instance.ConnectionId != Guid.Empty && !RoomModel.Instance.IsMaster)
         {

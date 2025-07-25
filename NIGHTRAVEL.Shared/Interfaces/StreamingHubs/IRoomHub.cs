@@ -56,6 +56,13 @@ namespace Shared.Interfaces.StreamingHubs
         Task MovePlayerAsync(PlayerData playerData);
 
         /// <summary>
+        /// プレイヤーの更新
+        /// </summary>
+        /// <param name="playerData"></param>
+        /// <returns></returns>
+        Task UpdatePlayerAsync(PlayerData playerData);
+
+        /// <summary>
         /// マスタークライアントの更新
         /// Author:木田晃輔
         /// </summary>
