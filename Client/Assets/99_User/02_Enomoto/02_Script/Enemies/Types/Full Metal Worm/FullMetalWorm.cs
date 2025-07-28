@@ -2,14 +2,10 @@
 //  [ボス] フルメタルワーム(本体)のの管理クラス
 //  Author:r-enomoto
 //**************************************************
-using DG.Tweening;
-using NUnit.Framework;
 using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.Sqlite;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 

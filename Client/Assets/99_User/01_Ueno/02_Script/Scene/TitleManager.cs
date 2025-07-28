@@ -3,12 +3,25 @@ using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
+    [SerializeField] GameObject fade;
+
+    public static bool isMenuFlag;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GameObject obj = GameObject.Find("UISet");
-
         Destroy(obj);
+
+        fade.SetActive(true);               //フェードを有効化
+        //  menu.SetActive(false);              //メニューを非表示
+        isMenuFlag = false;                 //メニューフラグを無効化
+    }
+
+    public void OpenOptionButton()
+    {
+        // menu.SetActive(true);
+        isMenuFlag = true;
     }
 
     public void ButtonPush()

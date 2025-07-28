@@ -2,14 +2,10 @@
 //  エネミーの抽象クラス
 //  Author:r-enomoto
 //**************************************************
-using Grpc.Core;
-using NUnit.Framework;
 using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 abstract public class EnemyBase : CharacterBase
