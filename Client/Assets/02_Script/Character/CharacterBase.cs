@@ -2,6 +2,7 @@
 //  キャラクターの抽象クラス
 //  Author:r-enomoto
 //**************************************************
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using System;
 using System.Collections;
@@ -11,6 +12,13 @@ using UnityEngine;
 
 abstract public class CharacterBase : MonoBehaviour
 {
+    #region データ関連
+    [Foldout("データ関連")]
+    [SerializeField]
+    protected int characterId;    // 識別用ID
+    public int CharacterId { get { return characterId; } }
+    #endregion
+
     #region 初期ステータス関連
     [Foldout("ステータス")]
     [SerializeField]

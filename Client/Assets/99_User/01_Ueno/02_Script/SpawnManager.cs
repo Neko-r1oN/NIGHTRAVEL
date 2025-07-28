@@ -2,6 +2,7 @@
 // 敵生成クラス
 // Author : Souma Ueno
 //----------------------------------------------------
+using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -27,8 +28,9 @@ public class SpawnManager : MonoBehaviour
     #endregion
 
     #region 敵関連
-    [SerializeField] List<GameObject> enemyPrefabs;      // エネミーリスト
+    [SerializeField] List<GameObject> enemyPrefabs;      // エネミーのプレファブリスト
     [SerializeField] List<GameObject> enemiesByTerminal; // 端末から生成された敵のリスト
+    [SerializeField] Dictionary<EnumManager.ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
     float[] enemyWeights;
     int eliteEnemyCnt;
 
@@ -70,12 +72,26 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
+        SetEnemyPrefabList();
         player = CharacterManager.Instance.PlayerObjSelf;
-        enemyWeights = new float[enemyPrefabs.Count];
+        enemyWeights = new float[idEnemyPrefabPairs.Count];
 
         // 割合
         enemyWeights[0] = 24; // ドローン
         enemyWeights[1] = 76; // いぬ
+    }
+
+    /// <summary>
+    /// 敵のプレファブ情報をまとめる
+    /// </summary>
+    void SetEnemyPrefabList()
+    {
+        idEnemyPrefabPairs = new Dictionary<EnumManager.ENEMY_TYPE, GameObject>();
+        foreach (var prefab in enemyPrefabs)
+        {
+            Debug.Log((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId + "：" + prefab.name);
+            idEnemyPrefabPairs.Add((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId, prefab);
+        }
     }
 
     /// <summary>
@@ -190,7 +206,7 @@ public class SpawnManager : MonoBehaviour
             // 確率の計算
             int listNum = Choose(enemyWeights);
 
-            EnemyBase enemyBase = enemyPrefabs[listNum].GetComponent<EnemyBase>();
+            EnemyBase enemyBase = idEnemyPrefabPairs[(EnumManager.ENEMY_TYPE)listNum].GetComponent<EnemyBase>();
 
             Vector2 spawnRight = (Vector2)player.transform.position + Vector2.right * spawnRangeOffset;
             Vector2 spawnLeft = (Vector2)player.transform.position + Vector2.left * spawnRangeOffset;
@@ -206,29 +222,37 @@ public class SpawnManager : MonoBehaviour
 
             //Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
-            Vector3? spawnRightPosCandidate, spawnLeftPosCandidate,spawnPos;
+            Vector3? spawnRightPosCandidate = null, spawnLeftPosCandidate = null, spawnPos = null;
 
             spawnRightPosCandidate = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight, enemyBase);
             spawnLeftPosCandidate = GenerateEnemySpawnPosition(minSpawnLeft, maxSpawnLeft, enemyBase);
 
-            if(spawnLeftPosCandidate != null && spawnRightPosCandidate != null)
+            if (spawnLeftPosCandidate != null && spawnRightPosCandidate != null)
             {
                 int rand = Random.Range(0, 2);
 
                 if(rand == 0)
                 {
-                    SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnRightPosCandidate);
+                    spawnPos = spawnRightPosCandidate;
                 }
                 else
                 {
-                    SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnLeftPosCandidate);
+                    spawnPos = spawnLeftPosCandidate;
                 }
             }
-            else
+            else if (spawnLeftPosCandidate != null || spawnRightPosCandidate != null)
             {
                 spawnPos = spawnRightPosCandidate == null ? spawnLeftPosCandidate : spawnRightPosCandidate;
+            }
 
-                SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
+            // 生成座標が確定している場合は敵を生成する
+            if (spawnPos != null)
+            {
+                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
+                var enemyType = (EnumManager.ENEMY_TYPE)listNum;
+                Vector3 scale = idEnemyPrefabPairs[enemyType].transform.localScale;
+                var spawnData = CreateSpawnEnemyData(enemyType, (Vector3)spawnPos, scale, spawnType);
+                SpawnEnemyRequest(spawnData);
             }
 
             //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight,enemyBase);
@@ -245,9 +269,9 @@ public class SpawnManager : MonoBehaviour
 
         while (enemyCnt < num)
         {
-            int listNum = Random.Range(0, enemyPrefabs.Count);
+            int listNum = Random.Range(0, idEnemyPrefabPairs.Count);
 
-            EnemyBase enemyBase = enemyPrefabs[listNum].GetComponent<EnemyBase>();
+            EnemyBase enemyBase = idEnemyPrefabPairs[(EnumManager.ENEMY_TYPE)listNum].GetComponent<EnemyBase>();
 
             Vector2 minPlayer =
                         new Vector2(player.transform.position.x - xRadius,
@@ -333,53 +357,121 @@ public class SpawnManager : MonoBehaviour
         return probs.Length - 1;
     }
 
+    ///// <summary>
+    ///// 敵生成リクエスト
+    ///// </summary>
+    ///// <param name="spawnEnemy"></param>
+    ///// <param name="spawnPos"></param>
+    //public GameObject SpawnEnemyRequest(GameObject spawnEnemy, Vector3 spawnPos, bool canPromoteToElite = true)
+    //{
+    //    GameManager.Instance.SpawnCnt++;
+
+    //    // 生成
+    //    GameObject enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
+    //    if (!canPromoteToElite) return enemy;
+
+    //    int number = Random.Range(0, 100);
+
+    //    // エリート敵生成限度を設定
+    //    int onePercentOfMaxEnemies =
+    //        Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
+
+    //    if (number < 5 * ((int)LevelManager.Instance.GameLevel + 1)
+    //        && eliteEnemyCnt < onePercentOfMaxEnemies)
+    //    {// 5%(* 現在のゲームレベル)以下で、エリート敵生成限度に達していなかったら
+    //        // エリート敵生成
+    //        enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4));
+    //        eliteEnemyCnt++;
+    //    }
+
+    //    return enemy;
+    //}
+
+    /// <summary>
+    /// ※ 各配列の引数の数は統一すること
+    /// 複数の生成する敵のデータ作成
+    /// </summary>
+    /// <param name="enemyTypes"></param>
+    /// <param name="spawnTypes"></param>
+    /// <param name="positions"></param>
+    /// <param name="canPromoteToElite"></param>
+    /// <returns></returns>
+    public List<SpawnEnemyData> CreateSpawnEnemyDatas(EnumManager.ENEMY_TYPE[] enemyTypes, Vector3[] positions, Vector3[] scales, EnumManager.SPAWN_ENEMY_TYPE spawnType, bool canPromoteToElite = true)
+    {
+        List<SpawnEnemyData> spawnDatas = new List<SpawnEnemyData>();
+        for (int i = 0; i <= enemyTypes.Length; i++)
+        {
+            spawnDatas[i] = CreateSpawnEnemyData(enemyTypes[i], positions[i], scales[i], spawnType, canPromoteToElite);
+        }
+        return spawnDatas;
+    }
+
+    /// <summary>
+    /// 生成する敵のデータを作成
+    /// </summary>
+    /// <param name="enemyPrefabs"></param>
+    /// <param name="positions"></param>
+    /// <param name="canPromoteToElite"></param>
+    /// <returns></returns>
+    public SpawnEnemyData CreateSpawnEnemyData(EnumManager.ENEMY_TYPE enemyType, Vector3 position, Vector3 scale, EnumManager.SPAWN_ENEMY_TYPE spawnType, bool canPromoteToElite = true)
+    {
+        GameManager.Instance.SpawnCnt++;
+        EnumManager.ENEMY_ELITE_TYPE eliteType = EnumManager.ENEMY_ELITE_TYPE.None;
+
+        //if (canPromoteToElite)
+        //{
+        //    int rnd = Random.Range(0, 100);
+        //    eliteType = (EnumManager.ENEMY_EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
+        //}
+
+        return new SpawnEnemyData()
+        {
+            TypeId = enemyType,
+            EnemyId = GameManager.Instance.SpawnCnt,
+            Position = position,
+            Scale = scale,
+            SpawnType = spawnType,
+            EliteType = eliteType,
+        };
+    }
+
     /// <summary>
     /// 敵生成リクエスト
     /// </summary>
     /// <param name="spawnEnemy"></param>
     /// <param name="spawnPos"></param>
-    public GameObject SpawnEnemyRequest(GameObject spawnEnemy,Vector3 spawnPos, bool canPromoteToElite = true)
+    public List<GameObject> SpawnEnemyRequest(params SpawnEnemyData[] spawnDatas)
     {
-        GameManager.Instance.SpawnCnt++;
+        // ここで敵の生成リクエスト
+        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
 
-        // 生成
-        GameObject enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
-        if (!canPromoteToElite) return enemy;
-
-        int number = Random.Range(0, 100);
-
-        // エリート敵生成限度を設定
-        int onePercentOfMaxEnemies =
-            Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
-
-        if (number < 5 * ((int)LevelManager.Instance.GameLevel + 1) 
-            && eliteEnemyCnt < onePercentOfMaxEnemies)
-        {// 5%(* 現在のゲームレベル)以下で、エリート敵生成限度に達していなかったら
-            // エリート敵生成
-            enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.ELITE_TYPE)Random.Range(1, 4));
-            eliteEnemyCnt++;
         }
 
-        return enemy;
-    }
-
-    /// <summary>
-    /// 敵生成を実行する
-    /// </summary>
-    /// <param name="spawnEnemy"></param>
-    /// <param name="spawnPos"></param>
-    /// <param name="canPromoteToElite"></param>
-    /// <returns></returns>
-    void DoSwawnEnemy(GameObject spawnEnemy, Vector3 spawnPos, EnemyElite.ELITE_TYPE eliteType)
-    {
-        GameObject enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
-        enemy.GetComponent<EnemyBase>().PromoteToElite(eliteType);
-        //CharacterManager.Instance.AddEnemies(GameManager.Instance.SpawnCnt, );
+        List<GameObject> enemies = new List<GameObject>();
+        foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
+        {
+            // 敵の生成
+            var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
+            var position = spawnEnemyData.Position;
+            var scale = spawnEnemyData.Scale;
+            var eliteType = spawnEnemyData.EliteType;
+            GameObject enemy = Instantiate(prefab, position, Quaternion.identity);
+            enemy.transform.localScale = scale;
+            enemy.GetComponent<EnemyBase>().PromoteToElite(0);
+            enemies.Add(enemy);
+            CharacterManager.Instance.AddEnemies(spawnEnemyData.EnemyId, enemy);
+        }
+        return enemies;
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // 右
-        Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.left * spawnRangeOffset, spawnRange);   // 左
+        if (CharacterManager.Instance && CharacterManager.Instance.PlayerObjSelf)
+        {
+            var player = CharacterManager.Instance.PlayerObjSelf;
+            Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // 右
+            Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.left * spawnRangeOffset, spawnRange);   // 左
+        }
     }
 }

@@ -2,10 +2,13 @@
 //  [ボス] フルメタルワームの体の管理クラス
 //  Author:r-enomoto
 //**************************************************
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEngine;
 
@@ -183,7 +186,7 @@ public class FullMetalBody : EnemyBase
     {
         isAttacking = true;
         bool isGenerateSucsess = false;
-        int generatedEnemiesCnt = worm.GeneratedEnemies.Count;
+        int generatedEnemiesCnt = worm.GeneratedEnemyCnt;
 
         GameObject nearPlayer = GetNearPlayer();
         if (generatedEnemiesCnt >= worm.GeneratedMax || nearPlayer == null) return false;   // これ以上敵の生成ができない || 近くにプレイヤーが存在しない
@@ -221,6 +224,7 @@ public class FullMetalBody : EnemyBase
     IEnumerator GenerateEnemeiesCoroutine(int maxEnemies, Action onFinished)
     {
         SetAnimId((int)ANIM_ID.Open);  // ハッチが開くアニメーション
+        List<SpawnEnemyData> spawnDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < maxEnemies; i++)
         {
             UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
@@ -228,28 +232,47 @@ public class FullMetalBody : EnemyBase
             yield return new WaitForSeconds(time);
 
             // 既に生成上限に達している場合は生成を終了
-            if (worm.GeneratedEnemies.Count >= worm.GeneratedMax) break;
+            if (worm.GeneratedEnemyCnt >= worm.GeneratedMax) break;
 
-            // ここに生成する処理 && ハッチが開くアニメーション####################################
-            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);  // 乱数のシード値を更新
-            worm.GeneratedEnemies.Add(GenerateEnemy(transform.position));
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
+            spawnDatas.Add(EmitEnemy(transform.position));
+            worm.GeneratedEnemyCnt++;
         }
+
+        if (spawnDatas.Count > 0) GenerateEnemy(spawnDatas.ToArray());
         onFinished?.Invoke();
     }
 
     /// <summary>
-    /// ザコ敵を生成する処理
+    /// 生成する敵の抽選処理
     /// </summary>
-    GameObject GenerateEnemy(Vector2 point)
+    /// <param name="point"></param>
+    /// <returns></returns>
+    SpawnEnemyData EmitEnemy(Vector2 point)
     {
-        var emitPrefab = worm.EnemyPrefabs[(int)UnityEngine.Random.Range(0, worm.EnemyPrefabs.Count)];
-        var enemyObj = SpawnManager.Instance.SpawnEnemyRequest(emitPrefab, point);
-        EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
+        var rnd = (int)UnityEngine.Random.Range(0, 2);
+        var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByWorm;
+        var enemyType = rnd == 0 ? EnumManager.ENEMY_TYPE.Drone_ByWorm : EnumManager.ENEMY_TYPE.CyberDog_ByWorm;
+        var spawnData = SpawnManager.Instance.CreateSpawnEnemyData(enemyType, point, Vector3.one, spawnType);
+        return SpawnManager.Instance.CreateSpawnEnemyData(enemyType, point, Vector3.one, spawnType);
+    }
 
-        if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
-        enemy.Players = GetAlivePlayers();
-        enemy.Target = GetNearPlayer(enemy.transform.position);
-        return enemyObj;
+    /// <summary>
+    /// 敵を生成する処理
+    /// </summary>
+    void GenerateEnemy(SpawnEnemyData[] spawnEnemyDatas)
+    {
+        var enemyObjs = SpawnManager.Instance.SpawnEnemyRequest(spawnEnemyDatas);
+
+        for (int i = 0; i < enemyObjs.Count; i++)
+        {
+            var enemy = enemyObjs[i].GetComponent<EnemyBase>();
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);
+            if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
+            enemy.Players = GetAlivePlayers();
+            enemy.Target = GetNearPlayer(enemy.transform.position);
+            worm.GeneratedEnemies.Add(enemyObjs[i]);
+        }
     }
 
     #endregion
@@ -341,7 +364,7 @@ public class FullMetalBody : EnemyBase
     protected override void DrawDetectionGizmos()
     {
         // 攻撃開始距離
-        Gizmos.color = Color.blue;
+        Gizmos.color = UnityEngine.Color.blue;
         Gizmos.DrawWireSphere(transform.position, attackDist);
 
         // 攻撃範囲

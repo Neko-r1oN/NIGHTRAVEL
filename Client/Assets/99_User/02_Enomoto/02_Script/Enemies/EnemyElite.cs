@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static StatusEffectController;
+using Shared.Interfaces.StreamingHubs;
 
 public class EnemyElite : MonoBehaviour
 {
@@ -18,18 +19,8 @@ public class EnemyElite : MonoBehaviour
 
     float timer;
 
-    /// <summary>
-    /// エリートの種類
-    /// </summary>
-    public enum ELITE_TYPE
-    {
-        None,
-        Blaze,      // ブレイズエリート
-        Frost,      // フロストエリート
-        Thunder     // サンダーエリート
-    }
-    ELITE_TYPE eliteType = ELITE_TYPE.None;
-    public ELITE_TYPE EliteType { get { return eliteType; } }
+    EnumManager.ENEMY_ELITE_TYPE eliteType = EnumManager.ENEMY_ELITE_TYPE.None;
+    public EnumManager.ENEMY_ELITE_TYPE EliteType { get { return eliteType; } }
 
     /// <summary>
     /// 付与する状態異常の種類
@@ -39,7 +30,7 @@ public class EnemyElite : MonoBehaviour
     /// <summary>
     /// 初期化処理
     /// </summary>
-    public void Init(ELITE_TYPE type)
+    public void Init(EnumManager.ENEMY_ELITE_TYPE type)
     {
         eliteType = type;
 
@@ -51,19 +42,19 @@ public class EnemyElite : MonoBehaviour
         Color outlineColor = new Color();
         Action action = type switch
         {
-            ELITE_TYPE.Blaze => () =>
+            EnumManager.ENEMY_ELITE_TYPE.Blaze => () =>
             {
                 // カラーコード FF0000(赤色)
                 outlineColor = new Color32(0xFF, 0x00, 0x00, 0xFF);
             }
             ,
-            ELITE_TYPE.Frost => () =>
+            EnumManager.ENEMY_ELITE_TYPE.Frost => () =>
             {
                 // カラーコード 00FFEA(水色)
                 outlineColor = new Color32(0x00, 0xFF, 0xEF, 0xFF);
             }
             ,
-            ELITE_TYPE.Thunder => () =>
+            EnumManager.ENEMY_ELITE_TYPE.Thunder => () =>
             {
                 // カラーコード E100FF(紫色)
                 outlineColor = new Color32(0xE1, 0x00, 0xFF, 0xFF);
@@ -93,14 +84,14 @@ public class EnemyElite : MonoBehaviour
     /// 付与させる状態異常のenumを取得する
     /// </summary>
     /// <returns></returns>
-    public StatusEffectController.EFFECT_TYPE GetAddStatusEffectEnum()
+    public StatusEffectController.EFFECT_TYPE? GetAddStatusEffectEnum()
     {
         return eliteType switch
         {
-            ELITE_TYPE.Blaze => StatusEffectController.EFFECT_TYPE.Burn,
-            ELITE_TYPE.Frost => StatusEffectController.EFFECT_TYPE.Freeze,
-            ELITE_TYPE.Thunder => StatusEffectController.EFFECT_TYPE.Shock,
-            _ => StatusEffectController.EFFECT_TYPE.None
+            EnumManager.ENEMY_ELITE_TYPE.Blaze => StatusEffectController.EFFECT_TYPE.Burn,
+            EnumManager.ENEMY_ELITE_TYPE.Frost => StatusEffectController.EFFECT_TYPE.Freeze,
+            EnumManager.ENEMY_ELITE_TYPE.Thunder => StatusEffectController.EFFECT_TYPE.Shock,
+            _ => null
         };
     }
 
@@ -118,7 +109,7 @@ public class EnemyElite : MonoBehaviour
         timer += Time.fixedDeltaTime;
         Action action = eliteType switch
         {
-            ELITE_TYPE.Blaze => () =>
+            EnumManager.ENEMY_ELITE_TYPE.Blaze => () =>
             {
                 if (timer > blazeTickInterval)
                 {

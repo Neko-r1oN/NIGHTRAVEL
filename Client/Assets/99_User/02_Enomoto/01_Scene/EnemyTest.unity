@@ -2010,8 +2010,11 @@ MonoBehaviour:
   stageMin: {fileID: 913623441}
   stageMax: {fileID: 1620564624}
   enemyPrefabs:
-  - {fileID: 3047601142500118110, guid: b28eaadd96b2d8949bfad3ed29cd502c, type: 3}
-  - {fileID: 9004236794111217968, guid: b36c3dd8d7a217b4ab63fe5a6c393b3d, type: 3}
+  - {fileID: 9004236794111217968, guid: 1a368837ba8f6d04a9799d8f94256d87, type: 3}
+  - {fileID: 3047601142500118110, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+  - {fileID: 5504973916346317349, guid: df59c69a4b1a76c4299f5b9c13c04f6a, type: 3}
+  - {fileID: 3488628306998136812, guid: b2b73b729aea6dc408fcf80d5f07945e, type: 3}
+  - {fileID: 2717074539250444405, guid: 3092e870d5df0e24a9fbe5eddd4edd96, type: 3}
   enemiesByTerminal: []
   distMinSpawnPos: 3
   xRadius: 10
@@ -36068,7 +36071,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnInterval: 5
-  maxSpawnCnt: 0
+  maxSpawnCnt: 5
   bossPrefab: {fileID: 2717074539250444405, guid: 9d8dfa9e60155594f8fd2e2613cf89af, type: 3}
   minCameraPos: {fileID: 694902049}
   maxCameraPos: {fileID: 1380261142}
@@ -37167,6 +37170,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2717074539250444405, guid: 3092e870d5df0e24a9fbe5eddd4edd96, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658854216591808366, guid: 3092e870d5df0e24a9fbe5eddd4edd96, type: 3}
+      propertyPath: terrainCheckRange
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8404820690910202369, guid: 3092e870d5df0e24a9fbe5eddd4edd96, type: 3}

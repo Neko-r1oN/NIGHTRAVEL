@@ -121,7 +121,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos);
+        Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos);    // 種類ID, 識別用ID, 座標, スケール(向き), エリートタイプ, 生成する際の種類
 
         /// <summary>
         /// 敵体力増減

@@ -34,6 +34,11 @@ public class CharacterManager : MonoBehaviour
 
     #region 敵関連
     Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+
+    /// <summary>
+    /// 現在のステージで生成した敵のリスト
+    /// </summary>
+    public Dictionary<int, GameObject> Enemies { get { return enemies; } }
     #endregion
 
     const float updateSec = 0.1f;

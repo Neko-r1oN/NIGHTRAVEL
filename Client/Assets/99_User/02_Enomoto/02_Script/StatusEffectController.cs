@@ -17,7 +17,6 @@ public class StatusEffectController : MonoBehaviour
     /// </summary>
     public enum EFFECT_TYPE
     {
-        None = 0,
         Burn,       // ‰Šãó‘Ô
         Freeze,     // ‘šÄ‚¯ó‘Ô
         Shock       // Š´“dó‘Ô
@@ -179,7 +178,7 @@ public class StatusEffectController : MonoBehaviour
                         else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(shockEffect);
                     }
                     ,
-                    _ => null
+                    _ => () => { }
                 };
                 action();
                 ApplyStatusEffectParticle(effectType);

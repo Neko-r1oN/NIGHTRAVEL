@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Shared.Interfaces.StreamingHubs;
 
 abstract public class EnemyBase : CharacterBase
 {
@@ -157,8 +158,9 @@ abstract public class EnemyBase : CharacterBase
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
 
-    protected virtual void Start()
+    protected override void Start()
     {
+        base.Start();
         players = new List<GameObject>(CharacterManager.Instance.PlayerObjs.Values);
         terrainLayerMask = LayerMask.GetMask("Default");
         m_rb2d = GetComponent<Rigidbody2D>();
@@ -351,7 +353,7 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// ƒGƒŠ[ƒgŒÂ‘Ì‚É‚·‚éˆ—
     /// </summary>
-    public void PromoteToElite(EnemyElite.ELITE_TYPE type)
+    public void PromoteToElite(EnumManager.ENEMY_ELITE_TYPE type)
     {
         if (!isElite)
         {

@@ -114,22 +114,21 @@ public class FullMetalWorm : EnemyBase
     #region “G‚Ì¶¬ŠÖ˜A
     [Foldout("“G‚Ì¶¬ŠÖ˜A")]
     [SerializeField]
-    List<GameObject> enemyPrefabs = new List<GameObject>();
-    public List<GameObject> EnemyPrefabs { get { return enemyPrefabs; } }
-
-    [Foldout("“G‚Ì¶¬ŠÖ˜A")]
-    [SerializeField]
     int generatedMax = 15;
     public int GeneratedMax { get { return generatedMax; } }
 
     [Foldout("“G‚Ì¶¬ŠÖ˜A")]
     [SerializeField]
-    float distToPlayerMin = 8;
+    float distToPlayerMin = 10;
     public float DistToPlayerMin { get { return distToPlayerMin; } }
 
     // ¶¬Ï‚İ‚Ì“G
     List<GameObject> generatedEnemies = new List<GameObject>();
     public List<GameObject> GeneratedEnemies { get { return generatedEnemies; } set { generatedEnemies = value; } }
+
+    // ¶¬‚µ‚Ä‚¢‚é“G‚Ì”
+    int generatedEnemyCnt = 0;
+    public int GeneratedEnemyCnt { get { return generatedEnemyCnt; } set { generatedEnemyCnt = value; } }
     #endregion
 
     #region ‚»‚Ì‘¼ƒƒ“ƒo•Ï”
@@ -175,8 +174,10 @@ public class FullMetalWorm : EnemyBase
             doOnceDecision = false;
             RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
 
+            nextDecide = DECIDE_TYPE.Attack;
             if (nextDecide == DECIDE_TYPE.Attack)
             {
+                generatedEnemyCnt = GeneratedEnemies.Count;
                 // ‘S‚Ä‚Ì•”ˆÊ‚Ìs“®‚ğÀs
                 isAttacking = true;
                 ExecuteAllPartActions();
