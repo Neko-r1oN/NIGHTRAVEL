@@ -210,7 +210,7 @@ abstract public class CharacterBase : MonoBehaviour
     protected virtual void Start()
     {
         // リアルタイム中&&マスタークライアントではない場合
-        if (RoomModel.Instance.ConnectionId != Guid.Empty && !RoomModel.Instance.IsMaster)
+        if (RoomModel.Instance && RoomModel.Instance.ConnectionId != Guid.Empty && !RoomModel.Instance.IsMaster)
         {
             // 自身が敵 || 操作キャラではない場合はスクリプトを非アクティブにする
             if (gameObject.tag == "Enemy" || CharacterManager.Instance.PlayerObjSelf != this.gameObject)

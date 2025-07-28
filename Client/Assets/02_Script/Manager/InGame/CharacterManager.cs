@@ -53,6 +53,7 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
+        if (!RoomModel.Instance) return;
         RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
     }
@@ -68,7 +69,8 @@ public class CharacterManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
-        if (RoomModel.Instance.ConnectionId == Guid.Empty) 
+
+        if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty) 
         {
             playerObjs.Add(Guid.Empty, playerObjSelf);
             return;
@@ -85,6 +87,7 @@ public class CharacterManager : MonoBehaviour
 
     private void Start()
     {
+        if (!RoomModel.Instance) return;
         StartCoroutine("UpdateCoroutine");
     }
 

@@ -175,8 +175,9 @@ public class Drone : EnemyBase
         // UŒ‚‚ª‰Â”\‚Èê‡
         if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
         {
-            attackWeight = 10;
-            rndMoveWeight = 5;
+            int weightRate = nextDecide == DECIDE_TYPE.Attack ? 3 : 1;
+            attackWeight = 10 / weightRate;
+            rndMoveWeight = 5 * weightRate;
         }
         else if(target)
         {
