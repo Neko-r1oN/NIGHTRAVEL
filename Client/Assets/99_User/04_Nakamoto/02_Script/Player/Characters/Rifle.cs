@@ -6,6 +6,7 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;   // HashSet 用
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static StatusEffectController;
@@ -221,7 +222,7 @@ public class Rifle : PlayerBase
             Vector2 damageDir = Vector2.zero;
 
             // ノックバック処理
-            if (position != null || id != 11 || id != 12)
+            if (position != null && id != 11 || position != null && id != 12)
             {
                 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
