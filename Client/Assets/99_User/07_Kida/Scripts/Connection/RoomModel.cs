@@ -56,6 +56,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //プレイヤー位置回転通知
     public Action<PlayerData> OnMovePlayerSyn { get; set; }
 
+    //マスタークライアントの変更通知
+    public Action OnChangedMasterClient {  get; set; }
+
     //マスタークライアントの更新通知
     public Action<MasterClientData> OnUpdateMasterClientSyn { get; set; }
 
@@ -476,6 +479,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnMovePlayer(PlayerData playerData)
     {
         OnMovePlayerSyn(playerData);
+    }
+
+    /// <summary>
+    /// マスタークライアントの変更通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnChangeMasterClient()
+    {
+        OnChangedMasterClient();
     }
 
     /// <summary>

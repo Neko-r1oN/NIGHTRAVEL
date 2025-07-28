@@ -437,14 +437,16 @@ namespace StreamingHubs
                 // 対象がマスタークライアントでない場合
                 if (user.Value.IsMaster == false)
                 {
-                    // その対象をマスタークライアントとし、ループを抜ける
+                    // その対象をマスタークライアントとし、通知を送る。ループを抜ける
                     user.Value.IsMaster = true;
+                    this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
                     break;
                 }
             }
 
             // マスタークライアントを剥奪
             this.roomContext.JoinedUserList[conID].IsMaster = false;
+
         }
 
 

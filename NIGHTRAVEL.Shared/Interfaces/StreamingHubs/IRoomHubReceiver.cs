@@ -210,5 +210,10 @@ namespace Shared.Interfaces.StreamingHubs
         void OnDamage(int dmg);
         #endregion
         #endregion
+
+        /// <summary>
+        /// マスタークライアントの変更通知
+        /// </summary>
+        void OnChangeMasterClient();
     }
 }

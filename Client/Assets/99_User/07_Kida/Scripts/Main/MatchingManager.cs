@@ -42,6 +42,8 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnReadySyn += this.OnReadySyn;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnStartedGame += this.OnStartedGame;
+        //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
+        RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
         #endregion
     }
 
@@ -139,6 +141,11 @@ public class MatchingManager : MonoBehaviour
         Debug.Log("ゲームを開始します");
 
         SceneManager.LoadScene("01_Stage");
+    }
+
+    public void OnChangedMasterClient()
+    {
+        Debug.Log("あなたがマスタークライアントになりました。");
     }
     #endregion
 }
