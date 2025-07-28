@@ -162,6 +162,7 @@ public class CharacterManager : MonoBehaviour
         character.OverridCurrentStatus(statusData);
         character.gameObject.SetActive(characterData.IsActiveSelf);
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
+        character.gameObject.transform.localScale = characterData.Scale;
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
         character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<StatusEffectController>().ApplyStatusEffect(false, characterData.DebuffList);
@@ -195,6 +196,7 @@ public class CharacterManager : MonoBehaviour
             MoveSpeedFactor = player.moveSpeedFactor,
             AttackSpeedFactor = player.attackSpeedFactor,
             Position = player.transform.position,
+            Scale = player.transform.localScale, 
             Rotation = player.transform.rotation,
             AnimationId = player.GetAnimId(),
             DebuffList = statusEffectController.GetAppliedStatusEffects(),
@@ -229,6 +231,7 @@ public class CharacterManager : MonoBehaviour
                 MoveSpeedFactor = enemy.moveSpeedFactor,
                 AttackSpeedFactor = enemy.attackSpeedFactor,
                 Position = enemy.transform.position,
+                Scale = enemy.transform.localScale,
                 Rotation = enemy.transform.rotation,
                 AnimationId = enemy.GetAnimId(),
                 DebuffList = statusEffectController.GetAppliedStatusEffects(),
