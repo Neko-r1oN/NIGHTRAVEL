@@ -20,8 +20,8 @@ public class SpawnManager : MonoBehaviour
     #region ステージ情報
     [SerializeField] Transform stageMin;             // リスポーン範囲A
     [SerializeField] Transform stageMax;             // リスポーン範囲B
-    //[SerializeField] Transform minTerminalRespawn;       // ターミナルリスポーン範囲
-    //[SerializeField] Transform maxTerminalRespawn;       // ターミナルリスポーン範囲
+    [SerializeField] Transform minTerminalRespawn;       // ターミナルリスポーン範囲
+    [SerializeField] Transform maxTerminalRespawn;       // ターミナルリスポーン範囲
 
     #region 外部参照
     public Transform StageMinPoint { get { return stageMin; } }
@@ -137,7 +137,7 @@ public class SpawnManager : MonoBehaviour
     /// <param name="minPoint"></param>
     /// <param name="maxPoint"></param>
     /// <returns></returns>
-    /*public (Vector3 minRange, Vector3 maxRange) CreateEnemyTerminalSpawnPosition(Vector3 minPoint, Vector3 maxPoint)
+    public (Vector3 minRange, Vector3 maxRange) CreateEnemyTerminalSpawnPosition(Vector3 minPoint, Vector3 maxPoint)
     {
         Vector3 minRange = minPoint, maxRange = maxPoint;
         if (minPoint.y < minTerminalRespawn.position.y)
@@ -161,7 +161,7 @@ public class SpawnManager : MonoBehaviour
         }
 
         return (minRange, maxRange);
-    }*/
+    }
 
     /// <summary>
     /// 敵生成の位置決定処理
@@ -299,19 +299,19 @@ public class SpawnManager : MonoBehaviour
                 player.transform.position.y + yRadius);
 
             // ランダムな位置を生成
-            /*var spawnPostions = CreateEnemyTerminalSpawnPosition(minPlayer, maxPlayer);
+            var spawnPostions = CreateEnemyTerminalSpawnPosition(minPlayer, maxPlayer);
 
             Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
             if (spawnPos != null)
             {
-                SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
+                GameObject enemy = SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
 
                 // 端末から出た敵をリストに追加
                 enemiesByTerminal.Add(Enemy);
 
                 enemyCnt++;
-            }*/
+            }
         }
     }
 

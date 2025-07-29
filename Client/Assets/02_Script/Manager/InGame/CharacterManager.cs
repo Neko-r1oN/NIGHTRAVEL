@@ -6,14 +6,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
-using System.Drawing;
 using DG.Tweening;
-using UnityEditor.MemoryProfiler;
-using UnityEngine.Playables;
-using System.Linq;
-using System.Data;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -35,12 +29,7 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region 敵関連
-    Dictionary<int, SpawnedEnemy> enemies = new Dictionary<int, SpawnedEnemy>();
-
-    /// <summary>
-    /// 現在のステージで生成した敵のリスト
-    /// </summary>
-    public Dictionary<int, SpawnedEnemy> Enemies { get { return enemies; } }
+    Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     #endregion
 
     const float updateSec = 0.1f;
@@ -55,16 +44,6 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// シーン遷移したときに通知関数呼び出しを止める
-    /// </summary>
-    private void OnDisable()
-    {
-        if (!RoomModel.Instance) return;
-        RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
-        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
-    }
-
     private void Awake()
     {
         if (instance == null)
@@ -76,14 +55,14 @@ public class CharacterManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
-
-        if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty) 
+        if (RoomModel.Instance.ConnectionId == Guid.Empty) 
         {
             playerObjs.Add(Guid.Empty, playerObjSelf);
             return;
         }
         DestroyExistingPlayer();
         GenerateCharacters();
+        StartCoroutine("UpdateCoroutine");
         isAwake = true;
 
         //プレイヤーの更新通知時に呼ぶ
@@ -92,26 +71,14 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
     }
 
-    private void Start()
-    {
-        if (!RoomModel.Instance) return;
-        StartCoroutine("UpdateCoroutine");
-    }
-
     /// <summary>
-    /// キャラクターの情報更新呼び出し用コルーチン
+    /// シーン遷移したときに通知関数呼び出しを止める
     /// </summary>
-    /// <returns></returns>
-    public IEnumerator UpdateCoroutine()
+    private void OnDisable()
     {
-        while (true)
-        {
-            if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
-            else UpdatePlayerDataRequest();
-            yield return new WaitForSeconds(updateSec);
-        }
+        RoomModel.Instance.OnMovePlayerSyn -= this.OnMovePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
+        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
     }
-
 
     /// <summary>
     /// 既にシーン上に存在しているプレイヤーを破棄する
@@ -144,36 +111,14 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 新たな敵をリストに追加する
+    /// キャラクターの情報更新呼び出し用コルーチン
     /// </summary>
-    /// <param name="newEnemies"></param>
-    public void AddEnemies(params SpawnedEnemy[] newEnemies)
-    {
-        foreach(var enemy in newEnemies)
-        {
-            enemies.Add(enemy.UniqueId, enemy);
-        }
-    }
-
-    /// <summary>
-    /// SPAWN_ENEMY_TYPEの値に該当する敵だけ返す
-    /// </summary>
-    /// <param name="spawnType"></param>
     /// <returns></returns>
-    public List<GameObject> GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE spawnType)
+    public IEnumerator UpdateCoroutine()
     {
-        List<int> removeKeys = new List<int>();             // 死亡済みの敵のkey
-        List<GameObject> result = new List<GameObject>();   // 返す敵のリスト
-        foreach (var data in enemies)
-        {
-            if (data.Value.Enemy.HP <= 0 || data.Value.Object == null) removeKeys.Add(data.Key);
-            else if (data.Value.SpawnType == spawnType) result.Add(data.Value.Object);
-        }
-        foreach (var key in removeKeys)
-        {
-            enemies.Remove(key);
-        }
-        return result;
+        if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
+        else UpdatePlayerDataRequest();
+        yield return new WaitForSeconds(updateSec);
     }
 
     /// <summary>
@@ -196,7 +141,6 @@ public class CharacterManager : MonoBehaviour
         character.OverridCurrentStatus(statusData);
         character.gameObject.SetActive(characterData.IsActiveSelf);
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
-        character.gameObject.transform.localScale = characterData.Scale;
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
         character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<StatusEffectController>().ApplyStatusEffect(false, characterData.DebuffList);
@@ -215,8 +159,6 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     PlayerData GetPlayerData()
     {
-        if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
-        Debug.Log("キャラクター："+RoomModel.Instance.ConnectionId);
         var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
         var statusEffectController = player.GetComponent<StatusEffectController>();
         return new PlayerData()
@@ -230,14 +172,12 @@ public class CharacterManager : MonoBehaviour
             MoveSpeedFactor = player.moveSpeedFactor,
             AttackSpeedFactor = player.attackSpeedFactor,
             Position = player.transform.position,
-            Scale = player.transform.localScale, 
             Rotation = player.transform.rotation,
             AnimationId = player.GetAnimId(),
             DebuffList = statusEffectController.GetAppliedStatusEffects(),
 
             // 以下は専用変数
             PlayerID = 0,   // ######################################################### とりあえず0固定
-            ConnectionId = RoomModel.Instance.ConnectionId,
             IsDead = false
         };
     }
@@ -251,9 +191,9 @@ public class CharacterManager : MonoBehaviour
         List <EnemyData> enemyDatas = new List <EnemyData>();
         foreach (var key in enemies.Keys)
         {
-            var enemyData = enemies[key];
-            var enemy = enemyData.Enemy;
-            var statusEffectController = enemyData.Object.GetComponent<StatusEffectController>();
+            var enemyObj = enemies[key];
+            var enemy = enemyObj.GetComponent<EnemyBase>();
+            var statusEffectController = enemyObj.GetComponent<StatusEffectController>();
             var data = new EnemyData()
             {
                 IsActiveSelf = enemy.gameObject.activeInHierarchy,
@@ -265,14 +205,13 @@ public class CharacterManager : MonoBehaviour
                 MoveSpeedFactor = enemy.moveSpeedFactor,
                 AttackSpeedFactor = enemy.attackSpeedFactor,
                 Position = enemy.transform.position,
-                Scale = enemy.transform.localScale,
                 Rotation = enemy.transform.rotation,
                 AnimationId = enemy.GetAnimId(),
                 DebuffList = statusEffectController.GetAppliedStatusEffects(),
 
                 // 以下は専用変数
                 EnemyID = key,
-                EnemyName = enemyData.Object.name,
+                EnemyName = enemyObj.name,
                 isBoss = enemy.IsBoss,
             };
         }
@@ -302,7 +241,19 @@ public class CharacterManager : MonoBehaviour
         var playerData = GetPlayerData();
 
         // プレイヤー情報更新リクエスト
-        await RoomModel.Instance.UpdatePlayerAsync(playerData);
+        await RoomModel.Instance.MovePlayerAsync(playerData);
+    }
+
+    /// <summary>
+    /// 新たな敵をリストに追加する
+    /// </summary>
+    /// <param name="newEnemies"></param>
+    public void AddEnemies(params GameObject[] newEnemies)
+    {
+        foreach (GameObject enemy in newEnemies)
+        {
+            enemies.Add(enemies.Count, enemy);
+        }
     }
 
     /// <summary>
@@ -335,7 +286,7 @@ public class CharacterManager : MonoBehaviour
         {
             if (enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID] != null)
             {
-                var enemy = enemies[enemyData.EnemyID].Enemy;
+                var enemy = enemies[enemyData.EnemyID].GetComponent<EnemyBase>();
                 UpdateCharacter(enemyData, enemy);
             }
         }

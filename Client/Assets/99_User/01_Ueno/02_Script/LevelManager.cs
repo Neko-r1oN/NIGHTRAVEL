@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
@@ -45,7 +46,8 @@ public class LevelManager : MonoBehaviour
         {GAME_LEVEL.Easy,"イージー" },
         {GAME_LEVEL.Normal,"ノーマル" },
         {GAME_LEVEL.Hard,"ハード" },
-        {GAME_LEVEL.Berryhard,"ベリーハード" }
+        {GAME_LEVEL.Berryhard,"ベリーハード" },
+        {GAME_LEVEL.Hell,"ヘル" }
     };
 
     public void InitLevel(GAME_LEVEL level)
@@ -56,8 +58,15 @@ public class LevelManager : MonoBehaviour
     [ContextMenu("UpGameLevel")]
     public void UpGameLevel()
     {
+        if(gameLevel + 1 > (GAME_LEVEL)Enum.GetValues(typeof(GAME_LEVEL)).Length)
+        {
+            return;
+        }
+
         gameLevel = gameLevel + 1;
+
         UIManager.Instance.UpGameLevelText();
+
         Debug.Log(gameLevel.ToString());
     }
 }

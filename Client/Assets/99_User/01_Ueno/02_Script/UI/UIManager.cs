@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static CharacterBase;
+using static LevelManager;
 using ColorUtility = UnityEngine.ColorUtility;
 using Random = UnityEngine.Random;
 
@@ -21,74 +22,76 @@ public class UIManager : MonoBehaviour
     PlayerBase player;
     EnemyBase boss;
     LevelManager level;
+    Terminal terminal;
 
     #region 各UI
     [Foldout("キャンバス")]
-    [SerializeField] GameObject canvas;             // キャンバス
-                                                    
-    [Foldout("プレイヤーステータス関連")]          
-    [SerializeField] Slider playerHpBar;            // プレイヤーのHPバー
-    [Foldout("プレイヤーステータス関連")]           
-    [SerializeField] Slider expBar;                 // 経験値バー
-                                                    
-    [Foldout("テキスト")]                           
-    [SerializeField] Text playerSliderText;         // プレイヤーの最大HPテキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text bossSliderText;           // ボスの最大HPテキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text levelText;                // レベルテキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text pointText;                // ポイントテキスト
-    [SerializeField] List<Image> relicImages;       
-    [Foldout("テキスト")]                           
-    [SerializeField] List<Text> relicCntText;       // レリックを持ってる数を表示するテキスト
-    //[Foldout("テキスト")]                     
-    //[SerializeField] List<Text>  statusText;        // ステータスアップ説明テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text levelUpStock;             // レベルアップストックテキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text levelUpText;              // 強化可能テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text clashNumText;             // 撃破数テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text tmText;                   // クリア条件テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] GameObject playerDmgText;      // プレイヤーダメージ表記
-    [Foldout("テキスト")]                           
-    [SerializeField] GameObject otherDmgText;       // その他ダメージ表記
-    [Foldout("テキスト")]                           
-    [SerializeField] Text relicName;                // その他ダメージ表記
-    [Foldout("テキスト")]                           
-    [SerializeField] Text diffText;                 // 難易度テキスト
-                                                    
-                                                    
-    [Foldout("フェードアウト")]                     
-    [SerializeField] Canvas parentCanvas;           // テキストが表示されるキャンバスを割り当ててください
-    [Foldout("フェードアウト")]                     
-    [SerializeField] float fadeDuration = 2f;       // テキストがフェードアウトにかかる時間（秒）
-    [Foldout("フェードアウト")]                     
-    [SerializeField] float displayDuration = 1f;    // テキストが完全に表示される時間（フェード開始まで）
+    [SerializeField] GameObject canvas;              // キャンバス
+                                                     
+    [Foldout("プレイヤーステータス関連")]            
+    [SerializeField] Slider playerHpBar;             // プレイヤーのHPバー
+    [Foldout("プレイヤーステータス関連")]            
+    [SerializeField] Slider expBar;                  // 経験値バー
+                                                     
+    [Foldout("テキスト")]                            
+    [SerializeField] Text playerSliderText;          // プレイヤーの最大HPテキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text bossSliderText;            // ボスの最大HPテキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text levelText;                 // レベルテキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text pointText;                 // ポイントテキスト
+    [SerializeField] List<Image> relicImages;        
+    [Foldout("テキスト")]                            
+    [SerializeField] List<Text> relicCntText;        // レリックを持ってる数を表示するテキスト
+    //[Foldout("テキスト")]                          
+    //[SerializeField] List<Text>  statusText;         // ステータスアップ説明テキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text levelUpStock;              // レベルアップストックテキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text levelUpText;               // 強化可能テキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text clashNumText;              // 撃破数テキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text tmText;                    // クリア条件テキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] GameObject playerDmgText;       // プレイヤーダメージ表記
+    [Foldout("テキスト")]                            
+    [SerializeField] GameObject otherDmgText;        // その他ダメージ表記
+    [Foldout("テキスト")]                            
+    [SerializeField] Text relicName;                 // その他ダメージ表記
+    [Foldout("テキスト")]                            
+    [SerializeField] Text diffText;                  // 難易度テキスト
+    [Foldout("テキスト")]                            
+    [SerializeField] Text terminalExplanationText;   // ターミナル説明テキスト
+                                                     
+    [Foldout("フェードアウト")]                      
+    [SerializeField] Canvas parentCanvas;            // テキストが表示されるキャンバスを割り当ててください
+    [Foldout("フェードアウト")]                      
+    [SerializeField] float fadeDuration = 2f;        // テキストがフェードアウトにかかる時間（秒）
+    [Foldout("フェードアウト")]                      
+    [SerializeField] float displayDuration = 1f;     // テキストが完全に表示される時間（フェード開始まで）
 
     [Foldout("ボスステータス関連")]
-    [SerializeField] Slider bossHpBar;              // ボスのHPバー
-    [Foldout("ボスステータス関連")]                 
-    [SerializeField] GameObject bossStatus;         // ボスのステータス
-                                                    
-    [Foldout("ウィンドウ関係")]                     
-    [SerializeField] GameObject statusUpWindow;     // ステータス強化ウィンドウ
-    [Foldout("ウィンドウ関係")]                     
-    [SerializeField] float windowTime;              // ウィンドウが表示される秒数
+    [SerializeField] Slider bossHpBar;               // ボスのHPバー
+    [Foldout("ボスステータス関連")]                  
+    [SerializeField] GameObject bossStatus;          // ボスのステータス
+                                                     
+    [Foldout("ウィンドウ関係")]                      
+    [SerializeField] GameObject statusUpWindow;      // ステータス強化ウィンドウ
+    [Foldout("ウィンドウ関係")]                      
+    [SerializeField] float windowTime;               // ウィンドウが表示される秒数
 
     [Foldout("バナー関係")]
-    [SerializeField] GameObject bossWindow;         // ボス出現UI
-    [Foldout("バナー関係")]                         
-    [SerializeField] GameObject termsBanner;        // クリア条件バナー
-    [Foldout("バナー関係")]                         
-    [SerializeField] GameObject relicBanner;        // 取得したレリックバナー
-
-    [SerializeField] List<GameObject> playerStatus; // 自分以外のプレイヤーのステータス
-
-    [SerializeField] Image relicImg;                // レリックのイメージ
+    [SerializeField] GameObject bossWindow;          // ボス出現UI
+    [Foldout("バナー関係")]                          
+    [SerializeField] GameObject termsBanner;         // クリア条件バナー
+    [Foldout("バナー関係")]                          
+    [SerializeField] GameObject relicBanner;         // 取得したレリックバナー
+                                                     
+    [SerializeField] List<GameObject> playerStatus;  // 自分以外のプレイヤーのステータス
+    [SerializeField] Image relicImg;                 // レリックのイメージ
+    [SerializeField] GameObject terminalExplanation; // ターミナル説明用オブジェクト
 
     #endregion
 
@@ -162,6 +165,8 @@ public class UIManager : MonoBehaviour
     {
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
+        terminal = Terminal.Instance;
+
         //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
 
         playerHpBar.maxValue = player.MaxHP;
@@ -201,12 +206,14 @@ public class UIManager : MonoBehaviour
         level = LevelManager.Instance;
 
         diffText.text = level.LevelName[level.GameLevel].ToString();
-        colorCode = "#ffb6c1";
+        colorCode = "#ffc0cb";
 
         if(ColorUtility.TryParseHtmlString(colorCode,out color))
         {
             diffText.color = color;
         }
+
+        terminalExplanation.SetActive(false);
     }
 
     /// <summary>
@@ -613,6 +620,12 @@ public class UIManager : MonoBehaviour
 
     public void UpGameLevelText()
     {
+        if(level.GameLevel + 1 > 
+            (LevelManager.GAME_LEVEL)Enum.GetValues(typeof(LevelManager.GAME_LEVEL)).Length)
+        {
+            return;
+        }
+             
         diffText.text = level.LevelName[level.GameLevel].ToString();
 
         // textの色変更
@@ -629,7 +642,7 @@ public class UIManager : MonoBehaviour
                 }
 
                 return;
-                
+
             case LevelManager.GAME_LEVEL.Normal:
 
                 diffText.text = level.LevelName[level.GameLevel].ToString();
@@ -645,12 +658,8 @@ public class UIManager : MonoBehaviour
             case LevelManager.GAME_LEVEL.Hard:
 
                 diffText.text = level.LevelName[level.GameLevel].ToString();
-                colorCode = "#dc143c";
 
-                if (ColorUtility.TryParseHtmlString(colorCode, out color))
-                {
-                    diffText.color = color;
-                }
+                diffText.color = Color.red;
 
                 return;
 
@@ -665,6 +674,26 @@ public class UIManager : MonoBehaviour
                 }
 
                 return;
+
+            case LevelManager.GAME_LEVEL.Hell:
+
+                diffText.text = level.LevelName[level.GameLevel].ToString();
+                colorCode = "#ff00ff";
+
+                if (ColorUtility.TryParseHtmlString(colorCode, out color))
+                {
+                    diffText.color = color;
+                }
+
+                return;
         }
+    }
+
+    public void DisplayTerminalExplanation()
+    {
+        terminalExplanation.SetActive(true);
+
+        terminalExplanationText.text = 
+            terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
     }
 }
