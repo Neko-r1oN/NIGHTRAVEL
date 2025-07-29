@@ -2,6 +2,7 @@
 // マスタクライアントが同期する際に使用
 // Author:Enomoto Data:07/25
 //=============================
+using MessagePack;
 using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
@@ -9,16 +10,19 @@ using UnityEngine;
 
 namespace Shared.Interfaces.StreamingHubs
 {
+    [MessagePackObject]
     /// <summary>
     /// マスタークライアント用のデータクラス
     /// </summary>
     public class MasterClientData
     {
+        [Key(1)]
         /// <summary>
         /// 自身の操作キャラを同期させる情報
         /// </summary>
         public PlayerData PlayerData { get; set; }
 
+        [Key(2)]
         /// <summary>
         /// 全ての敵を同期させる情報
         /// </summary>

@@ -68,8 +68,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //“G‚ÌoŒ»’Ê’m
     public Action<EnemyData, Vector3> OnSpawndEnemy { get; set; }
 
-    //“G‚ÌˆÚ“®’Ê’m
-    public Action<int , Vector2 , Quaternion , EnemyAnimState> OnMoveEnemySyn { get; set; }
+    //“G‚ÌXV’Ê’m
+    public Action<EnemyData> OnUpdatedEnemy { get; set; }
 
     //“G‚ÌŒ‚”j’Ê’m
     public Action<string> OnExcusionedEnemy { get; set; }
@@ -308,17 +308,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     #endregion
     #region “G“¯ŠúŠÖ˜A
     /// <summary>
-    /// “G‚ÌˆÊ’u“¯Šú
+    /// “G‚ÌXV“¯Šú
     /// Aughter:–Ø“cW•ã
     /// </summary>
-    /// <param name="enemIDList"></param>
-    /// <param name="pos"></param>
-    /// <param name="rot"></param>
-    /// <param name="anim"></param>
+    /// <param name="enemyData"></param>
     /// <returns></returns>
-    public async Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim)
+    public async Task UpdateEnemyAsync(EnemyData enemyData)
     {
-        await roomHub.MoveEnemyAsync(enemIDList, pos, rot, anim);
+        await roomHub.UpdateEnemyAsync(enemyData);
     }
 
     /// <summary>
@@ -328,9 +325,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="pos"></param>
     /// <returns></returns>
-    public async Task SpawnEnemyAsync(List<int> enemID, Vector2 pos)
+    public async Task SpawnEnemyAsync(EnemyData enemyData, Vector2 pos)
     {
-        await roomHub.SpawnEnemyAsync(enemID, pos);
+        await roomHub.SpawnEnemyAsync(enemyData, pos);
     }
 
     /// <summary>
@@ -546,24 +543,21 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// “G‚ÌˆÚ“®’Ê’m
     /// Aughter:–Ø“cW•ã
     /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="pos"></param>
-    /// <param name="rot"></param>
-    /// <param name="animID"></param>
-    public void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID)
+    /// <param name="enemyData"></param>
+    public void OnUpdateEnemy(EnemyData enemyData)
     {
-        OnMoveEnemySyn(enemID, pos, rot, animID);
+        OnUpdatedEnemy(enemyData);
     }
 
     /// <summary>
     /// “G‚Ì¶¬’Ê’m
     /// Aughter:–Ø“cW•ã
     /// </summary>
-    /// <param name="enemData"></param>
+    /// <param name="enemyData"></param>
     /// <param name="pos"></param>
-    public void OnSpawnEnemy(EnemyData enemData, Vector2 pos)
+    public void OnSpawnEnemy(EnemyData enemyData, Vector2 pos)
     {
-        OnSpawndEnemy(enemData, pos);
+        OnSpawndEnemy(enemyData, pos);
     }
 
     /// <summary>

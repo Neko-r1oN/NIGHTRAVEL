@@ -12,21 +12,21 @@ namespace Shared.Interfaces.StreamingHubs
     [MessagePackObject]
     public class EnemyData : CharacterData
     {
-        [Key(13)]
+        [Key(16)]
         /// <summary>
         /// 識別ID
         /// Author:Nishiura
         /// </summary>
         public int EnemyID { get; set; }
 
-        [Key(14)]
+        [Key(17)]
         /// <summary>
         /// 敵名称
         /// Author:Nishiura
         /// </summary>
         public string EnemyName { get; set; }
 
-        [Key(15)]
+        [Key(18)]
         /// <summary>
         /// ボス判定
         /// Author:Nishiura
