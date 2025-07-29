@@ -25,7 +25,7 @@ public class PreGameManager : MonoBehaviour
         //ユーザーが移動した時にOnMoveUserメソッドを実行するよう、モデルに登録
         //roomModel.OnMovePlayerSyn += this.OnMoveCharacterSyn;
         //敵が移動した時にOnMoveUserメソッドを実行するよう、モデルに登録
-        roomModel.OnMoveEnemySyn += this.OnMoveEnemySyn;
+        //roomModel.OnMoveEnemySyn += this.OnMoveEnemySyn;
     }
 
     // Update is called once per frame

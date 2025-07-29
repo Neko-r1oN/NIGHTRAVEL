@@ -203,25 +203,25 @@ namespace StreamingHubs
         ///  敵位置、回転、アニメーション同期処理
         /// Author:Nishiura
         /// </summary>
-        /// <param name="enemIDList">敵ID</param>
-        /// <param name="pos">敵位置値</param>
-        /// <param name="rot">敵回転値</param>
-        /// <param name="anim">敵アニメーションID</param>
+        /// <param name="enemyData">敵ID</param>
         /// <returns></returns>
-        public async Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim)
+        public async Task UpdateEnemyAsync(EnemyData enemyData)
         {
-            foreach (var enemID in enemIDList)
-            {
-                // ルームデータから接続IDを指定して自身のデータを取得
-                var enemData = this.roomContext.GetEnemyData(enemID);
+            //foreach (var enemID in enemIDList)
+            //{
+            //    // ルームデータから接続IDを指定して自身のデータを取得
+            //    var enemData = this.roomContext.GetEnemyData(enemID);
 
-                //enemData.Position = pos; // 位置を渡す
-                //enemData.Rotation = rot; // 回転を渡す
-                //enemData.State = anim;   // アニメーションIDを渡す
+            //    //enemData.Position = pos; // 位置を渡す
+            //    //enemData.Rotation = rot; // 回転を渡す
+            //    //enemData.State = anim;   // アニメーションIDを渡す
 
-                // ルーム参加者全員に、ユーザ情報通知を送信
-                this.roomContext.Group.All.OnMoveEnemy(enemID, pos, rot, anim);
-            }
+            //    // ルーム参加者全員に、ユーザ情報通知を送信
+            //    this.roomContext.Group.All.OnMoveEnemy(enemID, pos, rot, anim);
+            //}
+
+            //ルーム参加者全員に、敵の情報通知を送信
+            this.roomContext.Group.All.OnUpdateEnemy(enemyData);
         }
 
         /// <summary>
@@ -267,26 +267,29 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        public async Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos)
+        public async Task SpawnEnemyAsync(EnemyData enemyData,Vector2 pos)
         {
-            // 受け取った敵ID数分ループ
-            foreach (var enemID in enemIDList)
-            {
-                // DBからIDを指定して敵の情報を取得する
-                GameDbContext dbContext = new GameDbContext();
-                var enemies = dbContext.Enemies.Where(enemies => enemies.id == enemID).First();
+            //// 受け取った敵ID数分ループ
+            //foreach (var enemID in enemIDList)
+            //{
+            //    // DBからIDを指定して敵の情報を取得する
+            //    GameDbContext dbContext = new GameDbContext();
+            //    var enemies = dbContext.Enemies.Where(enemies => enemies.id == enemID).First();
 
-                // 取得したものをエネミーデータに格納する
-                this.roomContext.SetEnemyData(enemies);
+            //    // 取得したものをエネミーデータに格納する
+            //    this.roomContext.SetEnemyData(enemies);
 
-                // ルームデータから敵のIDを指定して生成した敵データを取得
-                EnemyData enemData = this.roomContext.GetEnemyData(enemID);
+            //    // ルームデータから敵のIDを指定して生成した敵データを取得
+            //    EnemyData enemData = this.roomContext.GetEnemyData(enemID);
 
-                enemData.Position = pos; // 敵の位置に渡された位置を代入
+            //    enemData.Position = pos; // 敵の位置に渡された位置を代入
 
-                // ルーム参加者全員に、取得した敵情報と生成位置を送信
-                this.roomContext.Group.All.OnSpawnEnemy(enemData, pos);
-            }
+            //    // ルーム参加者全員に、取得した敵情報と生成位置を送信
+            //    this.roomContext.Group.All.OnSpawnEnemy(enemData, pos);
+            //}
+
+            // ルーム参加者全員に、取得した敵情報と生成位置を送信
+            this.roomContext.Group.All.OnSpawnEnemy(enemyData, pos);
         }
 
         /// <summary>

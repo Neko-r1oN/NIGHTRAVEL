@@ -107,21 +107,18 @@ namespace Shared.Interfaces.StreamingHubs
         /// 敵動作、情報
         /// Author:Nishiura
         /// </summary>
-        /// <param name="enemIDList">敵ID</param>
-        /// <param name="pos">敵位置値</param>
-        /// <param name="rot">敵回転値</param>
-        /// <param name="anim">敵アニメーションID</param>
+        /// <param name="enemyData">敵の情報</param>
         /// <returns></returns>
-        Task MoveEnemyAsync(List<int> enemIDList, Vector2 pos, Quaternion rot, EnemyAnimState anim);
+        Task UpdateEnemyAsync(EnemyData enemyData);
 
         /// <summary>
         /// 敵生成
         /// Author:Nishiura
         /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        /// <param name="pos">位置</param>
+        /// <param name="enemyData">敵の情報</param>
+        /// <param name="pos">敵の生成位置</param>
         /// <returns></returns>
-        Task SpawnEnemyAsync(List<int> enemIDList, Vector2 pos);
+        Task SpawnEnemyAsync(EnemyData enemyData,Vector2 pos);
 
         /// <summary>
         /// 敵体力増減

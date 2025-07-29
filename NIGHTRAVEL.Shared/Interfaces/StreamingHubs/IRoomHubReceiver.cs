@@ -133,19 +133,16 @@ namespace Shared.Interfaces.StreamingHubs
         /// 敵の動作通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="enemID">対象敵ID</param>
-        /// <param name="pos">位置</param>
-        /// <param name="rot">回転</param>
-        /// <param name="animID">アニメーションID</param>
-        void OnMoveEnemy(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState animID);
+        /// <param name="enemyData">対象敵ID</param>
+        void OnUpdateEnemy(EnemyData enemyData);
 
         /// <summary>
         /// 敵生成通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="enemData">敵情報</param>
-        /// <param name="pos">位置</param>
-        void OnSpawnEnemy(EnemyData enemData, Vector2 pos);
+        /// <param name="enemyData">敵情報</param>
+        /// <param name="pos">敵のスポーン位置</param>
+        void OnSpawnEnemy(EnemyData enemyData,Vector2 pos);
 
         /// <summary>
         /// 敵体力増減通知
