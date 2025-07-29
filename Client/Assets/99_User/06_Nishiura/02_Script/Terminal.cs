@@ -91,10 +91,10 @@ public class Terminal : MonoBehaviour
         }
 
 
-        if (SpawnManager.Instance.EnemiesByTerminal.Count <= 0)
+        /*if (SpawnManager.Instance.EnemiesByTerminal.Count <= 0)
         {
 
-        }
+        }*/
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -136,7 +136,17 @@ public class Terminal : MonoBehaviour
                 isTerminal = true;
 
                 rndNum = rand.Next(6, 11); // ¶¬”‚ð—”(6-10)‚ÅÝ’è
-                SpawnManager.Instance.TerminalGenerateEnemy(rndNum);   // “G¶¬
+
+                int childrenCnt = this.gameObject.transform.childCount;
+
+                List<Transform> children = new List<Transform>();
+
+                for ( int i = 0;i < childrenCnt; i++)
+                {
+                    children.Add(this.gameObject.transform.GetChild(i));
+                }
+
+                SpawnManager.Instance.TerminalGenerateEnemy(rndNum, children[0].position, children[1].position);   // “G¶¬
                 isTerminal = true;
                 break;
 
