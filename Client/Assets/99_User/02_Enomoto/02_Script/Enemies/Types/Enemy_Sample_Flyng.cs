@@ -141,7 +141,7 @@
 //        {
 //            GameObject throwableProj = Instantiate(throwableObject, aimTransform.position, Quaternion.identity);
 //            Vector3 direction = target.transform.position - transform.position;
-//            throwableProj.GetComponent<Projectile>().Initialize(direction, gameObject);
+//            throwableProj.GetComponent<Projectile>().Initialize(direction, Object);
 //            yield return new WaitForSeconds(shotsPerSecond);
 //        }
 //        cancellCoroutines.Add(StartCoroutine(AttackCooldownCoroutine(attackCoolTime)));

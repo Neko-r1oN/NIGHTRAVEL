@@ -23,10 +23,10 @@ public class ThrowableProjectile : MonoBehaviour
 			collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(2, transform.position);
 			Destroy(gameObject);
 		}
-		//else if ( owner != null && collision.gameObject != owner && collision.gameObject.tag == "EnemyBase" )
+		//else if ( owner != null && collision.Object != owner && collision.Object.tag == "EnemyBase" )
 		//{
-		//	collision.gameObject.SendMessage("ApplyDamage", Mathf.Sign(direction.x) * 2f);
-		//	Destroy(gameObject);
+		//	collision.Object.SendMessage("ApplyDamage", Mathf.Sign(direction.x) * 2f);
+		//	Destroy(Object);
 		//}
 		else if (collision.gameObject.tag != "EnemyBase" && collision.gameObject.tag != "Player")
 		{

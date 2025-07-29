@@ -6,12 +6,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Shared;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
 using System.Drawing;
 using DG.Tweening;
 using UnityEditor.MemoryProfiler;
 using UnityEngine.Playables;
+using System.Linq;
+using System.Data;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -33,12 +35,12 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region “GŠÖ˜A
-    Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    Dictionary<int, SpawnedEnemy> enemies = new Dictionary<int, SpawnedEnemy>();
 
     /// <summary>
     /// Œ»İ‚ÌƒXƒe[ƒW‚Å¶¬‚µ‚½“G‚ÌƒŠƒXƒg
     /// </summary>
-    public Dictionary<int, GameObject> Enemies { get { return enemies; } }
+    public Dictionary<int, SpawnedEnemy> Enemies { get { return enemies; } }
     #endregion
 
     const float updateSec = 0.1f;
@@ -145,9 +147,33 @@ public class CharacterManager : MonoBehaviour
     /// V‚½‚È“G‚ğƒŠƒXƒg‚É’Ç‰Á‚·‚é
     /// </summary>
     /// <param name="newEnemies"></param>
-    public void AddEnemies(int id, GameObject newEnemies)
+    public void AddEnemies(params SpawnedEnemy[] newEnemies)
     {
-        enemies.Add(id, newEnemies);
+        foreach(var enemy in newEnemies)
+        {
+            enemies.Add(enemy.UniqueId, enemy);
+        }
+    }
+
+    /// <summary>
+    /// SPAWN_ENEMY_TYPE‚Ì’l‚ÉŠY“–‚·‚é“G‚¾‚¯•Ô‚·
+    /// </summary>
+    /// <param name="spawnType"></param>
+    /// <returns></returns>
+    public List<GameObject> GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE spawnType)
+    {
+        List<int> removeKeys = new List<int>();             // €–SÏ‚İ‚Ì“G‚Ìkey
+        List<GameObject> result = new List<GameObject>();   // •Ô‚·“G‚ÌƒŠƒXƒg
+        foreach (var data in enemies)
+        {
+            if (data.Value.Enemy.HP <= 0 || data.Value.Object == null) removeKeys.Add(data.Key);
+            else if (data.Value.SpawnType == spawnType) result.Add(data.Value.Object);
+        }
+        foreach (var key in removeKeys)
+        {
+            enemies.Remove(key);
+        }
+        return result;
     }
 
     /// <summary>
@@ -225,9 +251,9 @@ public class CharacterManager : MonoBehaviour
         List <EnemyData> enemyDatas = new List <EnemyData>();
         foreach (var key in enemies.Keys)
         {
-            var enemyObj = enemies[key];
-            var enemy = enemyObj.GetComponent<EnemyBase>();
-            var statusEffectController = enemyObj.GetComponent<StatusEffectController>();
+            var enemyData = enemies[key];
+            var enemy = enemyData.Enemy;
+            var statusEffectController = enemyData.Object.GetComponent<StatusEffectController>();
             var data = new EnemyData()
             {
                 IsActiveSelf = enemy.gameObject.activeInHierarchy,
@@ -246,7 +272,7 @@ public class CharacterManager : MonoBehaviour
 
                 // ˆÈ‰º‚Íê—p•Ï”
                 EnemyID = key,
-                EnemyName = enemyObj.name,
+                EnemyName = enemyData.Object.name,
                 isBoss = enemy.IsBoss,
             };
         }
@@ -309,7 +335,7 @@ public class CharacterManager : MonoBehaviour
         {
             if (enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID] != null)
             {
-                var enemy = enemies[enemyData.EnemyID].GetComponent<EnemyBase>();
+                var enemy = enemies[enemyData.EnemyID].Enemy;
                 UpdateCharacter(enemyData, enemy);
             }
         }

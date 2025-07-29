@@ -15,7 +15,7 @@
 //    // Start is called once before the first execution of Update after the MonoBehaviour is created
 //    void Start()
 //    {
-//        spawnObject = this.gameObject.transform.GetChild(0).GetComponent<GameObject>();
+//        spawnObject = this.Object.transform.GetChild(0).GetComponent<GameObject>();
 //    }
 
 //    // Update is called once per frame
@@ -26,7 +26,7 @@
 
 //    private void OnTriggerEnter2D(Collider2D collision)
 //    {
-//        if(collision.gameObject.CompareTag("Player"))
+//        if(collision.Object.CompareTag("Player"))
 //        {
 //            isCheck = true;
 //        }

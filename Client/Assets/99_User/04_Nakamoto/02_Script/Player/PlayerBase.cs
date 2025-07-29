@@ -278,7 +278,7 @@ abstract public class PlayerBase : CharacterBase
         Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
-            // gameObject→プレイヤーオブジェクトのこと？
+            // Object→プレイヤーオブジェクトのこと？
             if (colliders[i].gameObject != gameObject)
                 m_Grounded = true;
 

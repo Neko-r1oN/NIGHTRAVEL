@@ -1990,6 +1990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3c588392de9b6a4db890f174a47c438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterId: 0
   baseHp: 100
   baseDefense: 15
   basePower: 35
@@ -2020,7 +2021,6 @@ MonoBehaviour:
   hitTime: 0.8
   isBoss: 0
   isElite: 0
-  canDamageOnContact: 0
   canPatrol: 0
   canChaseTarget: 1
   canAttack: 1
@@ -2030,6 +2030,7 @@ MonoBehaviour:
   spawnGroundOffset: 0.6
   canDrawRay: 1
   exp: 100
+  spawnWeight: 10
   meleeAttackCheck: {fileID: 984287513036131797}
   meleeAttackRange: 0.6
   wallCheck: {fileID: 4185119391643625501}

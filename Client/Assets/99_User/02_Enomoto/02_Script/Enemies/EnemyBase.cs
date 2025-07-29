@@ -12,6 +12,7 @@ using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Shared.Interfaces.StreamingHubs;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 abstract public class EnemyBase : CharacterBase
 {
@@ -128,21 +129,25 @@ abstract public class EnemyBase : CharacterBase
     protected float disToTargetX;
     #endregion
 
-    #region その他
-    [Foldout("その他")]
+    #region システム
+    [Foldout("システム")]
     [Tooltip("生成されるときの地面からの距離")]
     [SerializeField]
     float spawnGroundOffset;
 
-    [Foldout("その他")]
+    [Foldout("システム")]
     [Tooltip("判定を描画するかどうか")]
     [SerializeField]
     protected bool canDrawRay = false;
     public bool CanDrawRay { get { return canDrawRay; } }
 
-    [Foldout("その他")]
+    [Foldout("システム")]
     [SerializeField]
     protected int exp = 100;
+
+    [Foldout("システム")]
+    [SerializeField]
+    protected int spawnWeight = 1;  // スポーンの抽選する際の重み
     #endregion
 
     #region 外部参照用プロパティ
@@ -153,6 +158,8 @@ abstract public class EnemyBase : CharacterBase
 
     public bool IsElite { get { return isElite; } }
 
+    public int SpawnWeight { get { return spawnWeight; } }
+
     public float SpawnGroundOffset { get { return spawnGroundOffset; } }
 
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
@@ -162,7 +169,7 @@ abstract public class EnemyBase : CharacterBase
     {
         base.Start();
         players = new List<GameObject>(CharacterManager.Instance.PlayerObjs.Values);
-        terrainLayerMask = LayerMask.GetMask("Default");
+        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();

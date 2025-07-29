@@ -12,6 +12,7 @@ using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class FullMetalWorm : EnemyBase
 {
@@ -122,10 +123,6 @@ public class FullMetalWorm : EnemyBase
     float distToPlayerMin = 10;
     public float DistToPlayerMin { get { return distToPlayerMin; } }
 
-    // ¶¬Ï‚İ‚Ì“G
-    List<GameObject> generatedEnemies = new List<GameObject>();
-    public List<GameObject> GeneratedEnemies { get { return generatedEnemies; } set { generatedEnemies = value; } }
-
     // ¶¬‚µ‚Ä‚¢‚é“G‚Ì”
     int generatedEnemyCnt = 0;
     public int GeneratedEnemyCnt { get { return generatedEnemyCnt; } set { generatedEnemyCnt = value; } }
@@ -173,11 +170,9 @@ public class FullMetalWorm : EnemyBase
         {
             doOnceDecision = false;
             RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
-
-            nextDecide = DECIDE_TYPE.Attack;
             if (nextDecide == DECIDE_TYPE.Attack)
             {
-                generatedEnemyCnt = GeneratedEnemies.Count;
+                generatedEnemyCnt = CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByWorm).Count;
                 // ‘S‚Ä‚Ì•”ˆÊ‚Ìs“®‚ğÀs
                 isAttacking = true;
                 ExecuteAllPartActions();
@@ -289,9 +284,6 @@ public class FullMetalWorm : EnemyBase
 
         if (!isAttacking)
         {
-            // Šù‚É€–S‚µ‚Ä‚¢‚é¶¬Ï‚İ‚Ì“G‚Ì—v‘f‚ğíœ
-            generatedEnemies.RemoveAll(item => item == null);
-
             // ”ÍˆÍ“à‚ÉPlayer‚ª‚¢‚é‚©ƒ`ƒFƒbƒN
             int layerNumber = 1 << LayerMask.NameToLayer("Player");
             Collider2D hit = Physics2D.OverlapCircle(playerCheck.position, playerCheckRange, layerNumber);
@@ -492,7 +484,7 @@ public class FullMetalWorm : EnemyBase
         }
 
         // ¶¬‚µ‚½ƒUƒR“G‚ğ”jŠü‚·‚é
-        foreach (var enemy in generatedEnemies)
+        foreach (var enemy in CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByWorm))
         {
             StartCoroutine(enemy.GetComponent<EnemyBase>().DestroyEnemy(null));
         }

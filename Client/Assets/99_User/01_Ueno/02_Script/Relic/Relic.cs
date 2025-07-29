@@ -33,7 +33,7 @@ public class Relic : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             AddRelic();
-            //gameObject.SetActive(false);
+            //Object.SetActive(false);
             Destroy(this.gameObject);
         }
     }

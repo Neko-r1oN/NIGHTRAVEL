@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class FullMetalBody : EnemyBase
 {
@@ -250,11 +251,9 @@ public class FullMetalBody : EnemyBase
     /// <returns></returns>
     SpawnEnemyData EmitEnemy(Vector2 point)
     {
-        var rnd = (int)UnityEngine.Random.Range(0, 2);
-        var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByWorm;
-        var enemyType = rnd == 0 ? EnumManager.ENEMY_TYPE.Drone_ByWorm : EnumManager.ENEMY_TYPE.CyberDog_ByWorm;
-        var spawnData = SpawnManager.Instance.CreateSpawnEnemyData(enemyType, point, Vector3.one, spawnType);
-        return SpawnManager.Instance.CreateSpawnEnemyData(enemyType, point, Vector3.one, spawnType);
+        var spawnType = SPAWN_ENEMY_TYPE.ByWorm;
+        var emitResult = SpawnManager.Instance.EmitEnemy(ENEMY_TYPE.CyberDog_ByWorm, ENEMY_TYPE.Drone_ByWorm);
+        return SpawnManager.Instance.CreateSpawnEnemyData(new EnemySpawnEntry(emitResult, point, Vector3.one), spawnType);
     }
 
     /// <summary>
@@ -271,7 +270,6 @@ public class FullMetalBody : EnemyBase
             if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
             enemy.Players = GetAlivePlayers();
             enemy.Target = GetNearPlayer(enemy.transform.position);
-            worm.GeneratedEnemies.Add(enemyObjs[i]);
         }
     }
 
@@ -385,7 +383,7 @@ public class FullMetalBody : EnemyBase
         //foreach (var aimTransform in aimTransformList)
         //{
         //    var a = aimTransform.GetComponent<EnemyProjectileChecker>().GetNearPlayerInSight(Players);
-        //    string log = $"[{aimTransform.gameObject.name}] プレイヤーの視認：{a != null}";
+        //    string log = $"[{aimTransform.Object.name}] プレイヤーの視認：{a != null}";
         //    Debug.Log(log);
         //}
     }

@@ -112,9 +112,9 @@
 //        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
 //        for (int i = 0; i < collidersEnemies.Length; i++)
 //        {
-//            if (collidersEnemies[i].gameObject.tag == "Player")
+//            if (collidersEnemies[i].Object.tag == "Player")
 //            {
-//                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
+//                collidersEnemies[i].Object.GetComponent<PlayerBase>().ApplyDamage(power, transform.position);
 //            }
 //        }
 //        cancellCoroutines.Add(StartCoroutine(AttackCooldownCoroutine(attackCoolTime)));
