@@ -112,9 +112,13 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 0;
         }
-        else if(Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.N))
         {
             Time.timeScale = 1;
+        }
+        else if(Input.GetKeyDown(KeyCode.S))
+        {
+            Time.timeScale = 20;
         }
 
         if (!isSpawnBoss && bossFlag)

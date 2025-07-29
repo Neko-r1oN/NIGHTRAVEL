@@ -15,12 +15,21 @@ public class Terminal : MonoBehaviour
     // 端末の種別
     public int terminalType;
 
+    public int TerminalType { get { return terminalType; } }
+
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
 
     List<GameObject> terminalSpawnList;
 
     GameManager gameManager;
+
+    private static Terminal instance;
+
+    public static Terminal Instance
+    {
+        get { return instance; }
+    }
 
     // 端末タイプ列挙型
     public enum TerminalCode 
@@ -35,9 +44,41 @@ public class Terminal : MonoBehaviour
         Type_Elite
     }
 
+    public TerminalCode code;
+
+    public Dictionary<TerminalCode, string> Terminalexplanation = new Dictionary<TerminalCode, string>
+    {
+        {TerminalCode.None,""},
+        {TerminalCode.Type_Enemy,"出現した敵を全て倒せ" },
+        {TerminalCode.Type_Speed,"出現したゲートを全て通れ" },
+        {TerminalCode.Type_Deal,"" },
+        {TerminalCode.Type_Recycle,""},
+        {TerminalCode.Type_Jumble,"" },
+        {TerminalCode.Type_Return,"" },
+        {TerminalCode.Type_Elite,"" }
+    };
+
+    bool isTerminal;
+
+    public bool IsTerminal {  get { return isTerminal; } }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        isTerminal = false;
     }
 
     private void Update()
@@ -83,19 +124,25 @@ public class Terminal : MonoBehaviour
     {     
         System.Random rand = new System.Random();
         int rndNum;
+
+        UIManager.Instance.DisplayTerminalExplanation();
+
         // 端末タイプで処理を分ける
         switch (terminalType)
         {
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
                 isUsed = true;  // 使用済みにする
+                isTerminal = true;
 
                 rndNum = rand.Next(6, 11); // 生成数を乱数(6-10)で設定
                 SpawnManager.Instance.TerminalGenerateEnemy(rndNum);   // 敵生成
+                isTerminal = true;
                 break;
 
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合
+                isTerminal = true;
                 isUsed = true;  // 使用済みにする
                 foreach (var point in pointList)
                 {   // 各ゴールポイントを表示
