@@ -4,6 +4,7 @@
 //----------------------------------------------------
 using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -274,38 +275,45 @@ public class SpawnManager : MonoBehaviour
     /// <summary>
     /// 端末操作時の敵生成処理
     /// </summary>
-    public void TerminalGenerateEnemy(int num)
+    public void TerminalGenerateEnemy(int num,Vector2 minPos,Vector2 maxPos)
     {
         int enemyCnt = 0;
 
         while (enemyCnt < num)
         {
+            // 生成する敵の抽選
+            var emitResult = EmitEnemy(emitEnemyTypes.ToArray());
+            if (emitResult == null)
+            {
+                Debug.LogWarning("生成する敵の抽選結果がnullのため、以降の処理をスキップします。");
+                continue;
+            }
+            ENEMY_TYPE enemyType = (ENEMY_TYPE)emitResult;
+
             int listNum = Random.Range(0, idEnemyPrefabPairs.Count);
 
             EnemyBase enemyBase = idEnemyPrefabPairs[(EnumManager.ENEMY_TYPE)listNum].GetComponent<EnemyBase>();
 
-            Vector2 minPlayer =
-                        new Vector2(player.transform.position.x - xRadius,
-                        player.transform.position.y - yRadius);
-
-            Vector2 maxPlayer =
-                new Vector2(player.transform.position.x + xRadius,
-                player.transform.position.y + yRadius);
-
             // ランダムな位置を生成
-            var spawnPostions = CreateEnemyTerminalSpawnPosition(minPlayer, maxPlayer);
+            var spawnPostions = CreateEnemyTerminalSpawnPosition(minPos, maxPos);
 
             Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
-            //if (spawnPos != null)
-            //{
-            //    GameObject enemy = SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
+            if (spawnPos != null)
+            {
 
-            //    // 端末から出た敵をリストに追加
-            //    enemiesByTerminal.Add(Enemy);
+                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
+                Vector3 scale = Vector3.one;    // 一旦このまま
+                var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+                
 
-            //    enemyCnt++;
-            //}
+                List<GameObject> enemys = SpawnEnemyRequest(spawnData);
+
+                // 端末から出た敵をリストに追加
+                CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByTerminal);
+
+                enemyCnt++;
+            }
         }
     }
 
@@ -468,11 +476,10 @@ public class SpawnManager : MonoBehaviour
         GameManager.Instance.SpawnCnt++;
         ENEMY_ELITE_TYPE eliteType = ENEMY_ELITE_TYPE.None;
 
-        //if (canPromoteToElite)
-        //{
-        //    int rnd = Random.Range(0, 100);
-        //    EliteType = (EnumManager.ENEMY_EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
-        //}
+        if (canPromoteToElite)
+        {
+            eliteType = (EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
+        }
 
         return new SpawnEnemyData()
         {
