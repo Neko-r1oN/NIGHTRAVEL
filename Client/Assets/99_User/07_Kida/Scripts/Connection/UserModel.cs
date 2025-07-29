@@ -14,13 +14,8 @@ using Grpc.Net.Client;
 using MagicOnion.Client;
 using Newtonsoft.Json;
 using NIGHTRAVEL.Shared.Interfaces.Services;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using UnityEditor.Overlays;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class UserModel : BaseModel
 {

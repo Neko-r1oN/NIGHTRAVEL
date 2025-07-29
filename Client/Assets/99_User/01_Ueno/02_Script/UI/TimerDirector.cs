@@ -11,7 +11,7 @@ public class TimerDirector : MonoBehaviour
     [SerializeField] float minute;
     float second;
     float elapsedTime = 0f; // 経過時間
-    float halfMinute;
+    float initMinute;       // 初期設定(分)
 
     [SerializeField] GameObject timerObj; // タイマーテキストの親
     [SerializeField] Text timer;          // タイマーテキスト
@@ -20,36 +20,20 @@ public class TimerDirector : MonoBehaviour
     private void Start()
     {
         second = minute * 60;
+        initMinute = minute * 60;
         GameManager.Instance.InvokeRepeating("DecreaseGeneratInterval", 0.1f, 60f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.BossFlag == false)
+        if (Terminal.Instance.IsTerminal)
         {
-            second -= Time.deltaTime;
-            var span = new TimeSpan(0,0,(int)second);
-            minute = span.Minutes;
-            timer.text = span.ToString(@"mm\:ss");
-
-            elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
-            TimeSpan timeSpan = GetCurrentMinutesAndSeconds();
-
-            float currentTime = (float)timeSpan.TotalSeconds;
-
-            if (currentTime >= (minute * 60) / 2 && minute > 0)
-            {
-                halfMinute = minute / 2;
-                LevelManager.Instance.UpGameLevel();
-                ResetTimer();
-            }
-            else if(currentTime >= (second) / 2)
-            {
-                halfMinute = minute / 2;
-                LevelManager.Instance.UpGameLevel();
-                ResetTimer();
-            }
+            timerObj.SetActive(false);
+        }
+        else
+        {
+            timerObj.SetActive(true);
         }
 
         if (minute <= 0 && second <= 0 && GameManager.Instance.BossFlag == false)
@@ -58,23 +42,41 @@ public class TimerDirector : MonoBehaviour
             // ボス出現
             GameManager.Instance.BossFlag = true;
         }
-        else if(GameManager.Instance.IsSpawnBoss == true)
-        {
+        else if (GameManager.Instance.IsSpawnBoss == true)
+        {// ボスが出現したら
+            // タイマー削除
             timerObj.SetActive(false);
+        }
+        else if (GameManager.Instance.BossFlag == false)
+        {// ボスが出現していなかったら
+            elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
+
+            // タイマー(UI)の更新
+            UpdateTimerDisplay();
+
+            if(elapsedTime > initMinute)
+            {
+                // ゲームレベルアップ
+                LevelManager.Instance.UpGameLevel();
+                ResetTimer();
+            }
         }
     }
 
     /// <summary>
-    /// 現在の分と秒を取得します。
+    /// タイマー更新
     /// </summary>
-    /// <returns>現在の時間（分と秒）をTimeSpanで返します。</returns>
-    public TimeSpan GetCurrentMinutesAndSeconds()
+    public void UpdateTimerDisplay()
     {
-        return TimeSpan.FromSeconds(elapsedTime);
+        // フレームの経過時間分減算
+        second -= Time.deltaTime;
+        var span = new TimeSpan(0, 0, (int)second);
+        minute = span.Minutes;
+        timer.text = span.ToString(@"mm\:ss");
     }
 
     /// <summary>
-    /// タイマーをリセットします。
+    /// タイマーをリセット
     /// </summary>
     public void ResetTimer()
     {

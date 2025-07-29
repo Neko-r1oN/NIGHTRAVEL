@@ -31,7 +31,7 @@ public class CharacterManager : MonoBehaviour
     /// <summary>
     /// プレイヤーのリスト
     /// </summary>
-    public Dictionary<Guid, GameObject> PlayerObjs { get {  return playerObjs; } }
+    public Dictionary<Guid, GameObject> PlayerObjs { get { return playerObjs; } }
     #endregion
 
     #region 敵関連
@@ -77,7 +77,7 @@ public class CharacterManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty) 
+        if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             playerObjs.Add(Guid.Empty, playerObjSelf);
             return;
@@ -149,7 +149,7 @@ public class CharacterManager : MonoBehaviour
     /// <param name="newEnemies"></param>
     public void AddEnemies(params SpawnedEnemy[] newEnemies)
     {
-        foreach(var enemy in newEnemies)
+        foreach (var enemy in newEnemies)
         {
             enemies.Add(enemy.UniqueId, enemy);
         }
@@ -216,7 +216,7 @@ public class CharacterManager : MonoBehaviour
     PlayerData GetPlayerData()
     {
         if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
-        Debug.Log("キャラクター："+RoomModel.Instance.ConnectionId);
+        Debug.Log("キャラクター：" + RoomModel.Instance.ConnectionId);
         var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
         var statusEffectController = player.GetComponent<StatusEffectController>();
         return new PlayerData()
@@ -230,7 +230,7 @@ public class CharacterManager : MonoBehaviour
             MoveSpeedFactor = player.moveSpeedFactor,
             AttackSpeedFactor = player.attackSpeedFactor,
             Position = player.transform.position,
-            Scale = player.transform.localScale, 
+            Scale = player.transform.localScale,
             Rotation = player.transform.rotation,
             AnimationId = player.GetAnimId(),
             DebuffList = statusEffectController.GetAppliedStatusEffects(),
@@ -248,7 +248,7 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     List<EnemyData> GetEnemyDatas()
     {
-        List <EnemyData> enemyDatas = new List <EnemyData>();
+        List<EnemyData> enemyDatas = new List<EnemyData>();
         foreach (var key in enemies.Keys)
         {
             var enemyData = enemies[key];
@@ -331,7 +331,7 @@ public class CharacterManager : MonoBehaviour
         UpdateCharacter(masterClientData.PlayerData, player);
 
         // 敵の情報更新
-        foreach(var enemyData in masterClientData.EnemyDatas)
+        foreach (var enemyData in masterClientData.EnemyDatas)
         {
             if (enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID] != null)
             {
