@@ -125,7 +125,7 @@ public class RelicManager : MonoBehaviour
         }
     }
 
-        [ContextMenu("GenerateRelicTest")]
+    [ContextMenu("GenerateRelicTest")]
     public void GenerateRelicTest()
     {
         randomRarity = GetRandomRarity();

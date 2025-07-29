@@ -306,8 +306,7 @@ public class SpawnManager : MonoBehaviour
                 Vector3 scale = Vector3.one;    // 一旦このまま
                 var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
                 
-
-                List<GameObject> enemys = SpawnEnemyRequest(spawnData);
+                SpawnEnemyRequest(spawnData);
 
                 // 端末から出た敵をリストに追加
                 CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByTerminal);
