@@ -303,15 +303,15 @@ public class SpawnManager : MonoBehaviour
 
             Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
-            if (spawnPos != null)
-            {
-                GameObject enemy = SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
+            //if (spawnPos != null)
+            //{
+            //    GameObject enemy = SpawnEnemyRequest(enemyPrefabs[listNum], (Vector3)spawnPos);
 
-                // 端末から出た敵をリストに追加
-                enemiesByTerminal.Add(Enemy);
+            //    // 端末から出た敵をリストに追加
+            //    enemiesByTerminal.Add(Enemy);
 
-                enemyCnt++;
-            }
+            //    enemyCnt++;
+            //}
         }
     }
 
