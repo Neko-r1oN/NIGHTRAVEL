@@ -80,12 +80,6 @@ public class SpawnManager : MonoBehaviour
         enemyWeights[1] = 76; // いぬ
     }
 
-    [ContextMenu("aaa")]
-    public void TEST()
-    {
-        Debug.Log(CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByWorm).Count);
-    }
-
     /// <summary>
     /// 敵のプレファブ情報をまとめる
     /// </summary>
