@@ -59,7 +59,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<JoinedUser> OnEscapeCharacter { get; set; }
 
     //敵の出現通知
-    public Action<EnemyData, Vector3> OnSpawndEnemy { get; set; }
+    public Action<List<SpawnEnemyData>> OnSpawndEnemy { get; set; }
 
     //敵の更新通知
     public Action<EnemyData> OnUpdatedEnemy { get; set; }
@@ -318,9 +318,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="pos"></param>
     /// <returns></returns>
-    public async Task SpawnEnemyAsync(EnemyData enemyData, Vector2 pos)
+    public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyDatas)
     {
-        await roomHub.SpawnEnemyAsync(enemyData, pos);
+        await roomHub.SpawnEnemyAsync(spawnEnemyDatas);
     }
 
     /// <summary>
@@ -548,9 +548,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="enemyData"></param>
     /// <param name="pos"></param>
-    public void OnSpawnEnemy(EnemyData enemyData, Vector2 pos)
+    public void OnSpawnEnemy(List<SpawnEnemyData> spawnEnemyDatas)
     {
-        OnSpawndEnemy(enemyData, pos);
+        OnSpawndEnemy(spawnEnemyDatas);
     }
 
     /// <summary>
