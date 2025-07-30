@@ -178,13 +178,13 @@ namespace StreamingHubs
             //this.roomContext.Group.All.OnMovePlayer(playerData);
 
             //ルームの自分以外に、ユーザ情報通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnMovePlayer(playerData);
+            this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
         }
 
         public async Task UpdatePlayerAsync(PlayerData playerData)
         {
             //ルームの自分以外に、ユーザ情報通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnMovePlayer(playerData);
+            this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="enemyData">敵ID</param>
         /// <returns></returns>
-        public async Task UpdateEnemyAsync(EnemyData enemyData)
+        public async Task UpdateEnemyAsync(List<EnemyData> enemyDatas)
         {
             //foreach (var enemID in enemIDList)
             //{
@@ -220,8 +220,8 @@ namespace StreamingHubs
             //    this.roomContext.Group.All.OnMoveEnemy(enemID, pos, rot, anim);
             //}
 
-            //ルーム参加者全員に、敵の情報通知を送信
-            this.roomContext.Group.All.OnUpdateEnemy(enemyData);
+            //自分以外に、敵の情報通知を送信
+            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateEnemy(enemyDatas);
         }
 
         /// <summary>
@@ -288,6 +288,11 @@ namespace StreamingHubs
             //    this.roomContext.Group.All.OnSpawnEnemy(enemData, pos);
             //}
 
+            foreach(var data in spawnEnemyData)
+            {
+                Console.WriteLine(data.TypeId);
+            }
+            
             // 自分以外に、取得した敵情報と生成位置を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
         }

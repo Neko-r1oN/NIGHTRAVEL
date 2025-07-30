@@ -48,7 +48,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnStartedGame { get; set; }
 
     //プレイヤー位置回転通知
-    public Action<PlayerData> OnMovePlayerSyn { get; set; }
+    public Action<PlayerData> OnUpdatePlayerSyn { get; set; }
 
     //マスタークライアントの変更通知
     public Action OnChangedMasterClient {  get; set; }
@@ -63,7 +63,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<List<SpawnEnemyData>> OnSpawndEnemy { get; set; }
 
     //敵の更新通知
-    public Action<EnemyData> OnUpdatedEnemy { get; set; }
+    public Action<List<EnemyData>> OnUpdatedEnemy { get; set; }
 
     //敵の撃破通知
     public Action<string> OnExcusionedEnemy { get; set; }
@@ -242,16 +242,21 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     #endregion
     #region プレイヤー同期関連
-    /// <summary>
-    /// プレイヤーの移動同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <returns></returns>
-    public async Task MovePlayerAsync(PlayerData playerData)
-    {
-        await roomHub.MovePlayerAsync(playerData);
-    }
+    ///// <summary>
+    ///// プレイヤーの移動同期
+    ///// Aughter:木田晃輔
+    ///// </summary>
+    ///// <returns></returns>
+    //public async Task MovePlayerAsync(PlayerData playerData)
+    //{
+    //    await roomHub.UpdatePlayerAsync(playerData);
+    //}
 
+    /// <summary>
+    /// プレイヤーの更新同期
+    /// </summary>
+    /// <param name="playerData"></param>
+    /// <returns></returns>
     public async Task UpdatePlayerAsync(PlayerData playerData)
     {
         await roomHub.UpdatePlayerAsync(playerData);
@@ -309,9 +314,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="enemyData"></param>
     /// <returns></returns>
-    public async Task UpdateEnemyAsync(EnemyData enemyData)
+    public async Task UpdateEnemyAsync(List<EnemyData> enemyDatas)
     {
-        await roomHub.UpdateEnemyAsync(enemyData);
+        await roomHub.UpdateEnemyAsync(enemyDatas);
     }
 
     /// <summary>
@@ -469,9 +474,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="pos"></param>
     /// <param name="rot"></param>
     /// <param name="animID"></param>
-    public void OnMovePlayer(PlayerData playerData)
+    public void OnUpdatePlayer(PlayerData playerData)
     {
-        OnMovePlayerSyn(playerData);
+        OnUpdatePlayerSyn(playerData);
     }
 
     /// <summary>
@@ -540,9 +545,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="enemyData"></param>
-    public void OnUpdateEnemy(EnemyData enemyData)
+    public void OnUpdateEnemy(List<EnemyData> enemyDatas)
     {
-        OnUpdatedEnemy(enemyData);
+        OnUpdatedEnemy(enemyDatas);
     }
 
     /// <summary>

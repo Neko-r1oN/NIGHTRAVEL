@@ -45,15 +45,15 @@ namespace Shared.Interfaces.StreamingHubs
 
         #region ゲーム内
         #region プレイヤー関連
-        /// <summary>
-        /// プレイヤー動作、情報
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="pos">PL位置値</param>
-        /// <param name="rot">Pl回転値</param>
-        /// <param name="anim">PLアニメーションID</param>
-        /// <returns></returns>
-        Task MovePlayerAsync(PlayerData playerData);
+        ///// <summary>
+        ///// プレイヤー動作、情報
+        ///// Author:Nishiura
+        ///// </summary>
+        ///// <param name="pos">PL位置値</param>
+        ///// <param name="rot">Pl回転値</param>
+        ///// <param name="anim">PLアニメーションID</param>
+        ///// <returns></returns>
+        //Task MovePlayerAsync(PlayerData playerData);
 
         /// <summary>
         /// プレイヤーの更新
@@ -109,7 +109,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="enemyData">敵の情報</param>
         /// <returns></returns>
-        Task UpdateEnemyAsync(EnemyData enemyData);
+        Task UpdateEnemyAsync(List<EnemyData> enemyDatas);
 
         /// <summary>
         /// 敵生成

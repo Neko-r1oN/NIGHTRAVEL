@@ -222,7 +222,7 @@ abstract public class CharacterBase : MonoBehaviour
             if (gameObject.tag == "Enemy" || CharacterManager.Instance.PlayerObjSelf != this.gameObject)
             {
                 var rb2d = GetComponent<Rigidbody2D>();
-                rb2d.bodyType = RigidbodyType2D.Kinematic;
+                rb2d.bodyType = RigidbodyType2D.Static;
                 this.enabled = false;
             }
         }
