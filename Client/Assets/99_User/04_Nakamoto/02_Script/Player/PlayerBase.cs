@@ -5,6 +5,7 @@
 using Pixeye.Unity;
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -77,8 +78,11 @@ abstract public class PlayerBase : CharacterBase
     [Foldout("共通ステータス")]
     [SerializeField] protected int testExp = 10;      // デバッグ用獲得経験値
 
-    protected float horizontalMove = 0f;      // 速度用変数
-    protected float gravity;  // 重力
+    protected float horizontalMove = 0f;                // 速度用変数
+    protected float gravity;                            // 重力
+    protected float timer;                              // タイマー
+    protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
+    protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
 
     #endregion
 
@@ -178,8 +182,8 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region 判定係数
-    protected const float k_GroundedRadius = .2f; // 接地確認用の円の半径
-    protected const float k_AttackRadius = 1.2f;   // 攻撃判定の円の半径
+    protected const float GROUNDED_RADIUS = .2f; // 接地確認用の円の半径
+    protected const float ATTACK_RADIUS = 1.2f;  // 攻撃判定の円の半径
     #endregion
 
     //--------------------
@@ -206,8 +210,17 @@ abstract public class PlayerBase : CharacterBase
 
     virtual protected void Update()
     {
+        timer += Time.deltaTime;
+
+        // 毎秒最大HPの0.1% を基礎値とし、1秒毎に基礎値分回復する
+        if (timer >= REGENE_TIME)
+        {
+            if(HP < MaxHP) hp += (int)(MaxHP * REGENE_MAGNIFICATION);
+            timer = 0;
+        }
+
         // キャラの移動
-        if(!canMove) return;
+        if (!canMove) return;
 
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
@@ -234,6 +247,9 @@ abstract public class PlayerBase : CharacterBase
         {
             if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
             {   // ジャンプ押下時
+                // カーソル非表示
+                UnityEngine.Cursor.visible = false;
+
                 if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
                     isJump = true;
             }
@@ -275,7 +291,7 @@ abstract public class PlayerBase : CharacterBase
 
         // グラウンドチェックが地面として指定されたものに当たった場合、プレーヤーを接地扱いにする
         // これはレイヤーを使って行うこともできますが、Sample Assetsはプロジェクトの設定を上書きしません。
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, GROUNDED_RADIUS, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
             // Object→プレイヤーオブジェクトのこと？
@@ -323,7 +339,7 @@ abstract public class PlayerBase : CharacterBase
             if (animator.GetInteger("animation_id") == (int)ANIM_ID.Idle || animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
 
-            Collider2D[] collidersWall = Physics2D.OverlapCircleAll(m_WallCheck.position, k_GroundedRadius, m_WhatIsGround);
+            Collider2D[] collidersWall = Physics2D.OverlapCircleAll(m_WallCheck.position, GROUNDED_RADIUS, m_WhatIsGround);
             for (int i = 0; i < collidersWall.Length; i++)
             {
                 if (collidersWall[i].gameObject != null)
@@ -783,6 +799,12 @@ abstract public class PlayerBase : CharacterBase
     abstract public void ResetFlag();
 
     /// <summary>
+    /// 被ダメ処理
+    /// (ノックバックはposに応じて有無が変わる)
+    /// </summary>
+    abstract public void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null);
+
+    /// <summary>
     /// ブリンク終了処理
     /// </summary>
     public void BlinkEnd()
@@ -797,12 +819,6 @@ abstract public class PlayerBase : CharacterBase
     {
         playerPos.position = FetchNearObjectWithTag("Gimmick/ChecKPoint").position;
     }
-
-    /// <summary>
-    /// 被ダメ処理
-    /// (ノックバックはposに応じて有無が変わる)
-    /// </summary>
-    abstract public void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null);
 
     /// <summary>
     /// 経験値獲得

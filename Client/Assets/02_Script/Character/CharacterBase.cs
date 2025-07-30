@@ -127,7 +127,7 @@ abstract public class CharacterBase : MonoBehaviour
 
     #region 現在のステータス関連
     // インスペクター上で見るためのpublic
-    // 後でpublicを消す
+    // 後でprotectedにする
     [Foldout("[Debug用] 現在のステータス")]
     public int hp;
     [Foldout("[Debug用] 現在のステータス")]
@@ -211,8 +211,6 @@ abstract public class CharacterBase : MonoBehaviour
         ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
         if (!animator) animator = GetComponent<Animator>();
         effectController = GetComponent<StatusEffectController>();
-
-        
     }
 
     protected virtual void Start()

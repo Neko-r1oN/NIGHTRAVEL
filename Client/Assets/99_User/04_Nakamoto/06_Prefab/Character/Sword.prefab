@@ -9839,9 +9839,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 5000
-  baseDefense: 10
-  basePower: 15
+  baseHp: 400
+  baseDefense: 35
+  basePower: 85
   baseJumpPower: 10
   baseMoveSpeed: 60
   hp: 150
@@ -9865,9 +9865,10 @@ MonoBehaviour:
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 20
+  enemyLayer: 6
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 16781365
+    m_Bits: 16789557
   ziplineLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -9882,7 +9883,7 @@ MonoBehaviour:
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
-  atkGravity: 5
+  atkGravity: 0
   skillEffect1: {fileID: 6263195172226639990}
   skillEffect2: {fileID: 5592272234982887123}
   skillEffect3: {fileID: 2161620717427457088}

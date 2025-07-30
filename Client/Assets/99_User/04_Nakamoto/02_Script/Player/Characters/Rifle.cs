@@ -53,8 +53,6 @@ public class Rifle : PlayerBase
     [Foldout("í èÌçUåÇ")]
     [SerializeField] private float bulletSpeed;
     [Foldout("í èÌçUåÇ")]
-    [SerializeField] private float bulletAccele;
-    [Foldout("í èÌçUåÇ")]
     [SerializeField] private GameObject bulletPrefab;
     [Foldout("í èÌçUåÇ")]
     [SerializeField] private GameObject bulletSpawnObj;
@@ -199,7 +197,6 @@ public class Rifle : PlayerBase
         var bullet = Instantiate(bulletPrefab, bulletSpawnObj.transform.position, Quaternion.identity);
         bullet.GetComponent<Bullet>().SetPlayer(m_Player);
         bullet.GetComponent<Bullet>().Speed = bulletSpeed;
-        bullet.GetComponent<Bullet>().AcceleCoefficient = bulletAccele;
         bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);
     }
 
@@ -207,7 +204,7 @@ public class Rifle : PlayerBase
 
     #region îÌÉ_ÉÅèàóù
 
-    public override void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
+    public override void ApplyDamage(int power, Vector3? position = null, EFFECT_TYPE? type = null)
     {
         if (!invincible)
         {
@@ -216,7 +213,7 @@ public class Rifle : PlayerBase
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
 
             var id = animator.GetInteger("animation_id");
-            if (position != null || id != 11 || id != 12) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null && id != 11 && id != 12) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
@@ -231,7 +228,7 @@ public class Rifle : PlayerBase
 
             if (type != null)
             {
-                effectController.ApplyStatusEffect((StatusEffectController.EFFECT_TYPE)type);
+                effectController.ApplyStatusEffect((EFFECT_TYPE)type);
             }
 
             if (hp <= 0)

@@ -28,7 +28,7 @@ public class Sword : PlayerBase
     private bool isCombo = false;       // コンボ可能フラグ
     private float plDirection = 0;      // プレイヤーの向き
 
-    #region ソード専用ステータス
+    #region 剣士専用ステータス
 
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillForth = 45f;        // スキルの移動力
@@ -40,7 +40,7 @@ public class Sword : PlayerBase
     [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
 
     [Foldout("キャラ別ステータス")]
-    [SerializeField] private float atkGravityCoefficient = 1.8f;   // 攻撃中の落下速度係数
+    [SerializeField] private float atkGravity = 1.0f;   // 攻撃中の落下速度係数
 
     [Foldout("スキルエフェクト")]
     [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
@@ -50,6 +50,8 @@ public class Sword : PlayerBase
 
     [Foldout("スキルエフェクト")]
     [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
+
+    private bool isAirAttack = false;   // 空中攻撃をしたかどうか
 
     #endregion
 
@@ -79,7 +81,7 @@ public class Sword : PlayerBase
         {   // 通常攻撃
             int id = animator.GetInteger("animation_id");
 
-            if (isBlink || isSkill || id == 3 || m_IsZipline) return;
+            if (isBlink || isSkill || id == 3 || m_IsZipline || isAirAttack) return;
 
             if (canAttack && !isCombo)
             {   // 攻撃1段目
@@ -105,7 +107,7 @@ public class Sword : PlayerBase
         {   // 攻撃2
             if (canSkill && canAttack)
             {
-                //Object.layer = 21;
+                //gameObject.layer = 21;
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
                 canSkill = false;
                 plDirection = transform.localScale.x;
@@ -140,6 +142,8 @@ public class Sword : PlayerBase
     {
         base.FixedUpdate();
 
+        if(m_Grounded) isAirAttack = false;
+
         if (isSkill)
         {
             // クールダウンに入るまで加速
@@ -163,10 +167,15 @@ public class Sword : PlayerBase
             m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
         }
 
-        if (!canAttack)
+        if (!m_Grounded && !canAttack)
         {
             // 攻撃中は落下速度減少
-            m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, m_Rigidbody2D.linearVelocity.y / atkGravityCoefficient);
+            m_Rigidbody2D.gravityScale = 0;
+            m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, 0);
+        }
+        else
+        {
+            m_Rigidbody2D.gravityScale = gravity;
         }
     }
 
@@ -174,33 +183,9 @@ public class Sword : PlayerBase
 
     #region 攻撃・ダメージ関連
 
-    /// <summary>
-    /// ダメージを与える処理
-    /// </summary>
-    //public override void DoDashDamage()
-    //{
-    //    Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius,enemyLayer);
-
-    //    for (int i = 0; i < collidersEnemies.Length; i++)
-    //    {
-    //        if (collidersEnemies[i].Object.tag == "Enemy")
-    //        {
-    //            //++ GetComponentでEnemyスクリプトを取得し、ApplyDamageを呼び出すように変更
-    //            //++ 破壊できるオブジェを作る際にはオブジェの共通被ダメ関数を呼ぶようにする
-
-    //            collidersEnemies[i].Object.GetComponent<EnemyBase>().ApplyDamage(Power, playerPos);
-    //            cam.GetComponent<CameraFollow>().ShakeCamera();
-    //        }
-    //        else if (collidersEnemies[i].Object.tag == "Object")
-    //        {
-    //            collidersEnemies[i].Object.GetComponent<ObjectBase>().ApplyDamage();
-    //        }
-    //    }
-    //}
-
     public override void DoDashDamage()
     {
-        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, k_AttackRadius);
+        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, ATTACK_RADIUS);
         HashSet<EnemyBase> processedEnemies = new HashSet<EnemyBase>();
 
         for (int i = 0; i < collidersEnemies.Length; i++)
@@ -256,6 +241,8 @@ public class Sword : PlayerBase
         canAttack = true;
         isCombo = false;
 
+        if (!m_Grounded) isAirAttack = true;
+
         // Idleに戻る
         animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
     }
@@ -297,14 +284,17 @@ public class Sword : PlayerBase
 
     #region 被ダメ処理
 
-    public override void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null)
+    public override void ApplyDamage(int power, Vector3? position = null,EFFECT_TYPE? type = null)
     {
         if (!invincible)
         {
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
-            if (position != null) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+
+            var id = animator.GetInteger("animation_id");
+            if (position != null && id != 13) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
 
@@ -318,7 +308,7 @@ public class Sword : PlayerBase
 
             if (type != null)
             {
-                effectController.ApplyStatusEffect((StatusEffectController.EFFECT_TYPE)type);
+                effectController.ApplyStatusEffect((EFFECT_TYPE)type);
             }
 
             if (hp <= 0)
@@ -343,6 +333,6 @@ public class Sword : PlayerBase
     {
         //　CircleCastのレイを可視化
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(attackCheck.position, k_AttackRadius);
+        Gizmos.DrawWireSphere(attackCheck.position, ATTACK_RADIUS);
     }
 }

@@ -12,19 +12,13 @@ public class Bullet : MonoBehaviour
     // フィールド
 
     private float timer;                    // 累計生存時間
-    private bool orbitFlag;                 // 追尾フラグ
+    private const float DEATH_TIME = 10f;   // 破棄時間
     private PlayerBase player;              // 発射キャラの情報
-    [SerializeField] private float trackingStart;           // 追尾開始時間
 
     /// <summary>
     /// 弾の速さ
     /// </summary>
     public float Speed {  get; set; }
-
-    /// <summary>
-    /// 加速係数
-    /// </summary>
-    public float AcceleCoefficient { get; set; }
 
     //--------------------------
     // メソッド
@@ -36,23 +30,7 @@ public class Bullet : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if(trackingStart <= timer && !orbitFlag)
-        {   // 軌道変化
-            orbitFlag = true;
-
-            var target = FetchNearObjectWithTag("Enemy");
-
-            // 敵に向けて加速
-            if(target != null)
-            {
-                var vec = target.transform.position - transform.position;
-                vec = vec.normalized;
-                gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, vec);
-                gameObject.GetComponent<Rigidbody2D>().linearVelocity = (vec * Speed) * AcceleCoefficient;
-            }
-        }
-
-        if(timer >= 10f) Destroy(gameObject);
+        if(timer >= DEATH_TIME) Destroy(gameObject);
     }
 
     /// <summary>
@@ -81,31 +59,5 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    /// <summary>
-    /// １番近いオブジェクトを取得する
-    /// </summary>
-    /// <param name="tagName">取得したいtagName</param>
-    /// <returns>最小距離の指定Obj</returns>
-    public Transform FetchNearObjectWithTag(string tagName)
-    {
-        // 該当タグが1つしか無い場合はそれを返す
-        var targets = GameObject.FindGameObjectsWithTag(tagName);
-        if (targets.Length == 1) return targets[0].transform;
-
-        GameObject result = null;               // 返り値
-        var minTargetDistance = float.MaxValue; // 最小距離
-        foreach (var target in targets)
-        {
-            // 前回計測したオブジェクトよりも近くにあれば記録
-            var targetDistance = Vector3.Distance(transform.position, target.transform.position);
-            if (!(targetDistance < minTargetDistance)) continue;
-            minTargetDistance = targetDistance;
-            result = target.transform.gameObject;
-        }
-
-        // 最後に記録されたオブジェクトを返す
-        return result?.transform;
     }
 }
