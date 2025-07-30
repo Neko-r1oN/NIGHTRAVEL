@@ -288,7 +288,7 @@ namespace StreamingHubs
             //    this.roomContext.Group.All.OnSpawnEnemy(enemData, pos);
             //}
 
-            // ルーム参加者全員に、取得した敵情報と生成位置を送信
+            // 自分以外に、取得した敵情報と生成位置を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
         }
 

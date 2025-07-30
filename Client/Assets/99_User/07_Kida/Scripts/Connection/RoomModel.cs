@@ -11,6 +11,7 @@ using Cysharp.Threading.Tasks;
 using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
@@ -201,6 +202,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             if (user.Value.UserData.Id == userId)
             {
                 this.ConnectionId = user.Value.ConnectionId;
+                this.IsMaster = user.Value.IsMaster;
                 Debug.Log("モデル：" + RoomModel.Instance.ConnectionId);
             }
         }
@@ -225,6 +227,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask LeaveAsync()
     {
         await roomHub.LeavedAsync();
+        this.IsMaster = false;
         //自分をリストから消す
         joinedUserList.Clear();
     }

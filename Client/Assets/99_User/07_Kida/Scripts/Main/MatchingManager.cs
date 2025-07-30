@@ -106,7 +106,7 @@ public class MatchingManager : MonoBehaviour
             //入室したときの処理を書く
             Debug.Log(data.UserData.Name + "が入室しました。");
         }
-      
+        
     }
 
     /// <summary>
@@ -139,7 +139,6 @@ public class MatchingManager : MonoBehaviour
     {
         //ゲーム開始の時の処理を書く
         Debug.Log("ゲームを開始します");
-
         SceneManager.LoadScene("01_Stage");
     }
 
