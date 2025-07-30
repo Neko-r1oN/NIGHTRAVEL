@@ -60,7 +60,7 @@ public class EnemySightChecker : MonoBehaviour
         float minTargetDist = float.MaxValue;
         foreach (GameObject player in GetComponent<EnemyBase>().Players)
         {
-            if (player.GetComponent<CharacterBase>().HP <= 0) continue;
+            if (!player || player && player.GetComponent<CharacterBase>().HP <= 0) continue;
 
             Vector2 dirToTarget = player.transform.position - transform.position;
             Vector2 angleVec = new Vector2(TransformUtils.GetFacingDirection(transform), 0);
@@ -92,6 +92,7 @@ public class EnemySightChecker : MonoBehaviour
         {
             foreach (GameObject player in players)
             {
+                if (!player || player && player.GetComponent<CharacterBase>().HP <= 0) continue;
                 Vector2 dirToTarget = player.transform.position - transform.position;
                 Vector2 angleVec = new Vector2(TransformUtils.GetFacingDirection(transform), 0);
                 float angle = Vector2.Angle(dirToTarget, angleVec);

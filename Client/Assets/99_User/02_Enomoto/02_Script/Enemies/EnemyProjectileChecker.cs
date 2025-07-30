@@ -164,6 +164,7 @@ public class EnemyProjectileChecker : MonoBehaviour
         GameObject nearPlayer = null;
         foreach (var player in players)
         {
+            if (!player || player && player.GetComponent<CharacterBase>().HP <= 0) continue;
             var projectileRays = GetProjectileRaycastHit(player.transform, canFollowTargetSimulation, null);
 
             // プレイヤーにRayが当たっているか、何も検知ができなかった場合はtrue
