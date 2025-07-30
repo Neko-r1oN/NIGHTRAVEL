@@ -166,6 +166,7 @@ public class FullMetalWorm : EnemyBase
         {
             doOnceDecision = false;
             RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+            nextDecide = DECIDE_TYPE.Attack;
             if (nextDecide == DECIDE_TYPE.Attack)
             {
                 generatedEnemyCnt = CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByWorm).Count;
