@@ -118,25 +118,6 @@ public class Sword : PlayerBase
                 StartCoroutine(SkillCoolDown());
             }
         }
-
-        //-----------------------------
-        // デバッグ用
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
-        }
-
-        //Escが押された時
-        if (Input.GetKey(KeyCode.Escape))
-        {
-
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
-#else
-    Application.Quit();//ゲームプレイ終了
-#endif
-        }
     }
 
     /// <summary>
@@ -241,9 +222,6 @@ public class Sword : PlayerBase
 
                 enemyComponent.ApplyDamage(attackPower, playerPos);
                 processedEnemies.Add(enemyComponent); // 処理済みリストに追加
-
-                // カメラのシェイク処理
-                cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
 

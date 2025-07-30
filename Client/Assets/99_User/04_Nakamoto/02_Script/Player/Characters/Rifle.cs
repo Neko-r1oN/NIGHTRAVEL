@@ -48,8 +48,6 @@ public class Rifle : PlayerBase
     [SerializeField] private float damageInterval = 0.3f;   // ダメージ間隔
     [Foldout("ビーム関連")]
     [SerializeField] private GameObject beamEffect;         // ビームエフェクト
-    [Foldout("ビーム関連")]
-    [SerializeField] private LineRenderer lr;
 
     [Foldout("通常攻撃")]
     [SerializeField] private float bulletSpeed;
@@ -111,14 +109,6 @@ public class Rifle : PlayerBase
         }
 
         base.Update();
-
-        //-----------------------------
-        // デバッグ用
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
-        }
     }
 
     /// <summary>
@@ -288,15 +278,6 @@ public class Rifle : PlayerBase
         float laserTimer = 0f;   // 全体の照射時間
         float tickTimer = 0f;    // ダメージ間隔計測
 
-#if UNITY_EDITOR
-        //lr.enabled = true;
-
-        // LineRenderer の太さを当たり判定と合わせる
-        float lrWidth = beamRadius * 2f * beamWidthScale;
-        lr.startWidth = lrWidth;
-        lr.endWidth = lrWidth;
-#endif
-
         while (laserTimer < duration)
         {
             laserTimer += Time.deltaTime;
@@ -325,12 +306,6 @@ public class Rifle : PlayerBase
                 }
                 tickTimer = 0f;
             }
-
-#if UNITY_EDITOR
-            // LineRenderer 更新
-            //lr.SetPosition(0, firePoint.position);
-            //lr.SetPosition(1, endPos);
-#endif
 
             yield return null;
         }

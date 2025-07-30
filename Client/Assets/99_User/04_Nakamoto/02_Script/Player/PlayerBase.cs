@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using static StatusEffectController;
 
 abstract public class PlayerBase : CharacterBase
 {
@@ -271,6 +272,15 @@ abstract public class PlayerBase : CharacterBase
             {
                 gameObject.layer = 21;
                 StartCoroutine(ScaffoldDown());
+            }
+
+            //-----------------------------
+            // デバッグ用
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                // カメラのシェイク処理
+                cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
     }
