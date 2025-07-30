@@ -22,8 +22,6 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.Rendering.DebugUI.Table;
 #endregion
 
 public class RoomModel : BaseModel, IRoomHubReceiver

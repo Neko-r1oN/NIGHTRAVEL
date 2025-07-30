@@ -10,7 +10,6 @@ using Shared;
 using Shared.Interfaces.StreamingHubs;
 using System.Drawing;
 using DG.Tweening;
-using UnityEditor.MemoryProfiler;
 using UnityEngine.Playables;
 
 public class CharacterManager : MonoBehaviour

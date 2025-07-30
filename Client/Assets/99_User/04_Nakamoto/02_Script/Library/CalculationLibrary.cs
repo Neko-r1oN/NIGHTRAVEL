@@ -4,6 +4,7 @@ public static class CalculationLibrary
 {
     public static int CalcDamage(int power,int defense)
     {
-        return (int)((power / 2) - (defense / 4));
+        int result = (int)((power / 2) - (defense / 4));
+        return result <= 0 ? 0 : result;
     }
 }

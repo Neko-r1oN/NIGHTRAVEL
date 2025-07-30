@@ -4957,12 +4957,12 @@ GameObject:
   - component: {fileID: 510062482197681080}
   - component: {fileID: 8918475707352852377}
   m_Layer: 20
-  m_Name: protoRifle
+  m_Name: Rifle
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6470474938770394812
 Transform:
   m_ObjectHideFlags: 0
@@ -4999,9 +4999,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5d212abf86b5a4d8938c938e1d0519, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 1500
-  baseDefense: 10
-  basePower: 50
+  baseHp: 300
+  baseDefense: 20
+  basePower: 100
   baseJumpPower: 10
   baseMoveSpeed: 50
   hp: 0
@@ -5025,9 +5025,10 @@ MonoBehaviour:
   m_MovementSmoothing: 0.05
   invincible: 0
   testExp: 10
+  enemyLayer: 6
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 16781365
+    m_Bits: 16789557
   ziplineLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -5051,7 +5052,6 @@ MonoBehaviour:
   beamEffect: {fileID: 3090962919235560449}
   lr: {fileID: 6522089363274242335}
   bulletSpeed: 20
-  bulletAccele: 3
   bulletPrefab: {fileID: 11297972727251665, guid: 9276c139e5f7ddd4fb92a69ca2b6356d, type: 3}
   bulletSpawnObj: {fileID: 3115150242735003394}
 --- !u!120 &6522089363274242335
