@@ -142,7 +142,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="enemyData">敵情報</param>
         /// <param name="pos">敵のスポーン位置</param>
-        void OnSpawnEnemy(EnemyData enemyData,Vector2 pos);
+        void OnSpawnEnemy(List<SpawnEnemyData> spawnEnemyDatas);
 
         /// <summary>
         /// 敵体力増減通知

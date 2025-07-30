@@ -134,13 +134,9 @@ public class RelicManager : MonoBehaviour
         }
     }
 
-<<<<<<< HEAD
-    [ContextMenu("GenerateRelicTest")]
-    public void GenerateRelicTest()
-=======
+
         [ContextMenu("GenerateRelicTest")]
     public async void GenerateRelicTest()
->>>>>>> feature/k-kida
     {
         randomRarity = GetRandomRarity();
 

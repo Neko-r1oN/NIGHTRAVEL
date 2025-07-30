@@ -118,7 +118,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemyData">敵の情報</param>
         /// <param name="pos">敵の生成位置</param>
         /// <returns></returns>
-        Task SpawnEnemyAsync(EnemyData enemyData,Vector2 pos);
+        Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyDatas);
 
         /// <summary>
         /// 敵体力増減
