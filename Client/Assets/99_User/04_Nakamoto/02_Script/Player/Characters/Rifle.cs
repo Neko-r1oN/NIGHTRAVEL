@@ -30,6 +30,7 @@ public class Rifle : PlayerBase
 
     private bool isFiring = false;      // ビーム照射中フラグ
     private bool isRailgun = false;     // 銃変形フラグ
+    private const float BEAM_MAG = 1.3f;// ビームの攻撃力倍率
 
     [Foldout("ビーム関連")]
     [SerializeField] private Transform firePoint;           // 発射地点
@@ -47,8 +48,6 @@ public class Rifle : PlayerBase
     [SerializeField] private float damageInterval = 0.3f;   // ダメージ間隔
     [Foldout("ビーム関連")]
     [SerializeField] private GameObject beamEffect;         // ビームエフェクト
-    [Foldout("ビーム関連")]
-    [SerializeField] private LineRenderer lr;
 
     [Foldout("通常攻撃")]
     [SerializeField] private float bulletSpeed;
@@ -110,25 +109,6 @@ public class Rifle : PlayerBase
         }
 
         base.Update();
-
-        //-----------------------------
-        // デバッグ用
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
-        }
-
-        //Escが押された時
-        if (Input.GetKey(KeyCode.Escape))
-        {
-
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
-#else
-    Application.Quit();//ゲームプレイ終了
-#endif
-        }
     }
 
     /// <summary>
@@ -208,24 +188,28 @@ public class Rifle : PlayerBase
     {
         if (!invincible)
         {
+            // ダメージ計算
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
+            // ダメージ表記
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
 
+            // アニメーション変更
             var id = animator.GetInteger("animation_id");
-            if (position != null && id != 11 && id != 12) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null && id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
 
             // ノックバック処理
-            if (position != null && id != 11 || position != null && id != 12)
+            if (position != null && id != (int)GS_ANIM_ID.Skill || position != null && id != (int)GS_ANIM_ID.BeamReady)
             {
-                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
+                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * KNOCKBACK_DIR;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                m_Rigidbody2D.AddForce(damageDir * 15);
+                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
             }
 
+            // 状態異常付与
             if (type != null)
             {
                 effectController.ApplyStatusEffect((EFFECT_TYPE)type);
@@ -233,15 +217,15 @@ public class Rifle : PlayerBase
 
             if (hp <= 0)
             {   // 死亡処理
-                m_Rigidbody2D.AddForce(damageDir * 10);
+                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
                 StartCoroutine(WaitToDead());
             }
             else
             {   // 被ダメ硬直
                 if (position != null)
                 {
-                    StartCoroutine(Stun(0.35f));
-                    StartCoroutine(MakeInvincible(0.4f));
+                    StartCoroutine(Stun(STUN_TIME));
+                    StartCoroutine(MakeInvincible(INVINCIBLE_TIME));
                 }
             }
         }
@@ -294,15 +278,6 @@ public class Rifle : PlayerBase
         float laserTimer = 0f;   // 全体の照射時間
         float tickTimer = 0f;    // ダメージ間隔計測
 
-#if UNITY_EDITOR
-        //lr.enabled = true;
-
-        // LineRenderer の太さを当たり判定と合わせる
-        float lrWidth = beamRadius * 2f * beamWidthScale;
-        lr.startWidth = lrWidth;
-        lr.endWidth = lrWidth;
-#endif
-
         while (laserTimer < duration)
         {
             laserTimer += Time.deltaTime;
@@ -327,16 +302,10 @@ public class Rifle : PlayerBase
                 {
                     if (hit.collider == null) continue;
 
-                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage(this.Power, this.transform);
+                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage((int)(Power * BEAM_MAG), transform);
                 }
                 tickTimer = 0f;
             }
-
-#if UNITY_EDITOR
-            // LineRenderer 更新
-            //lr.SetPosition(0, firePoint.position);
-            //lr.SetPosition(1, endPos);
-#endif
 
             yield return null;
         }

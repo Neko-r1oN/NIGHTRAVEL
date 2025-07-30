@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using static StatusEffectController;
 
 abstract public class PlayerBase : CharacterBase
 {
@@ -81,8 +82,6 @@ abstract public class PlayerBase : CharacterBase
     protected float horizontalMove = 0f;                // 速度用変数
     protected float gravity;                            // 重力
     protected float timer;                              // タイマー
-    protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
-    protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
 
     #endregion
 
@@ -181,9 +180,18 @@ abstract public class PlayerBase : CharacterBase
     protected bool canSkill = true;   // スキル使用可能フラグ
     #endregion
 
-    #region 判定係数
-    protected const float GROUNDED_RADIUS = .2f; // 接地確認用の円の半径
-    protected const float ATTACK_RADIUS = 1.2f;  // 攻撃判定の円の半径
+    #region プレイヤーに関する定数
+    protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
+    protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
+
+    protected const float GROUNDED_RADIUS = .2f;// 接地確認用の円の半径
+    protected const float ATTACK_RADIUS = 1.2f; // 攻撃判定の円の半径
+
+    protected const float KNOCKBACK_DIR = 40f;  // ノックバック
+    protected const float KNOCKBACK_POW = 10f;  // ノックバックの強さ
+
+    protected const float STUN_TIME = 0.15f;        // スタン時間
+    protected const float INVINCIBLE_TIME = 0.22f;  // 無敵時間
     #endregion
 
     //--------------------
@@ -256,17 +264,23 @@ abstract public class PlayerBase : CharacterBase
 
             if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
             {   // ブリンク押下時
-                if (canAttack)
-                {
                     isBlink = true;
                     gameObject.layer = 21;
-                }
             }
 
             if (m_IsScaffold && Input.GetKeyDown(KeyCode.DownArrow))
             {
                 gameObject.layer = 21;
                 StartCoroutine(ScaffoldDown());
+            }
+
+            //-----------------------------
+            // デバッグ用
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                // カメラのシェイク処理
+                cam.GetComponent<CameraFollow>().ShakeCamera();
             }
         }
     }
@@ -774,6 +788,7 @@ abstract public class PlayerBase : CharacterBase
         canBlink = false;
         yield return new WaitForSeconds(blinkTime);  // ブリンク時間
         gameObject.layer = 20;
+        canAttack = true;
         isBlinking = false;
         yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
         canBlink = true;

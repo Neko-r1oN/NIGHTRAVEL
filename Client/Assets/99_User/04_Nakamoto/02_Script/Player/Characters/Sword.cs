@@ -53,6 +53,10 @@ public class Sword : PlayerBase
 
     private bool isAirAttack = false;   // 空中攻撃をしたかどうか
 
+    // 各攻撃の攻撃力倍率
+    private const float ATTACK2_MAG = 1.1f;
+    private const float ATTACK3_MAG = 1.3f;
+    private const float SKILL_MAG = 1.65f;
     #endregion
 
     //--------------------------
@@ -81,7 +85,7 @@ public class Sword : PlayerBase
         {   // 通常攻撃
             int id = animator.GetInteger("animation_id");
 
-            if (isBlink || isSkill || id == 3 || m_IsZipline || isAirAttack) return;
+            if (isBlink || isSkill || id == (int)ANIM_ID.Hit || m_IsZipline || isAirAttack) return;
 
             if (canAttack && !isCombo)
             {   // 攻撃1段目
@@ -113,25 +117,6 @@ public class Sword : PlayerBase
                 plDirection = transform.localScale.x;
                 StartCoroutine(SkillCoolDown());
             }
-        }
-
-        //-----------------------------
-        // デバッグ用
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            GetComponent<StatusEffectController>().ApplyStatusEffect(EFFECT_TYPE.Burn);
-        }
-
-        //Escが押された時
-        if (Input.GetKey(KeyCode.Escape))
-        {
-
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
-#else
-    Application.Quit();//ゲームプレイ終了
-#endif
         }
     }
 
@@ -179,12 +164,21 @@ public class Sword : PlayerBase
         }
     }
 
+    void OnDrawGizmos()
+    {
+        //　CircleCastのレイを可視化
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(attackCheck.position, ATTACK_RADIUS);
+    }
+
     #endregion
 
     #region 攻撃・ダメージ関連
 
     public override void DoDashDamage()
     {
+        // 攻撃範囲に居る敵を取得
+        int animID = animator.GetInteger("animation_id");
         Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, ATTACK_RADIUS);
         HashSet<EnemyBase> processedEnemies = new HashSet<EnemyBase>();
 
@@ -200,11 +194,34 @@ public class Sword : PlayerBase
                     continue;
 
                 // 敵にダメージを与える
-                enemyComponent.ApplyDamage(Power, playerPos);
-                processedEnemies.Add(enemyComponent); // 処理済みリストに追加
+                int attackPower = 0;    // 最終攻撃力
 
-                // カメラのシェイク処理
-                cam.GetComponent<CameraFollow>().ShakeCamera();
+                // 攻撃力を設定
+                switch (animID)
+                {
+                    case (int)S_ANIM_ID.Attack1:
+                        attackPower = Power;
+                        break;
+
+                    case (int)S_ANIM_ID.Attack2:
+                        attackPower = (int)(Power * ATTACK2_MAG);
+                        break;
+
+                    case (int)S_ANIM_ID.Attack3:
+                        attackPower = (int)(Power * ATTACK3_MAG);
+                        break;
+
+                    case (int)S_ANIM_ID.Skill:
+                        attackPower = (int)(Power * SKILL_MAG);
+                        break;
+
+                    default:
+                        attackPower = Power;
+                        break;
+                }
+
+                enemyComponent.ApplyDamage(attackPower, playerPos);
+                processedEnemies.Add(enemyComponent); // 処理済みリストに追加
             }
         }
 
@@ -286,14 +303,18 @@ public class Sword : PlayerBase
 
     public override void ApplyDamage(int power, Vector3? position = null,EFFECT_TYPE? type = null)
     {
+        // 無敵以外の時
         if (!invincible)
         {
+            // ダメージ計算
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
+            // ダメージ表記
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
 
+            // アニメーション変更
             var id = animator.GetInteger("animation_id");
-            if (position != null && id != 13) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null && id != (int)S_ANIM_ID.Skill) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
             hp -= damage;
             Vector2 damageDir = Vector2.zero;
@@ -301,11 +322,12 @@ public class Sword : PlayerBase
             // ノックバック処理
             if (position != null)
             {
-                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * 40f;
+                damageDir = Vector3.Normalize(transform.position - (Vector3)position) * KNOCKBACK_DIR;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                m_Rigidbody2D.AddForce(damageDir * 15);
+                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
             }
 
+            // 状態異常付与
             if (type != null)
             {
                 effectController.ApplyStatusEffect((EFFECT_TYPE)type);
@@ -313,26 +335,19 @@ public class Sword : PlayerBase
 
             if (hp <= 0)
             {   // 死亡処理
-                m_Rigidbody2D.AddForce(damageDir * 10);
+                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
                 StartCoroutine(WaitToDead());
             }
             else
             {   // 被ダメ硬直
                 if (position != null)
                 {
-                    StartCoroutine(Stun(0.35f));
-                    StartCoroutine(MakeInvincible(0.4f));
+                    StartCoroutine(Stun(STUN_TIME));
+                    StartCoroutine(MakeInvincible(INVINCIBLE_TIME));
                 }
             }
         }
     }
 
     #endregion
-
-    void OnDrawGizmos()
-    {
-        //　CircleCastのレイを可視化
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(attackCheck.position, ATTACK_RADIUS);
-    }
 }
