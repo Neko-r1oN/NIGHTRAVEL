@@ -242,16 +242,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     #endregion
     #region プレイヤー同期関連
-    ///// <summary>
-    ///// プレイヤーの移動同期
-    ///// Aughter:木田晃輔
-    ///// </summary>
-    ///// <returns></returns>
-    //public async Task MovePlayerAsync(PlayerData playerData)
-    //{
-    //    await roomHub.UpdatePlayerAsync(playerData);
-    //}
-
     /// <summary>
     /// プレイヤーの更新同期
     /// </summary>
@@ -308,17 +298,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     #endregion
     #region 敵同期関連
-    /// <summary>
-    /// 敵の更新同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemyData"></param>
-    /// <returns></returns>
-    public async Task UpdateEnemyAsync(List<EnemyData> enemyDatas)
-    {
-        await roomHub.UpdateEnemyAsync(enemyDatas);
-    }
-
     /// <summary>
     /// 敵の生成同期
     /// Aughter:木田晃輔

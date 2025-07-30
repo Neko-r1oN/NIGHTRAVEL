@@ -200,31 +200,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        ///  敵位置、回転、アニメーション同期処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemyData">敵ID</param>
-        /// <returns></returns>
-        public async Task UpdateEnemyAsync(List<EnemyData> enemyDatas)
-        {
-            //foreach (var enemID in enemIDList)
-            //{
-            //    // ルームデータから接続IDを指定して自身のデータを取得
-            //    var enemData = this.roomContext.GetEnemyData(enemID);
-
-            //    //enemData.Position = pos; // 位置を渡す
-            //    //enemData.Rotation = rot; // 回転を渡す
-            //    //enemData.State = anim;   // アニメーションIDを渡す
-
-            //    // ルーム参加者全員に、ユーザ情報通知を送信
-            //    this.roomContext.Group.All.OnMoveEnemy(enemID, pos, rot, anim);
-            //}
-
-            //自分以外に、敵の情報通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateEnemy(enemyDatas);
-        }
-
-        /// <summary>
         /// レリックID設定、位置同期処理
         /// Author:Nishiura
         /// </summary>
@@ -268,31 +243,7 @@ namespace StreamingHubs
         /// <param name="pos">位置</param>
         /// <returns></returns>
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
-        {
-            //// 受け取った敵ID数分ループ
-            //foreach (var enemID in enemIDList)
-            //{
-            //    // DBからIDを指定して敵の情報を取得する
-            //    GameDbContext dbContext = new GameDbContext();
-            //    var enemies = dbContext.Enemies.Where(enemies => enemies.id == enemID).First();
-
-            //    // 取得したものをエネミーデータに格納する
-            //    this.roomContext.SetEnemyData(enemies);
-
-            //    // ルームデータから敵のIDを指定して生成した敵データを取得
-            //    EnemyData enemData = this.roomContext.GetEnemyData(enemID);
-
-            //    enemData.Position = pos; // 敵の位置に渡された位置を代入
-
-            //    // ルーム参加者全員に、取得した敵情報と生成位置を送信
-            //    this.roomContext.Group.All.OnSpawnEnemy(enemData, pos);
-            //}
-
-            foreach(var data in spawnEnemyData)
-            {
-                Console.WriteLine(data.TypeId);
-            }
-            
+        {            
             // 自分以外に、取得した敵情報と生成位置を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
         }
