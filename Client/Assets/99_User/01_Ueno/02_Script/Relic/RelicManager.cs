@@ -63,11 +63,9 @@ public class RelicManager : MonoBehaviour
 
     private void Start()
     {
+        if (RoomModel.Instance == null) return;
         //モデルでOnSpawnedRelicが呼び出されるとOnSpawnRelicが呼び出される
         RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
-
-        //5秒間ごとにGenerateRelicTestを呼び出す
-        InvokeRepeating("GenerateRelicTest", 5.0f, 5.0f);
     }
 
     /// <summary>

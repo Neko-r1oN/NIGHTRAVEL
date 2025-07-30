@@ -68,6 +68,12 @@ public class SpawnManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
+
+        // RoomModelが実行してない場合はここから下は実行しない
+        if (RoomModel.Instance == null) return;
+
+        // ルームモデルでOnSpawndEnemy実行時に、この中でOnSpawnEnemyを実行する
+        RoomModel.Instance.OnSpawndEnemy += this.OnSpawnEnemy;
     }
 
     private void Start()
@@ -83,7 +89,8 @@ public class SpawnManager : MonoBehaviour
 
     private void OnDisable()
     {
-        
+        // 実行終了時にモデルの共有を切る
+        RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
     }
 
     /// <summary>
@@ -207,7 +214,7 @@ public class SpawnManager : MonoBehaviour
     public void GenerateEnemy(int num)
     {
         // マスタクライアント以外は処理をしない
-        if (!RoomModel.Instance || RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+        if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
 
         for (int i = 0; i < num; i++)
         {
@@ -527,7 +534,7 @@ public class SpawnManager : MonoBehaviour
     /// </summary>
     /// <param name="spawnEnemy"></param>
     /// <param name="spawnPos"></param>
-    public void SpawnEnemyRequest(params SpawnEnemyData[] spawnDatas)
+    public async void SpawnEnemyRequest(params SpawnEnemyData[] spawnDatas)
     {
         if (spawnDatas.Any(x => x == null))
         {
@@ -538,7 +545,8 @@ public class SpawnManager : MonoBehaviour
         // ここで敵の生成リクエスト
         if (RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-
+            // SpawnEnemyAsyncを呼び出す
+            await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
         }
 
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
