@@ -218,7 +218,6 @@ public class CharacterManager : MonoBehaviour
     PlayerData GetPlayerData()
     {
         if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
-        Debug.Log("キャラクター：" + RoomModel.Instance.ConnectionId);
         var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
         var statusEffectController = player.GetComponent<StatusEffectController>();
         return new PlayerData()

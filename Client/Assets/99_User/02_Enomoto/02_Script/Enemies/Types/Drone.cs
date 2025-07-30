@@ -18,6 +18,7 @@ public class Drone : EnemyBase
         Spawn = 0,
         Idle,
         Hit,
+        Attack,
         Dead,
     }
 
@@ -127,8 +128,6 @@ public class Drone : EnemyBase
                     NextDecision(2f);
                     break;
             }
-
-            SetAnimId((int)ANIM_ID.Idle);
         }
     }
 
@@ -278,6 +277,7 @@ public class Drone : EnemyBase
     /// </summary>
     IEnumerator RangeAttack(Action onFinished)
     {
+        SetAnimId((int)ANIM_ID.Attack);
         yield return new WaitForSeconds(0.25f);  // çUåÇäJénÇíxâÑ
         gunPsController.StartShooting();
 
