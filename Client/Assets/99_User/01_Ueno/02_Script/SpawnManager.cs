@@ -538,16 +538,7 @@ public class SpawnManager : MonoBehaviour
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
         {
             if (spawnEnemyData == null) continue;
-            // ìGÇÃê∂ê¨
-            var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
-            var position = spawnEnemyData.Position;
-            var scale = spawnEnemyData.Scale;
-            var eliteType = spawnEnemyData.EliteType;
-            GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
-            enemyObj.transform.localScale = scale;
-            enemyObj.GetComponent<EnemyBase>().PromoteToElite(0);
-            enemies.Add(enemyObj);
-            //spawnedEnemies.Add(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+            SpawnEnemy(spawnEnemyData);
         }
     }
 

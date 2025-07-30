@@ -255,8 +255,11 @@ abstract public class PlayerBase : CharacterBase
         {
             if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
             {   // ジャンプ押下時
+#if !UNITY_EDITOR
                 // カーソル非表示
                 UnityEngine.Cursor.visible = false;
+#endif
+
 
                 if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
                     isJump = true;

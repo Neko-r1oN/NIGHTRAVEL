@@ -25,16 +25,16 @@ public class TimerDirector : MonoBehaviour
     }
 
     // Update is called once per frame
-    ////void Update()
-    ////{
-    ////    if (Terminal.Instance.IsTerminal)
-    ////    {
-    ////        timerObj.SetActive(false);
-    ////    }
-    ////    else
-    ////    {
-    ////        timerObj.SetActive(true);
-    ////    }
+    void Update()
+    {
+        if (Terminal.Instance.IsTerminal)
+        {
+            timerObj.SetActive(false);
+        }
+        else
+        {
+            timerObj.SetActive(true);
+        }
 
         if (minute <= 0 && second <= 0 && SpawnManager.Instance.IsSpawnBoss == false)
         {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
@@ -51,17 +51,17 @@ public class TimerDirector : MonoBehaviour
         {// ボスが出現していなかったら
             elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
 
-    ////        // タイマー(UI)の更新
-    ////        UpdateTimerDisplay();
+            // タイマー(UI)の更新
+            UpdateTimerDisplay();
 
-    ////        if(elapsedTime > initMinute)
-    ////        {
-    ////            // ゲームレベルアップ
-    ////            LevelManager.Instance.UpGameLevel();
-    ////            ResetTimer();
-    ////        }
-    ////    }
-    ////}
+            if (elapsedTime > initMinute)
+            {
+                // ゲームレベルアップ
+                LevelManager.Instance.UpGameLevel();
+                ResetTimer();
+            }
+        }
+    }
 
     /// <summary>
     /// タイマー更新
