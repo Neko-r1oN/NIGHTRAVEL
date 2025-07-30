@@ -61,7 +61,6 @@ public class CharacterManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
-        RoomModel.Instance.OnUpdatedEnemy -= this.OnUpdateEnemy;                        //シーン遷移した場合に通知関数をモデルから解除
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
     }
 
@@ -88,8 +87,6 @@ public class CharacterManager : MonoBehaviour
 
         //プレイヤーの更新通知時に呼ぶ
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
-        //敵の更新通知時に呼ぶ
-        RoomModel.Instance.OnUpdatedEnemy += this.OnUpdateEnemy;
         //マスタークライアントの更新通知時に呼ぶ
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
     }
@@ -318,33 +315,6 @@ public class CharacterManager : MonoBehaviour
         // プレイヤーの情報更新
         var player = playerObjs[playerData.ConnectionId].GetComponent<PlayerBase>();
         UpdateCharacter(playerData, player);
-    }
-
-    /// <summary>
-    /// 敵の情報更新
-    /// </summary>
-    async void UpdateEnemyDataRequest()
-    {
-        var enemyDatas = GetEnemyDatas();
-
-        // プレイヤー情報更新リクエスト
-        await RoomModel.Instance.UpdateEnemyAsync(enemyDatas);
-    }
-
-    /// <summary>
-    /// 敵の更新通知
-    /// </summary>
-    /// <param name="enemyData"></param>
-    void OnUpdateEnemy(List<EnemyData> enemyDatas)
-    {
-        foreach (var enemyData in enemyDatas)
-        {
-            if (!enemies.ContainsKey(enemyData.EnemyID)) continue;
-
-            // エネミーの情報更新
-            var enemy = enemies[enemyData.EnemyID].Enemy;
-            UpdateCharacter(enemyData, enemy);
-        }
     }
 
     /// <summary>

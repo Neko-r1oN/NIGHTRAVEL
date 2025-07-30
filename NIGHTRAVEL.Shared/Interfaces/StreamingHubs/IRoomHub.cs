@@ -104,14 +104,6 @@ namespace Shared.Interfaces.StreamingHubs
         #endregion
         #region 敵関連
         /// <summary>
-        /// 敵動作、情報
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemyData">敵の情報</param>
-        /// <returns></returns>
-        Task UpdateEnemyAsync(List<EnemyData> enemyDatas);
-
-        /// <summary>
         /// 敵生成
         /// Author:Nishiura
         /// </summary>
