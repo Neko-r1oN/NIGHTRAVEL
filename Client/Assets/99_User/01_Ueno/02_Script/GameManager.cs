@@ -18,18 +18,13 @@ public class GameManager : MonoBehaviour
 {
     #region 初期設定
     [Header("初期設定")]
-    int crashNum = 0; 　　　　　    // 撃破数
-    bool bossFlag = false;      // ボスが出たかどうか
+    int crashNum = 0; 　　　　　// 撃破数
     int xp;                     // 経験値
     int requiredXp = 100;       // 必要経験値
     int level;                  // レベル
     int num;                    // 生成までのカウント
     public int spawnInterval;   // 生成間隔
-    int spawnCnt;               // スポーン回数
-    public int maxSpawnCnt;     // マックススポーン回数
     bool isBossDead;            // ボスが死んだかどうか
-    bool isSpawnBoss;           // ボスが生成されたかどうか
-    GameObject boss;            // ボス
 
     #endregion
 
@@ -41,7 +36,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float xRadius;          // 生成範囲のx半径
     [SerializeField] float yRadius;          // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
-    [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
+    [SerializeField] int knockTermsNum;      // エネミーの撃破数条件
 
     float elapsedTime;
 
@@ -50,18 +45,12 @@ public class GameManager : MonoBehaviour
 
     #region 各プロパティ
     [Header("各プロパティ")]
-    public bool BossFlag { get { return bossFlag; } set { bossFlag = value; } }
-    public GameObject Boss {  get { return boss; } }
 
     public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
 
-    public bool IsSpawnBoss { get { return isSpawnBoss; } }
+    public bool IsBossDead { get { return isBossDead; } }
 
     public int KnockTermsNum { get { return knockTermsNum; } }
-
-    public int SpawnCnt { get { return spawnCnt; } set { spawnCnt = value; } }
-
-    public int MaxSpawnCnt { get { return maxSpawnCnt; } }
 
     private static GameManager instance;
 
@@ -121,53 +110,40 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 20;
         }
 
-        if (!isSpawnBoss && bossFlag)
+        
+
+        //Escが押された時
+        if (Input.GetKey(KeyCode.Escape))
         {
-            // ボスの生成範囲の判定
-            var spawnPostions = SpawnManager.Instance.CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
-
-            EnemyBase bossEnemy = bossPrefab.GetComponent<EnemyBase>();
-
-            Vector3? spawnPos = SpawnManager.Instance.GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange,bossEnemy);
-
-            if (spawnPos != null)
-            {// 返り値がnullじゃないとき
-                boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
- 
-                //boss.GetComponent<EnemyBase>().SetNearTarget();
-            }
-
-            isSpawnBoss = true;
-
-            bossFlag = false;
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+#else
+    Application.Quit();//ゲームプレイ終了
+#endif
         }
 
-        if (isBossDead)
-        {// ボスを倒した(仮)
-            // 遅れて呼び出し
-            Invoke(nameof(ChengScene), 15f);
-        }
+        //if (spawnCnt < maxSpawnCnt && !isBossDead)
+        //{// スポーン回数が限界に達しているか
+        //    elapsedTime += Time.deltaTime;
+        //    if (elapsedTime > spawnInterval)
+        //    {
+        //        elapsedTime = 0;
 
-        if (spawnCnt < maxSpawnCnt && !isBossDead)
-        {// スポーン回数が限界に達しているか
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime > spawnInterval)
-            {
-                elapsedTime = 0;
+        //        if (!isSpawnBoss)
+        //        {
+        //            if (spawnCnt < maxSpawnCnt / 2)
+        //            {// 敵が100体いない場合
+        //                SpawnManager.Instance.GenerateEnemy(Random.Range(3, 7));
+        //            }
+        //            else
+        //            {// いる場合
+        //                SpawnManager.Instance.GenerateEnemy(1);
+        //            }
 
-                if (!IsSpawnBoss)
-                {
-                    if (spawnCnt < maxSpawnCnt / 2)
-                    {// 敵が100体いない場合
-                        SpawnManager.Instance.GenerateEnemy(Random.Range(3, 7));
-                    }
-                    else
-                    {// いる場合
-                        SpawnManager.Instance.GenerateEnemy(1);
-                    }
-                }
-            }
-        }
+        //            Debug.Log(spawnCnt);
+        //        }
+        //    }
+        //}
     }
 
     /// <summary>
@@ -184,31 +160,29 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CrushEnemy(EnemyBase enemy)
     {
-        crashNum++;
+        SpawnManager.Instance.CrashNum++;
 
-        UIManager.Instance.CountTermsText(crashNum);
+        UIManager.Instance.CountTermsText(SpawnManager.Instance.CrashNum);
 
-        spawnCnt--;
+        SpawnManager.Instance.SpawnCnt--;
 
         if (enemy.IsBoss)
         {
             DeathBoss();
-        }
-        else if (crashNum >= knockTermsNum)
-        {
-            bossFlag = true;
         }
     }
 
     [ContextMenu("DeathBoss")]
     private void DeathBoss()
     {
-        RelicManager.Instance.GenerateRelic(boss.transform.position);
+        RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
         // ボスフラグを変更
-        bossFlag = false;
+        //bossFlag = false;
         // 死んだ判定にする
         isBossDead = true;
+
+        Invoke(nameof(ChengScene), 15f);
     }
 
     private void OnDrawGizmos()

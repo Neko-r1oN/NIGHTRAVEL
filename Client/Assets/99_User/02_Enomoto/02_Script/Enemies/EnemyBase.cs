@@ -508,7 +508,7 @@ abstract public class EnemyBase : CharacterBase
         // ”ÍˆÍŠO‚É‚Å‚½‚ç”jŠü‚·‚é
         if (!canIgnoreDeadZoneCollision && collision.gameObject.tag == "Gimmick/Abyss")
         {
-            GameManager.Instance.SpawnCnt--;
+            SpawnManager.Instance.SpawnCnt--;
             Destroy(gameObject);
         }
     }
