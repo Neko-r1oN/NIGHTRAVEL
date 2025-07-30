@@ -206,6 +206,9 @@ public class SpawnManager : MonoBehaviour
     /// </summary>
     public void GenerateEnemy(int num)
     {
+        // マスタクライアント以外は処理をしない
+        if (!RoomModel.Instance || RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+
         for (int i = 0; i < num; i++)
         {
             // 生成する敵の抽選
