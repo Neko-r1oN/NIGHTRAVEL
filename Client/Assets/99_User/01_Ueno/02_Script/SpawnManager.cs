@@ -216,6 +216,7 @@ public class SpawnManager : MonoBehaviour
         // マスタクライアント以外は処理をしない
         if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
 
+        List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < num; i++)
         {
             // 生成する敵の抽選
@@ -278,13 +279,13 @@ public class SpawnManager : MonoBehaviour
 
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // 一旦このまま
-                var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
-                SpawnEnemyRequest(spawnData);
+                spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
             }
 
             //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight,enemyBase);
             //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnLeft, maxSpawnLeft, enemyBase);
         }
+        SpawnEnemyRequest(spawnEnemyDatas.ToArray());
     }
 
     /// <summary>
