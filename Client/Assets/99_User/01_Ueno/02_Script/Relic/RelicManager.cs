@@ -61,6 +61,15 @@ public class RelicManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        //モデルでOnSpawnedRelicが呼び出されるとOnSpawnRelicが呼び出される
+        RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
+
+        //5秒間ごとにGenerateRelicTestを呼び出す
+        InvokeRepeating("GenerateRelicTest", 5.0f, 5.0f);
+    }
+
     /// <summary>
     /// レアリティの確率の設定
     /// </summary>
@@ -125,8 +134,13 @@ public class RelicManager : MonoBehaviour
         }
     }
 
+<<<<<<< HEAD
     [ContextMenu("GenerateRelicTest")]
     public void GenerateRelicTest()
+=======
+        [ContextMenu("GenerateRelicTest")]
+    public async void GenerateRelicTest()
+>>>>>>> feature/k-kida
     {
         randomRarity = GetRandomRarity();
 
@@ -141,7 +155,11 @@ public class RelicManager : MonoBehaviour
         {
             int random = Random.Range(0, filteredRelics.Count);
             GameObject selectedRelic = filteredRelics[random];
-            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+            //relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+            //レリックの設定
+            relic = selectedRelic;
+            //レリックの生成同期を実行
+            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
         }
 
         if (relic != null)
@@ -152,6 +170,16 @@ public class RelicManager : MonoBehaviour
             Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // 力を設定
             rb.AddForce(force, ForceMode2D.Impulse);             // 力を加える
         }
+    }
+
+    /// <summary>
+    /// レリックの生成の通知
+    /// </summary>
+    /// <param name="relicId"></param>
+    /// <param name="pos"></param>
+    void OnSpawnRelic(int relicId,Vector2 pos)
+    {
+       relic = Instantiate(relicPrefab[relicId], pos,Quaternion.identity);
     }
 
     [ContextMenu("ShuffleRelic")]
