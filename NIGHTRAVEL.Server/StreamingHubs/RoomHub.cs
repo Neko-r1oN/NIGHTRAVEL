@@ -267,7 +267,7 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        public async Task SpawnEnemyAsync(EnemyData enemyData,Vector2 pos)
+        public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
             //// 受け取った敵ID数分ループ
             //foreach (var enemID in enemIDList)
@@ -289,7 +289,7 @@ namespace StreamingHubs
             //}
 
             // ルーム参加者全員に、取得した敵情報と生成位置を送信
-            this.roomContext.Group.All.OnSpawnEnemy(enemyData, pos);
+            this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
         }
 
         /// <summary>
