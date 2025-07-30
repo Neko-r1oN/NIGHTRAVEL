@@ -1,7 +1,6 @@
 //--------------------------------------------------------------
 // 弾用処理 [ Bullet.cs ]
 // Author：Kenta Nakamoto
-// 引用：https://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
 //--------------------------------------------------------------
 using System.Collections.Generic;
 using UnityEngine;
