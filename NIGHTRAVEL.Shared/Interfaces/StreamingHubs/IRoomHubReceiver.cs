@@ -92,7 +92,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="rot">回転</param>
         /// <param name="animID">アニメーションID</param>
         //void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
-        void OnMovePlayer(PlayerData playerData);
+        void OnUpdatePlayer(PlayerData playerData);
 
         /// <summary>
         /// マスタークライアントの更新通知
@@ -134,7 +134,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemyData">対象敵ID</param>
-        void OnUpdateEnemy(EnemyData enemyData);
+        void OnUpdateEnemy(List<EnemyData> enemyDatas);
 
         /// <summary>
         /// 敵生成通知
