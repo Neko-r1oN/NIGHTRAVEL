@@ -81,6 +81,11 @@ public class SpawnManager : MonoBehaviour
         enemyWeights[1] = 76; // ‚¢‚Ê
     }
 
+    private void OnDisable()
+    {
+        
+    }
+
     /// <summary>
     /// “G‚ÌƒvƒŒƒtƒ@ƒuî•ñ‚ğ‚Ü‚Æ‚ß‚é
     /// </summary>
@@ -492,16 +497,39 @@ public class SpawnManager : MonoBehaviour
     }
 
     /// <summary>
+    /// “G‚Ì¶¬Às
+    /// </summary>
+    /// <param name="spawnEnemyData"></param>
+    /// <returns></returns>
+    void SpawnEnemy(SpawnEnemyData spawnEnemyData)
+    {
+        if (spawnEnemyData == null)
+        {
+            Debug.LogWarning("null‚Ì—v‘f‚ªŒ©‚Â‚©‚Á‚½‚½‚ßA“G‚Ì¶¬‚ğ’†’f‚µ‚Ü‚µ‚½B");
+            return;
+        }
+        // “G‚Ì¶¬
+        var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
+        var position = spawnEnemyData.Position;
+        var scale = spawnEnemyData.Scale;
+        var eliteType = spawnEnemyData.EliteType;
+        GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
+        enemyObj.transform.localScale = scale;
+        enemyObj.GetComponent<EnemyBase>().PromoteToElite(0);
+        CharacterManager.Instance.AddEnemies(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+    }
+
+    /// <summary>
     /// “G¶¬ƒŠƒNƒGƒXƒg
     /// </summary>
     /// <param name="spawnEnemy"></param>
     /// <param name="spawnPos"></param>
-    public List<GameObject> SpawnEnemyRequest(params SpawnEnemyData[] spawnDatas)
+    public void SpawnEnemyRequest(params SpawnEnemyData[] spawnDatas)
     {
         if (spawnDatas.Any(x => x == null))
         {
             Debug.LogWarning("spawnDatas‚Énull‚Ì—v‘f‚ªŒ©‚Â‚©‚Á‚½‚½‚ßA“G‚Ì¶¬‚ğ’†’f‚µ‚Ü‚µ‚½B");
-            return null;
+            return;
         }
 
         // ‚±‚±‚Å“G‚Ì¶¬ƒŠƒNƒGƒXƒg
@@ -510,24 +538,23 @@ public class SpawnManager : MonoBehaviour
 
         }
 
-        List<GameObject> enemies = new List<GameObject>();
-        List<SpawnedEnemy> spawnedEnemies = new List<SpawnedEnemy>();
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
         {
             if (spawnEnemyData == null) continue;
-            // “G‚Ì¶¬
-            var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
-            var position = spawnEnemyData.Position;
-            var scale = spawnEnemyData.Scale;
-            var eliteType = spawnEnemyData.EliteType;
-            GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
-            enemyObj.transform.localScale = scale;
-            enemyObj.GetComponent<EnemyBase>().PromoteToElite(0);
-            enemies.Add(enemyObj);
-            spawnedEnemies.Add(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+            SpawnEnemy(spawnEnemyData);
         }
-        CharacterManager.Instance.AddEnemies(spawnedEnemies.ToArray());
-        return enemies;
+    }
+
+    /// <summary>
+    /// “G‚Ì¶¬’Ê’m
+    /// </summary>
+    /// <param name="spawnEnemyDatas"></param>
+    void OnSpawnEnemy(List<SpawnEnemyData> spawnEnemyDatas)
+    {
+        foreach(SpawnEnemyData spawnEnemyData in spawnEnemyDatas)
+        {
+            SpawnEnemy(spawnEnemyData);
+        }
     }
 
     private void OnDrawGizmos()

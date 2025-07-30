@@ -261,7 +261,8 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     void GenerateEnemy(SpawnEnemyData[] spawnEnemyDatas)
     {
-        var enemyObjs = SpawnManager.Instance.SpawnEnemyRequest(spawnEnemyDatas);
+        SpawnManager.Instance.SpawnEnemyRequest(spawnEnemyDatas);
+        var enemyObjs = CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByManager);
 
         for (int i = 0; i < enemyObjs.Count; i++)
         {
