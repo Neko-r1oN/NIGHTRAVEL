@@ -81,6 +81,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject statusUpWindow;      // ステータス強化ウィンドウ
     [Foldout("ウィンドウ関係")]                      
     [SerializeField] float windowTime;               // ウィンドウが表示される秒数
+    [Foldout("ウィンドウ関係")]
+    [SerializeField] GameObject endWindow;           // 終了のウィンドウ
 
     [Foldout("バナー関係")]
     [SerializeField] GameObject bossWindow;          // ボス出現UI
@@ -234,12 +236,13 @@ public class UIManager : MonoBehaviour
             isStatusWindow = true;
             statusStock += player.NowLv - lastLevel;
             levelUpStock.text = "残り強化数：" + statusStock;
+
             levelUpText.enabled = true;
             lastLevel = player.NowLv;
         }
         expBar.value = player.NowExp;
 
-        if (GameManager.Instance.IsSpawnBoss)
+        if (SpawnManager.Instance.IsSpawnBoss)
         {// ボスがスポーンした
             if (windowCnt <= 0)
             {// ウィンドウが一回も出ていないとき
@@ -255,7 +258,7 @@ public class UIManager : MonoBehaviour
                     bossWindow.SetActive(true);
                 }
 
-                boss = GameManager.Instance.Boss.GetComponent<EnemyBase>();
+                boss = SpawnManager.Instance.Boss.GetComponent<EnemyBase>();
                 // ボスステータスUI
                 bossHpBar.maxValue = boss.HP;
             }
@@ -382,6 +385,7 @@ public class UIManager : MonoBehaviour
         {// 強化ストックが0の場合
             CloseStatusWindow();
             isStatusWindow = false;
+            levelUpText.enabled = false;
         }
     }
 
@@ -455,7 +459,7 @@ public class UIManager : MonoBehaviour
         {
             relicBanner.SetActive(true);
         }
-        else if (GameManager.Instance.IsSpawnBoss)
+        else if (SpawnManager.Instance.IsSpawnBoss)
         {
             bossWindow.SetActive(true);
         }

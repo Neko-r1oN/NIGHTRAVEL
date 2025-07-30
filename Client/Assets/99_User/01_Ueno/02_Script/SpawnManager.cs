@@ -5,6 +5,7 @@
 using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,6 +17,14 @@ public class SpawnManager : MonoBehaviour
     #region 敵生成条件
     [SerializeField] Vector2 spawnRange;
     [SerializeField] float spawnRangeOffset;
+    #endregion
+
+    #region 敵生成関連
+    int spawnCnt;                     // スポーン回数
+    [SerializeField] int maxSpawnCnt; // マックススポーン回数
+    public int SpawnCnt { get { return spawnCnt; } set { spawnCnt = value; } }
+    public int MaxSpawnCnt { get { return maxSpawnCnt; } }
+    [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
     #endregion
 
     #region ステージ情報
@@ -46,7 +55,20 @@ public class SpawnManager : MonoBehaviour
     public List<GameObject> EnemiesByTerminal { get { return null; } }
     #endregion
 
-    [SerializeField] GameObject player;
+    int crashNum = 0; 　　　　　// 撃破数
+    public int CrashNum { get { return crashNum; } set {  crashNum = value; } }
+
+    #region ボス関連
+    GameObject boss;            // ボス
+    public GameObject Boss { get { return boss; }}
+    [SerializeField] GameObject bossTerminal;
+    [SerializeField] ENEMY_TYPE bossId;
+    bool isSpawnBoss;           // ボスが生成されたかどうか
+    public bool IsSpawnBoss { get {  return isSpawnBoss; } set {  isSpawnBoss = value; } }
+    #endregion
+
+    GameObject player;
+    List<GameObject> players;
     private static SpawnManager instance;
 
     public static SpawnManager Instance
@@ -85,12 +107,45 @@ public class SpawnManager : MonoBehaviour
         // 割合
         enemyWeights[0] = 24; // ドローン
         enemyWeights[1] = 76; // いぬ
+
+        StartCoroutine("SpawnCoroutin");
     }
 
     private void OnDisable()
     {
         // 実行終了時にモデルの共有を切る
         RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
+    }
+
+    IEnumerator SpawnCoroutin()
+    {
+        while (true)
+        {
+            if (crashNum >= knockTermsNum)
+            {
+                SpawnBoss();
+            }
+
+            if (spawnCnt < maxSpawnCnt && !GameManager.Instance.IsBossDead)
+            {// スポーン回数が限界に達しているか
+                if (!SpawnManager.Instance.IsSpawnBoss)
+                {
+                    foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
+                    {
+                        if (spawnCnt < maxSpawnCnt / 2)
+                        {// 敵が100体いない場合
+                            GenerateEnemy(Random.Range(3, 7),player.transform.position);
+                        }
+                        else
+                        {// いる場合
+                            GenerateEnemy(1, player.transform.position);
+                        }
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(3);
+        }
     }
 
     /// <summary>
@@ -104,38 +159,6 @@ public class SpawnManager : MonoBehaviour
             Debug.Log((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId + "：" + prefab.name);
             idEnemyPrefabPairs.Add((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId, prefab);
         }
-    }
-
-    /// <summary>
-    /// 敵のスポーン可能範囲判定処理
-    /// </summary>
-    /// <param name="minPoint"></param>
-    /// <param name="maxPoint"></param>
-    /// <returns></returns>
-    public (Vector3 minRange, Vector3 maxRange) CreateEnemySpawnPosition(Vector3 minPoint, Vector3 maxPoint)
-    {
-        Vector3 minRange = minPoint, maxRange = maxPoint;
-        if (minPoint.y < stageMin.position.y)
-        {
-            minRange.y = stageMin.position.y;
-        }
-
-        if (minPoint.x < stageMin.position.x)
-        {
-            minRange.x = stageMin.position.x;
-        }
-
-        if (maxPoint.y > stageMax.position.y)
-        {
-            maxRange.y = stageMax.position.y;
-        }
-
-        if (maxPoint.x > stageMax.position.x)
-        {
-            maxRange.x = stageMax.position.x;
-        }
-
-        return (minRange, maxRange);
     }
 
     /// <summary>
@@ -211,7 +234,7 @@ public class SpawnManager : MonoBehaviour
     /// <summary>
     /// 敵生成処理
     /// </summary>
-    public void GenerateEnemy(int num)
+    public void GenerateEnemy(int num,Vector2 playerPos)
     {
         // マスタクライアント以外は処理をしない
         if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
@@ -219,6 +242,13 @@ public class SpawnManager : MonoBehaviour
         List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < num; i++)
         {
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
+
+            if (spawnCnt > maxSpawnCnt)
+            {
+                return;
+            }
+
             // 生成する敵の抽選
             var emitResult = EmitEnemy(emitEnemyTypes.ToArray());
             if (emitResult == null)
@@ -227,23 +257,17 @@ public class SpawnManager : MonoBehaviour
                 continue;
             }
             ENEMY_TYPE enemyType = (ENEMY_TYPE)emitResult;
-            //int listNum = Choose(enemyWeights);   // 元のコード
 
             EnemyBase enemyBase = idEnemyPrefabPairs[enemyType].GetComponent<EnemyBase>();
 
-            Vector2 spawnRight = (Vector2)player.transform.position + Vector2.right * spawnRangeOffset;
-            Vector2 spawnLeft = (Vector2)player.transform.position + Vector2.left * spawnRangeOffset;
+            Vector2 spawnRight = playerPos + Vector2.right * spawnRangeOffset;
+            Vector2 spawnLeft = playerPos + Vector2.left * spawnRangeOffset;
 
             Vector2 minSpawnRight = spawnRight - spawnRight / 2;
             Vector2 maxSpawnRight = spawnRight + spawnRight / 2;
 
             Vector2 minSpawnLeft = spawnLeft - spawnLeft / 2;
             Vector2 maxSpawnLeft = spawnLeft + spawnLeft / 2;
-
-            // ランダムな位置を生成
-            var spawnPostions = CreateEnemySpawnPosition(minSpawnRight, maxSpawnRight);
-
-            //Vector3? spawnPos = GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
 
             Vector3? spawnRightPosCandidate = null, spawnLeftPosCandidate = null, spawnPos = null;
 
@@ -271,19 +295,10 @@ public class SpawnManager : MonoBehaviour
             // 生成座標が確定している場合は敵を生成する
             if (spawnPos != null)
             {
-                //var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
-                //var enemyType = (EnumManager.ENEMY_TYPE)listNum;
-                //Vector3 scale = idEnemyPrefabPairs[enemyType].transform.localScale;
-                //var spawnData = CreateSpawnEnemyData(enemyType, (Vector3)spawnPos, scale, spawnType);
-                //SpawnEnemyRequest(spawnData);
-
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // 一旦このまま
                 spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
             }
-
-            //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight,enemyBase);
-            //Vector3? spawnPos = GenerateEnemySpawnPosition(minSpawnLeft, maxSpawnLeft, enemyBase);
         }
         SpawnEnemyRequest(spawnEnemyDatas.ToArray());
     }
@@ -391,36 +406,6 @@ public class SpawnManager : MonoBehaviour
         return probs.Length - 1;
     }
 
-    ///// <summary>
-    ///// 敵生成リクエスト
-    ///// </summary>
-    ///// <param name="spawnEnemy"></param>
-    ///// <param name="spawnPos"></param>
-    //public GameObject SpawnEnemyRequest(GameObject spawnEnemy, Vector3 spawnPos, bool canPromoteToElite = true)
-    //{
-    //    GameManager.Instance.SpawnCnt++;
-
-    //    // 生成
-    //    GameObject Enemy = Instantiate(spawnEnemy, spawnPos, Quaternion.identity);
-    //    if (!canPromoteToElite) return Enemy;
-
-    //    int number = Random.Range(0, 100);
-
-    //    // エリート敵生成限度を設定
-    //    int onePercentOfMaxEnemies =
-    //        Mathf.FloorToInt(GameManager.Instance.MaxSpawnCnt * 0.3f);
-
-    //    if (number < 5 * ((int)LevelManager.Instance.GameLevel + 1)
-    //        && eliteEnemyCnt < onePercentOfMaxEnemies)
-    //    {// 5%(* 現在のゲームレベル)以下で、エリート敵生成限度に達していなかったら
-    //        // エリート敵生成
-    //        Enemy.GetComponent<EnemyBase>().PromoteToElite((EnemyElite.EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4));
-    //        eliteEnemyCnt++;
-    //    }
-
-    //    return Enemy;
-    //}
-
     /// <summary>
     /// 生成する敵の抽選処理
     /// </summary>
@@ -488,7 +473,7 @@ public class SpawnManager : MonoBehaviour
             Debug.LogWarning("entryData.EnemyTypeがnullだったため、データの生成を中断しました。");
             return null;
         }
-        GameManager.Instance.SpawnCnt++;
+        spawnCnt++;
         ENEMY_ELITE_TYPE eliteType = ENEMY_ELITE_TYPE.None;
 
         if (canPromoteToElite)
@@ -499,7 +484,7 @@ public class SpawnManager : MonoBehaviour
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = GameManager.Instance.SpawnCnt,
+            EnemyId = spawnCnt,
             Position = entryData.Position,
             Scale = entryData.Scale,
             SpawnType = spawnType,
@@ -553,7 +538,16 @@ public class SpawnManager : MonoBehaviour
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
         {
             if (spawnEnemyData == null) continue;
-            SpawnEnemy(spawnEnemyData);
+            // 敵の生成
+            var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
+            var position = spawnEnemyData.Position;
+            var scale = spawnEnemyData.Scale;
+            var eliteType = spawnEnemyData.EliteType;
+            GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
+            enemyObj.transform.localScale = scale;
+            enemyObj.GetComponent<EnemyBase>().PromoteToElite(0);
+            enemies.Add(enemyObj);
+            //spawnedEnemies.Add(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
         }
     }
 
@@ -577,5 +571,53 @@ public class SpawnManager : MonoBehaviour
             Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // 右
             Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.left * spawnRangeOffset, spawnRange);   // 左
         }
+    }
+
+    [ContextMenu("SpawnBoss")]
+    public void SpawnBoss()
+    {
+        if (!isSpawnBoss)
+        {
+            EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
+
+            int childrenCnt = bossTerminal.transform.childCount;
+
+            List<Transform> children = new List<Transform>();
+
+            for (int i = 0; i < childrenCnt; i++)
+            {
+                children.Add(bossTerminal.transform.GetChild(i));
+            }
+
+            Vector3? spawnPos =
+                GenerateEnemySpawnPosition(children[0].position, children[1].position, bossEnemy);
+
+            if (spawnPos != null)
+            {// 返り値がnullじゃないとき
+                boss = Instantiate(idEnemyPrefabPairs[bossId], (Vector3)spawnPos, Quaternion.identity);
+
+                //boss.GetComponent<EnemyBase>().SetNearTarget();
+            }
+
+            isSpawnBoss = true;
+        }
+
+        // ボスの生成範囲の判定
+        /*var spawnPostions = SpawnManager.Instance.CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
+
+        EnemyBase bossEnemy = bossPrefab.GetComponent<EnemyBase>();
+
+        Vector3? spawnPos = SpawnManager.Instance.GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, bossEnemy);
+
+        if (spawnPos != null)
+        {// 返り値がnullじゃないとき
+            boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
+
+            //boss.GetComponent<EnemyBase>().SetNearTarget();
+        }
+
+        isSpawnBoss = true;
+
+        bossFlag = false;*/
     }
 }

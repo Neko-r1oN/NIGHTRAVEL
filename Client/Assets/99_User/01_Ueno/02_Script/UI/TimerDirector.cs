@@ -36,20 +36,20 @@ public class TimerDirector : MonoBehaviour
     ////        timerObj.SetActive(true);
     ////    }
 
-    ////    if (minute <= 0 && second <= 0 && GameManager.Instance.BossFlag == false)
-    ////    {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
-    ////        timerObj.SetActive(false);
-    ////        // ボス出現
-    ////        GameManager.Instance.BossFlag = true;
-    ////    }
-    ////    else if (GameManager.Instance.IsSpawnBoss == true)
-    ////    {// ボスが出現したら
-    ////        // タイマー削除
-    ////        timerObj.SetActive(false);
-    ////    }
-    ////    else if (GameManager.Instance.BossFlag == false)
-    ////    {// ボスが出現していなかったら
-    ////        elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
+        if (minute <= 0 && second <= 0 && SpawnManager.Instance.IsSpawnBoss == false)
+        {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
+            timerObj.SetActive(false);
+            // ボス出現
+            SpawnManager.Instance.IsSpawnBoss = true;
+        }
+        else if (SpawnManager.Instance.IsSpawnBoss == true)
+        {// ボスが出現したら
+            // タイマー削除
+            timerObj.SetActive(false);
+        }
+        else if (SpawnManager.Instance.IsSpawnBoss == false)
+        {// ボスが出現していなかったら
+            elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
 
     ////        // タイマー(UI)の更新
     ////        UpdateTimerDisplay();
