@@ -43,7 +43,7 @@ public class GunParticleController : MonoBehaviour
     public void StartShooting()
     {
         // •t—^‚·‚éó‘ÔˆÙí‚ğæ“¾
-        EFFECT_TYPE? effectType = null;
+        DEBUFF_TYPE? effectType = null;
         if (owner.tag == "Enemy")
         {
             effectType = owner.GetComponent<EnemyBase>().GetStatusEffectToApply();

@@ -210,7 +210,7 @@ public class CharacterManager : MonoBehaviour
         character.gameObject.transform.localScale = characterData.Scale;
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
         character.SetAnimId(characterData.AnimationId);
-        character.gameObject.GetComponent<StatusEffectController>().ApplyStatusEffect(false, characterData.DebuffList);
+        character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList);
 
         // マスタークライアントの場合、キャラクターが動けるようにする
         if (RoomModel.Instance.IsMaster && !character.enabled)
@@ -228,7 +228,7 @@ public class CharacterManager : MonoBehaviour
     {
         if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
         var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
-        var statusEffectController = player.GetComponent<StatusEffectController>();
+        var statusEffectController = player.GetComponent<DebuffController>();
         return new PlayerData()
         {
             IsActiveSelf = player.gameObject.activeInHierarchy,
@@ -263,7 +263,7 @@ public class CharacterManager : MonoBehaviour
         {
             var enemyData = enemies[key];
             var enemy = enemyData.Enemy;
-            var statusEffectController = enemyData.Object.GetComponent<StatusEffectController>();
+            var statusEffectController = enemyData.Object.GetComponent<DebuffController>();
             var data = new EnemyData()
             {
                 IsActiveSelf = enemy.gameObject.activeInHierarchy,
@@ -330,34 +330,6 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 敵の情報更新
-    /// </summary>
-    async void UpdateEnemyDataRequest()
-    {
-        var enemyDatas = GetEnemyDatas();
-
-        // プレイヤー情報更新リクエスト
-        await RoomModel.Instance.UpdateEnemyAsync(enemyDatas);
-    }
-
-    /// <summary>
-    /// 敵の更新通知
-    /// </summary>
-    /// <param name="enemyData"></param>
-    void OnUpdateEnemy(List<EnemyData> enemyDatas)
-    {
-        foreach (var enemyData in enemyDatas)
-        {
-            if (!enemies.ContainsKey(enemyData.EnemyID) 
-                || enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID].Enemy.HP <= 0) continue;
-
-            // エネミーの情報更新
-            var enemy = enemies[enemyData.EnemyID].Enemy;
-            UpdateCharacter(enemyData, enemy);
-        }
-    }
-
-    /// <summary>
     /// マスタークライアントの更新通知
     /// </summary>
     /// <param name="masterClientData"></param>
@@ -372,11 +344,11 @@ public class CharacterManager : MonoBehaviour
         // 敵の情報更新
         foreach (var enemyData in masterClientData.EnemyDatas)
         {
-            if (enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID] != null)
-            {
-                var enemy = enemies[enemyData.EnemyID].Enemy;
-                UpdateCharacter(enemyData, enemy);
-            }
+            if (!enemies.ContainsKey(enemyData.EnemyID)
+                || enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID].Enemy.HP <= 0) continue;
+
+            var enemy = enemies[enemyData.EnemyID].Enemy;
+            UpdateCharacter(enemyData, enemy);
         }
     }
 

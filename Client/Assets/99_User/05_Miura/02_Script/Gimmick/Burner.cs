@@ -12,7 +12,7 @@ public class Burner : GimmickBase
 {
     PlayerBase player;
     EnemyBase enemy;
-    StatusEffectController statusEffectController;
+    DebuffController statusEffectController;
     [SerializeField] GameObject flame;
     bool isFlame;
 
@@ -44,16 +44,16 @@ public class Burner : GimmickBase
         if (collision.CompareTag("Player"))
         {//触れたオブジェクトのタグが「Player」だったら
             player = GetComponent<PlayerBase>();
-            statusEffectController = collision.gameObject.GetComponent<StatusEffectController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
+            statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
 
-            statusEffectController.ApplyStatusEffect(EFFECT_TYPE.Burn); //プレイヤーに炎上状態を付与
+            statusEffectController.ApplyStatusEffect(DEBUFF_TYPE.Burn); //プレイヤーに炎上状態を付与
             Debug.Log("プレイヤーに炎上状態を付与");
         }
 
         if (collision.CompareTag("Enemy"))
         {//触れたオブジェクトのタグが「Enemy」だったら
             enemy = GetComponent<EnemyBase>();
-            statusEffectController = collision.gameObject.GetComponent<StatusEffectController>(); //触れたオブジェクトのStatusEffectControllerを取得する
+            statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerを取得する
 
             Debug.Log("敵に炎上状態を付与");
         }

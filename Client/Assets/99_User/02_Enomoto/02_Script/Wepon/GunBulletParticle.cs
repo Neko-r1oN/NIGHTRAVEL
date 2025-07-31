@@ -10,7 +10,7 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class GunBulletParticle : MonoBehaviour
 {
-    EFFECT_TYPE? effectType = null;
+    DEBUFF_TYPE? effectType = null;
     string ownerTag;
     int damageValue;
 
@@ -19,7 +19,7 @@ public class GunBulletParticle : MonoBehaviour
     /// </summary>
     /// <param name="damageValue"></param>
     /// <param name="enemyTag"></param>
-    public void Initialize(string ownerTag, int damageValue, EFFECT_TYPE? effectType)
+    public void Initialize(string ownerTag, int damageValue, DEBUFF_TYPE? effectType)
     {
         this.ownerTag = ownerTag;
         this.damageValue = damageValue;
