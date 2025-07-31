@@ -129,12 +129,6 @@ namespace Shared.Interfaces.StreamingHubs
         void OnPlayerDead(int playerID);
         #endregion
         #region 敵関連
-        /// <summary>
-        /// 敵の動作通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemyData">対象敵ID</param>
-        void OnUpdateEnemy(List<EnemyData> enemyDatas);
 
         /// <summary>
         /// 敵生成通知

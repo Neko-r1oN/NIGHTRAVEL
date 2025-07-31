@@ -61,7 +61,6 @@ public class CharacterManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
-        RoomModel.Instance.OnUpdatedEnemy -= this.OnUpdateEnemy;                        //シーン遷移した場合に通知関数をモデルから解除
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
     }
 
@@ -88,8 +87,6 @@ public class CharacterManager : MonoBehaviour
 
         //プレイヤーの更新通知時に呼ぶ
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
-        //敵の更新通知時に呼ぶ
-        RoomModel.Instance.OnUpdatedEnemy += this.OnUpdateEnemy;
         //マスタークライアントの更新通知時に呼ぶ
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
     }
