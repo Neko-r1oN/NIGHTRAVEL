@@ -77,10 +77,10 @@ public class Rifle : PlayerBase
     /// </summary>
     protected override void Update()
     {
+        int id = animator.GetInteger("animation_id");
+
         if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
         {   // 通常攻撃
-            int id = animator.GetInteger("animation_id");
-
             if (isBlink || isSkill || id == 3 || m_IsZipline) return;
 
             if (canAttack)
@@ -107,6 +107,8 @@ public class Rifle : PlayerBase
             canAttack = true;
             animator.SetInteger("animation_id", (int)GS_ANIM_ID.Skill);
         }
+
+        if (id == (int)GS_ANIM_ID.BeamReady || id == (int)GS_ANIM_ID.Skill) return;
 
         base.Update();
     }
@@ -295,6 +297,9 @@ public class Rifle : PlayerBase
             Vector3 endPos = firePoint.position + (Vector3)(dir * maxDistance);
             if (hits.Length > 0) endPos = hits[0].point;
 
+            // カメラのシェイク処理
+            cam.GetComponent<CameraFollow>().ShakeCamera();
+
             // 指定ダメージ間隔毎にダメージ
             if (tickTimer >= damageInterval && hits.Length > 0)
             {
@@ -304,6 +309,7 @@ public class Rifle : PlayerBase
 
                     hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage((int)(Power * BEAM_MAG), gameObject);
                 }
+
                 tickTimer = 0f;
             }
 
