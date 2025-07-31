@@ -147,7 +147,7 @@ abstract public class CharacterBase : MonoBehaviour
     [Foldout("[Debug用] 現在のステータス")]
     public float attackSpeedFactor;
 
-    protected StatusEffectController effectController;
+    protected DebuffController effectController;
     #endregion
 
     #region ステータス外部参照用プロパティ
@@ -189,7 +189,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// <summary>
     /// 状態異常管理のコンポーネント
     /// </summary>
-    public StatusEffectController EffectController { get { return effectController; } }
+    public DebuffController EffectController { get { return effectController; } }
     #endregion
 
     #region テクスチャ・アニメーション
@@ -202,7 +202,7 @@ abstract public class CharacterBase : MonoBehaviour
     {
         ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
         if (!animator) animator = GetComponent<Animator>();
-        effectController = GetComponent<StatusEffectController>();
+        effectController = GetComponent<DebuffController>();
     }
 
     protected virtual void Start()

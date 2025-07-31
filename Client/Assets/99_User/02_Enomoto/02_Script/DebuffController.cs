@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
-public class StatusEffectController : MonoBehaviour
+public class DebuffController : MonoBehaviour
 {
-    Dictionary<EFFECT_TYPE, float> currentEffects = new Dictionary<EFFECT_TYPE, float>();
+    Dictionary<DEBUFF_TYPE, float> currentEffects = new Dictionary<DEBUFF_TYPE, float>();
 
     #region 各状態異常の効果時間
     readonly float maxBurnDuration = 6f;    // 炎上
@@ -28,13 +28,13 @@ public class StatusEffectController : MonoBehaviour
     #endregion
 
     #region  各状態異常を適用させた効果割合
-    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedRates = new Dictionary<EFFECT_TYPE, float>();    // 移動速度
-    Dictionary<EFFECT_TYPE, float> tmpMoveSpeedFactorRates = new Dictionary<EFFECT_TYPE, float>();    // 移動速度(Animatorの係数)
-    Dictionary<EFFECT_TYPE, float> tmpAttackSpeedFactorRates = new Dictionary<EFFECT_TYPE, float>();  // 攻撃速度(Animatorの係数)
+    Dictionary<DEBUFF_TYPE, float> tmpMoveSpeedRates = new Dictionary<DEBUFF_TYPE, float>();    // 移動速度
+    Dictionary<DEBUFF_TYPE, float> tmpMoveSpeedFactorRates = new Dictionary<DEBUFF_TYPE, float>();    // 移動速度(Animatorの係数)
+    Dictionary<DEBUFF_TYPE, float> tmpAttackSpeedFactorRates = new Dictionary<DEBUFF_TYPE, float>();  // 攻撃速度(Animatorの係数)
     #endregion
 
     #region 状態異常のパーティクル
-    Dictionary<EFFECT_TYPE, GameObject> appliedParticles = new Dictionary<EFFECT_TYPE, GameObject>();   // 適用中のパーティクル
+    Dictionary<DEBUFF_TYPE, GameObject> appliedParticles = new Dictionary<DEBUFF_TYPE, GameObject>();   // 適用中のパーティクル
     [SerializeField] GameObject burnPS;
     [SerializeField] GameObject freezePS;
     [SerializeField] GameObject shockPS;
@@ -55,8 +55,8 @@ public class StatusEffectController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        List<EFFECT_TYPE> keyList = new List<EFFECT_TYPE>(currentEffects.Keys);
-        List<EFFECT_TYPE> effectsToRemove = new List<EFFECT_TYPE>();
+        List<DEBUFF_TYPE> keyList = new List<DEBUFF_TYPE>(currentEffects.Keys);
+        List<DEBUFF_TYPE> effectsToRemove = new List<DEBUFF_TYPE>();
         foreach (var key in keyList)
         {
             currentEffects[key] -= Time.fixedDeltaTime;
@@ -80,7 +80,7 @@ public class StatusEffectController : MonoBehaviour
     public List<int> GetAppliedStatusEffects()
     {
         List<int> result = new List<int>();
-        foreach (EFFECT_TYPE effectType in currentEffects.Keys)
+        foreach (DEBUFF_TYPE effectType in currentEffects.Keys)
         {
             result.Add((int)effectType);
         }
@@ -91,7 +91,7 @@ public class StatusEffectController : MonoBehaviour
     /// 状態異常を付与する処理 (フラグ省略)
     /// </summary>
     /// <param name="effectTypes"></param>
-    public void ApplyStatusEffect(params EFFECT_TYPE[] effectTypes)
+    public void ApplyStatusEffect(params DEBUFF_TYPE[] effectTypes)
     {
         ApplyStatusEffect(true, effectTypes);
     }
@@ -102,10 +102,10 @@ public class StatusEffectController : MonoBehaviour
     /// <param name="effectTypes"></param>
     public void ApplyStatusEffect(bool canUpdateDuration, List<int> effectTypeIds)
     {
-        List<EFFECT_TYPE> effectTypes = new List<EFFECT_TYPE>();
+        List<DEBUFF_TYPE> effectTypes = new List<DEBUFF_TYPE>();
         foreach(int id in effectTypeIds)
         {
-            foreach (EFFECT_TYPE type in Enum.GetValues(typeof(EFFECT_TYPE)))
+            foreach (DEBUFF_TYPE type in Enum.GetValues(typeof(DEBUFF_TYPE)))
             {
                 if ((int)type == id)
                 {
@@ -121,15 +121,15 @@ public class StatusEffectController : MonoBehaviour
     /// 状態異常を付与する処理
     /// </summary>
     /// <param name="effectTypes"></param>
-    public void ApplyStatusEffect(bool canUpdateDuration, params EFFECT_TYPE[] effectTypes)
+    public void ApplyStatusEffect(bool canUpdateDuration, params DEBUFF_TYPE[] effectTypes)
     {
-        foreach (EFFECT_TYPE effectType in effectTypes)
+        foreach (DEBUFF_TYPE effectType in effectTypes)
         {
             float effectDuration = effectType switch
             {
-                EFFECT_TYPE.Burn => maxBurnDuration,
-                EFFECT_TYPE.Freeze => maxFreezeDuration,
-                EFFECT_TYPE.Shock => maxShockDuration,
+                DEBUFF_TYPE.Burn => maxBurnDuration,
+                DEBUFF_TYPE.Freeze => maxFreezeDuration,
+                DEBUFF_TYPE.Shock => maxShockDuration,
                 _ => 0
             };
 
@@ -140,12 +140,12 @@ public class StatusEffectController : MonoBehaviour
                 // 状態異常の効果を適用させる
                 Action action = effectType switch
                 {
-                    EFFECT_TYPE.Burn => () =>
+                    DEBUFF_TYPE.Burn => () =>
                     {
                         InvokeRepeating("ActivateBurnEffect", 0, burnTickInterval);
                     }
                     ,
-                    EFFECT_TYPE.Freeze => () =>
+                    DEBUFF_TYPE.Freeze => () =>
                     {
                         // 移動速度・攻撃速度の20%分を現在のステータスから減算する
                         float freezeRatio = -freezeEffect;
@@ -160,7 +160,7 @@ public class StatusEffectController : MonoBehaviour
                         );
                     }
                     ,
-                    EFFECT_TYPE.Shock => () =>
+                    DEBUFF_TYPE.Shock => () =>
                     {
                         if (this.gameObject.tag == "Player") StartCoroutine(playerBase.AbnormalityStun(shockEffect));
                         else if (this.gameObject.tag == "Enemy") enemyBase.ApplyStun(shockEffect);
@@ -173,7 +173,7 @@ public class StatusEffectController : MonoBehaviour
             }
             else
             {
-                if (effectType != EFFECT_TYPE.Shock && canUpdateDuration)
+                if (effectType != DEBUFF_TYPE.Shock && canUpdateDuration)
                 {
                     currentEffects[effectType] = effectDuration;    // 効果時間をリセット
                 }
@@ -185,15 +185,15 @@ public class StatusEffectController : MonoBehaviour
     /// 状態異常解除
     /// </summary>
     /// <param name="effectType"></param>
-    void ClearStatusEffect(EFFECT_TYPE effectType)
+    void ClearStatusEffect(DEBUFF_TYPE effectType)
     {
         Action action = effectType switch
         {
-            EFFECT_TYPE.Burn => () => { 
+            DEBUFF_TYPE.Burn => () => { 
                 CancelInvoke("ActivateBurnEffect");
             }
             ,
-            EFFECT_TYPE.Freeze => () => {
+            DEBUFF_TYPE.Freeze => () => {
                 // 移動速度・攻撃速度の減算されていた分の値をステータスに加算する
                 float freezeRatio = freezeEffect;
                 characterBase.ApplyStatusModifierByRate(
@@ -207,7 +207,7 @@ public class StatusEffectController : MonoBehaviour
                 tmpAttackSpeedFactorRates.Remove(effectType);
             }
             ,
-            EFFECT_TYPE.Shock => () => {
+            DEBUFF_TYPE.Shock => () => {
             }
             ,
             _ => null
@@ -222,7 +222,7 @@ public class StatusEffectController : MonoBehaviour
     /// </summary>
     /// <param name="type"></param>
     /// <param name="particlePrefab"></param>
-    void ApplyStatusEffectParticle(EFFECT_TYPE type)
+    void ApplyStatusEffectParticle(DEBUFF_TYPE type)
     {
         GameObject psObj = null;
         ParticleSystem ps;
@@ -230,7 +230,7 @@ public class StatusEffectController : MonoBehaviour
         // 各パーティクルの詳細設定
         Action action = type switch
         {
-            EFFECT_TYPE.Burn => () =>
+            DEBUFF_TYPE.Burn => () =>
             {
                 psObj = Instantiate(burnPS, this.transform);
                 psObj.transform.position = capsule2D.bounds.center;
@@ -238,7 +238,7 @@ public class StatusEffectController : MonoBehaviour
                 ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);
             }
             ,
-            EFFECT_TYPE.Freeze => () =>
+            DEBUFF_TYPE.Freeze => () =>
             {
                 psObj = Instantiate(freezePS, this.transform);
                 psObj.transform.position = capsule2D.bounds.center;
@@ -246,7 +246,7 @@ public class StatusEffectController : MonoBehaviour
                 ParticleHelper.MatchRadiusToSpriteWidth(capsule2D, ps);
             }
             ,
-            EFFECT_TYPE.Shock => () =>
+            DEBUFF_TYPE.Shock => () =>
             {
                 psObj = Instantiate(shockPS, this.transform);
                 psObj.transform.position = capsule2D.bounds.center;
@@ -266,7 +266,7 @@ public class StatusEffectController : MonoBehaviour
     /// 適用されていた状態異常のパーティクルを破棄する
     /// </summary>
     /// <param name="type"></param>
-    void DestroyStatusEffectParticle(EFFECT_TYPE type)
+    void DestroyStatusEffectParticle(DEBUFF_TYPE type)
     {
         if (appliedParticles.ContainsKey(type))
         {

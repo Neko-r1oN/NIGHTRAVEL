@@ -296,7 +296,7 @@ public class FullMetalBody : EnemyBase
     /// <param name="power"></param>
     /// <param name="attacker"></param>
     /// <param name="effectTypes"></param>
-    public override void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params EFFECT_TYPE[] effectTypes)
+    public override void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
     {
         attacker = null;
         base.ApplyDamage(power, attacker, true, effectTypes);

@@ -16,7 +16,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 状態異常の種類
         /// </summary>
-        public enum EFFECT_TYPE
+        public enum DEBUFF_TYPE
         {
             None = 0,
             Burn,       // 炎上状態

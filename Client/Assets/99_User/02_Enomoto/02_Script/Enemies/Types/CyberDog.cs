@@ -174,7 +174,7 @@ public class CyberDog : EnemyBase
         while (true)
         {
             // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-            EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
+            DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)

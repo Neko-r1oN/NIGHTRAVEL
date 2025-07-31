@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shared.Interfaces.StreamingHubs;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using UnityEditor.Experimental.GraphView;
 
 abstract public class EnemyBase : CharacterBase
 {
@@ -369,10 +370,10 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// 適用させる状態異常の種類を取得する
     /// </summary>
-    public EFFECT_TYPE? GetStatusEffectToApply()
+    public DEBUFF_TYPE? GetStatusEffectToApply()
     {
         bool isElite = this.isElite && enemyElite != null;
-        EFFECT_TYPE? applyEffect = null;
+        DEBUFF_TYPE? applyEffect = null;
         if (isElite)
         {
             applyEffect = enemyElite.GetAddStatusEffectEnum();
@@ -406,10 +407,10 @@ abstract public class EnemyBase : CharacterBase
     /// ノックバック処理
     /// </summary>
     /// <param name="damage"></param>
-    protected void DoKnokBack(int damage)
+    protected void DoKnokBack()
     {
-        float durationX = 130f + damage;
-        float durationY = 90f + damage;
+        float durationX = 130f;
+        float durationY = 90f;
         transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
         transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-transform.localScale.x * durationX, durationY));
     }
@@ -445,9 +446,11 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params EFFECT_TYPE[] effectTypes)
+    public virtual void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
     {
         if (isInvincible || isDead) return;
+
+        // ダメージ適用、ダメージ表記
         Vector3? attackerPos = attacker.transform.position;
         var damage = CalculationLibrary.CalcDamage(power, Defense);
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
@@ -460,10 +463,7 @@ abstract public class EnemyBase : CharacterBase
         }
 
         // 状態異常を付与する
-        if (effectTypes.Length > 0)
-        {
-            effectController.ApplyStatusEffect(effectTypes);
-        }
+        if (effectTypes.Length > 0) effectController.ApplyStatusEffect(effectTypes);
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
         if (attackerPos != null)
@@ -472,7 +472,7 @@ abstract public class EnemyBase : CharacterBase
             if (pos.x < transform.position.x && transform.localScale.x > 0
             || pos.x > transform.position.x && transform.localScale.x < 0) Flip();
             
-            DoKnokBack(damage);
+            DoKnokBack();
 
             if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
         }
@@ -496,11 +496,17 @@ abstract public class EnemyBase : CharacterBase
         if (!isDead)
         {
             isDead = true;
-            if (player) player.GetExp(exp);
             OnDead();
+            var model = RoomModel.Instance;
+            if (player)
+            {
+                // 倒したのが自分自身の場合は経験値を与える
+                if (!model || model && CharacterManager.Instance.PlayerObjSelf == player)
+                player.GetExp(exp);
+            }
+
             if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
-            m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
             yield return new WaitForSeconds(destroyWaitSec);
             Destroy(gameObject);
         }

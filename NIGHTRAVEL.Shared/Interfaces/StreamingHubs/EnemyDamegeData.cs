@@ -7,25 +7,31 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 namespace Shared.Interfaces.StreamingHubs
 {
     [MessagePackObject]
     public class EnemyDamegeData
     {
-        //// ダメージを付与する敵のID
-        //public string EnemyObjectName { get; set; }
+        [Key(0)]
+        // ダメージを付与する敵のID
+        public int HitEnemyId { get; set; }
 
-        //// 攻撃したプレイヤーのID
-        //public Vector2 PlayerPosition { get; set; }
+        [Key(1)]
+        // 攻撃したプレイヤーのID
+        public Guid AttackerId { get; set; }
 
-        //// 付与する状態異常リスト
-        //public List<int> DebuffList {  get; set; }
+        [Key(2)]
+        // 付与する状態異常リスト
+        public List<DEBUFF_TYPE> DebuffList { get; set; }
 
-        //// 残りHP
-        //public int RemainingHp { get; set; }
+        [Key(3)]
+        // 残りHP
+        public int RemainingHp { get; set; }
 
-        //// 敵の経験値
-        //public int Exp {  get; set; }
+        [Key(4)]
+        // 敵の経験値
+        public int Exp { get; set; }
     }
 }

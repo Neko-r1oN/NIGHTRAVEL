@@ -74,8 +74,8 @@ public class BlazeTrap : MonoBehaviour
         if (tag == "Player")
         {
             // âäè„å¯â Çïtó^Ç∑ÇÈ
-            var controller = collision.gameObject.GetComponent<StatusEffectController>();
-            if (controller) controller.ApplyStatusEffect(EFFECT_TYPE.Burn);
+            var controller = collision.gameObject.GetComponent<DebuffController>();
+            if (controller) controller.ApplyStatusEffect(DEBUFF_TYPE.Burn);
         }
     }
 }

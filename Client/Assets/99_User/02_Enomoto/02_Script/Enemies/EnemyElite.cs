@@ -22,7 +22,7 @@ public class EnemyElite : MonoBehaviour
     /// <summary>
     /// •t—^‚·‚éó‘ÔˆÙí‚Ìí—Ş
     /// </summary>
-    public EFFECT_TYPE addStatusEffect { get; private set; }
+    public DEBUFF_TYPE addStatusEffect { get; private set; }
 
     /// <summary>
     /// ‰Šú‰»ˆ—
@@ -81,13 +81,13 @@ public class EnemyElite : MonoBehaviour
     /// •t—^‚³‚¹‚éó‘ÔˆÙí‚Ìenum‚ğæ“¾‚·‚é
     /// </summary>
     /// <returns></returns>
-    public EFFECT_TYPE? GetAddStatusEffectEnum()
+    public DEBUFF_TYPE? GetAddStatusEffectEnum()
     {
         return eliteType switch
         {
-            ENEMY_ELITE_TYPE.Blaze => EFFECT_TYPE.Burn,
-            ENEMY_ELITE_TYPE.Frost => EFFECT_TYPE.Freeze,
-            ENEMY_ELITE_TYPE.Thunder => EFFECT_TYPE.Shock,
+            ENEMY_ELITE_TYPE.Blaze => DEBUFF_TYPE.Burn,
+            ENEMY_ELITE_TYPE.Frost => DEBUFF_TYPE.Freeze,
+            ENEMY_ELITE_TYPE.Thunder => DEBUFF_TYPE.Shock,
             _ => null
         };
     }

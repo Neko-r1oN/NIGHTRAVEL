@@ -184,7 +184,7 @@ public class Rifle : PlayerBase
 
     #region ”íƒ_ƒˆ—
 
-    public override void ApplyDamage(int power, Vector3? position = null, EFFECT_TYPE? type = null)
+    public override void ApplyDamage(int power, Vector3? position = null, DEBUFF_TYPE? type = null)
     {
         if (!invincible)
         {
@@ -212,7 +212,7 @@ public class Rifle : PlayerBase
             // ó‘ÔˆÙí•t—^
             if (type != null)
             {
-                effectController.ApplyStatusEffect((EFFECT_TYPE)type);
+                effectController.ApplyStatusEffect((DEBUFF_TYPE)type);
             }
 
             if (hp <= 0)
