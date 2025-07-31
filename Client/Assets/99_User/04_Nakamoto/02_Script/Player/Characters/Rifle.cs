@@ -9,7 +9,7 @@ using System.Collections.Generic;   // HashSet —p
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static StatusEffectController;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Sword;
 
 public class Rifle : PlayerBase
@@ -302,7 +302,7 @@ public class Rifle : PlayerBase
                 {
                     if (hit.collider == null) continue;
 
-                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage((int)(Power * BEAM_MAG), transform);
+                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage((int)(Power * BEAM_MAG), gameObject);
                 }
                 tickTimer = 0f;
             }

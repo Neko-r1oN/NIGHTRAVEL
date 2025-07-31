@@ -2,18 +2,14 @@
 // UIä«óùÉNÉâÉX
 // Author : Souma Ueno
 //----------------------------------------------------
-using MessagePack;
 using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static CharacterBase;
-using static LevelManager;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using ColorUtility = UnityEngine.ColorUtility;
 using Random = UnityEngine.Random;
 

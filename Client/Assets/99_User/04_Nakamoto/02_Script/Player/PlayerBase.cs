@@ -10,7 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using static StatusEffectController;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 abstract public class PlayerBase : CharacterBase
 {
@@ -820,7 +820,7 @@ abstract public class PlayerBase : CharacterBase
     /// 被ダメ処理
     /// (ノックバックはposに応じて有無が変わる)
     /// </summary>
-    abstract public void ApplyDamage(int power, Vector3? position = null, StatusEffectController.EFFECT_TYPE? type = null);
+    abstract public void ApplyDamage(int power, Vector3? position = null, EFFECT_TYPE? type = null);
 
     /// <summary>
     /// ブリンク終了処理

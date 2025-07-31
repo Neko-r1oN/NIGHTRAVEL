@@ -1,7 +1,12 @@
+//**************************************************
+//  銃のパーティクルを制御する
+//  Author:r-enomoto
+//**************************************************
 using NUnit.Framework;
 using Pixeye.Unity;
 using System.Collections.Generic;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class GunParticleController : MonoBehaviour
 {
@@ -38,7 +43,7 @@ public class GunParticleController : MonoBehaviour
     public void StartShooting()
     {
         // 付与する状態異常を取得
-        StatusEffectController.EFFECT_TYPE? effectType = null;
+        EFFECT_TYPE? effectType = null;
         if (owner.tag == "Enemy")
         {
             effectType = owner.GetComponent<EnemyBase>().GetStatusEffectToApply();

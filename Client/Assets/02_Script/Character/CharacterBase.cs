@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 abstract public class CharacterBase : MonoBehaviour
 {
@@ -86,6 +87,7 @@ abstract public class CharacterBase : MonoBehaviour
 
     #region 現在のステータスの上限値関連(マイナスの値を許容しないもののみ)
     protected int maxHp;
+    protected int maxDefense;
     protected int maxPower;
     protected float maxJumpPower;
     protected float maxMoveSpeed;
@@ -98,6 +100,8 @@ abstract public class CharacterBase : MonoBehaviour
     /// 最大体力
     /// </summary>
     public int MaxHP { get { return maxHp; } }
+
+    public int MaxDefence { get { return maxDefense; } }
 
     /// <summary>
     /// 最大攻撃力
@@ -194,18 +198,6 @@ abstract public class CharacterBase : MonoBehaviour
     protected Animator animator;
     #endregion
 
-    public enum STATUS_TYPE
-    {
-        All,
-        HP,
-        Defense,
-        Power,
-        JumpPower,
-        MoveSpeed,
-        MoveSpeedFactor,
-        AttackSpeedFactor
-    }
-
     protected virtual void Awake()
     {
         ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
@@ -229,18 +221,107 @@ abstract public class CharacterBase : MonoBehaviour
     }
 
     /// <summary>
+    /// 現在のステータスを上下限に制限する
+    /// </summary>
+    void ClampStatus()
+    {
+        hp = Mathf.Clamp(hp, 0, maxHp);
+        defense = Mathf.Clamp(defense, 0, defense);
+        power = Mathf.Clamp(power, 0, maxPower);
+        moveSpeed = Mathf.Clamp(moveSpeed, 0, maxPower);
+        jumpPower = Mathf.Clamp(jumpPower, 0, maxJumpPower);
+        moveSpeedFactor = Mathf.Clamp(moveSpeedFactor, 0, maxMoveSpeedFactor);
+        attackSpeedFactor = Mathf.Clamp(attackSpeedFactor, 0, maxAttackSpeedFactor);
+    }
+
+    /// <summary>
     /// 現在のステータスを上書きする
     /// </summary>
-    public void OverridCurrentStatus(CharacterStatusData statusData)
+    public void OverridCurrentStatus(CharacterStatusData statusData, params STATUS_TYPE[] types)
     {
-        hp = statusData.hp;
-        defense = statusData.defence;
-        power = statusData.power;
-        jumpPower = statusData.jumpPower;
-        moveSpeed = statusData.moveSpeed;
-        moveSpeedFactor = statusData.moveSpeedFactor;
-        attackSpeedFactor = statusData.attackSpeedFactor;
+        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
+        if (statusList.Contains(STATUS_TYPE.All))
+        {
+            statusList = new List<STATUS_TYPE> {
+                STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
+                STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor, STATUS_TYPE.AttackSpeedFactor
+            };
+        }
+
+        foreach (STATUS_TYPE type in statusList)
+        {
+            switch (type)
+            {
+                case STATUS_TYPE.HP:
+                    hp = statusData.hp;
+                    break;
+                case STATUS_TYPE.Defense:
+                    defense = statusData.defence;
+                    break;
+                case STATUS_TYPE.Power:
+                    power = statusData.power;
+                    break;
+                case STATUS_TYPE.JumpPower:
+                    jumpPower = statusData.jumpPower;
+                    break;
+                case STATUS_TYPE.MoveSpeed:
+                    moveSpeed = statusData.moveSpeed;
+                    break;
+                case STATUS_TYPE.MoveSpeedFactor:
+                    moveSpeedFactor = statusData.moveSpeedFactor;
+                    break;
+                case STATUS_TYPE.AttackSpeedFactor:
+                    attackSpeedFactor = statusData.attackSpeedFactor;
+                    break;
+            }
+        }
+        ClampStatus();
         OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// ステータスを指定して、一括で現在のステータスに加減する処理
+    /// </summary>
+    public void ApplyStatusBonus(float bonus, params STATUS_TYPE[] types)
+    {
+        var requestData = new CharacterStatusData();
+        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
+        if (statusList.Contains(STATUS_TYPE.All))
+        {
+            statusList = new List<STATUS_TYPE> {
+                STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
+                STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor, STATUS_TYPE.AttackSpeedFactor
+            };
+        }
+
+        foreach (STATUS_TYPE type in statusList)
+        {
+            switch (type)
+            {
+                case STATUS_TYPE.HP:
+                    requestData.hp = (int)bonus;
+                    break;
+                case STATUS_TYPE.Defense:
+                    requestData.defence = (int)bonus;
+                    break;
+                case STATUS_TYPE.Power:
+                    requestData.power = (int)bonus;
+                    break;
+                case STATUS_TYPE.JumpPower:
+                    requestData.jumpPower = bonus;
+                    break;
+                case STATUS_TYPE.MoveSpeed:
+                    requestData.moveSpeed = bonus;
+                    break;
+                case STATUS_TYPE.MoveSpeedFactor:
+                    requestData.moveSpeedFactor = bonus;
+                    break;
+                case STATUS_TYPE.AttackSpeedFactor:
+                    requestData.attackSpeedFactor = bonus;
+                    break;
+            }
+        }
+        ApplyStatusBonus(requestData);
     }
 
     /// <summary>
@@ -248,26 +329,14 @@ abstract public class CharacterBase : MonoBehaviour
     /// </summary>
     public void ApplyStatusBonus(CharacterStatusData addStatusData)
     {
-        var applyHp = hp + addStatusData.hp;
-        hp = applyHp < maxHp ? applyHp : maxHp;
-
+        hp += addStatusData.hp;
         defense += addStatusData.defence;
-
-        var applyPower = power + addStatusData.power;
-        power = applyPower < maxPower ? applyPower : maxPower;
-
-        var applyMoveSpeed = moveSpeed + addStatusData.moveSpeed;
-        moveSpeed = applyMoveSpeed < maxMoveSpeed ? applyMoveSpeed : maxMoveSpeed;
-
-        var applyJumpPower = jumpPower + addStatusData.jumpPower;
-        jumpPower = applyJumpPower < maxJumpPower ? applyJumpPower : maxJumpPower;
-
-        var applyMoveSpeedFactor = moveSpeedFactor + addStatusData.moveSpeedFactor;
-        moveSpeedFactor = applyMoveSpeedFactor < maxMoveSpeedFactor ? applyMoveSpeedFactor : maxMoveSpeedFactor;
-
-        var applyAttackSpeedFactor = attackSpeedFactor + addStatusData.attackSpeedFactor;
-        attackSpeedFactor = applyAttackSpeedFactor < maxAttackSpeedFactor ? applyAttackSpeedFactor : maxAttackSpeedFactor;
-
+        power += addStatusData.power;
+        moveSpeed += addStatusData.moveSpeed;
+        jumpPower += addStatusData.jumpPower;
+        moveSpeedFactor += addStatusData.moveSpeedFactor;
+        attackSpeedFactor += addStatusData.attackSpeedFactor;
+        ClampStatus();
         OverrideAnimaterParam();
     }
 
@@ -333,6 +402,7 @@ abstract public class CharacterBase : MonoBehaviour
                     break;
             }
         }
+        ClampStatus();
         OverrideAnimaterParam();
     }
 

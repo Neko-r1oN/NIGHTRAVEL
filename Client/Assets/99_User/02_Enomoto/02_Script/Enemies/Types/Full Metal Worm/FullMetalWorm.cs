@@ -331,7 +331,7 @@ public class FullMetalWorm : EnemyBase
         while (!isDead)
         {
             // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-            StatusEffectController.EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
+            EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
 
             Collider2D[] collidersEnemies = Physics2D.OverlapBoxAll(meleeAttackCheck.position, meleeAttackRange, 0);
             for (int i = 0; i < collidersEnemies.Length; i++)
@@ -493,7 +493,7 @@ public class FullMetalWorm : EnemyBase
     /// <param name="power"></param>
     /// <param name="attacker"></param>
     /// <param name="effectTypes"></param>
-    public override void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    public override void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params EFFECT_TYPE[] effectTypes)
     {
         attacker = null;
         base.ApplyDamage(power, attacker, true, effectTypes);

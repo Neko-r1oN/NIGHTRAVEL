@@ -6,10 +6,11 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class GunBulletParticle : MonoBehaviour
 {
-    StatusEffectController.EFFECT_TYPE? effectType = null;
+    EFFECT_TYPE? effectType = null;
     string ownerTag;
     int damageValue;
 
@@ -18,7 +19,7 @@ public class GunBulletParticle : MonoBehaviour
     /// </summary>
     /// <param name="damageValue"></param>
     /// <param name="enemyTag"></param>
-    public void Initialize(string ownerTag, int damageValue, StatusEffectController.EFFECT_TYPE? effectType)
+    public void Initialize(string ownerTag, int damageValue, EFFECT_TYPE? effectType)
     {
         this.ownerTag = ownerTag;
         this.damageValue = damageValue;

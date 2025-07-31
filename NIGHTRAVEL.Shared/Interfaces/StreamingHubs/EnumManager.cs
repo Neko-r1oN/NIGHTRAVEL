@@ -16,13 +16,28 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 状態異常の種類
         /// </summary>
-        //public enum EFFECT_TYPE
-        //{
-        //    None = 0,
-        //    Burn,       // 炎上状態
-        //    Freeze,     // 霜焼け状態
-        //    Shock       // 感電状態
-        //}
+        public enum EFFECT_TYPE
+        {
+            None = 0,
+            Burn,       // 炎上状態
+            Freeze,     // 霜焼け状態
+            Shock       // 感電状態
+        }
+
+        /// <summary>
+        /// ステータスの種類
+        /// </summary>
+        public enum STATUS_TYPE
+        {
+            All,
+            HP,
+            Defense,
+            Power,
+            JumpPower,
+            MoveSpeed,
+            MoveSpeedFactor,
+            AttackSpeedFactor
+        }
 
         #region 操作キャラ関連
 

@@ -296,7 +296,7 @@ public class FullMetalBody : EnemyBase
     /// <param name="power"></param>
     /// <param name="attacker"></param>
     /// <param name="effectTypes"></param>
-    public override void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    public override void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params EFFECT_TYPE[] effectTypes)
     {
         attacker = null;
         base.ApplyDamage(power, attacker, true, effectTypes);
@@ -306,7 +306,7 @@ public class FullMetalBody : EnemyBase
 
         // 被ダメージ量を表示する
         var damage = CalculationLibrary.CalcDamage(power, Defense);
-        DrawHitDamageUI(damage, attacker);
+        DrawHitDamageUI(damage, attacker.gameObject.transform.position);
     }
 
     /// <summary>

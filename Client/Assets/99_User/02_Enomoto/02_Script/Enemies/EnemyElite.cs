@@ -1,10 +1,7 @@
-using NUnit.Framework;
-using Pixeye.Unity;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using static StatusEffectController;
 using Shared.Interfaces.StreamingHubs;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class EnemyElite : MonoBehaviour
 {
@@ -25,7 +22,7 @@ public class EnemyElite : MonoBehaviour
     /// <summary>
     /// 付与する状態異常の種類
     /// </summary>
-    public StatusEffectController.EFFECT_TYPE addStatusEffect { get; private set; }
+    public EFFECT_TYPE addStatusEffect { get; private set; }
 
     /// <summary>
     /// 初期化処理
@@ -36,8 +33,8 @@ public class EnemyElite : MonoBehaviour
 
         // HP・攻撃力が50%増し、防御力・移動速度・移動速度係数が25%増しにする
         CharacterBase charaBase = GetComponent<CharacterBase>();
-        charaBase.ApplyStatusModifierByRate(0.5f, true, CharacterBase.STATUS_TYPE.HP, CharacterBase.STATUS_TYPE.Power);
-        charaBase.ApplyStatusModifierByRate(0.25f, CharacterBase.STATUS_TYPE.Defense, CharacterBase.STATUS_TYPE.MoveSpeed, CharacterBase.STATUS_TYPE.MoveSpeedFactor);
+        charaBase.ApplyStatusModifierByRate(0.5f, true, STATUS_TYPE.HP, STATUS_TYPE.Power);
+        charaBase.ApplyStatusModifierByRate(0.25f, STATUS_TYPE.Defense, STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor);
 
         Color outlineColor = new Color();
         Action action = type switch
@@ -60,7 +57,7 @@ public class EnemyElite : MonoBehaviour
                 outlineColor = new Color32(0xE1, 0x00, 0xFF, 0xFF);
 
                 // Thunderのみ移動速度・移動速度係数が2倍になるようにする
-                charaBase.ApplyStatusModifierByRate(0.75f, CharacterBase.STATUS_TYPE.MoveSpeed, CharacterBase.STATUS_TYPE.MoveSpeedFactor);
+                charaBase.ApplyStatusModifierByRate(0.75f, STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor);
             }
             ,
             _ => () => { }
@@ -84,13 +81,13 @@ public class EnemyElite : MonoBehaviour
     /// 付与させる状態異常のenumを取得する
     /// </summary>
     /// <returns></returns>
-    public StatusEffectController.EFFECT_TYPE? GetAddStatusEffectEnum()
+    public EFFECT_TYPE? GetAddStatusEffectEnum()
     {
         return eliteType switch
         {
-            EnumManager.ENEMY_ELITE_TYPE.Blaze => StatusEffectController.EFFECT_TYPE.Burn,
-            EnumManager.ENEMY_ELITE_TYPE.Frost => StatusEffectController.EFFECT_TYPE.Freeze,
-            EnumManager.ENEMY_ELITE_TYPE.Thunder => StatusEffectController.EFFECT_TYPE.Shock,
+            ENEMY_ELITE_TYPE.Blaze => EFFECT_TYPE.Burn,
+            ENEMY_ELITE_TYPE.Frost => EFFECT_TYPE.Freeze,
+            ENEMY_ELITE_TYPE.Thunder => EFFECT_TYPE.Shock,
             _ => null
         };
     }

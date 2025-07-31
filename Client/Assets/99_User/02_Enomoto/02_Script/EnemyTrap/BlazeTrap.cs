@@ -2,7 +2,7 @@
 //  エリート個体(ブレイズ)な敵による炎のトラップのスクリプト
 //  Author:r-enomoto
 //**************************************************
-using NUnit.Framework;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -75,7 +75,7 @@ public class BlazeTrap : MonoBehaviour
         {
             // 炎上効果を付与する
             var controller = collision.gameObject.GetComponent<StatusEffectController>();
-            if (controller) controller.ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Burn);
+            if (controller) controller.ApplyStatusEffect(EFFECT_TYPE.Burn);
         }
     }
 }

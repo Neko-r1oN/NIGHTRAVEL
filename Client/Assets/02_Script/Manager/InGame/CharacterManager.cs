@@ -195,6 +195,18 @@ public class CharacterManager : MonoBehaviour
             characterData.JumpPower
             );
 
+        List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All};
+        if (character.gameObject.tag == "Enemy")
+        {
+            // 敵の場合はHP以外を更新する
+            addStatusTypes = new List<STATUS_TYPE>() { 
+                STATUS_TYPE.Defense, 
+                STATUS_TYPE.JumpPower, 
+                STATUS_TYPE.MoveSpeed, 
+                STATUS_TYPE.MoveSpeedFactor, 
+                STATUS_TYPE.AttackSpeedFactor};
+        }
+        character.OverridCurrentStatus(statusData, STATUS_TYPE.All);
         character.OverridCurrentStatus(statusData);
         character.gameObject.SetActive(characterData.IsActiveSelf);
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
@@ -339,7 +351,8 @@ public class CharacterManager : MonoBehaviour
     {
         foreach (var enemyData in enemyDatas)
         {
-            if (!enemies.ContainsKey(enemyData.EnemyID)) continue;
+            if (!enemies.ContainsKey(enemyData.EnemyID) 
+                || enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID].Enemy.HP <= 0) continue;
 
             // エネミーの情報更新
             var enemy = enemies[enemyData.EnemyID].Enemy;
@@ -368,5 +381,13 @@ public class CharacterManager : MonoBehaviour
                 UpdateCharacter(enemyData, enemy);
             }
         }
+    }
+
+    /// <summary>
+    /// 敵の被ダメ通知処理
+    /// </summary>
+    void OnHitEnemy()
+    {
+
     }
 }

@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Drone;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class CyberDog : EnemyBase
 {
@@ -174,7 +174,7 @@ public class CyberDog : EnemyBase
         while (true)
         {
             // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-            StatusEffectController.EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
+            EFFECT_TYPE? applyEffect = GetStatusEffectToApply();
 
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)

@@ -2,25 +2,13 @@
 //  状態異常を管理(制御・適用・更新など)するクラス
 //  Author:r-enomoto
 //**************************************************
-using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static StatusEffectController;
-using static UnityEngine.Rendering.DebugUI;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class StatusEffectController : MonoBehaviour
 {
-    /// <summary>
-    /// 状態異常の種類
-    /// </summary>
-    public enum EFFECT_TYPE
-    {
-        Burn,       // 炎上状態
-        Freeze,     // 霜焼け状態
-        Shock       // 感電状態
-    }
     Dictionary<EFFECT_TYPE, float> currentEffects = new Dictionary<EFFECT_TYPE, float>();
 
     #region 各状態異常の効果時間
@@ -166,9 +154,9 @@ public class StatusEffectController : MonoBehaviour
                         tmpAttackSpeedFactorRates.Add(effectType, freezeRatio);
                         characterBase.ApplyStatusModifierByRate(
                             freezeRatio,
-                            CharacterBase.STATUS_TYPE.MoveSpeed,
-                            CharacterBase.STATUS_TYPE.MoveSpeedFactor,
-                            CharacterBase.STATUS_TYPE.AttackSpeedFactor
+                            STATUS_TYPE.MoveSpeed,
+                            STATUS_TYPE.MoveSpeedFactor,
+                            STATUS_TYPE.AttackSpeedFactor
                         );
                     }
                     ,
@@ -210,9 +198,9 @@ public class StatusEffectController : MonoBehaviour
                 float freezeRatio = freezeEffect;
                 characterBase.ApplyStatusModifierByRate(
                         freezeRatio,
-                        CharacterBase.STATUS_TYPE.MoveSpeed,
-                        CharacterBase.STATUS_TYPE.MoveSpeedFactor,
-                        CharacterBase.STATUS_TYPE.AttackSpeedFactor
+                        STATUS_TYPE.MoveSpeed,
+                        STATUS_TYPE.MoveSpeedFactor,
+                        STATUS_TYPE.AttackSpeedFactor
                     );
                 tmpMoveSpeedRates.Remove(effectType);
                 tmpMoveSpeedFactorRates.Remove(effectType);

@@ -6,7 +6,7 @@
 using UnityEngine;
 using System.Collections;
 using Pixeye.Unity;
-using static StatusEffectController;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 
@@ -220,7 +220,7 @@ public class Sword : PlayerBase
                         break;
                 }
 
-                enemyComponent.ApplyDamage(attackPower, playerPos);
+                enemyComponent.ApplyDamage(attackPower, gameObject);
                 processedEnemies.Add(enemyComponent); // ˆ—Ï‚İƒŠƒXƒg‚É’Ç‰Á
             }
         }

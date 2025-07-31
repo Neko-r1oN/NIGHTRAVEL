@@ -6,6 +6,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class Burner : GimmickBase
 {
@@ -45,7 +46,7 @@ public class Burner : GimmickBase
             player = GetComponent<PlayerBase>();
             statusEffectController = collision.gameObject.GetComponent<StatusEffectController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
 
-            statusEffectController.ApplyStatusEffect(StatusEffectController.EFFECT_TYPE.Burn); //プレイヤーに炎上状態を付与
+            statusEffectController.ApplyStatusEffect(EFFECT_TYPE.Burn); //プレイヤーに炎上状態を付与
             Debug.Log("プレイヤーに炎上状態を付与");
         }
 

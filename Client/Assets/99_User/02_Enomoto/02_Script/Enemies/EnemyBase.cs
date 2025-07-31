@@ -369,10 +369,10 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// 適用させる状態異常の種類を取得する
     /// </summary>
-    public StatusEffectController.EFFECT_TYPE? GetStatusEffectToApply()
+    public EFFECT_TYPE? GetStatusEffectToApply()
     {
         bool isElite = this.isElite && enemyElite != null;
-        StatusEffectController.EFFECT_TYPE? applyEffect = null;
+        EFFECT_TYPE? applyEffect = null;
         if (isElite)
         {
             applyEffect = enemyElite.GetAddStatusEffectEnum();
@@ -406,7 +406,7 @@ abstract public class EnemyBase : CharacterBase
     /// ノックバック処理
     /// </summary>
     /// <param name="damage"></param>
-    protected void DoKnokBack(Transform attacker, int damage)
+    protected void DoKnokBack(int damage)
     {
         float durationX = 130f + damage;
         float durationY = 90f + damage;
@@ -432,10 +432,10 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// 被ダメージを表示する
     /// </summary>
-    protected void DrawHitDamageUI(int damage, Transform attacker = null)
+    protected void DrawHitDamageUI(int damage, Vector3? attackerPos = null)
     {
         // 被ダメージ量のUIを表示する
-        var attackerPoint = attacker ? attacker.position : transform.position;
+        var attackerPoint = attackerPos != null ? (Vector3)attackerPos : transform.position;
         var hitPoint = TransformUtils.GetHitPointToTarget(transform, attackerPoint);
         if (hitPoint == null) hitPoint = transform.position;
         UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ダメージ表記
@@ -445,13 +445,19 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void ApplyDamage(int power, Transform attacker = null, bool drawDmgText = true, params StatusEffectController.EFFECT_TYPE[] effectTypes)
+    public virtual void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params EFFECT_TYPE[] effectTypes)
     {
         if (isInvincible || isDead) return;
-
+        Vector3? attackerPos = attacker.transform.position;
         var damage = CalculationLibrary.CalcDamage(power, Defense);
-        if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attacker);
+        if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp -= Mathf.Abs(damage);
+
+        // リアルタイム中、自分による攻撃の場合はダメージ同期をリクエスト
+        if (attacker && RoomModel.Instance && CharacterManager.Instance.PlayerObjSelf == attacker)
+        {
+
+        }
 
         // 状態異常を付与する
         if (effectTypes.Length > 0)
@@ -460,12 +466,13 @@ abstract public class EnemyBase : CharacterBase
         }
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
-        if (attacker)
+        if (attackerPos != null)
         {
-            if (attacker.position.x < transform.position.x && transform.localScale.x > 0
-            || attacker.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+            Vector3 pos = (Vector3)attackerPos;
+            if (pos.x < transform.position.x && transform.localScale.x > 0
+            || pos.x > transform.position.x && transform.localScale.x < 0) Flip();
             
-            DoKnokBack(attacker, damage);
+            DoKnokBack(damage);
 
             if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
         }
