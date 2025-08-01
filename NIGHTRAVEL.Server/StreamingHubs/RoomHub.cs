@@ -527,7 +527,7 @@ namespace StreamingHubs
         // <summary>
         /// レベルアップ処理
         /// </summary>
-        protected void LevelUpAsync(ExpManager expManager)
+        protected void LevelUp(ExpManager expManager)
         {
             // レベルアップ処理
             expManager.Level++; // 現在のレベルを上げる
