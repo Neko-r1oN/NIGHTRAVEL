@@ -21,9 +21,8 @@ public class SpawnManager : MonoBehaviour
     #endregion
 
     #region 敵生成関連
-    int spawnCnt;                     // スポーン回数
+    int spawnCnt;                     // 累計スポーン回数(減算禁止)
     [SerializeField] int maxSpawnCnt; // マックススポーン回数
-    public int SpawnCnt { get { return spawnCnt; } set { spawnCnt = value; } }
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
@@ -47,7 +46,6 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] List<GameObject> enemyPrefabs;      // エネミーのプレファブリスト
     [SerializeField] List<EnumManager.ENEMY_TYPE> emitEnemyTypes;   // 生成対象の敵の種類
     [SerializeField] Dictionary<EnumManager.ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
-    float[] enemyWeights;
     int eliteEnemyCnt;
     #endregion
 
@@ -105,16 +103,11 @@ public class SpawnManager : MonoBehaviour
     {
         SetEnemyPrefabList();
         player = CharacterManager.Instance.PlayerObjSelf;
-        enemyWeights = new float[idEnemyPrefabPairs.Count];
 
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        // 割合
-        enemyWeights[0] = 24; // ドローン
-        enemyWeights[1] = 76; // いぬ
-
-        StartCoroutine("SpawnCoroutin");
+        StartCoroutine(WaitAndStartCoroutine(3f));
     }
 
     private void OnDisable()
@@ -140,7 +133,7 @@ public class SpawnManager : MonoBehaviour
                     {
                         if (spawnCnt < maxSpawnCnt / 2)
                         {// 敵が100体いない場合
-                            GenerateEnemy(Random.Range(3, 7),player.transform.position);
+                            GenerateEnemy(Random.Range(3, 5),player.transform.position);
                         }
                         else
                         {// いる場合
@@ -152,6 +145,12 @@ public class SpawnManager : MonoBehaviour
 
             yield return new WaitForSeconds(3);
         }
+    }
+
+    IEnumerator WaitAndStartCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        StartCoroutine(SpawnCoroutin());
     }
 
     /// <summary>
@@ -248,8 +247,6 @@ public class SpawnManager : MonoBehaviour
         List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < num; i++)
         {
-            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
-
             if (spawnCnt > maxSpawnCnt)
             {
                 return;

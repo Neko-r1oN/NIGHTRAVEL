@@ -306,7 +306,7 @@ public class FullMetalBody : EnemyBase
 
         // 被ダメージ量を表示する
         var damage = CalculationLibrary.CalcDamage(power, Defense);
-        DrawHitDamageUI(damage, attacker.gameObject.transform.position);
+        DrawHitDamageUI(damage);
     }
 
     /// <summary>

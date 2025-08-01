@@ -3,6 +3,7 @@
 // Author : Souma Ueno
 //----------------------------------------------------
 using JetBrains.Annotations;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,8 +23,6 @@ public class GameManager : MonoBehaviour
     int xp;                     // 経験値
     int requiredXp = 100;       // 必要経験値
     int level;                  // レベル
-    int num;                    // 生成までのカウント
-    public int spawnInterval;   // 生成間隔
     bool isBossDead;            // ボスが死んだかどうか
     bool isGameStart;           // ゲームが開始したかどうか
     #endregion
@@ -45,8 +44,6 @@ public class GameManager : MonoBehaviour
 
     #region 各プロパティ
     [Header("各プロパティ")]
-
-    public int SpawnInterval { get { return spawnInterval; } set { spawnInterval = value; } }
 
     public bool IsBossDead { get { return isBossDead; } }
 
@@ -110,11 +107,11 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1;
         }
         else if(Input.GetKeyDown(KeyCode.S))
-        {
+        {// 20倍速(デバック用)
+#if UNITY_EDITOR
             Time.timeScale = 20;
+#endif
         }
-
-        
 
         //Escが押された時
         if (Input.GetKey(KeyCode.Escape))
@@ -125,29 +122,6 @@ public class GameManager : MonoBehaviour
     UIManager.Instance.DisplayEndGameWindow();
 #endif
         }
-
-        //if (spawnCnt < maxSpawnCnt && !isBossDead)
-        //{// スポーン回数が限界に達しているか
-        //    elapsedTime += Time.deltaTime;
-        //    if (elapsedTime > spawnInterval)
-        //    {
-        //        elapsedTime = 0;
-
-        //        if (!isSpawnBoss)
-        //        {
-        //            if (spawnCnt < maxSpawnCnt / 2)
-        //            {// 敵が100体いない場合
-        //                SpawnManager.Instance.GenerateEnemy(Random.Range(3, 7));
-        //            }
-        //            else
-        //            {// いる場合
-        //                SpawnManager.Instance.GenerateEnemy(1);
-        //            }
-
-        //            Debug.Log(spawnCnt);
-        //        }
-        //    }
-        //}
     }
 
     /// <summary>
@@ -170,7 +144,7 @@ public class GameManager : MonoBehaviour
 
         UIManager.Instance.CountTermsText(SpawnManager.Instance.CrashNum);
 
-        SpawnManager.Instance.SpawnCnt--;
+        var result = CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByManager);
 
         if (enemy.IsBoss)
         {
@@ -183,30 +157,9 @@ public class GameManager : MonoBehaviour
     {
         RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
-        // ボスフラグを変更
-        //bossFlag = false;
         // 死んだ判定にする
         isBossDead = true;
 
         Invoke(nameof(ChengScene), 15f);
-    }
-
-    private void OnDrawGizmos()
-    {
-        //if (player != null)
-        //{
-        //    Gizmos.DrawWireCube(player.transform.position, new Vector3(distMinSpawnPos * 2, yRadius * 2));
-        //    Gizmos.color = Color.yellow;
-        //    Gizmos.DrawWireCube(player.transform.position, new Vector3(xRadius * 2, yRadius * 2));
-        //}
-    }
-
-    [ContextMenu("DecreaseGeneratInterval")]
-    /// <summary>
-    /// 時間経過毎にスポーン間隔を早める処理
-    /// </summary>
-    private void DecreaseGeneratInterval()
-    {
-        spawnInterval -= 2;
     }
 }
