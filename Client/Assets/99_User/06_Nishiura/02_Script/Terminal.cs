@@ -122,7 +122,6 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Enemy:
                 // “G¶¬‚Ìê‡
                 isUsed = true;  // g—pÏ‚İ‚É‚·‚é
-                isTerminal = true;
 
                 rndNum = rand.Next(6, 11); // ¶¬”‚ğ—”(6-10)‚Åİ’è
                 SpawnManager.Instance.TerminalGenerateEnemy(rndNum);   // “G¶¬
