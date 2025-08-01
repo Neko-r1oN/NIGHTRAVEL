@@ -39,6 +39,31 @@ namespace Shared.Interfaces.StreamingHubs
             AttackSpeedFactor
         }
 
+        /// <summary>
+        /// タイマ-の種類
+        /// Author:Nishiura
+        /// </summary>
+        public enum TIME_TYPE
+        {
+            GameTimer,          // ゲーム全体のタイマー
+            StageClearTimer,    // ステージクリア後待機タイマー
+            TerminalTimer       // 端末のレース用タイマー
+        }
+
+        /// <summary>
+        /// 難易度の種類
+        /// Author:Nishiura
+        /// </summary>
+        public enum DIFFICULTY_TYPE
+        {
+            Baby,
+            Easy,
+            Noraml,
+            Hard,
+            VeryHard,
+            Hell
+        }
+
         #region 操作キャラ関連
 
         /// <summary>

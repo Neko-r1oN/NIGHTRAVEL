@@ -32,5 +32,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         public bool isBoss { get; set; } = false;
+
+        [Key(19)]
+        /// <summary>
+        /// 経験値
+        /// Author:Nishiura
+        /// </summary>
+        public int Exp { get; set; }
     }
 }

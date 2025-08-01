@@ -40,6 +40,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         [Key(4)]
         public bool IsReady { get; set; }
+
+        /// <summary>
+        /// ステージ進行完了判定
+        /// </summary>
+        [Key(5)]
+        public bool IsAdvance { get; set; }
     }
 
 }
