@@ -2,6 +2,7 @@
 // 敵生成クラス
 // Author : Souma Ueno
 //----------------------------------------------------
+using DG.Tweening;
 using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -25,6 +26,8 @@ public class SpawnManager : MonoBehaviour
     public int SpawnCnt { get { return spawnCnt; } set { spawnCnt = value; } }
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
+    [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
+    int fivePercentOfMaxFloor;
     #endregion
 
     #region ステージ情報
@@ -103,6 +106,9 @@ public class SpawnManager : MonoBehaviour
         SetEnemyPrefabList();
         player = CharacterManager.Instance.PlayerObjSelf;
         enemyWeights = new float[idEnemyPrefabPairs.Count];
+
+        // 敵生成上限の5%を取得
+        fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
         // 割合
         enemyWeights[0] = 24; // ドローン
@@ -476,17 +482,32 @@ public class SpawnManager : MonoBehaviour
         spawnCnt++;
         ENEMY_ELITE_TYPE eliteType = ENEMY_ELITE_TYPE.None;
 
-        if (canPromoteToElite)
+        if (canPromoteToElite && fivePercentOfMaxFloor > eliteEnemyCnt
+            && Random.value < spawnProbability)
         {
             eliteType = (EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
+
+            eliteEnemyCnt++;
+
+            Debug.Log(eliteType);
         }
+        else if (canPromoteToElite)
+        {
+            eliteType = ENEMY_ELITE_TYPE.None;
+        }
+
+        // プレイヤーの向きを算出
+        var playerPos = FetchNearObjectWithTag("Player");
+        float scaleX = playerPos.position.x - entryData.Position.x;
+        scaleX = scaleX >= 0 ? 1 : -1;
+        var enemyScale = new Vector3(scaleX, 1, 1);
 
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
             EnemyId = spawnCnt,
             Position = entryData.Position,
-            Scale = entryData.Scale,
+            Scale = enemyScale,
             SpawnType = spawnType,
             EliteType = eliteType,
         };
@@ -511,7 +532,7 @@ public class SpawnManager : MonoBehaviour
         var eliteType = spawnEnemyData.EliteType;
         GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
         enemyObj.transform.localScale = scale;
-        enemyObj.GetComponent<EnemyBase>().PromoteToElite(0);
+        enemyObj.GetComponent<EnemyBase>().PromoteToElite(spawnEnemyData.EliteType);
         CharacterManager.Instance.AddEnemies(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
     }
 
@@ -592,23 +613,30 @@ public class SpawnManager : MonoBehaviour
 
             isSpawnBoss = true;
         }
-
-        // ボスの生成範囲の判定
-        /*var spawnPostions = SpawnManager.Instance.CreateEnemySpawnPosition(minCameraPos.position, maxCameraPos.position);
-
-        EnemyBase bossEnemy = bossPrefab.GetComponent<EnemyBase>();
-
-        Vector3? spawnPos = SpawnManager.Instance.GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, bossEnemy);
-
-        if (spawnPos != null)
-        {// 返り値がnullじゃないとき
-            boss = Instantiate(bossPrefab, (Vector3)spawnPos, Quaternion.identity);
-
-            //boss.GetComponent<EnemyBase>().SetNearTarget();
-        }
-
-        isSpawnBoss = true;
-
-        bossFlag = false;*/
     }
+
+    /// <summary>
+    /// １番近いオブジェクトを取得する
+    /// </summary>
+    /// <param name="tagName">取得したいtagName</param>
+    /// <returns>最小距離の指定Obj</returns>
+    private Transform FetchNearObjectWithTag(string tagName)
+    {
+        // 該当タグが1つしか無い場合はそれを返す
+        var targets = GameObject.FindGameObjectsWithTag(tagName);
+        if (targets.Length == 1) return targets[0].transform;
+        GameObject result = null;               // 返り値
+        var minTargetDistance = float.MaxValue; // 最小距離
+        foreach (var target in targets)
+        {
+            // 前回計測したオブジェクトよりも近くにあれば記録
+            var targetDistance = Vector3.Distance(transform.position, target.transform.position);
+            if (!(targetDistance < minTargetDistance)) continue;
+            minTargetDistance = targetDistance;
+            result = target.transform.gameObject;
+        }
+        // 最後に記録されたオブジェクトを返す
+        return result?.transform;
+    }
+
 }

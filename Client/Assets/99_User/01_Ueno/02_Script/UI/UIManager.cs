@@ -212,6 +212,7 @@ public class UIManager : MonoBehaviour
         }
 
         terminalExplanation.SetActive(false);
+        endWindow.SetActive(false);
     }
 
     /// <summary>
@@ -695,5 +696,28 @@ public class UIManager : MonoBehaviour
 
         terminalExplanationText.text = 
             terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
+    }
+
+    public void DisplayEndGameWindow()
+    {
+        endWindow.SetActive(true);
+    }
+
+    public void EndGameButtonPush(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                EndGame();
+                break; 
+            case 1:
+                endWindow.SetActive(false); 
+                break;
+        }
+    }
+
+    public void EndGame()
+    {
+        UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
     }
 }
