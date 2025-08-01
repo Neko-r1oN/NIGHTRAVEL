@@ -1894,11 +1894,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
   m_PrefabInstance: {fileID: 1159229251}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &420946202 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  m_PrefabInstance: {fileID: 1159229251}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &448944410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16625,7 +16620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FollowSpeed: 15
-  Target: {fileID: 420946202}
+  Target: {fileID: 0}
   shakeDuration: 0
   shakeAmount: 0.1
   decreaseFactor: 55
@@ -40099,7 +40094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 5
+  spawnInterval: 500
   bossPrefab: {fileID: 2717074539250444405, guid: 9d8dfa9e60155594f8fd2e2613cf89af, type: 3}
   minCameraPos: {fileID: 1980890281}
   maxCameraPos: {fileID: 1873303072}

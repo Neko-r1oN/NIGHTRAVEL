@@ -79,6 +79,7 @@ abstract public class PlayerBase : CharacterBase
     [Foldout("共通ステータス")]
     [SerializeField] protected int testExp = 10;      // デバッグ用獲得経験値
 
+    protected Player_Type playerType;                   // プレイヤータイプ
     protected float horizontalMove = 0f;                // 速度用変数
     protected float gravity;                            // 重力
     protected float timer;                              // タイマー
@@ -100,6 +101,11 @@ abstract public class PlayerBase : CharacterBase
     /// 次レベルまでの必要経験値
     /// </summary>
     public int NextLvExp { get { return nextLvExp; } }
+
+    /// <summary>
+    /// 操作キャラのタイプ
+    /// </summary>
+    public Player_Type PlayerType { get { return playerType; } }
 
     #endregion
 
@@ -188,7 +194,9 @@ abstract public class PlayerBase : CharacterBase
     protected const float ATTACK_RADIUS = 1.2f; // 攻撃判定の円の半径
 
     protected const float KNOCKBACK_DIR = 40f;  // ノックバック
-    protected const float KNOCKBACK_POW = 10f;  // ノックバックの強さ
+    protected const float KB_SMALL = 5f;        // ノックバック力（小）
+    protected const float KB_MEDIUM = 10f;      // ノックバック力（中）
+    protected const float KB_BIG = 20f;         // ノックバック力（大）
 
     protected const float STUN_TIME = 0.15f;        // スタン時間
     protected const float INVINCIBLE_TIME = 0.22f;  // 無敵時間
@@ -208,14 +216,27 @@ abstract public class PlayerBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        // 各種値の取得
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
         m_Player = GetComponent<PlayerBase>();
         gravity = m_Rigidbody2D.gravityScale;
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
         startHp = maxHp;
+
+        // カメラのターゲットを自身に設定
+        cam.GetComponent<CameraFollow>().Target = gameObject.transform;
     }
 
+    /// <summary>
+    /// 更新処理
+    /// </summary>
     virtual protected void Update()
     {
         timer += Time.deltaTime;
@@ -624,10 +645,11 @@ abstract public class PlayerBase : CharacterBase
     protected void LevelUp()
     {
         // レベルアップ処理
-        nowLv++;
-        nowExp = nowExp - nextLvExp;
-        int nextLv = nowLv + 1;
-        nextLvExp = (int)Math.Pow(nextLv, 3) - (int)Math.Pow(nowLv, 3);
+        nowLv++;                        // 現在のレベルを上げる
+        nowExp = nowExp - nextLvExp;    // 超過した分の経験値を現在の経験値量として保管
+
+        // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
+        nextLvExp = (int)Math.Pow(nowLv + 1, 3) - (int)Math.Pow(nowLv, 3);  
 
         // HP反映処理
         CalcHP();
@@ -638,7 +660,7 @@ abstract public class PlayerBase : CharacterBase
     /// </summary> ** ローカル **
     private void CalcHP()
     {
-        float hpRatio = (float)hp / (float)maxHp;
+        float hpRatio = hp / maxHp;
         maxHp = (int)(startHp + (int)Math.Pow(nowLv, 2));
         hp = (int)(maxHp * hpRatio);
 
@@ -820,7 +842,7 @@ abstract public class PlayerBase : CharacterBase
     /// 被ダメ処理
     /// (ノックバックはposに応じて有無が変わる)
     /// </summary>
-    abstract public void ApplyDamage(int power, Vector3? position = null, DEBUFF_TYPE? type = null);
+    abstract public void ApplyDamage(int power, Vector3? position = null, KB_POW? kbPow = null, DEBUFF_TYPE? type = null);
 
     /// <summary>
     /// ブリンク終了処理
