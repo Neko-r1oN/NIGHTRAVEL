@@ -451,7 +451,8 @@ abstract public class EnemyBase : CharacterBase
         if (isInvincible || isDead) return;
 
         // ダメージ適用、ダメージ表記
-        Vector3? attackerPos = attacker.transform.position;
+        Vector3? attackerPos = null;
+        if(attacker != null) attackerPos = attacker.transform.position;
         var damage = CalculationLibrary.CalcDamage(power, Defense);
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp -= Mathf.Abs(damage);
@@ -521,7 +522,6 @@ abstract public class EnemyBase : CharacterBase
         // 範囲外にでたら破棄する
         if (!canIgnoreDeadZoneCollision && collision.gameObject.tag == "Gimmick/Abyss")
         {
-            SpawnManager.Instance.SpawnCnt--;
             Destroy(gameObject);
         }
     }

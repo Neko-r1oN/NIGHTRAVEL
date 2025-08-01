@@ -708,7 +708,7 @@ public class UIManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                EndGame();
+                ChangTitleScene();
                 break; 
             case 1:
                 endWindow.SetActive(false); 

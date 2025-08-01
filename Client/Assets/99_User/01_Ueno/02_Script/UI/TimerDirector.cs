@@ -56,6 +56,8 @@ public class TimerDirector : MonoBehaviour
 
             if (elapsedTime > initMinute)
             {
+                // ゲームレベルアップリクエスト送信
+
                 // ゲームレベルアップ
                 LevelManager.Instance.UpGameLevel();
                 ResetTimer();
