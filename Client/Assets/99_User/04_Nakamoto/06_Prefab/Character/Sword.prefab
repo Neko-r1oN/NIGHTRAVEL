@@ -9789,7 +9789,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5712522905003491261}
   - component: {fileID: 524075092959210961}
-  - component: {fileID: 5756218363346932300}
+  - component: {fileID: 5426549567346677190}
   - component: {fileID: 2607110954662783208}
   - component: {fileID: 8689955818485255211}
   - component: {fileID: 6652703405110584885}
@@ -9839,6 +9839,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterId: 0
   baseHp: 400
   baseDefense: 35
   basePower: 85
@@ -9887,7 +9888,7 @@ MonoBehaviour:
   skillEffect1: {fileID: 6263195172226639990}
   skillEffect2: {fileID: 5592272234982887123}
   skillEffect3: {fileID: 2161620717427457088}
---- !u!114 &5756218363346932300
+--- !u!114 &5426549567346677190
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9896,7 +9897,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1965832932378072417}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e43c647c3c791364d9d3c4d4731398a1, type: 3}
+  m_Script: {fileID: 11500000, guid: de12d8387a0fc654b9af6be8e2610cf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   burnPS: {fileID: 605604136134073261, guid: acf41ac9d4d63834ab12ff5229114a2f, type: 3}
