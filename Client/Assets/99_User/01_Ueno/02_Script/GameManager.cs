@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     int num;                    // 生成までのカウント
     public int spawnInterval;   // 生成間隔
     bool isBossDead;            // ボスが死んだかどうか
-
+    bool isGameStart;           // ゲームが開始したかどうか
     #endregion
 
     #region その他
@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     public bool IsBossDead { get { return isBossDead; } }
 
     public int KnockTermsNum { get { return knockTermsNum; } }
+
+    public bool IsGameStart {  get { return isGameStart; } set { isGameStart = value; } }
 
     private static GameManager instance;
 
@@ -89,6 +91,8 @@ public class GameManager : MonoBehaviour
         isBossDead = false;
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
+
+        isGameStart = true;
     }
 
     /// <summary>
@@ -116,9 +120,9 @@ public class GameManager : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
         {
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+            UIManager.Instance.DisplayEndGameWindow();
 #else
-    Application.Quit();//ゲームプレイ終了
+    UIManager.Instance.DisplayEndGameWindow();
 #endif
         }
 
@@ -152,6 +156,8 @@ public class GameManager : MonoBehaviour
     private void ChengScene()
     {// シーン遷移
         SceneManager.LoadScene("Result ueno");
+
+        isGameStart = false;
     }
 
     [ContextMenu("CrushEnemy")]
