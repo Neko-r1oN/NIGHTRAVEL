@@ -26,6 +26,8 @@ public class Terminal : MonoBehaviour
 
     private static Terminal instance;
 
+    [SerializeField] GameObject terminalIcon;
+
     public static Terminal Instance
     {
         get { return instance; }
@@ -62,19 +64,6 @@ public class Terminal : MonoBehaviour
 
     public bool IsTerminal {  get { return isTerminal; } }
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
-            Destroy(gameObject);
-        }
-    }
-
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -91,10 +80,10 @@ public class Terminal : MonoBehaviour
         }
 
 
-        if (SpawnManager.Instance.EnemiesByTerminal.Count <= 0)
-        {
+        //if (SpawnManager.Instance.EnemiesByTerminal.Count <= 0)
+        //{
 
-        }
+        //}
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -149,6 +138,8 @@ public class Terminal : MonoBehaviour
                     point.SetActive(true);
                 }
                 Invoke("TimeUp",10f);   // 10秒後タイムアップとする
+                Destroy(terminalIcon);
+
                 break;
 
             case (int)TerminalCode.Type_Deal:
