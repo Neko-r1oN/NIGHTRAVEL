@@ -36,7 +36,7 @@ public class GunBulletParticle : MonoBehaviour
 
         if (other.tag == "Player")
         {
-            other.GetComponent<PlayerBase>().ApplyDamage(damageValue, null, effectType);
+            other.GetComponent<PlayerBase>().ApplyDamage(damageValue, null,null, effectType);
         }
         else if (other.tag == "Enemy")
         {

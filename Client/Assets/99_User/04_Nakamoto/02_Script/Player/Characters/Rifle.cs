@@ -39,8 +39,6 @@ public class Rifle : PlayerBase
     [Foldout("ビーム関連")]
     [SerializeField] private float beamRadius = 0.15f;      // ビーム半径
     [Foldout("ビーム関連")]
-    [SerializeField] private float beamWidthScale = 1f;     // LineRenderer に乗算して見た目を調整したい場合
-    [Foldout("ビーム関連")]
     [SerializeField] private LayerMask targetLayers;        // 敵レイヤー
     [Foldout("ビーム関連")]
     [SerializeField] private float duration = 2.5f;         // 照射時間
@@ -70,8 +68,17 @@ public class Rifle : PlayerBase
         isSkill = false;
     }
 
-    #region 更新関連処理
+    /// <summary>
+    /// 初期処理
+    /// </summary>
+    protected override void Start()
+    {
+        base.Start();
 
+        playerType = Player_Type.Gunner;
+    }
+
+    #region 更新関連処理
     /// <summary>
     /// 更新処理
     /// </summary>
@@ -186,7 +193,7 @@ public class Rifle : PlayerBase
 
     #region 被ダメ処理
 
-    public override void ApplyDamage(int power, Vector3? position = null, DEBUFF_TYPE? type = null)
+    public override void ApplyDamage(int power, Vector3? position = null, KB_POW? kbPow = null, DEBUFF_TYPE? type = null)
     {
         if (!invincible)
         {
@@ -208,7 +215,25 @@ public class Rifle : PlayerBase
             {
                 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * KNOCKBACK_DIR;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
+
+                // 引数に応じてノックバック力を変更
+                switch(kbPow)
+                {
+                    case KB_POW.Small:
+                        m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
+                        break;
+
+                    case KB_POW.Medium:
+                        m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
+                        break;
+
+                    case KB_POW.Big:
+                        m_Rigidbody2D.AddForce(damageDir * KB_BIG);
+                        break;
+
+                    default:
+                        break;
+                }
             }
 
             // 状態異常付与
@@ -219,7 +244,7 @@ public class Rifle : PlayerBase
 
             if (hp <= 0)
             {   // 死亡処理
-                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
+                m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                 StartCoroutine(WaitToDead());
             }
             else

@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
@@ -84,7 +85,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// </summary>
     public float BaseAttackSpeedFactor { get { return baseAttackSpeedFactor; } }
     #endregion
-
+        
     #region 現在のステータスの上限値関連(マイナスの値を許容しないもののみ)
     protected int maxHp;
     protected int maxDefense;
@@ -196,6 +197,18 @@ abstract public class CharacterBase : MonoBehaviour
     [Foldout("テクスチャ・アニメーション")]
     [SerializeField] 
     protected Animator animator;
+    #endregion
+
+    #region ノックバックパワーID
+    /// <summary>
+    /// ノックバック強さID
+    /// </summary>
+    public enum KB_POW
+    {
+        Small = 1,
+        Medium,
+        Big,
+    }
     #endregion
 
     protected virtual void Awake()
@@ -418,6 +431,31 @@ abstract public class CharacterBase : MonoBehaviour
         moveSpeedFactor = maxMoveSpeedFactor;
         attackSpeedFactor = maxAttackSpeedFactor;
         OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// 最大値の変更＆それに応じた現在値の変更
+    /// </summary>
+    /// <param name="changeData">強化後のステータス</param>
+    public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
+    {
+        // 最大値の更新
+        maxHp = changeData.hp;
+        maxDefense = changeData.defence;
+        maxPower = changeData.power;
+        maxJumpPower = changeData.jumpPower;
+        maxMoveSpeed = changeData.moveSpeed;
+        maxMoveSpeedFactor = changeData.moveSpeedFactor;
+        maxAttackSpeedFactor = changeData.attackSpeedFactor;
+
+        // 変更後の最大値に応じた現在値の変更
+        hp = (int)((float)maxHp * (hp / maxHp));
+        defense = (int)((float)maxDefense * (defense / maxDefense));
+        power = (int)((float)maxPower * (power / maxPower));
+        jumpPower = (int)((float)maxJumpPower * (jumpPower / maxJumpPower));
+        moveSpeed = (int)((float)maxMoveSpeed * (moveSpeed / maxMoveSpeedFactor));
+        moveSpeedFactor = (int)((float)maxMoveSpeedFactor * (moveSpeedFactor / maxMoveSpeedFactor));
+        attackSpeedFactor = (int)((float)maxAttackSpeedFactor * (attackSpeedFactor / maxAttackSpeedFactor));
     }
 
     #region アニメーション関連

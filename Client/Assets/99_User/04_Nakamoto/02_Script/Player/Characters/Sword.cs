@@ -39,9 +39,6 @@ public class Sword : PlayerBase
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
 
-    [Foldout("キャラ別ステータス")]
-    [SerializeField] private float atkGravity = 1.0f;   // 攻撃中の落下速度係数
-
     [Foldout("スキルエフェクト")]
     [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
 
@@ -70,6 +67,16 @@ public class Sword : PlayerBase
         canAttack = true;
         isCombo = false;
         isSkill = false;
+    }
+
+    /// <summary>
+    /// 初期処理
+    /// </summary>
+    protected override void Start()
+    {
+        base.Start();
+
+        playerType = Player_Type.Sword;
     }
 
     #region 更新関連処理
@@ -174,7 +181,6 @@ public class Sword : PlayerBase
     #endregion
 
     #region 攻撃・ダメージ関連
-
     public override void DoDashDamage()
     {
         // 攻撃範囲に居る敵を取得
@@ -301,7 +307,7 @@ public class Sword : PlayerBase
 
     #region 被ダメ処理
 
-    public override void ApplyDamage(int power, Vector3? position = null,DEBUFF_TYPE? type = null)
+    public override void ApplyDamage(int power, Vector3? position = null, KB_POW? kbPow = null, DEBUFF_TYPE? type = null)
     {
         // 無敵以外の時
         if (!invincible)
@@ -324,7 +330,25 @@ public class Sword : PlayerBase
             {
                 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * KNOCKBACK_DIR;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
-                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
+
+                // 引数に応じてノックバック力を変更
+                switch (kbPow)
+                {
+                    case KB_POW.Small:
+                        m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
+                        break;
+
+                    case KB_POW.Medium:
+                        m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
+                        break;
+
+                    case KB_POW.Big:
+                        m_Rigidbody2D.AddForce(damageDir * KB_BIG);
+                        break;
+
+                    default:
+                        break;
+                }
             }
 
             // 状態異常付与
@@ -335,7 +359,7 @@ public class Sword : PlayerBase
 
             if (hp <= 0)
             {   // 死亡処理
-                m_Rigidbody2D.AddForce(damageDir * KNOCKBACK_POW);
+                m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                 StartCoroutine(WaitToDead());
             }
             else
