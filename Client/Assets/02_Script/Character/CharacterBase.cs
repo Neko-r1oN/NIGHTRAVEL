@@ -11,6 +11,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using Shared.Interfaces.StreamingHubs;
 
 abstract public class CharacterBase : MonoBehaviour
 {

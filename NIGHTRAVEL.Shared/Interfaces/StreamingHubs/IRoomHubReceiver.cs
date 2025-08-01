@@ -22,37 +22,6 @@ namespace Shared.Interfaces.StreamingHubs
     {
         //ここにサーバー～クライアントの定義
 
-        #region アニメーション設定(列挙型)
-        /// <summary>
-        /// プレイヤーアニメーションの状態(列挙型)
-        /// Author:Nishiura
-        /// </summary>
-        public enum CharacterState
-        {
-            Idle = 0,
-            Walk,
-            Run,
-            Attack,
-            SecAttack,
-            Hit,
-            Dead,
-        }
-
-        /// <summary>
-        /// 敵アニメーションの状態(列挙型)
-        /// Author:Nishiura
-        /// </summary>
-        public enum EnemyAnimState
-        {
-            Idle = 0,
-            Walk,
-            Run,
-            Attack,
-            Hit,
-            Dead,
-        }
-        #endregion
-
         #region 入室からゲーム開始まで
         /// <summary>
         /// ユーザーの入室通知
@@ -101,26 +70,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="masterClientData"></param>
         void OnUpdateMasterClient(MasterClientData masterClientData);
-
-        /// <summary>
-        /// プレイヤー体力増減通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-        void OnPlayerHealth(int playerID, float playerHP);
-
-        /// <summary>
-        /// 経験値通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="exp">経験値</param>
-        void OnEXP(int exp);
-
-        /// <summary>
-        /// レベルアップ通知
-        /// </summary>
-        void OnLevelUp();
 
         /// <summary>
         /// プレイヤー死亡通知
@@ -195,12 +144,6 @@ namespace Shared.Interfaces.StreamingHubs
         void OnAdanceNextStage(int stageID);
 
         /// <summary>
-        /// ダメージ表記通知
-        /// </summary>
-        /// <param name="dmg">ダメージ</param>
-        void OnDamage(int dmg);
-
-        /// <summary>
         /// タイマー通知
         /// Author:Nishiura
         /// </summary>
@@ -222,5 +165,42 @@ namespace Shared.Interfaces.StreamingHubs
         void OnAdvancedStage(Guid conID);
 
         void OnGameEnd(ResultData result);
+
+        #region 不要になりそうなAPI
+
+        #region ゲーム内
+        #region プレイヤー関連
+
+        /// <summary>
+        /// プレイヤー体力増減通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="playerID">プレイヤー識別ID</param>
+        /// <param name="playerHP">プレイヤー体力</param>
+        void OnPlayerHealth(int playerID, float playerHP);
+
+        /// <summary>
+        /// 経験値通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="exp">経験値</param>
+        void OnEXP(int exp);
+
+        /// <summary>
+        /// レベルアップ通知
+        /// </summary>
+        void OnLevelUp();
+
+        #endregion
+        #region ゲーム内UI、仕様
+        /// <summary>
+        /// ダメージ表記通知
+        /// </summary>
+        /// <param name="dmg">ダメージ</param>
+        void OnDamage(int dmg);
+        #endregion
+        #endregion
+
+        #endregion
     }
 }

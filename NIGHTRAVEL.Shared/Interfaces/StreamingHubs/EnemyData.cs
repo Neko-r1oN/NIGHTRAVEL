@@ -33,7 +33,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public bool isBoss { get; set; } = false;
 
-        [Key(19)]
+        [Key(20)]
         /// <summary>
         /// 経験値
         /// Author:Nishiura
