@@ -78,21 +78,4 @@ public class PreGameManager : MonoBehaviour
         //退室したプレイヤーを消す
         player.SetActive(false);
     }
-
-    /// <summary>
-    /// プレイヤーの移動通知
-    /// </summary>
-    public void OnMoveCharacterSyn(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState animID)
-    {
-
-    }
-
-    /// <summary>
-    /// 敵の移動通知
-    /// </summary>
-    public void OnMoveEnemySyn(int enemID, Vector2 pos, Quaternion rot, EnemyAnimState anim)
-    {
-
-    }
-
 }
