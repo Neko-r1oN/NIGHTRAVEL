@@ -12,11 +12,13 @@ using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
 #endregion
 
@@ -93,7 +95,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int,float> OnPlayerHealthSyn {  get; set; }
 
     //敵体力増減通知
-    public Action<int,float> OnEnemyHealthSyn { get; set; }
+    public Action<EnemyDamegeData> OnEnemyHealthSyn { get; set; }
 
     //敵死亡通知
     public Action<int> OnKilledEnemySyn {  get; set; }
@@ -105,10 +107,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnLevelUpSyn { get; set; }
 
     //プレイヤーダウン通知
-    public Action<int> OnPlayerDeadSyn {  get; set; }
+    public Action<Guid> OnPlayerDeadSyn {  get; set; }
 
     //ダメージ表記通知
     public Action<int> OnDamaged {  get; set; }
+
+    //タイマー通知
+    public Action<Dictionary<EnumManager.TIME_TYPE, int>> OnTimerSyn { get; set; }
+
+    //ステージ進行通知
+    public Action<Guid> OnAdvancedStageSyn { get; set; }
+
+    //ゲーム終了通知
+    public Action<ResultData> OnGameEndSyn { get; set; }
     #endregion
 
     #region RoomModelインスタンス生成
@@ -280,7 +291,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="playerID"></param>
     /// <returns></returns>
-    public async Task PlayerDeadAsync(int playerID)
+    public async Task PlayerDeadAsync(Guid playerID)
     {
         await roomHub.PlayerDeadAsync(playerID);
     }
@@ -317,9 +328,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="enemHP"></param>
     /// <returns></returns>
-    public async Task EnemyHealthAsync(int enemID, float enemHP)
+    public async Task EnemyHealthAsync(int enemID,Guid guid, float enemHP)
     {
-        await roomHub.EnemyHealthAsync(enemID, enemHP);
+        await roomHub.EnemyHealthAsync(enemID,guid, enemHP);
     }
 
     /// <summary>
@@ -372,11 +383,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <summary>
     /// 難易度上昇の同期
     /// </summary>
-    /// <param name="difID"></param>
     /// <returns></returns>
-    public async Task AscendDifficultyAsync(int difID)
+    public async Task AscendDifficultyAsync()
     {
-        await roomHub.AscendDifficultyAsync(difID);
+        await roomHub.AscendDifficultyAsync();
     }
 
     /// <summary>
@@ -387,6 +397,17 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
     {
         await roomHub.AdvanceNextStageAsync(stageID, isBossStage);
+    }
+
+    /// <summary>
+    /// ステージ進行完了の同期
+    /// </summary>
+    /// <param name="stageID"></param>
+    /// <param name="isBossStage"></param>
+    /// <returns></returns>
+    public async Task AdvancedStageAsync(int stageID, bool isBossStage)
+    {
+        await roomHub.AdvancedStageAsync(stageID, isBossStage);
     }
 
     /// <summary>
@@ -401,6 +422,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     #endregion
+
+    /// <summary>
+    /// タイマーの同期
+    /// </summary>
+    /// <param name="tiemrType"></param>
+    /// <returns></returns>
+    public async Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType)
+    {
+        await roomHub.TimeAsync(tiemrType);
+    }
     #endregion
 
     #region 通知の処理
@@ -493,7 +524,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="playerID"></param>
-    public void OnPlayerDead(int playerID)
+    public void OnPlayerDead(Guid playerID)
     {
         OnPlayerDeadSyn(playerID);
     }
@@ -544,11 +575,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 敵体力増減通知
     /// Aughter:木田晃輔
     /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="enemHP"></param>
-    public void OnEnemyHealth(int enemID, float enemHP)
+    public void OnEnemyHealth(EnemyDamegeData enemyDamegeData)
     {
-        OnEnemyHealthSyn(enemID, enemHP);
+        OnEnemyHealthSyn(enemyDamegeData);
     }
 
     /// <summary>
@@ -633,6 +662,33 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnDamaged(dmg);
     }
+
+    /// <summary>
+    /// タイマー
+    /// </summary>
+    /// <param name="timerType"></param>
+    public void OnTimer(Dictionary<EnumManager.TIME_TYPE, int> timerType)
+    {
+        OnTimerSyn(timerType);
+    }
     #endregion
+
+    /// <summary>
+    /// ステージ進行通知
+    /// </summary>
+    /// <param name="conID"></param>
+    public void OnAdvancedStage(Guid conID)
+    {
+        OnAdvancedStageSyn(conID);
+    }
+
+    /// <summary>
+    /// ゲーム終了通知
+    /// </summary>
+    /// <param name="result"></param>
+    public void OnGameEnd(ResultData result)
+    {
+        OnGameEndSyn(result);
+    }
     #endregion
 }
