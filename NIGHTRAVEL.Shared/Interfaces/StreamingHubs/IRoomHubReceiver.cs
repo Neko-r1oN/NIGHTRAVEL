@@ -14,6 +14,7 @@ using MagicOnion;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using NIGHTRAVEL.Shared.Unity;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 
 namespace Shared.Interfaces.StreamingHubs
 {
@@ -125,8 +126,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// プレイヤー死亡通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="playerID">プレイヤーID</param>
-        void OnPlayerDead(int playerID);
+        /// <param name=")">プレイヤーID</param>
+        void OnPlayerDead(Guid conID);
         #endregion
         #region 敵関連
 
@@ -142,9 +143,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// 敵体力増減通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="enemID"></param>
-        /// <param name="enemHP"></param>
-        void OnEnemyHealth(int enemID, float enemHP);
+        /// <param name="enemDmgData">敵被弾データ</param>
+        void OnEnemyHealth(EnemyDamegeData enemDmgData);
 
         /// <summary>
         /// 敵死亡通知
@@ -184,8 +184,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// 難易度上昇通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="difID">増加後難易度</param>
-        void OnAscendDifficulty(int difID);
+        /// <param name="dif">増加後難易度</param>
+        void OnAscendDifficulty(int dif);
 
         /// <summary>
         /// 次ステージ進行通知
@@ -199,6 +199,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="dmg">ダメージ</param>
         void OnDamage(int dmg);
+
+        /// <summary>
+        /// タイマー通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="timerType">タイマー辞典</param>
+        void OnTimer(Dictionary<EnumManager.TIME_TYPE, int> timerType);
         #endregion
         #endregion
 
@@ -206,5 +213,14 @@ namespace Shared.Interfaces.StreamingHubs
         /// マスタークライアントの変更通知
         /// </summary>
         void OnChangeMasterClient();
+
+        /// <summary>
+        /// ステージ進行通知
+        /// Author;Nishiura
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        void OnAdvancedStage(Guid conID);
+
+        void OnGameEnd(ResultData result);
     }
 }

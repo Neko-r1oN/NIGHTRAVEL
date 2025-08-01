@@ -98,9 +98,9 @@ namespace Shared.Interfaces.StreamingHubs
         /// プレイヤー死亡
         /// Author:Nishiura
         /// </summary>
-        /// <param name="playerID">プレイヤーID</param>
+        /// <param name="conID">プレイヤーID</param>
         /// <returns></returns>
-        Task PlayerDeadAsync(int playerID);
+        Task PlayerDeadAsync(Guid conID);
         #endregion
         #region 敵関連
         /// <summary>
@@ -117,9 +117,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemID">敵識別ID</param>
-        /// <param name="enemHP">敵体力</param>
+        /// <param name="conID">ダメージを与えたPLの接続ID</param>
+        /// <param name="giverATK">PLの攻撃力</param>
         /// <returns></returns>
-        Task EnemyHealthAsync(int enemID, float enemHP);
+        Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK);
 
         /// <summary>
         /// 敵死亡
@@ -162,7 +163,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="difID">難易度ID</param>
         /// <returns></returns>
-        Task AscendDifficultyAsync(int difID);
+        Task AscendDifficultyAsync();
 
         /// <summary>
         /// 次ステージ進行
@@ -172,6 +173,15 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="isBossStage">ボスステージ判定</param>
         /// <returns></returns>
         Task AdvanceNextStageAsync(int stageID, bool isBossStage);
+
+        /// <summary>
+        /// ステージ進行完了
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="stageID">ステージID</param>
+        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <returns></returns>
+        Task AdvancedStageAsync(int stageID, bool isBossStage);
 
         /// <summary>
         /// ダメージ表記
@@ -190,5 +200,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <returns></returns>
         Task MasterLostAsync(Guid conID);
+
+        /// <summary>
+        /// 時間同期処理
+        /// </summary>
+        /// <param name="time">タイマーの辞典</param>
+        /// <returns></returns>
+        Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType);
     }
 }

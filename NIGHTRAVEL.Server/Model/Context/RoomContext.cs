@@ -6,6 +6,7 @@ using Cysharp.Runtime.Multicast;
 using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Numerics;
 using UnityEngine;
 
@@ -25,6 +26,18 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Kida
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// 難易度
+        /// Author:Nishiura
+        /// </summary>
+        public int NowDifficulty { get; set; }
+
+        /// <summary>
+        /// 経験値管理クラス
+        /// Author:Nishiura
+        /// </summary>
+        public ExpManager ExpManager { get; set; }
 
         /// <summary>
         /// グループ
@@ -57,6 +70,12 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         public Dictionary<int, GimmickData> gimmickDataList { get; } = new();
+
+        /// <summary>
+        /// 生成された敵リスト
+        /// Author:Nishiura
+        /// </summary>
+        public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new();
 
         //[その他、ゲームのルームデータをフィールドに保存]
         #endregion
@@ -154,8 +173,22 @@ namespace NIGHTRAVEL.Server.Model.Context
             setData.Defense = (int)enemData.defence;
             setData.MoveSpeed = (float)enemData.move_speed;
             setData.AttackSpeedFactor = (float)enemData.attack_speed;
+            setData.Exp = enemData.exp;
 
             enemyDataList.Add(enemData.id, setData);
+        }
+
+        /// <summary>
+        /// 生成された敵の情報を入力する関数
+        /// Author:Nishiura
+        /// </summary>
+        public void  SetSpawnedEnemyData(List<SpawnEnemyData> enemyList)
+        {
+            // 渡された敵のリスト分ループしてデータを追加
+            for (int i = 0; i < enemyList.Count; i++)
+            {
+                spawnedEnemyDataList.Add(i, enemyList[i]);
+            }
         }
 
         /// <summary>
@@ -183,6 +216,5 @@ namespace NIGHTRAVEL.Server.Model.Context
             }
         }
         #endregion
-
     }
 }

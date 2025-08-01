@@ -26,6 +26,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
         public double defence { get; set; }                 //敵の防御力
         public double move_speed { get; set; }              //敵の移動速度
         public string stage_id { get; set; }                //ステージのID(識別用)
+        public int exp { get; set; }                        //経験値
         public DateTime Created_at { get; set; }            //生成日時
         public DateTime Updated_at { get; set; }            //更新日時
     }
