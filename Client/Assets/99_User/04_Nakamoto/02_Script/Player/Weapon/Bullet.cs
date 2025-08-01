@@ -33,7 +33,7 @@ public class Bullet : MonoBehaviour
     }
 
     /// <summary>
-    /// プレイヤー情報の取得
+    /// プレイヤー情報取得
     /// </summary>
     /// <param name="player"></param>
     public void SetPlayer(PlayerBase player)

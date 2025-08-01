@@ -276,12 +276,6 @@ abstract public class PlayerBase : CharacterBase
         {
             if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
             {   // ジャンプ押下時
-#if !UNITY_EDITOR
-                // カーソル非表示
-                UnityEngine.Cursor.visible = false;
-#endif
-
-
                 if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
                     isJump = true;
             }
@@ -817,7 +811,13 @@ abstract public class PlayerBase : CharacterBase
         isBlinking = false;
         yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
         canBlink = true;
+        gameObject.layer = 20;
     }
+
+    /// <summary>
+    /// 足場すり抜け処理
+    /// </summary>
+    /// <returns></returns>
     protected IEnumerator ScaffoldDown()
     {
         yield return new WaitForSeconds(0.3f);

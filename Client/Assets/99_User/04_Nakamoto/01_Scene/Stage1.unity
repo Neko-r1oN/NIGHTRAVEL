@@ -3129,6 +3129,7 @@ MonoBehaviour:
   spawnRangeOffset: 5.7
   maxSpawnCnt: 50
   knockTermsNum: 5
+  spawnProbability: 0.05
   stageMin: {fileID: 2032298648}
   stageMax: {fileID: 1105730915}
   minTerminalRespawn: {fileID: 1333262453}
@@ -40094,7 +40095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 500
+  spawnInterval: 0
   bossPrefab: {fileID: 2717074539250444405, guid: 9d8dfa9e60155594f8fd2e2613cf89af, type: 3}
   minCameraPos: {fileID: 1980890281}
   maxCameraPos: {fileID: 1873303072}
