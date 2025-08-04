@@ -182,15 +182,7 @@ public class CharacterManager : MonoBehaviour
     /// <param name="character"></param>
     void UpdateCharacter(CharacterData characterData, CharacterBase character)
     {
-        var statusData = new CharacterStatusData(
-            characterData.Health,
-            characterData.Defense,
-            characterData.AttackPower,
-            characterData.MoveSpeed,
-            characterData.MoveSpeedFactor,
-            characterData.AttackSpeedFactor,
-            characterData.JumpPower
-            );
+        var stateData = characterData.State;
 
         List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All};
         if (character.gameObject.tag == "Enemy")
@@ -203,14 +195,14 @@ public class CharacterManager : MonoBehaviour
                 STATUS_TYPE.MoveSpeedFactor, 
                 STATUS_TYPE.AttackSpeedFactor};
         }
-        character.OverridCurrentStatus(statusData, STATUS_TYPE.All);
-        character.OverridCurrentStatus(statusData);
+        character.OverridCurrentStatus(stateData, STATUS_TYPE.All);
+        character.OverridCurrentStatus(stateData);
         character.gameObject.SetActive(characterData.IsActiveSelf);
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
         character.gameObject.transform.localScale = characterData.Scale;
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
         character.SetAnimId(characterData.AnimationId);
-        character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList);
+        character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
 
         // マスタークライアントの場合、キャラクターが動けるようにする
         if (RoomModel.Instance.IsMaster && !character.enabled)
@@ -232,13 +224,24 @@ public class CharacterManager : MonoBehaviour
         return new PlayerData()
         {
             IsActiveSelf = player.gameObject.activeInHierarchy,
-            Health = player.HP,
-            Defense = player.Defense,
-            AttackPower = player.power,
-            JumpPower = player.jumpPower,
-            MoveSpeed = player.moveSpeed,
-            MoveSpeedFactor = player.moveSpeedFactor,
-            AttackSpeedFactor = player.attackSpeedFactor,
+            Status = new CharacterStatusData(
+                hp: player.MaxHP,
+                defence: player.MaxDefence,
+                power: player.MaxPower,
+                moveSpeed: player.MaxMoveSpeed,
+                moveSpeedFactor: player.MaxMoveSpeedFactor,
+                attackSpeedFactor: player.MaxAttackSpeedFactor,
+                jumpPower: player.MaxJumpPower
+                ),
+            State = new CharacterStatusData(
+                hp: player.HP,
+                defence: player.defense,
+                power: player.power,
+                moveSpeed: player.moveSpeed,
+                moveSpeedFactor: player.moveSpeedFactor,
+                attackSpeedFactor: player.attackSpeedFactor,
+                jumpPower: player.jumpPower
+                ),
             Position = player.transform.position,
             Scale = player.transform.localScale,
             Rotation = player.transform.rotation,
@@ -267,13 +270,24 @@ public class CharacterManager : MonoBehaviour
             var data = new EnemyData()
             {
                 IsActiveSelf = enemy.gameObject.activeInHierarchy,
-                Health = enemy.HP,
-                Defense = enemy.Defense,
-                AttackPower = enemy.power,
-                JumpPower = enemy.jumpPower,
-                MoveSpeed = enemy.moveSpeed,
-                MoveSpeedFactor = enemy.moveSpeedFactor,
-                AttackSpeedFactor = enemy.attackSpeedFactor,
+                Status = new CharacterStatusData(
+                    hp: enemy.MaxHP,
+                    defence: enemy.MaxDefence,
+                    power: enemy.MaxPower,
+                    moveSpeed: enemy.MaxMoveSpeed,
+                    moveSpeedFactor: enemy.MaxMoveSpeedFactor,
+                    attackSpeedFactor: enemy.MaxAttackSpeedFactor,
+                    jumpPower: enemy.MaxJumpPower
+                ),
+                State = new CharacterStatusData(
+                    hp: enemy.HP,
+                    defence: enemy.defense,
+                    power: enemy.power,
+                    moveSpeed: enemy.moveSpeed,
+                    moveSpeedFactor: enemy.moveSpeedFactor,
+                    attackSpeedFactor: enemy.attackSpeedFactor,
+                    jumpPower: enemy.jumpPower
+                ),
                 Position = enemy.transform.position,
                 Scale = enemy.transform.localScale,
                 Rotation = enemy.transform.rotation,

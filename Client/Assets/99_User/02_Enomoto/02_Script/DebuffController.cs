@@ -77,13 +77,9 @@ public class DebuffController : MonoBehaviour
     /// “K—pÏ‚İ‚Ìó‘ÔˆÙí‚ğæ“¾‚·‚é
     /// </summary>
     /// <returns></returns>
-    public List<int> GetAppliedStatusEffects()
+    public List<DEBUFF_TYPE> GetAppliedStatusEffects()
     {
-        List<int> result = new List<int>();
-        foreach (DEBUFF_TYPE effectType in currentEffects.Keys)
-        {
-            result.Add((int)effectType);
-        }
+        List<DEBUFF_TYPE> result = new List<DEBUFF_TYPE>(currentEffects.Keys);
         return result;
     }
 
@@ -94,27 +90,6 @@ public class DebuffController : MonoBehaviour
     public void ApplyStatusEffect(params DEBUFF_TYPE[] effectTypes)
     {
         ApplyStatusEffect(true, effectTypes);
-    }
-
-    /// <summary>
-    /// ó‘ÔˆÙí‚ğ•t—^‚·‚éˆ—
-    /// </summary>
-    /// <param name="effectTypes"></param>
-    public void ApplyStatusEffect(bool canUpdateDuration, List<int> effectTypeIds)
-    {
-        List<DEBUFF_TYPE> effectTypes = new List<DEBUFF_TYPE>();
-        foreach(int id in effectTypeIds)
-        {
-            foreach (DEBUFF_TYPE type in Enum.GetValues(typeof(DEBUFF_TYPE)))
-            {
-                if ((int)type == id)
-                {
-                    effectTypes.Add(type);
-                    break;
-                }
-            }
-        }
-        ApplyStatusEffect(canUpdateDuration, effectTypes.ToArray());
     }
 
     /// <summary>

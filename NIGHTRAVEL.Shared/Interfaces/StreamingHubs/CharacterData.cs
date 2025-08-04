@@ -24,13 +24,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 最大ステータス
         /// </summary>
-        public CharacterStatusData Status;
+        public CharacterStatusData Status { get; set; } = new CharacterStatusData();
 
         [Key(2)]
         /// <summary>
         /// 現在のステータス
         /// </summary>
-        public CharacterStatusData State;
+        public CharacterStatusData State { get; set; } = new CharacterStatusData();
 
         //[Key(1)]
         ///// <summary>
