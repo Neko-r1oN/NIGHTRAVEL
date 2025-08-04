@@ -231,7 +231,10 @@ abstract public class PlayerBase : CharacterBase
         startHp = maxHp;
 
         // カメラのターゲットを自身に設定
-        cam.GetComponent<CameraFollow>().Target = gameObject.transform;
+        if(RoomModel.Instance == null)
+        {
+            cam.GetComponent<CameraFollow>().Target = gameObject.transform;
+        }
     }
 
     /// <summary>
