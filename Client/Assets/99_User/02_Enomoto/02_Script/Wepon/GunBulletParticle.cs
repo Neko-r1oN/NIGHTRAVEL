@@ -41,7 +41,7 @@ public class GunBulletParticle : MonoBehaviour
         else if (other.tag == "Enemy")
         {
             Debug.Log(other.gameObject.name);
-            other.GetComponent<EnemyBase>().ApplyDamage(damageValue);
+            other.GetComponent<EnemyBase>().ApplyDamageRequest(damageValue);
         }
         else if (other.tag == "Object")
         {

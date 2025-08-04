@@ -332,7 +332,7 @@ public class Rifle : PlayerBase
                 {
                     if (hit.collider == null) continue;
 
-                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamage((int)(Power * BEAM_MAG), gameObject);
+                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamageRequest((int)(Power * BEAM_MAG), gameObject);
                 }
 
                 tickTimer = 0f;

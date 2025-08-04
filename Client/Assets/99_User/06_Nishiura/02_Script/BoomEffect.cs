@@ -35,7 +35,7 @@ public class BoomEffect : MonoBehaviour
 
             // “G‚ÌÅ‘åHP30%‘Š“–‚Ìƒ_ƒ[ƒW‚Éİ’è
             int damage = Mathf.FloorToInt(enemyBase.MaxHP * 0.3f);
-            enemyBase.ApplyDamage(damage);
+            enemyBase.ApplyDamageRequest(damage);
 
             Invoke("DeleteThis", 0.3f);
         }

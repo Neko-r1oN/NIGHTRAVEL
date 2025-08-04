@@ -226,7 +226,7 @@ public class Sword : PlayerBase
                         break;
                 }
 
-                enemyComponent.ApplyDamage(attackPower, gameObject);
+                enemyComponent.ApplyDamageRequest(attackPower, gameObject);
                 processedEnemies.Add(enemyComponent); // ˆ—Ï‚İƒŠƒXƒg‚É’Ç‰Á
             }
         }

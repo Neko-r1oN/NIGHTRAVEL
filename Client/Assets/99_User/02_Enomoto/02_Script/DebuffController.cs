@@ -259,6 +259,6 @@ public class DebuffController : MonoBehaviour
         // Å‘åHP‚Ì5%‚Ìƒ_ƒ[ƒW‚ğ—^‚¦‚é
         int dmgValue = Mathf.CeilToInt((float)characterBase.MaxHP * burnEffect);
         if (this.gameObject.tag == "Player") playerBase.ApplyDamage(dmgValue);
-        else if (this.gameObject.tag == "Enemy") enemyBase.ApplyDamage(dmgValue);
+        else if (this.gameObject.tag == "Enemy") enemyBase.ApplyDamageRequest(dmgValue);
     }
 }

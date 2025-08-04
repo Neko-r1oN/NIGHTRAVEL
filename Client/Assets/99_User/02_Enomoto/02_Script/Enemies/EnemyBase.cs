@@ -446,22 +446,23 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用処理
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
+    public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
     {
-        if (isInvincible || isDead) return;
+        GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
+        if (isInvincible || isDead || attacker && attacker != playerSelf) return;
+
+        // リアルタイム中、自分による攻撃の場合はダメージ同期をリクエスト
+        if (RoomModel.Instance && attacker && attacker == playerSelf)
+        {
+            return;
+        }
 
         // ダメージ適用、ダメージ表記
         Vector3? attackerPos = null;
-        if(attacker != null) attackerPos = attacker.transform.position;
+        if (attacker != null) attackerPos = attacker.transform.position;
         var damage = CalculationLibrary.CalcDamage(power, Defense);
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp -= Mathf.Abs(damage);
-
-        // リアルタイム中、自分による攻撃の場合はダメージ同期をリクエスト
-        if (attacker && RoomModel.Instance && CharacterManager.Instance.PlayerObjSelf == attacker)
-        {
-
-        }
 
         // 状態異常を付与する
         if (effectTypes.Length > 0) effectController.ApplyStatusEffect(effectTypes);

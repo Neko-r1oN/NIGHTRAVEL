@@ -13,32 +13,8 @@ namespace Shared.Interfaces.StreamingHubs
     [MessagePackObject]
     public class EnumManager
     {
-        /// <summary>
-        /// 状態異常の種類
-        /// </summary>
-        public enum DEBUFF_TYPE
-        {
-            None = 0,
-            Burn,       // 炎上状態
-            Freeze,     // 霜焼け状態
-            Shock       // 感電状態
-        }
 
-        /// <summary>
-        /// ステータスの種類
-        /// </summary>
-        public enum STATUS_TYPE
-        {
-            All,
-            HP,
-            Defense,
-            Power,
-            JumpPower,
-            MoveSpeed,
-            MoveSpeedFactor,
-            AttackSpeedFactor
-        }
-
+        #region システム関連
         /// <summary>
         /// タイマ-の種類
         /// Author:Nishiura
@@ -63,6 +39,44 @@ namespace Shared.Interfaces.StreamingHubs
             VeryHard,
             Hell
         }
+        #endregion
+
+        #region キャラクター関連
+
+        /// <summary>
+        /// 状態異常の種類
+        /// </summary>
+        public enum DEBUFF_TYPE
+        {
+            None = 0,
+            Burn,       // 炎上状態
+            Freeze,     // 霜焼け状態
+            Shock       // 感電状態
+        }
+
+        /// <summary>
+        /// ステータス強化の選択肢の種類
+        /// DB上のレコードのIDと完全一致させる
+        /// </summary>
+        public enum STAT_UPGRADE_OPTION 
+        {
+            Sample
+        }
+
+        /// <summary>
+        /// ステータスの種類
+        /// </summary>
+        public enum STATUS_TYPE
+        {
+            All,
+            HP,
+            Defense,
+            Power,
+            JumpPower,
+            MoveSpeed,
+            MoveSpeedFactor,
+            AttackSpeedFactor
+        }
 
         #region 操作キャラ関連
 
@@ -76,7 +90,6 @@ namespace Shared.Interfaces.StreamingHubs
         }
 
         #endregion
-
         #region 敵関連
 
         /// <summary>
@@ -111,6 +124,8 @@ namespace Shared.Interfaces.StreamingHubs
             Frost,      // フロストエリート
             Thunder     // サンダーエリート
         }
+
+        #endregion
 
         #endregion
     }
