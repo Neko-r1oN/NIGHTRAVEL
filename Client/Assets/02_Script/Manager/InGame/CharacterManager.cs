@@ -78,6 +78,10 @@ public class CharacterManager : MonoBehaviour
 
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
+            if (!playerObjSelf)
+            {
+                Debug.LogError("playerObjSelf‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢");
+            }
             playerObjs.Add(Guid.Empty, playerObjSelf);
             return;
         }
