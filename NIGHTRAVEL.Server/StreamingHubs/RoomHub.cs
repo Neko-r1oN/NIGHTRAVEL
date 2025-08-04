@@ -56,6 +56,11 @@ namespace StreamingHubs
                 { //無かったら生成
                     this.roomContext = roomContextRepository.CreateContext(roomName);
                 }
+                else if(this.roomContext.JoinedUserList.Count == 0)
+                { //ルーム情報が入ってかつ参加人数が0人の場合
+                    roomContextRepository.RemoveContext(roomName);                      //ルーム情報を削除
+                    this.roomContext = roomContextRepository.CreateContext(roomName);   //ルームを生成
+                }
             }
 
             //DBからユーザー情報取得

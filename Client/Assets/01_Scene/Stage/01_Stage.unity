@@ -30077,6 +30077,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnRange: {x: 5.45, y: 7.29}
   spawnRangeOffset: 5.7
+  maxSpawnCnt: 100
+  knockTermsNum: 25
+  spawnProbability: 0.05
   stageMin: {fileID: 418484956}
   stageMax: {fileID: 959809368}
   minTerminalRespawn: {fileID: 0}
@@ -30091,7 +30094,8 @@ MonoBehaviour:
   distMinSpawnPos: 3
   xRadius: 10
   yRadius: 6
-  player: {fileID: 0}
+  bossTerminal: {fileID: 0}
+  bossId: 0
 --- !u!4 &1690200671 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5359299794365042959, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
@@ -38782,8 +38786,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 5
-  maxSpawnCnt: 5
   bossPrefab: {fileID: 2717074539250444405, guid: 9d8dfa9e60155594f8fd2e2613cf89af, type: 3}
   minCameraPos: {fileID: 970894747}
   maxCameraPos: {fileID: 1063930991}
