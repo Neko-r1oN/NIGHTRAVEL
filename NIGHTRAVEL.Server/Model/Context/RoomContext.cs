@@ -51,49 +51,49 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// 参加者リスト
         /// Author:Kida
         /// </summary>
-        public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new();
+        public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new Dictionary<Guid, JoinedUser>();
 
         /// <summary>
         /// ルームデータリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<Guid, PlayerData> playerDataList { get; } = new();
+        public Dictionary<Guid, PlayerData> playerDataList { get; } = new Dictionary<Guid, PlayerData>();
 
         /// <summary>
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<int, EnemyData> enemyDataList { get; } = new();
+        public Dictionary<int, EnemyData> enemyDataList { get; } = new Dictionary<int, EnemyData>();
 
         /// <summary>
         /// ギミックデータリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<int, GimmickData> gimmickDataList { get; } = new();
+        public Dictionary<int, GimmickData> gimmickDataList { get; } = new Dictionary<int, GimmickData>();
 
         /// <summary>
         /// 生成された敵リスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new();
+        public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new Dictionary<int, SpawnEnemyData>();
 
         /// <summary>
         /// 起動済み端末IDリスト
         /// Author:Nishiura
         /// </summary>
-        public List<int> bootedTerminalList { get; } = new();
+        public List<int> bootedTerminalList { get; } = new List<int>();
 
         /// <summary>
         /// 端末結果リスト
         /// Author:Nishiura
         /// </summary>
-        public List<int> succededTerminalList { get; } = new();
+        public List<int> succededTerminalList { get; } = new List<int>();
 
         /// <summary>
         /// 取得アイテムリスト
         /// Author:Nishiura
         /// </summary>
-        public List<string> gottenItemList { get; } = new();
+        public List<string> gottenItemList { get; } = new List<string>();
 
         //[その他、ゲームのルームデータをフィールドに保存]
         #endregion
@@ -205,7 +205,7 @@ namespace NIGHTRAVEL.Server.Model.Context
             // 渡された敵のリスト分ループしてデータを追加
             for (int i = 0; i < enemyList.Count; i++)
             {
-                spawnedEnemyDataList.Add(i, enemyList[i]);
+                spawnedEnemyDataList.Add(enemyList[i].EnemyId, enemyList[i]);
             }
         }
 
