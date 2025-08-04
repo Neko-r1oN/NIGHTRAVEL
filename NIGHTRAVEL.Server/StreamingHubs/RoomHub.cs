@@ -320,14 +320,18 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
         {
-            if ((stageID == 3 && isBossStage) || stageID != 3) stageID++;   // ステージが3かつラスボスへ進む場合または通常ステージの場合、ステージIDを加算
-            else if (stageID == 3 && !isBossStage) stageID = 1;             // ラスボスへ進まない場合、ステージ1へ移動
+            lock (roomContextRepository) // 排他制御
+            {
 
-            // 生成された敵リストをクリア
-            this.roomContext.spawnedEnemyDataList.Clear();
+                if ((stageID == 3 && isBossStage) || stageID != 3) stageID++;   // ステージが3かつラスボスへ進む場合または通常ステージの場合、ステージIDを加算
+                else if (stageID == 3 && !isBossStage) stageID = 1;             // ラスボスへ進まない場合、ステージ1へ移動
 
-            // 参加者全員にステージの進行を通知
-            this.roomContext.Group.All.OnAdanceNextStage(stageID);
+                // 生成された敵リストをクリア
+                this.roomContext.spawnedEnemyDataList.Clear();
+
+                // 参加者全員にステージの進行を通知
+                this.roomContext.Group.All.OnAdanceNextStage(stageID);
+            }
         }
 
         /// <summary>
@@ -355,6 +359,34 @@ namespace StreamingHubs
             // 進行できる場合、進行通知をする
             if (canAdvenceStage) await AdvanceNextStageAsync(stageID, isBossStage);
 
+        }
+
+        /// <summary>
+        /// ステージクリア待機同期処理
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isTimeUp">時間切れ判定</param>
+        /// <param name="stageID">ステージID</param>
+        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <returns></returns>
+        public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, int stageID, bool isBossStage)
+        {
+            // 時間切れの場合、即座に進行処理をする
+            if (isTimeUp) await AdvanceNextStageAsync(stageID, isBossStage);
+
+            bool canAdvenceStage = true; // ステージ進行判定変数
+
+            // 自身のデータを取得
+            var joinedUser = roomContext.JoinedUserList[(Guid)conID];
+            joinedUser.IsTouchBossTerm = true; // 接触したことにする
+
+            foreach (var user in this.roomContext.JoinedUserList)
+            { // 現在の参加者数分ループ
+                if (user.Value.IsTouchBossTerm != true) canAdvenceStage = false; // もし一人でも接触していなかった場合、進行させない
+            }
+
+            // 進行できる場合、進行通知をする
+            if (canAdvenceStage) await AdvanceNextStageAsync(stageID, isBossStage);
         }
 
         /// <summary>
@@ -496,6 +528,69 @@ namespace StreamingHubs
         {
             // 参加者全員に与えたダメージを通知
             this.roomContext.Group.All.OnDamage(dmg);
+        }
+
+        /// <summary>
+        /// 端末起動同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末識別ID</param>
+        /// <returns></returns>
+        public async Task BootTerminalAsync(int termID)
+        {
+            // 受け取った端末が起動済みである場合処理しない
+            if (this.roomContext.bootedTerminalList.Contains(termID)) return;
+
+            // 起動済み端末リストに入れる
+            this.roomContext.bootedTerminalList.Add(termID);
+
+            // 参加者全員に端末の起動を通知
+            this.roomContext.Group.All.OnBootTerminal(termID);
+        }
+
+        /// <summary>
+        /// 端末成功同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末識別ID</param>
+        /// <param name="result">端末結果</param>
+        /// <returns></returns>
+        public async Task TerminalsResultAsync(int termID, bool result)
+        {
+            // 受け取った端末がクリア済みである場合処理しない
+            if (this.roomContext.succededTerminalList.Contains(termID)) return;
+
+            if (result == true) // クリアの場合
+            {
+                // クリア済みとしてリストに入れる
+                this.roomContext.succededTerminalList.Add(termID);
+
+                // 参加者全員に端末の結果を通知
+                this.roomContext.Group.All.OnTerminalsResult(termID, result);
+            }
+            else if (result == false) // 失敗の場合
+            {
+                // 参加者全員に端末の結果を通知
+                this.roomContext.Group.All.OnTerminalsResult(termID, result);
+            }
+        }
+
+        /// <summary>
+        /// アイテム獲得同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="itemID">識別ID(文字列)</param>
+        /// <returns></returns>
+        public async Task GetItemAsync(string itemID)
+        {
+            // すでに取得済みである場合、処理しない
+            if(this.roomContext.gottenItemList.Contains(itemID)) return;
+
+            // 取得済みアイテムリストに入れる
+            this.roomContext.gottenItemList.Add(itemID);
+            
+            // アイテムの獲得を全員に通知
+            this.roomContext.Group.All.OnGetItem(itemID);
         }
         #endregion
 

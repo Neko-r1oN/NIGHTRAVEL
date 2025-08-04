@@ -77,6 +77,21 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name=")">プレイヤーID</param>
         void OnPlayerDead(Guid conID);
+
+        /// <summary>
+        /// 端末起動通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末識別ID</param>
+        void OnBootTerminal(int termID);
+
+        /// <summary>
+        /// 端末結果通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末識別ID</param>
+        /// <param name="result">端末結果</param>
+        void OnTerminalsResult(int termID, bool result);
         #endregion
         #region 敵関連
 
@@ -165,6 +180,12 @@ namespace Shared.Interfaces.StreamingHubs
         void OnAdvancedStage(Guid conID);
 
         void OnGameEnd(ResultData result);
+
+        /// <summary>
+        /// アイテム獲得通知
+        /// </summary>
+        /// <param name="itemID">アイテム識別ID(文字列)</param>
+        void OnGetItem(string itemID);
 
         #region 不要になりそうなAPI
 

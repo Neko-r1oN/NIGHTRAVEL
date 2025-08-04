@@ -68,6 +68,41 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">プレイヤーID</param>
         /// <returns></returns>
         Task PlayerDeadAsync(Guid conID);
+
+        /// <summary>
+        /// 端末起動
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末種別ID</param>
+        /// <returns></returns>
+        Task BootTerminalAsync(int termID);
+
+        /// <summary>
+        /// 端末成功処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末種別ID</param>
+        /// <param name="result">端末結果</param>
+        /// <returns></returns>
+        Task TerminalsResultAsync(int termID, bool result);
+
+        /// <summary>
+        /// アイテム獲得
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="itemID">識別ID(文字列)</param>
+        /// <returns></returns>
+        Task GetItemAsync(string itemID);
+
+        /// <summary>
+        /// ステージクリア待機
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isTimeUp">時間切れ判定</param>
+        /// <param name="stageID">ステージID</param>
+        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <returns></returns>
+        Task WaitStageClearAsync(Guid? conID, bool isTimeUp, int stageID, bool isBossStage);
         #endregion
         #region 敵関連
         /// <summary>
