@@ -244,7 +244,16 @@ abstract public class PlayerBase : CharacterBase
         // ñàïbç≈ëÂHPÇÃ0.1% ÇäÓëbílÇ∆ÇµÅA1ïbñàÇ…äÓëbílï™âÒïúÇ∑ÇÈ
         if (timer >= REGENE_TIME)
         {
-            if(HP < MaxHP) hp += (int)(MaxHP * REGENE_MAGNIFICATION);
+            if (HP < MaxHP)
+            {
+                hp += (int)(MaxHP * REGENE_MAGNIFICATION);
+
+                if (HP >= MaxHP)
+                {
+                    hp = MaxHP;
+                }
+            }
+
             timer = 0;
         }
 
@@ -654,7 +663,7 @@ abstract public class PlayerBase : CharacterBase
     /// </summary> ** ÉçÅ[ÉJÉã **
     private void CalcHP()
     {
-        float hpRatio = hp / maxHp;
+        float hpRatio = (float)hp / (float)maxHp;
         maxHp = (int)(startHp + (int)Math.Pow(nowLv, 2));
         hp = (int)(maxHp * hpRatio);
 
