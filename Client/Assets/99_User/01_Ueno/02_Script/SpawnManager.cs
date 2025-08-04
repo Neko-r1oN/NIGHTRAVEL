@@ -107,13 +107,13 @@ public class SpawnManager : MonoBehaviour
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(3f));
+        StartCoroutine(WaitAndStartCoroutine(10f));
     }
 
     private void OnDisable()
     {
         // 実行終了時にモデルの共有を切る
-        RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
+        //RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
     }
 
     IEnumerator SpawnCoroutin()
@@ -143,7 +143,7 @@ public class SpawnManager : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(10);
         }
     }
 
@@ -247,6 +247,8 @@ public class SpawnManager : MonoBehaviour
         List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < num; i++)
         {
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
+
             if (spawnCnt > maxSpawnCnt)
             {
                 return;
