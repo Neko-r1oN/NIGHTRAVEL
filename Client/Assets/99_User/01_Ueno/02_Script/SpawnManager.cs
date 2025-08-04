@@ -25,6 +25,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] int maxSpawnCnt; // マックススポーン回数
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
+    public int KnockTermsNum { get { return knockTermsNum; } }
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
     int fivePercentOfMaxFloor;
     #endregion

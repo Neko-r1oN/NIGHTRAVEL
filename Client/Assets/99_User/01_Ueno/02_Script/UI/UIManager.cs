@@ -36,8 +36,7 @@ public class UIManager : MonoBehaviour
     [Foldout("テキスト")]                            
     [SerializeField] Text levelText;                 // レベルテキスト
     [Foldout("テキスト")]                            
-    [SerializeField] Text pointText;                 // ポイントテキスト
-    [SerializeField] List<Image> relicImages;        
+    [SerializeField] Text pointText;                 // ポイントテキスト        
     [Foldout("テキスト")]                            
     [SerializeField] List<Text> relicCntText;        // レリックを持ってる数を表示するテキスト
     //[Foldout("テキスト")]                          
@@ -86,9 +85,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject termsBanner;         // クリア条件バナー
     [Foldout("バナー関係")]                          
     [SerializeField] GameObject relicBanner;         // 取得したレリックバナー
-                                                     
-    [SerializeField] List<GameObject> playerStatus;  // 自分以外のプレイヤーのステータス
+
+    [Foldout("レリック関連")]
+    [SerializeField] List<Image> relicImages;
+    [Foldout("レリック関連")]
     [SerializeField] Image relicImg;                 // レリックのイメージ
+
+    [SerializeField] List<GameObject> playerStatus;  // 自分以外のプレイヤーのステータス
     [SerializeField] GameObject terminalExplanation; // ターミナル説明用オブジェクト
 
     #endregion
@@ -196,10 +199,10 @@ public class UIManager : MonoBehaviour
             playerStatus[i].SetActive(false);
         }
 
-        clashNumText.text = "条件:0/" + GameManager.Instance.KnockTermsNum;
+        clashNumText.text = "条件:0/" + SpawnManager.Instance.KnockTermsNum;
 
         tmText.text = "クリア条件：5分間生き残る or 敵"
-            + GameManager.Instance.KnockTermsNum + "体倒せ";
+            + SpawnManager.Instance.KnockTermsNum + "体倒せ";
 
         level = LevelManager.Instance;
 
@@ -213,6 +216,11 @@ public class UIManager : MonoBehaviour
 
         terminalExplanation.SetActive(false);
         endWindow.SetActive(false);
+
+        foreach(Image relic in relicImages)
+        {
+            relic.enabled = false;
+        }
     }
 
     /// <summary>
@@ -300,6 +308,7 @@ public class UIManager : MonoBehaviour
             {
                 if (image.sprite == null)
                 {
+                    image.enabled = true;
                     image.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                     image.sprite = relicSprite;
                     isRelicGet = true;
@@ -434,7 +443,7 @@ public class UIManager : MonoBehaviour
 
     public void CountTermsText(int crashNum)
     {
-        clashNumText.text = "条件:" + crashNum + "/" + GameManager.Instance.KnockTermsNum;
+        clashNumText.text = "条件:" + crashNum + "/" + SpawnManager.Instance.KnockTermsNum;
     }
 
     /// <summary>
