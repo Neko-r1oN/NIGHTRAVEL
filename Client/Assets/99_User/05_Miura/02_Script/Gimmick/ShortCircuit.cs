@@ -46,11 +46,11 @@ public class ShortCircuit : MonoBehaviour
         if (damage <= 0)
         {//damege‚ð1‚É‚·‚é
             damage = 1;
-            enemyBase.ApplyDamage(damage);
+            enemyBase.ApplyDamageRequest(damage);
         }
 
         //EnemyBase‚ÌApplyDamage‚ðŒÄ‚Ño‚·
-        enemyBase.ApplyDamage(damage);
+        enemyBase.ApplyDamageRequest(damage);
     }
 
     /// <summary>

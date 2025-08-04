@@ -49,7 +49,7 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            collision.gameObject.GetComponent<EnemyBase>().ApplyDamage(player.Power, player.gameObject);
+            collision.gameObject.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject);
         }
         else if (collision.gameObject.tag == "Object")
         {

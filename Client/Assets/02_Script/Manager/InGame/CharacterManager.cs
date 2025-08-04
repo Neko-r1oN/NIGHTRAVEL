@@ -142,7 +142,11 @@ public class CharacterManager : MonoBehaviour
             var playerObj = Instantiate(charaSwordPrefab, point.position, Quaternion.identity);
             playerObjs.Add(key, playerObj);
 
-            if (key == RoomModel.Instance.ConnectionId) playerObjSelf = playerObj;
+            if (key == RoomModel.Instance.ConnectionId)
+            {
+                playerObjSelf = playerObj;
+                Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+            }
         }
     }
 

@@ -296,13 +296,13 @@ public class FullMetalBody : EnemyBase
     /// <param name="power"></param>
     /// <param name="attacker"></param>
     /// <param name="effectTypes"></param>
-    public override void ApplyDamage(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
+    public override void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
     {
         attacker = null;
-        base.ApplyDamage(power, attacker, true, effectTypes);
+        base.ApplyDamageRequest(power, attacker, true, effectTypes);
 
         // 本体のHPも削る
-        worm.ApplyDamage(power, attacker, false);
+        worm.ApplyDamageRequest(power, attacker, false);
 
         // 被ダメージ量を表示する
         var damage = CalculationLibrary.CalcDamage(power, Defense);

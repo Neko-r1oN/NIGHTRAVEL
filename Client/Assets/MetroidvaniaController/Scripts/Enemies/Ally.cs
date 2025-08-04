@@ -172,7 +172,7 @@ public class Ally : MonoBehaviour
 				{
 					dmgValue = -dmgValue;
 				}
-				collidersEnemies[i].gameObject.SendMessage("ApplyDamage", dmgValue);
+				collidersEnemies[i].gameObject.SendMessage("ApplyDamageRequest", dmgValue);
 			}
 			else if (collidersEnemies[i].gameObject.tag == "Player")
 			{
