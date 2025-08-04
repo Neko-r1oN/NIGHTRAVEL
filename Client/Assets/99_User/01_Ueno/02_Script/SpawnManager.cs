@@ -25,6 +25,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] int maxSpawnCnt; // マックススポーン回数
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
+    public int KnockTermsNum { get { return knockTermsNum; } }
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
     int fivePercentOfMaxFloor;
     #endregion
@@ -107,13 +108,13 @@ public class SpawnManager : MonoBehaviour
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(3f));
+        StartCoroutine(WaitAndStartCoroutine(10f));
     }
 
     private void OnDisable()
     {
         // 実行終了時にモデルの共有を切る
-        RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
+        //RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
     }
 
     IEnumerator SpawnCoroutin()
@@ -143,7 +144,7 @@ public class SpawnManager : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(10);
         }
     }
 
@@ -247,6 +248,8 @@ public class SpawnManager : MonoBehaviour
         List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < num; i++)
         {
+            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
+
             if (spawnCnt > maxSpawnCnt)
             {
                 return;
