@@ -20,6 +20,7 @@ public class StandbyScreenManager : MonoBehaviour
     /// </summary>
     public void BackOnlineButton()
     {
-        SceneManager.LoadScene("OnlineMultiScene");
+        //SceneManager.LoadScene("OnlineMultiScene");
+        Initiate.Fade("OnlineMultiScene", Color.black, 1.0f);   // フェード時間1秒
     }
 }
