@@ -49,7 +49,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terminalType: 2
   pointList: []
-  terminalIcon: {fileID: 6361361802870281962}
   code: 0
 --- !u!61 &3718235632338860364
 BoxCollider2D:
@@ -218,6 +217,7 @@ GameObject:
   - component: {fileID: 7950918733965687084}
   - component: {fileID: 6923079600204924889}
   - component: {fileID: 3839258721953553002}
+  - component: {fileID: 837104837059826761}
   m_Layer: 0
   m_Name: SpeedIcon
   m_TagString: Untagged
@@ -263,7 +263,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: e5c9779a9ef3d5a4da7bc27b621fbf11, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -317,3 +317,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &837104837059826761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6361361802870281962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentShaderType: 0
+  normalStrength: 5
+  normalSmoothing: 1
+  computingNormal: 0
