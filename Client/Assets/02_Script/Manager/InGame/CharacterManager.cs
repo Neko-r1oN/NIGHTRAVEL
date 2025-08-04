@@ -377,8 +377,9 @@ public class CharacterManager : MonoBehaviour
     /// <summary>
     /// “G‚Ì”íƒ_ƒ’Ê’mˆ—
     /// </summary>
-    void OnHitEnemy()
+    void OnHitEnemy(EnemyDamegeData damageData)
     {
-
+        enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, 
+            playerObjs[damageData.AttackerId], true, damageData.DebuffList.ToArray());
     }
 }

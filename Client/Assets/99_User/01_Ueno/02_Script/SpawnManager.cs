@@ -533,6 +533,7 @@ public class SpawnManager : MonoBehaviour
         GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
         enemyObj.transform.localScale = scale;
         enemyObj.GetComponent<EnemyBase>().PromoteToElite(spawnEnemyData.EliteType);
+        enemyObj.GetComponent<EnemyBase>().SelfID = spawnEnemyData.EnemyId;
         CharacterManager.Instance.AddEnemies(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
     }
 
