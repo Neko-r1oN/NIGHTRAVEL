@@ -19,20 +19,20 @@ namespace Shared.Interfaces.StreamingHubs
         ///// </summary>
         //public JoinedUser JoinedUser { get; set; }
 
-        [Key(13)]
+        [Key(8)]
         /// <summary>
         /// 接続ID(識別用)
         /// </summary>
         public Guid ConnectionId {  get; set; } = Guid.Empty;
 
-        [Key(14)]
+        [Key(9)]
         /// <summary>
         /// プレイヤーID
         /// Author:Nishiura
         /// </summary>
         public int PlayerID { get; set; }
 
-        [Key(15)]
+        [Key(10)]
         /// <summary>
         /// 死亡判定
         /// </summary>

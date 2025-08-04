@@ -382,10 +382,10 @@ namespace StreamingHubs
         {
             // ID指定で敵情報を取得
             var enemData =  this.roomContext.GetEnemyData(enemID);
-            if (enemData.Health <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
+            if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
             // 受け取った情報でダメージ計算をする
-            enemData.Health -= (int)((giverATK / 2) - (enemData.Defense / 4));
+            enemData.State.hp -= (int)((giverATK / 2) - (enemData.State.defence / 4));
 
             // 敵被弾データを新しく作成
             EnemyDamegeData enemDmgData = new EnemyDamegeData();
@@ -393,10 +393,10 @@ namespace StreamingHubs
             // 作成したデータに各情報を代入
             enemDmgData.AttackerId = conID;
             enemDmgData.HitEnemyId = enemID;
-            enemDmgData.RemainingHp = enemData.Health;
+            enemDmgData.RemainingHp = enemData.State.hp;
 
             // 敵のHPが0以下になった場合
-            if(enemData.Health <= 0)
+            if(enemData.State.hp <= 0)
             {
                 enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
                 this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
