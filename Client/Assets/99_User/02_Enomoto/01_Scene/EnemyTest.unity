@@ -2002,6 +2002,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnRange: {x: 5.45, y: 7.29}
   spawnRangeOffset: 5.7
+  maxSpawnCnt: 0
+  knockTermsNum: 0
+  spawnProbability: 0.05
   stageMin: {fileID: 913623441}
   stageMax: {fileID: 1620564624}
   minTerminalRespawn: {fileID: 0}
@@ -2016,7 +2019,8 @@ MonoBehaviour:
   distMinSpawnPos: 3
   xRadius: 10
   yRadius: 6
-  player: {fileID: 0}
+  bossTerminal: {fileID: 0}
+  bossId: 0
 --- !u!1001 &424552819
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35972,8 +35976,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 5
-  maxSpawnCnt: 5
   bossPrefab: {fileID: 2717074539250444405, guid: 9d8dfa9e60155594f8fd2e2613cf89af, type: 3}
   minCameraPos: {fileID: 694902049}
   maxCameraPos: {fileID: 1380261142}
@@ -38601,6 +38603,10 @@ PrefabInstance:
     - target: {fileID: 3047601142500118110, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
       propertyPath: m_Name
       value: Drone
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047601142500118110, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

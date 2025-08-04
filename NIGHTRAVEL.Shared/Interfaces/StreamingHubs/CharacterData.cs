@@ -32,52 +32,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public CharacterStatusData State { get; set; } = new CharacterStatusData();
 
-        //[Key(1)]
-        ///// <summary>
-        ///// 体力
-        ///// Author:Nishiura
-        ///// </summary>
-        //public int Health { get; set; }
-
-        //[Key(2)]
-        ///// <summary>
-        ///// 攻撃力
-        ///// Author:Nishiura
-        ///// </summary>
-        //public int AttackPower {  get; set; }
-
-        //[Key(3)]
-        ///// <summary>
-        ///// 防御力
-        ///// Author:Nishiura
-        ///// </summary>
-        //public int Defense {  get; set; }
-
-        //[Key(4)]
-        ///// <summary>
-        ///// 跳躍力
-        ///// </summary>
-        //public float JumpPower { get; set; }
-
-        //[Key(5)]
-        ///// <summary>
-        ///// 移動速度
-        ///// Author:Nishiura
-        ///// </summary>
-        //public float MoveSpeed { get; set; }
-
-        //[Key(6)]
-        ///// <summary>
-        ///// 移動速度係数
-        ///// </summary>
-        //public float MoveSpeedFactor { get; set; }
-
-        //[Key(7)]
-        ///// <summary>
-        ///// 攻撃速度係数
-        ///// </summary>
-        //public float AttackSpeedFactor { get; set; }
-
         [Key(3)]
         /// <summary>
         /// 位置

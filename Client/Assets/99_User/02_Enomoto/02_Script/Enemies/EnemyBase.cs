@@ -498,12 +498,11 @@ abstract public class EnemyBase : CharacterBase
         {
             isDead = true;
             OnDead();
-            var model = RoomModel.Instance;
             if (player)
             {
                 // “|‚µ‚½‚Ì‚ª©•ª©g‚Ìê‡‚ÍŒoŒ±’l‚ğ—^‚¦‚é
-                if (!model || model && CharacterManager.Instance.PlayerObjSelf == player)
-                player.GetExp(exp);
+                if (!RoomModel.Instance || RoomModel.Instance && CharacterManager.Instance.PlayerObjSelf == player)
+                    player.GetExp(exp);
             }
 
             if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
