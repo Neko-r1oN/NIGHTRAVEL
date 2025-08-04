@@ -20,11 +20,9 @@ public class SinglePlayManager : MonoBehaviour
     /// </summary>
     public void BackTitleButton()
     {
-        SceneManager.LoadScene("Title Ueno");
+        //SceneManager.LoadScene("TitleScene");
+        Initiate.Fade("TitleScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
-    public void ChangeGameButton()
-    {
-        SceneManager.LoadScene("Stage");
-    }
+    
 }
