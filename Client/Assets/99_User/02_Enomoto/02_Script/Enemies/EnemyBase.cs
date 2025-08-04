@@ -162,6 +162,15 @@ abstract public class EnemyBase : CharacterBase
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
 
+    #region ID
+    int selfID;
+
+    /// <summary>
+    /// 自身のユニークなID
+    /// </summary>
+    public int SelfID { get { return selfID; } set { selfID = value; } }
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -443,10 +452,10 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ダメージ適用処理
+    /// ダメージ適用リクエスト
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
+    public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
     {
         GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
         if (isInvincible || isDead || attacker && attacker != playerSelf) return;
@@ -456,16 +465,36 @@ abstract public class EnemyBase : CharacterBase
         {
             return;
         }
+        else if (RoomModel.Instance && !RoomModel.Instance.IsMaster)
+        {
+            // ギミックなどによるダメージはマスタクライアントのみ処理させる
+            return;
+        }
+
+
+        // 以降はローカル || ギミック用
+        int damage = CalculationLibrary.CalcDamage(power, Defense);
+        int remainingHp = this.hp - Mathf.Abs(damage);
+        ApplyDamage(damage, remainingHp, attacker, drawDmgText, debuffList);
+    }
+
+    /// <summary>
+    /// ダメージ適用処理
+    /// </summary>
+    /// <param name="damegeData"></param>
+    public void ApplyDamage(int damage, int remainingHP, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
+    {
+        if (isInvincible || isDead) return;
+        var charaManager = CharacterManager.Instance;
 
         // ダメージ適用、ダメージ表記
         Vector3? attackerPos = null;
         if (attacker != null) attackerPos = attacker.transform.position;
-        var damage = CalculationLibrary.CalcDamage(power, Defense);
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp -= Mathf.Abs(damage);
 
         // 状態異常を付与する
-        if (effectTypes.Length > 0) effectController.ApplyStatusEffect(effectTypes);
+        if (debuffList.Length > 0) effectController.ApplyStatusEffect(debuffList);
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
         if (attackerPos != null)
@@ -473,7 +502,7 @@ abstract public class EnemyBase : CharacterBase
             Vector3 pos = (Vector3)attackerPos;
             if (pos.x < transform.position.x && transform.localScale.x > 0
             || pos.x > transform.position.x && transform.localScale.x < 0) Flip();
-            
+
             DoKnokBack();
 
             if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
