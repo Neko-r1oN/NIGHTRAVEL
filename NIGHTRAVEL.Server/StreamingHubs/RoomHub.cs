@@ -430,7 +430,7 @@ namespace StreamingHubs
             // 敵のHPが0以下になった場合
             if(enemData.State.hp <= 0)
             {
-                enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
+                //enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
                 this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
 
                 // 所持経験値が必要経験値に満ちた場合

@@ -70,7 +70,7 @@ namespace NIGHTRAVEL.Server.StreamingHubs
         /// アニメーション状態
         /// Author:Nishiura
         /// </summary>
-        public IRoomHubReceiver.CharacterState State { get; set; }
+        //public IRoomHubReceiver.CharacterState State { get; set; }
 
         /// <summary>
         /// 状態異常リスト

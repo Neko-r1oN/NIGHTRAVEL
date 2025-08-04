@@ -120,6 +120,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //ゲーム終了通知
     public Action<ResultData> OnGameEndSyn { get; set; }
+
+    //端末起動通知
+    public Action<int> OnBootedTerminal {  get; set; }
+
+    //端末結果通知
+    public Action<int,bool> OnTerminalsResultSyn { get; set; }
+
+    //アイテム獲得通知
+    public Action<string> OnGetItemSyn {  get; set; }
     #endregion
 
     #region RoomModelインスタンス生成
@@ -631,6 +640,36 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnBootGimmick(GimmickData gimmickData)
     {
         OnBootedGimmick(gimmickData);
+    }
+
+    /// <summary>
+    /// 端末起動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="termID"></param>
+    public void OnBootTerminal(int termID)
+    {
+        OnBootedTerminal(termID);
+    }
+
+    /// <summary>
+    /// 端末結果通知
+    /// Author:木田晃輔
+    /// </summary>
+    /// <param name="termID"></param>
+    /// <param name="result"></param>
+    public void OnTerminalsResult(int termID, bool result)
+    {
+        OnTerminalsResultSyn(termID, result);
+    }
+
+    /// <summary>
+    /// アイテム獲得通知
+    /// Author:木田晃輔
+    /// </summary>
+    public void OnGetItem(string itemID)
+    {
+        OnGetItemSyn(itemID);
     }
 
     /// <summary>
