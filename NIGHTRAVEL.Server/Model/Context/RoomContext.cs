@@ -77,6 +77,24 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// </summary>
         public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new();
 
+        /// <summary>
+        /// 起動済み端末IDリスト
+        /// Author:Nishiura
+        /// </summary>
+        public List<int> bootedTerminalList { get; } = new();
+
+        /// <summary>
+        /// 端末結果リスト
+        /// Author:Nishiura
+        /// </summary>
+        public List<int> succededTerminalList { get; } = new();
+
+        /// <summary>
+        /// 取得アイテムリスト
+        /// Author:Nishiura
+        /// </summary>
+        public List<string> gottenItemList { get; } = new();
+
         //[その他、ゲームのルームデータをフィールドに保存]
         #endregion
 
@@ -168,11 +186,11 @@ namespace NIGHTRAVEL.Server.Model.Context
 
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
-            setData.Health = (int)enemData.hp;
-            setData.AttackPower = (int)enemData.attack;
-            setData.Defense = (int)enemData.defence;
-            setData.MoveSpeed = (float)enemData.move_speed;
-            setData.AttackSpeedFactor = (float)enemData.attack_speed;
+            //setData.Health = (int)enemData.hp;
+            //setData.AttackPower = (int)enemData.attack;
+            //setData.Defense = (int)enemData.defence;
+            //setData.MoveSpeed = (float)enemData.move_speed;
+            //setData.AttackSpeedFactor = (float)enemData.attack_speed;
             setData.Exp = enemData.exp;
 
             enemyDataList.Add(enemData.id, setData);

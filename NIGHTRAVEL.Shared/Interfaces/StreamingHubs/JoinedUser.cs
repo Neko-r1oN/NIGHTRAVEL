@@ -46,6 +46,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         [Key(5)]
         public bool IsAdvance { get; set; }
+
+        /// <summary>
+        /// ボス端末接触判定
+        /// </summary>
+        [Key(6)]
+        public bool IsTouchBossTerm { get; set; } = false;
     }
 
 }
