@@ -54,7 +54,7 @@ public class TimerDirector : MonoBehaviour
             // タイマー(UI)の更新
             UpdateTimerDisplay();
 
-            if (elapsedTime > initMinute)
+            if (elapsedTime > 15)
             {
                 // ゲームレベルアップリクエスト送信
 

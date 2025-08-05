@@ -6,6 +6,7 @@ using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -238,6 +239,11 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if(player == null)
+        {
+            player = Camera.main.GetComponent<CameraFollow>().Target.gameObject.GetComponent<PlayerBase>();
+        }
+
         // ÉvÉåÉCÉÑÅ[HPUI
         playerHpBar.maxValue = player.MaxHP;
         playerHpBar.value = player.HP;
@@ -298,7 +304,11 @@ public class UIManager : MonoBehaviour
             playerHpBar.value = 0;
             playerSliderText.text = "0";
             DisplaySpectatingPlayer();
-            ChangTitleScene();
+
+            if (CheckAllPlayersDead())
+            {
+                ChangTitleScene();
+            }
         }
     }
 
@@ -753,5 +763,23 @@ public class UIManager : MonoBehaviour
         {
             relic.enabled = false;
         }
+    }
+
+    private bool CheckAllPlayersDead()
+    {
+        if(CharacterManager.Instance.PlayerObjs == null)
+        {
+            return false;
+        }
+
+        foreach(var player in CharacterManager.Instance.PlayerObjs.Values)
+        {
+            if(player && player.GetComponent<PlayerBase>().HP > 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
