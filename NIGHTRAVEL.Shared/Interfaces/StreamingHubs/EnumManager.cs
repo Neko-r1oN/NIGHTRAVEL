@@ -78,6 +78,14 @@ namespace Shared.Interfaces.StreamingHubs
             AttackSpeedFactor
         }
 
+        /// <summary>
+        /// レリックの種類
+        /// </summary>
+        public enum RELIC_TYPE
+        {
+            Sample
+        }
+
         #region 操作キャラ関連
 
         /// <summary>

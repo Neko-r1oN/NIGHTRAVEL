@@ -203,6 +203,18 @@ namespace StreamingHubs
             // 取得したデータを受け取ったデータに置き換える
             gottenData = playerData;
 
+            // キャラクターデータリストに自身のデータがない場合
+            if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
+            {
+                // 新たなキャラクターデータを追加
+                this.roomContext.AddCharacterData(this.ConnectionId);
+            }
+            else // 既に存在している場合
+            {
+                // キャラクターデータを更新
+                this.roomContext.UpdateCharacterData(this.ConnectionId, playerData);
+            }
+
             // ルームの自分以外に、ユーザ情報通知を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
         }
@@ -222,16 +234,28 @@ namespace StreamingHubs
             gottenPlayerData = masterClientData.PlayerData;
 
             // ルームデータから敵のリストを取得
-            var gottenEnemyrDataList = this.roomContext.enemyDataList;
+            var gottenEnemyDataList = this.roomContext.enemyDataList;
 
             // 敵データの個数分ループして更新
             for (int i = 0; i < masterClientData.EnemyDatas.Count; i++)
-            { 
+            {
                 // 指定データが存在している場合、代入する
-                if (gottenEnemyrDataList[i] != null)
+                if (gottenEnemyDataList[i] != null)
                 {
-                    gottenEnemyrDataList[i] = masterClientData.EnemyDatas[i];
+                    gottenEnemyDataList[i] = masterClientData.EnemyDatas[i];
                 }
+            }
+
+            // キャラクターデータリストに自身のデータがない場合
+            if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
+            {
+                // 新たなキャラクターデータを追加
+                this.roomContext.AddCharacterData(this.ConnectionId);
+            }
+            else // 既に存在している場合
+            {
+                // キャラクターデータを更新
+                this.roomContext.UpdateCharacterData(this.ConnectionId, masterClientData.PlayerData);
             }
 
             // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
@@ -244,21 +268,31 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        public async Task SpawnRelicAsync(Vector2 pos)
+        public async Task DropRelicAsync(Vector2 pos)
         {
             GameDbContext dbContext = new GameDbContext();
-            Random rand = new Random();
 
-            // レリックテーブルから全ての要素を取得し、その個数を取得する
-            int relicMax = dbContext.Relics.ToArray().Length;
-            int relicID = rand.Next(1, relicMax); // 取得するレリックのIDを乱数で指定
+            int relicID = new Random().Next(1, dbContext.Relics.ToArray().Length); // 取得するレリックのIDを乱数で指定
 
-            var relicFind = dbContext.Relics.Where(relic => relic.id == relicID);   // 生成した乱数で検索
+            // レリック情報を検索
+            var relic = dbContext.Relics.Where(relic => relic.id == relicID).First();
 
-            if (relicFind.Count() <= 0) return; // 結果が空の場合処理しない
+            DropRelicData dropRelicData = new DropRelicData();
+
+            // データを更新
+            dropRelicData.Id = Guid.NewGuid().ToString();
+            dropRelicData.Name = relic.name;
+            dropRelicData.ExplanationText = relic.explanation;
+            dropRelicData.Effect = (int)relic.effect;
+            dropRelicData.RelicType = (EnumManager.RELIC_TYPE)relicID;
+            dropRelicData.SpawnPos = pos;
+            dropRelicData.DroppedVec = new Vector2();
+
+            // ドロップしたレリックリストに追加
+            this.roomContext.dropRelicDataList.Add(dropRelicData);
 
             // ルーム参加者全員に、レリックのIDと生成位置を送信
-            this.roomContext.Group.All.OnSpawnRelic(relicID, pos);
+            this.roomContext.Group.All.OnDropRelic(this.roomContext.dropRelicDataList);
         }
 
         /// <summary>
@@ -333,6 +367,15 @@ namespace StreamingHubs
 
                 // 生成された敵リストをクリア
                 this.roomContext.spawnedEnemyDataList.Clear();
+
+                // 獲得したアイテムリストをクリア
+                this.roomContext.gottenItemList.Clear();
+
+                // 起動した端末リストをクリア
+                this.roomContext.bootedTerminalList.Clear();
+
+                // 成功した端末リストをクリア
+                this.roomContext.succededTerminalList.Clear();
 
                 // 参加者全員にステージの進行を通知
                 this.roomContext.Group.All.OnAdanceNextStage(stageID);
@@ -597,6 +640,37 @@ namespace StreamingHubs
             // アイテムの獲得を全員に通知
             this.roomContext.Group.All.OnGetItem(itemID);
         }
+
+        /// <summary>
+        /// ステータス強化選択
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        /// <param name="upgradeOpt">強化項目</param>
+        /// <returns></returns>
+        public async Task<CharacterStatusData> ChooseUpgrade(Guid conID, EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+        {
+            // ルームデータから接続IDを指定して自身のデータを取得
+            var playerData = this.roomContext.characterDataList[conID];
+
+            // 各最大値を10%増加(仮)
+            playerData.Status.hp = (int)(playerData.Status.hp * 1.1f);
+            playerData.Status.power = (int)(playerData.Status.power * 1.1f);
+            playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
+            playerData.Status.jumpPower *= 1.1f;
+            playerData.Status.moveSpeed *= 1.1f;
+
+            CharacterStatusData newStatus = new CharacterStatusData();
+
+            // 最大値を更新
+            newStatus.hp = playerData.Status.hp;
+            newStatus.power = playerData.Status.power;
+            newStatus.defence = playerData.Status.defence;
+            newStatus.jumpPower = playerData.Status.jumpPower;
+            newStatus.moveSpeed = playerData.Status.moveSpeed;
+
+            return newStatus;
+        }
+
         #endregion
 
         /// <summary>

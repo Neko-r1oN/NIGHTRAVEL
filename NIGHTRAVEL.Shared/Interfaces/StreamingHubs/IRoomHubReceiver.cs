@@ -123,9 +123,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// レリック生成通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="relicID">レリックID</param>
-        /// <param name="pos">位置</param>
-        void OnSpawnRelic(int relicID, Vector2 pos);
+        /// <param name="relicDatas">レリックリスト</param>
+        void OnDropRelic(List<DropRelicData >relicDatas);
 
         /// <summary>
         /// レリック取得通知
