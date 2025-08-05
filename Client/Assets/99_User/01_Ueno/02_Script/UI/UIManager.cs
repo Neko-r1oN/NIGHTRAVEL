@@ -298,7 +298,7 @@ public class UIManager : MonoBehaviour
             playerHpBar.value = 0;
             playerSliderText.text = "0";
             DisplaySpectatingPlayer();
-            //ChangTitleScene();
+            ChangTitleScene();
         }
     }
 

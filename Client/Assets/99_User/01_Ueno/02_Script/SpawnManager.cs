@@ -63,8 +63,6 @@ public class SpawnManager : MonoBehaviour
     int crashNum = 0; @@@@@// Œ‚”j”
     public int CrashNum { get { return crashNum; } set { crashNum = value; } }
 
-    GameObject player;
-    List<GameObject> players;
     private static SpawnManager instance;
 
     public static SpawnManager Instance
@@ -97,7 +95,6 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         SetEnemyPrefabList();
-        player = CharacterManager.Instance.PlayerObjSelf;
 
         // “G¶¬ãŒÀ‚Ì5%‚ğæ“¾
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
@@ -127,6 +124,7 @@ public class SpawnManager : MonoBehaviour
                 {
                     foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
                     {
+                        if (!player) continue;
                         if (spawnCnt < maxSpawnCnt / 2)
                         {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
                             GenerateEnemy(Random.Range(3, 5),player.transform.position);

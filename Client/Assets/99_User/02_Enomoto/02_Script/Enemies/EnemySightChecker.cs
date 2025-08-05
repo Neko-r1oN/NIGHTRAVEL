@@ -42,6 +42,7 @@ public class EnemySightChecker : MonoBehaviour
     public bool IsObstructed()
     {
         GameObject target = GetComponent<EnemyBase>().Target;
+        if (!target) return false;
         Vector2 dirToTarget = (target.transform.position - transform.position).normalized;
         float dist = (target.transform.position - transform.position).magnitude;
         float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
