@@ -48,17 +48,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] List<EnumManager.ENEMY_TYPE> emitEnemyTypes;   // 生成対象の敵の種類
     [SerializeField] Dictionary<EnumManager.ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
     int eliteEnemyCnt;
+    List<GameObject> terminalEnemyList = new List<GameObject>();
     #endregion
-
-    #region 削除予定
-    [SerializeField] float distMinSpawnPos;              // 生成しない範囲
-    [SerializeField] float xRadius;                      // 生成範囲のx半径
-    [SerializeField] float yRadius;                      // 生成範囲のy半径
-    public List<GameObject> EnemiesByTerminal { get { return null; } }
-    #endregion
-
-    int crashNum = 0; 　　　　　// 撃破数
-    public int CrashNum { get { return crashNum; } set {  crashNum = value; } }
 
     #region ボス関連
     GameObject boss;            // ボス
@@ -68,6 +59,9 @@ public class SpawnManager : MonoBehaviour
     bool isSpawnBoss;           // ボスが生成されたかどうか
     public bool IsSpawnBoss { get {  return isSpawnBoss; } set {  isSpawnBoss = value; } }
     #endregion
+
+    int crashNum = 0; 　　　　　// 撃破数
+    public int CrashNum { get { return crashNum; } set { crashNum = value; } }
 
     GameObject player;
     List<GameObject> players;
@@ -346,7 +340,7 @@ public class SpawnManager : MonoBehaviour
                 SpawnEnemyRequest(spawnData);
 
                 // 端末から出た敵をリストに追加
-                CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByTerminal);
+                terminalEnemyList = CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByTerminal);
 
                 enemyCnt++;
             }
