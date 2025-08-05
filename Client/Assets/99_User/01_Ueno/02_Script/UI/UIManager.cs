@@ -746,7 +746,7 @@ public class UIManager : MonoBehaviour
         spectatingWindow.SetActive(true);
         spectatingNameText.text = "player2";
 
-        statusUpButton.SetActive(false);
+        //statusUpButton.SetActive(false);
         levelUpText.enabled = false;
 
         foreach (Image relic in relicImages)
