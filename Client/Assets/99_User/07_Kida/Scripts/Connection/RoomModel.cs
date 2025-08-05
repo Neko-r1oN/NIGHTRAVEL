@@ -77,7 +77,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<string, Vector3, Quaternion> OnMovedObject { get; set; }
 
     //レリックの生成通知
-    public Action<int, Vector2> OnSpawnedRelic {  get; set; }
+    public Action<List<DropRelicData>> OnDropedRelic {  get; set; }
 
     //レリックの取得通知
     public Action<int , string> OnGotRelic {  get; set; }
@@ -360,9 +360,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
-    public async Task SpawnRelicAsync(Vector2 pos)
+    public async Task DropRelicAsync(Vector2 pos)
     {
-        await roomHub.SpawnRelicAsync(pos);
+        await roomHub.DropRelicAsync(pos);
     }
 
     /// <summary>
@@ -606,9 +606,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="relicID"></param>
     /// <param name="pos"></param>
-    public void OnSpawnRelic(int relicID, Vector2 pos)
+    public void OnDropRelic(List<DropRelicData> relicDatas)
     {
-        OnSpawnedRelic(relicID, pos);
+        OnDropedRelic(relicDatas);
     }
 
     /// <summary>

@@ -2,12 +2,15 @@
 // レリック管理クラス
 // Author : Souma Ueno
 //----------------------------------------------------
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 
@@ -65,7 +68,7 @@ public class RelicManager : MonoBehaviour
     {
         if (RoomModel.Instance == null) return;
         //モデルでOnSpawnedRelicが呼び出されるとOnSpawnRelicが呼び出される
-        RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
+        RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
     }
 
     /// <summary>
@@ -153,7 +156,7 @@ public class RelicManager : MonoBehaviour
             //レリックの設定
             relic = selectedRelic;
             //レリックの生成同期を実行
-            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
+            await RoomModel.Instance.DropRelicAsync(relic.transform.position);
         }
 
         if (relic != null)
@@ -171,9 +174,18 @@ public class RelicManager : MonoBehaviour
     /// </summary>
     /// <param name="relicId"></param>
     /// <param name="pos"></param>
-    void OnSpawnRelic(int relicId,Vector2 pos)
+    void OnDropRelic(List<DropRelicData> dropRelicDatas)
     {
-       relic = Instantiate(relicPrefab[relicId], pos,Quaternion.identity);
+        foreach (var dropRelicdata in dropRelicDatas) 
+        {//ドロップした数分生成
+
+            //IDを整数変換
+            Int32.TryParse(dropRelicdata.Id, out int relicID);
+
+            //レリックを生成する
+            relic = Instantiate(relicPrefab[relicID],dropRelicdata.SpawnPos, Quaternion.identity);
+
+        }
     }
 
     [ContextMenu("ShuffleRelic")]
