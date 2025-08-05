@@ -36,16 +36,16 @@ public class UIManager : MonoBehaviour
     [Foldout("テキスト")]                            
     [SerializeField] Text levelText;                 // レベルテキスト
     [Foldout("テキスト")]                            
-    [SerializeField] Text pointText;                 // ポイントテキスト        
+    [SerializeField] Text pointText;                 // ポイントテキスト
     [Foldout("テキスト")]                            
     [SerializeField] List<Text> relicCntText;        // レリックを持ってる数を表示するテキスト
-    //[Foldout("テキスト")]                          
+    //[Foldout("テキスト")]
     //[SerializeField] List<Text>  statusText;         // ステータスアップ説明テキスト
-    [Foldout("テキスト")]                            
+    [Foldout("テキスト")]
     [SerializeField] Text levelUpStock;              // レベルアップストックテキスト
-    [Foldout("テキスト")]                            
+    [Foldout("テキスト")]
     [SerializeField] Text levelUpText;               // 強化可能テキスト
-    [Foldout("テキスト")]                            
+    [Foldout("テキスト")]
     [SerializeField] Text clashNumText;              // 撃破数テキスト
     [Foldout("テキスト")]                            
     [SerializeField] Text tmText;                    // クリア条件テキスト
@@ -59,7 +59,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text diffText;                  // 難易度テキスト
     [Foldout("テキスト")]                            
     [SerializeField] Text terminalExplanationText;   // ターミナル説明テキスト
-                                                     
+    [Foldout("テキスト")]
+    [SerializeField] Text spectatingNameText;        // 観戦中プレイヤー名テキスト
+
     [Foldout("フェードアウト")]                      
     [SerializeField] Canvas parentCanvas;            // テキストが表示されるキャンバスを割り当ててください
     [Foldout("フェードアウト")]                      
@@ -78,6 +80,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] float windowTime;               // ウィンドウが表示される秒数
     [Foldout("ウィンドウ関係")]
     [SerializeField] GameObject endWindow;           // 終了のウィンドウ
+    [Foldout("ウィンドウ関係")]
+    [SerializeField] GameObject spectatingWindow;    // 観戦ウィンドウ
 
     [Foldout("バナー関係")]
     [SerializeField] GameObject bossWindow;          // ボス出現UI
@@ -91,8 +95,12 @@ public class UIManager : MonoBehaviour
     [Foldout("レリック関連")]
     [SerializeField] Image relicImg;                 // レリックのイメージ
 
+    [Foldout("その他")]
     [SerializeField] List<GameObject> playerStatus;  // 自分以外のプレイヤーのステータス
+    [Foldout("その他")]
     [SerializeField] GameObject terminalExplanation; // ターミナル説明用オブジェクト
+    [Foldout("その他")]
+    [SerializeField] GameObject statusUpButton;      // ステータスアップボタン
 
     #endregion
 
@@ -217,7 +225,9 @@ public class UIManager : MonoBehaviour
         terminalExplanation.SetActive(false);
         endWindow.SetActive(false);
 
-        foreach(Image relic in relicImages)
+        spectatingWindow.SetActive(false);
+
+        foreach (Image relic in relicImages)
         {
             relic.enabled = false;
         }
@@ -287,7 +297,8 @@ public class UIManager : MonoBehaviour
         {
             playerHpBar.value = 0;
             playerSliderText.text = "0";
-            ChangTitleScene();
+            DisplaySpectatingPlayer();
+            //ChangTitleScene();
         }
     }
 
@@ -728,5 +739,19 @@ public class UIManager : MonoBehaviour
     public void EndGame()
     {
         UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+    }
+
+    public void DisplaySpectatingPlayer()
+    {
+        spectatingWindow.SetActive(true);
+        spectatingNameText.text = "player2";
+
+        statusUpButton.SetActive(false);
+        levelUpText.enabled = false;
+
+        foreach (Image relic in relicImages)
+        {
+            relic.enabled = false;
+        }
     }
 }
