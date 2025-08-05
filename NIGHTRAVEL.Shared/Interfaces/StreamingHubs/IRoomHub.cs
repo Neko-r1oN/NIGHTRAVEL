@@ -124,6 +124,14 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK);
 
+        /// <summary>
+        /// ステータス強化選択
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        /// <param name="upgradeOpt">強化項目</param>
+        /// <returns></returns>
+        Task<CharacterStatusData> ChooseUpgrade(Guid conID, EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
+
         #endregion
         #region レリック関連
         /// <summary>
@@ -132,7 +140,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        Task SpawnRelicAsync(Vector2 pos);
+        Task DropRelicAsync(Vector2 pos);
 
         /// <summary>
         /// レリック取得

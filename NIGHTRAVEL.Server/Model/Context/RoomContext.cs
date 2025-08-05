@@ -60,6 +60,12 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid, PlayerData> playerDataList { get; } = new Dictionary<Guid, PlayerData>();
 
         /// <summary>
+        /// キャラクターデータリスト
+        /// Author:Nishiura
+        /// </summary>
+        public Dictionary<Guid, CharacterData> characterDataList = new Dictionary<Guid, CharacterData>();
+
+        /// <summary>
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
@@ -76,6 +82,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new Dictionary<int, SpawnEnemyData>();
+
+        /// <summary>
+        /// ドロップレリックリスト
+        /// </summary>
+        public List<DropRelicData> dropRelicDataList { get; } = new List<DropRelicData>();
 
         /// <summary>
         /// 起動済み端末IDリスト
@@ -144,6 +155,28 @@ namespace NIGHTRAVEL.Server.Model.Context
         {
             // データリストから自身のデータを消去
             playerDataList.Remove(conID);
+        }
+
+        /// <summary>
+        /// キャラクターデータ追加処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="conID"></param>
+        public void AddCharacterData(Guid conID)
+        {
+            CharacterData characterSetData = new CharacterData();
+
+            characterDataList.Add(conID, characterSetData);
+        }
+
+        /// <summary>
+        /// キャラクターデータ更新処理
+        /// </summary>
+        /// <param name="conID"></param>
+        /// <param name="charaData"></param>
+        public void UpdateCharacterData(Guid conID, CharacterData charaData)
+        {
+            characterDataList[conID] = charaData;
         }
 
         /// <summary>
