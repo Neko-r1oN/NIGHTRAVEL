@@ -56,16 +56,6 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// シーン遷移したときに通知関数呼び出しを止める
-    /// </summary>
-    private void OnDisable()
-    {
-        if (!RoomModel.Instance) return;
-        RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;                    //シーン遷移した場合に通知関数をモデルから解除
-        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;    //シーン遷移した場合に通知関数をモデルから解除
-    }
-
     private void Awake()
     {
         if (instance == null)
@@ -95,10 +85,10 @@ public class CharacterManager : MonoBehaviour
         GenerateCharacters();
         isAwake = true;
 
-        //プレイヤーの更新通知時に呼ぶ
+        // 通知処理を登録
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
-        //マスタークライアントの更新通知時に呼ぶ
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
+        RoomModel.Instance.OnLeavedUser += this.OnLeave;
     }
 
     private void Start()
@@ -106,6 +96,18 @@ public class CharacterManager : MonoBehaviour
         if (!RoomModel.Instance) return;
         StartCoroutine("UpdateCoroutine");
     }
+
+    private void OnDisable()
+    {
+        if (!RoomModel.Instance) return;
+        StopAllCoroutines();
+
+        // シーン遷移したときに登録した通知処理を解除
+        RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;
+        RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;
+        RoomModel.Instance.OnLeavedUser -= this.OnLeave;
+    }
+
 
     /// <summary>
     /// キャラクターの情報更新呼び出し用コルーチン
@@ -323,6 +325,28 @@ public class CharacterManager : MonoBehaviour
         return enemyDatas;
     }
 
+    #region 同期処理関連
+
+    /// <summary>
+    /// 退室通知
+    /// </summary>
+    /// <param name="joinedUser"></param>
+    void OnLeave(JoinedUser joinedUser)
+    {
+        if (playerObjs.ContainsKey(joinedUser.ConnectionId))
+        {
+            var player = playerObjs[joinedUser.ConnectionId];
+            playerObjs.Remove(joinedUser.ConnectionId);
+            Destroy(player);
+
+            // 敵が持っているプレイヤーのリストを更新
+            foreach(var enemy in enemies.Values)
+            {
+                enemy.Enemy.Players = playerObjs.Values.ToList();
+            }
+        }
+    }
+
     /// <summary>
     /// マスタークライアント用の情報更新
     /// </summary>
@@ -393,4 +417,5 @@ public class CharacterManager : MonoBehaviour
         enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, 
             playerObjs[damageData.AttackerId], true, damageData.DebuffList.ToArray());
     }
+    #endregion
 }

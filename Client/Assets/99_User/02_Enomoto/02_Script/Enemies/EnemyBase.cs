@@ -18,7 +18,7 @@ abstract public class EnemyBase : CharacterBase
     protected GameObject target;
     public GameObject Target { get { return target; } set { target = value; } }
 
-    List<GameObject> players = new List<GameObject>();
+    public List<GameObject> players = new List<GameObject>();
     public List<GameObject> Players { get { return players; } set { players = value; } }
     #endregion
 
