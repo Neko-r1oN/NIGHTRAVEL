@@ -392,7 +392,8 @@ abstract public class CharacterBase : MonoBehaviour
                     else hp = applyHp < hp ? applyHp : hp;
                     break;
                 case STATUS_TYPE.Defense:
-                    defense += (int)(baseDefense * rate);
+                    maxDefense += (int)(baseDefense * rate);
+                    defense += maxDefense < 0 ? 0 : maxDefense;
                     break;
                 case STATUS_TYPE.Power:
                     maxPower += (int)(basePower * rate);
