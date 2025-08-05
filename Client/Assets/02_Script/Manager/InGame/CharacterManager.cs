@@ -125,7 +125,7 @@ public class CharacterManager : MonoBehaviour
         var players = FindObjectsByType<PlayerBase>(FindObjectsSortMode.None);
         foreach (var player in players)
         {
-            Destroy(player);
+            Destroy(player.gameObject);
         }
     }
 

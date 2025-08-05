@@ -113,8 +113,9 @@ public class SpawnManager : MonoBehaviour
 
     private void OnDisable()
     {
-        // 実行終了時にモデルの共有を切る
-        //RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
+        // RoomModelが存在するなら、登録済みのアクションを解除
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
     }
 
     IEnumerator SpawnCoroutin()

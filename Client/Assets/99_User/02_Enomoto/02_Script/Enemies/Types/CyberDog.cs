@@ -334,7 +334,7 @@ public class CyberDog : EnemyBase
     /// <returns></returns>
     bool IsFall()
     {
-        return !Physics2D.OverlapBox(fallCheck.position, fallCheckRange, terrainLayerMask);
+        return !Physics2D.OverlapBox(fallCheck.position, fallCheckRange, 0, terrainLayerMask);
     }
 
     /// <summary>
