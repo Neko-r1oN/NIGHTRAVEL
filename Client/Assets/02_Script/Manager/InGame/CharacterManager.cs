@@ -212,11 +212,16 @@ public class CharacterManager : MonoBehaviour
         character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
 
-        // マスタークライアントの場合、キャラクターが動けるようにする
-        if (RoomModel.Instance.IsMaster && !character.enabled)
+        // マスタークライアントの場合、敵が動けるようにする
+        if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
         {
             character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             character.enabled = true;
+        }
+        else
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            character.enabled = false;
         }
     }
 
