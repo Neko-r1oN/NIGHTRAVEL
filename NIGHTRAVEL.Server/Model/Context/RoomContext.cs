@@ -66,6 +66,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid, CharacterData> characterDataList = new Dictionary<Guid, CharacterData>();
 
         /// <summary>
+        /// キャラクターステータスデータリスト
+        /// </summary>
+        public Dictionary<Guid, CharacterStatusData> characterStatusDataList { get; } = new Dictionary<Guid, CharacterStatusData>();
+
+        /// <summary>
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
@@ -105,6 +110,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         public List<string> gottenItemList { get; } = new List<string>();
+
+        /// <summary>
+        /// ステータス強化選択肢リスト
+        /// </summary>
+        public List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList { get; } = new List<EnumManager.STAT_UPGRADE_OPTION>();
 
         //[その他、ゲームのルームデータをフィールドに保存]
         #endregion

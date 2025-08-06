@@ -60,7 +60,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum STAT_UPGRADE_OPTION 
         {
-            Sample
+            Sample_0 =0,
+            Sample_1 =1,
+            Sample_2 =2,
+            Sample_3 =3,
+            Max
         }
 
         /// <summary>

@@ -5,6 +5,7 @@
 
 #region using一覧
 using MagicOnion.Server.Hubs;
+using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
@@ -658,6 +659,7 @@ namespace StreamingHubs
             playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
             playerData.Status.jumpPower *= 1.1f;
             playerData.Status.moveSpeed *= 1.1f;
+            playerData.Status.healRate *= 1.1f;
 
             CharacterStatusData newStatus = new CharacterStatusData();
 
@@ -667,6 +669,7 @@ namespace StreamingHubs
             newStatus.defence = playerData.Status.defence;
             newStatus.jumpPower = playerData.Status.jumpPower;
             newStatus.moveSpeed = playerData.Status.moveSpeed;
+            newStatus.healRate = playerData.Status.healRate;
 
             return newStatus;
         }
@@ -709,6 +712,43 @@ namespace StreamingHubs
 
             // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
+
+            // リストが3になるまでループ
+            do
+            {
+                // ランダムな選択肢を乱数で設定
+                var rndOption = new Random().Next(0, (int)EnumManager.STAT_UPGRADE_OPTION.Max);
+
+                // 設定された選択肢がリスト内に無い場合
+                if (!this.roomContext.statusOptionList.Contains((EnumManager.STAT_UPGRADE_OPTION)rndOption))
+                {
+                    // 選択肢をリストに入れる
+                    this.roomContext.statusOptionList.Add((EnumManager.STAT_UPGRADE_OPTION)rndOption);
+                }
+            } while (this.roomContext.statusOptionList.Count <= 3);
+
+            // ルームデータから接続IDを指定して自身のデータを取得
+            var playerData = this.roomContext.characterDataList[this.ConnectionId];
+
+            // 各最大値を10%増加(仮)
+            playerData.Status.hp = (int)(playerData.Status.hp * 1.1f);
+            playerData.Status.power = (int)(playerData.Status.power * 1.1f);
+            playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
+            playerData.Status.jumpPower *= 1.1f;
+            playerData.Status.moveSpeed *= 1.1f;
+            playerData.Status.healRate *= 1.1f;
+
+            CharacterStatusData newStatus = new CharacterStatusData();
+
+            // 最大値を更新
+            newStatus.hp = playerData.Status.hp;
+            newStatus.power = playerData.Status.power;
+            newStatus.defence = playerData.Status.defence;
+            newStatus.jumpPower = playerData.Status.jumpPower;
+            newStatus.moveSpeed = playerData.Status.moveSpeed;
+            newStatus.healRate = playerData.Status.healRate;
+
+            this.roomContext.characterStatusDataList.Add(this.ConnectionId, newStatus);
         }
     }
 }
