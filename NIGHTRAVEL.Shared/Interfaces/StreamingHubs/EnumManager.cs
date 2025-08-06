@@ -79,7 +79,8 @@ namespace Shared.Interfaces.StreamingHubs
             JumpPower,
             MoveSpeed,
             MoveSpeedFactor,
-            AttackSpeedFactor
+            AttackSpeedFactor,
+            HealRate
         }
 
         /// <summary>
