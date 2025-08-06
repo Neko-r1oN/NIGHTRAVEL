@@ -26,8 +26,10 @@ namespace Shared.Interfaces.StreamingHubs
         public float moveSpeedFactor;     // 移動速度(Animatorの係数)
         [Key(6)]
         public float attackSpeedFactor;   // 攻撃速度(Animatorの係数)
+        [Key(7)]
+        public float healRate;  // 自動回復の倍率
 
-        public CharacterStatusData(int hp = 0, int defence = 0, int power = 0, float moveSpeed = 0, float moveSpeedFactor = 0, float attackSpeedFactor = 0, float jumpPower = 0)
+        public CharacterStatusData(int hp = 0, int defence = 0, int power = 0, float moveSpeed = 0, float moveSpeedFactor = 0, float attackSpeedFactor = 0, float jumpPower = 0, float healRate = 0)
         {
             this.hp = hp;
             this.defence = defence;
@@ -36,6 +38,7 @@ namespace Shared.Interfaces.StreamingHubs
             this.moveSpeed = moveSpeed;
             this.moveSpeedFactor = moveSpeedFactor;
             this.attackSpeedFactor = attackSpeedFactor;
+            this.healRate = healRate;
         }
 
     }
