@@ -420,6 +420,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
+    /// ステージクリア待機の同期
+    /// </summary>
+    /// <param name="conID"></param>
+    /// <param name="isTimeUp"></param>
+    /// <param name="stageID"></param>
+    /// <param name="isBossStage"></param>
+    /// <returns></returns>
+    public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, int stageID, bool isBossStage)
+    {
+        await roomHub.WaitStageClearAsync(conID, isTimeUp, stageID, isBossStage);
+    }
+
+    /// <summary>
     /// ダメージ表記同期
     /// Aughter:木田晃輔
     /// </summary>
@@ -429,6 +442,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         await roomHub.DamageAsync(dmg);
     }
+
+
 
     #endregion
 
