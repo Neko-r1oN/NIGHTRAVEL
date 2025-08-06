@@ -3,16 +3,36 @@ using UnityEngine.SceneManagement;
 
 public class DataListManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] GameObject playerInfo;
+    [SerializeField] GameObject enemyInfo; 
+    [SerializeField] GameObject relicInfo;
+
+    private void Start()
     {
-        
+        playerInfo.SetActive(true);
+        enemyInfo.SetActive(false);
+        relicInfo.SetActive(false);
+
+    }
+    public void PushPlayer()
+    {
+        playerInfo.SetActive(true);
+        enemyInfo.SetActive(false);
+        relicInfo.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void PushEnemy()
     {
-        
+        playerInfo.SetActive(false);
+        enemyInfo.SetActive(true);
+        relicInfo.SetActive(false);
+    }
+
+    public void PushRelic()
+    {
+        playerInfo.SetActive(false);
+        enemyInfo.SetActive(false);
+        relicInfo.SetActive(true);
     }
 
     /// <summary>
