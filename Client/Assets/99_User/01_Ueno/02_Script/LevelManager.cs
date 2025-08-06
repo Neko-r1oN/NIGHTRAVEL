@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
+using Shared.Interfaces.StreamingHubs;
 
 public class LevelManager : MonoBehaviour
 {
@@ -64,6 +66,12 @@ public class LevelManager : MonoBehaviour
         }
 
         gameLevel = gameLevel + 1;
+
+        foreach(var enemy in CharacterManager.Instance.Enemies.Values)
+        {
+            enemy.Enemy.ApplyStatusModifierByRate(10, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
+        }
+        
 
         UIManager.Instance.UpGameLevelText();
 

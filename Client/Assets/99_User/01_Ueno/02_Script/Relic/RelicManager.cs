@@ -2,15 +2,12 @@
 // レリック管理クラス
 // Author : Souma Ueno
 //----------------------------------------------------
-using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
-using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 
@@ -68,7 +65,7 @@ public class RelicManager : MonoBehaviour
     {
         if (RoomModel.Instance == null) return;
         //モデルでOnSpawnedRelicが呼び出されるとOnSpawnRelicが呼び出される
-        RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
+        RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
     }
 
     /// <summary>
@@ -105,38 +102,36 @@ public class RelicManager : MonoBehaviour
     /// <summary>
     /// レリックを生成する処理
     /// </summary>
-    public void GenerateRelic(Vector3 bossPos)
-    {
-        randomRarity = GetRandomRarity();
+    //public void GenerateRelic(Vector3 bossPos)
+    //{
+    //    randomRarity = GetRandomRarity();
 
-        List<GameObject> filteredRelics = relicPrefab.
-            Where(prefab =>
-            {
-                Relic relic = prefab.GetComponent<Relic>();
-                return relic != null && relic.Rarity == (int)randomRarity;
-            }).ToList();
+    //    List<GameObject> filteredRelics = relicPrefab.
+    //        Where(prefab =>
+    //        {
+    //            Relic relic = prefab.GetComponent<Relic>();
+    //            return relic != null && relic.Rarity == (int)randomRarity;
+    //        }).ToList();
 
-        if (filteredRelics.Count > 0)
-        {
-            int random = Random.Range(0, filteredRelics.Count);
-            GameObject selectedRelic = filteredRelics[random];
-            relic = Instantiate(selectedRelic, bossPos, Quaternion.identity);
-        }
+    //    if (filteredRelics.Count > 0)
+    //    {
+    //        int random = Random.Range(0, filteredRelics.Count);
+    //        GameObject selectedRelic = filteredRelics[random];
+    //        relic = Instantiate(selectedRelic, bossPos, Quaternion.identity);
+    //    }
 
-        int rand = Random.Range(0, relicSprites.Count);
-
-        if (relic != null)
-        {
-            Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbodyを取得
-            float boundRnd = Random.Range(2f, 6f);
-            boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
-            Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // 力を設定
-            rb.AddForce(force, ForceMode2D.Impulse);             // 力を加える
-        }
-    }
+    //    if (relic != null)
+    //    {
+    //        Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbodyを取得
+    //        float boundRnd = Random.Range(2f, 6f);
+    //        boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
+    //        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // 力を設定
+    //        rb.AddForce(force, ForceMode2D.Impulse);             // 力を加える
+    //    }
+    //}
 
 
-        [ContextMenu("GenerateRelicTest")]
+    [ContextMenu("GenerateRelicTest")]
     public async void GenerateRelicTest()
     {
         randomRarity = GetRandomRarity();
@@ -152,20 +147,14 @@ public class RelicManager : MonoBehaviour
         {
             int random = Random.Range(0, filteredRelics.Count);
             GameObject selectedRelic = filteredRelics[random];
-            //relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+#if UNITY_EDITOR
+            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+#else
             //レリックの設定
             relic = selectedRelic;
             //レリックの生成同期を実行
-            await RoomModel.Instance.DropRelicAsync(relic.transform.position);
-        }
-
-        if (relic != null)
-        {
-            Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbodyを取得
-            float boundRnd = Random.Range(2f, 6f);
-            boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
-            Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // 力を設定
-            rb.AddForce(force, ForceMode2D.Impulse);             // 力を加える
+            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
+#endif
         }
     }
 
@@ -174,18 +163,9 @@ public class RelicManager : MonoBehaviour
     /// </summary>
     /// <param name="relicId"></param>
     /// <param name="pos"></param>
-    void OnDropRelic(List<DropRelicData> dropRelicDatas)
+    void OnSpawnRelic(int relicId,Vector2 pos)
     {
-        foreach (var dropRelicdata in dropRelicDatas) 
-        {//ドロップした数分生成
-
-            //IDを整数変換
-            Int32.TryParse(dropRelicdata.Id, out int relicID);
-
-            //レリックを生成する
-            relic = Instantiate(relicPrefab[relicID],dropRelicdata.SpawnPos, Quaternion.identity);
-
-        }
+       relic = Instantiate(relicPrefab[relicId], pos,Quaternion.identity);
     }
 
     [ContextMenu("ShuffleRelic")]

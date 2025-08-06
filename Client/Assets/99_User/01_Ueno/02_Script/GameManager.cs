@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
     [ContextMenu("DeathBoss")]
     private void DeathBoss()
     {
-        RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
+        //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
         // Ž€‚ñ‚¾”»’è‚É‚·‚é
         isBossDead = true;
