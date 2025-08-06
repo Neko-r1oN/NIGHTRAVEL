@@ -337,9 +337,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="enemHP"></param>
     /// <returns></returns>
-    public async Task EnemyHealthAsync(int enemID,Guid guid, float enemHP)
+    public async Task EnemyHealthAsync(int enemID,Guid guid, float enemHP, List<DEBUFF_TYPE> debuffList)
     {
-        await roomHub.EnemyHealthAsync(enemID,guid, enemHP);
+        await roomHub.EnemyHealthAsync(enemID,guid, enemHP, debuffList);
     }
 
     /// <summary>
