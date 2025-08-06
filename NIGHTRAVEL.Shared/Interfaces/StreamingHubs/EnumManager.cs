@@ -41,6 +41,28 @@ namespace Shared.Interfaces.StreamingHubs
         }
         #endregion
 
+        #region アイテム関連
+
+        /// <summary>
+        /// アイテムの種類
+        /// </summary>
+        public enum ITEM_TYPE
+        {
+            DataCube,
+            DataBox,
+            Relic
+        }
+
+        /// <summary>
+        /// レリックの種類
+        /// </summary>
+        public enum RELIC_TYPE
+        {
+            Sample
+        }
+
+        #endregion
+
         #region キャラクター関連
 
         /// <summary>
@@ -72,7 +94,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum STATUS_TYPE
         {
-            All,
+            All = 0,
             HP,
             Defense,
             Power,
@@ -81,14 +103,6 @@ namespace Shared.Interfaces.StreamingHubs
             MoveSpeedFactor,
             AttackSpeedFactor,
             HealRate
-        }
-
-        /// <summary>
-        /// レリックの種類
-        /// </summary>
-        public enum RELIC_TYPE
-        {
-            Sample
         }
 
         #region 操作キャラ関連
