@@ -121,8 +121,9 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="conID">ダメージを与えたPLの接続ID</param>
         /// <param name="giverATK">PLの攻撃力</param>
+        /// <param name="debuffType">デバフの種類</param>
         /// <returns></returns>
-        Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK);
+        Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
 
         /// <summary>
         /// ステータス強化選択

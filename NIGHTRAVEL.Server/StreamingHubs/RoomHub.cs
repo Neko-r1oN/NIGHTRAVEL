@@ -458,39 +458,48 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="conID">ダメージを与えたPLの接続ID</param>
         /// <param name="giverATK">PLの攻撃力</param>
+        /// <param name="debuffType">デバフの種類</param>
         /// <returns></returns>
-        public async Task EnemyHealthAsync(int enemID, Guid conID, float giverATK)
+        public async Task EnemyHealthAsync(int enemID, Guid conID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType)
         {
-            // ID指定で敵情報を取得
-            var enemData =  this.roomContext.GetEnemyData(enemID);
-            if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
-
-            // 受け取った情報でダメージ計算をする
-            enemData.State.hp -= (int)((giverATK / 2) - (enemData.State.defence / 4));
-
-            // 敵被弾データを新しく作成
-            EnemyDamegeData enemDmgData = new EnemyDamegeData();
-
-            // 作成したデータに各情報を代入
-            enemDmgData.AttackerId = conID;
-            enemDmgData.HitEnemyId = enemID;
-            enemDmgData.RemainingHp = enemData.State.hp;
-
-            // 敵のHPが0以下になった場合
-            if(enemData.State.hp <= 0)
+            lock (roomContextRepository) // 排他制御
             {
-                //enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
-                this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
+                // ID指定で敵情報を取得
+                var enemData = this.roomContext.GetEnemyData(enemID);
+                if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
-                // 所持経験値が必要経験値に満ちた場合
-                if(this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
+                // 受け取った情報でダメージ計算をする
+                enemData.State.hp -= (int)((giverATK / 2) - (enemData.State.defence / 4));
+
+                // 敵被弾データを新しく作成
+                EnemyDamegeData enemDmgData = new EnemyDamegeData();
+
+                // 作成したデータに各情報を代入
+                enemDmgData.AttackerId = conID; // 攻撃者ID
+                enemDmgData.Damage = (int)((giverATK / 2) - (enemData.State.defence / 4));  // 付与ダメージ
+                enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
+                enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
+                enemDmgData.DebuffList = debuffType;    // 付与デバフ
+                enemDmgData.GainedExp = enemData.Exp;   // 獲得経験値
+                enemDmgData.UpdatedPlayerStats = this.roomContext.characterDataList;    // キャラクターステータス(idk)
+
+                // 敵のHPが0以下になった場合
+                if (enemData.State.hp <= 0)
                 {
-                    LevelUp(roomContext.ExpManager); // レベルアップ処理
+                    //enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
+                    this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
+                    
+                    // 所持経験値が必要経験値に満ちた場合
+                    if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
+                    {
+                        LevelUp(roomContext.ExpManager); // レベルアップ処理
+                        enemDmgData.StatUpgradeOptions = this.roomContext.statusOptionList; // 決定した選択肢を代入
+                    }
                 }
-            }
 
-            // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知
-            this.roomContext.Group.All.OnEnemyHealth(enemDmgData);
+                // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知
+                this.roomContext.Group.All.OnEnemyHealth(enemDmgData);
+            }
         }
 
         /// <summary>
@@ -632,14 +641,17 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task GetItemAsync(string itemID)
         {
-            // すでに取得済みである場合、処理しない
-            if(this.roomContext.gottenItemList.Contains(itemID)) return;
+            lock (roomContextRepository) // 排他制御
+            {
+                // すでに取得済みである場合、処理しない
+                if (this.roomContext.gottenItemList.Contains(itemID)) return;
 
-            // 取得済みアイテムリストに入れる
-            this.roomContext.gottenItemList.Add(itemID);
-            
-            // アイテムの獲得を全員に通知
-            this.roomContext.Group.All.OnGetItem(itemID);
+                // 取得済みアイテムリストに入れる
+                this.roomContext.gottenItemList.Add(itemID);
+
+                // アイテムの獲得を全員に通知
+                this.roomContext.Group.All.OnGetItem(itemID);
+            }
         }
 
         /// <summary>
@@ -661,17 +673,7 @@ namespace StreamingHubs
             playerData.Status.moveSpeed *= 1.1f;
             playerData.Status.healRate *= 1.1f;
 
-            CharacterStatusData newStatus = new CharacterStatusData();
-
-            // 最大値を更新
-            newStatus.hp = playerData.Status.hp;
-            newStatus.power = playerData.Status.power;
-            newStatus.defence = playerData.Status.defence;
-            newStatus.jumpPower = playerData.Status.jumpPower;
-            newStatus.moveSpeed = playerData.Status.moveSpeed;
-            newStatus.healRate = playerData.Status.healRate;
-
-            return newStatus;
+            return playerData.Status;
         }
 
         #endregion
@@ -706,6 +708,9 @@ namespace StreamingHubs
         /// </summary>
         protected void LevelUp(ExpManager expManager)
         {
+            // 強化選択肢リストを初期化
+            this.roomContext.statusOptionList.Clear();
+
             // レベルアップ処理
             expManager.Level++; // 現在のレベルを上げる
             expManager.nowExp = expManager.nowExp - expManager.RequiredExp;    // 超過した分の経験値を現在の経験値量として保管
