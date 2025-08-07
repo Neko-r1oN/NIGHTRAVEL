@@ -269,14 +269,14 @@ abstract public class PlayerBase : CharacterBase
 
         if(m_IsZipline)
         {
-            if(Input.GetKeyDown(KeyCode.LeftArrow))
+            if(Input.GetKeyDown(KeyCode.A))
             {
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_IsZipline = false;
                 ziplineSpark.SetActive(false);
                 m_Rigidbody2D.AddForce(new Vector2(-m_ZipJumpForceX,m_ZipJumpForceY));
             }
-            else if(Input.GetKeyDown(KeyCode.RightArrow))
+            else if(Input.GetKeyDown(KeyCode.D))
             {
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_IsZipline = false;
@@ -286,19 +286,19 @@ abstract public class PlayerBase : CharacterBase
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Jump"))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
             {   // ジャンプ押下時
                 if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
                     isJump = true;
             }
 
-            if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("Blink"))
+            if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Blink"))
             {   // ブリンク押下時
                     isBlink = true;
                     gameObject.layer = 21;
             }
 
-            if (m_IsScaffold && Input.GetKeyDown(KeyCode.DownArrow))
+            if (m_IsScaffold && Input.GetKeyDown(KeyCode.S))
             {
                 gameObject.layer = 21;
                 StartCoroutine(ScaffoldDown());

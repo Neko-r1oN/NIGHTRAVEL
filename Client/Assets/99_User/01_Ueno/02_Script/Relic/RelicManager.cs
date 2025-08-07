@@ -65,7 +65,7 @@ public class RelicManager : MonoBehaviour
     {
         if (RoomModel.Instance == null) return;
         //ƒ‚ƒfƒ‹‚ÅOnSpawnedRelic‚ªŒÄ‚Ño‚³‚ê‚é‚ÆOnSpawnRelic‚ªŒÄ‚Ño‚³‚ê‚é
-        RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
+        //RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
     }
 
     /// <summary>

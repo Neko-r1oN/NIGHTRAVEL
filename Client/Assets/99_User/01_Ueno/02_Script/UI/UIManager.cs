@@ -97,11 +97,20 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image relicImg;                 // レリックのイメージ
 
     [Foldout("その他")]
-    [SerializeField] List<GameObject> playerStatus;  // 自分以外のプレイヤーのステータス
+    [SerializeField] List<GameObject> playerStatus; // 自分以外のプレイヤーのステータス
     [Foldout("その他")]
-    [SerializeField] GameObject terminalExplanation; // ターミナル説明用オブジェクト
+    [SerializeField] GameObject terminalExplanation;// ターミナル説明用オブジェクト
     [Foldout("その他")]
-    [SerializeField] GameObject statusUpButton;      // ステータスアップボタン
+    [SerializeField] GameObject statusUpButton;     // ステータスアップボタン
+
+    [Foldout("操作UI")]
+    [SerializeField] GameObject gamePadUI;          // パッド操作UI
+    [Foldout("操作UI")]
+    [SerializeField] GameObject keyBoardUI;         // キーボード操作UI
+    [Foldout("操作UI")]
+    [SerializeField] GameObject swordSkillUI;          // 剣士スキルUI
+    [Foldout("操作UI")]
+    [SerializeField] GameObject gunnerSkillUI;         // ガンナースキルUI
 
     #endregion
 
@@ -232,6 +241,16 @@ public class UIManager : MonoBehaviour
         {
             relic.enabled = false;
         }
+
+        // キャラのジョブ毎にUIを変更
+        if(CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().PlayerType == Player_Type.Sword)
+        {
+            ChangeSkillUI("Sword");
+        }
+        else
+        {
+            ChangeSkillUI("Gunner");
+        }
     }
 
     /// <summary>
@@ -239,6 +258,16 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // キーボード or ゲームパッドの入力でUI変化
+        if(Input.anyKeyDown)
+        {
+            ChangeOperationUI("Keyboard");
+        }
+        else if(Input.GetButtonDown("Jump") || Input.GetButtonDown("Blink") || Input.GetButtonDown("Attack1") || Input.GetButtonDown("Attack2"))
+        {
+            ChangeOperationUI("Gamepad");
+        }
+
         if(player == null)
         {
             player = Camera.main.GetComponent<CameraFollow>().Target.gameObject.GetComponent<PlayerBase>();
@@ -781,5 +810,41 @@ public class UIManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// 操作UI変化処理
+    /// </summary>
+    /// <param name="keyBoardFlag"></param>
+    private void ChangeOperationUI(string mode)
+    {
+        if (mode == "Keyboard")
+        {
+            gamePadUI.SetActive(false);
+            keyBoardUI.SetActive(true);
+        }
+        else if(mode == "Gamepad")
+        {
+            gamePadUI.SetActive(true);
+            keyBoardUI.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// キャラ毎のスキルUI変化
+    /// </summary>
+    /// <param name="job"></param>
+    private void ChangeSkillUI(string job)
+    {
+        if (job == "Sword")
+        {
+            swordSkillUI.SetActive(true);
+            gunnerSkillUI.SetActive(false);
+        }
+        else if (job == "Gunner")
+        {
+            swordSkillUI.SetActive(false);
+            gunnerSkillUI.SetActive(true);
+        }
     }
 }

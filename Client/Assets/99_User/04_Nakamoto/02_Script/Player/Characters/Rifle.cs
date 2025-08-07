@@ -86,7 +86,7 @@ public class Rifle : PlayerBase
     {
         int id = animator.GetInteger("animation_id");
 
-        if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
+        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
         {   // í èÌçUåÇ
             if (isBlink || isSkill || id == 3 || m_IsZipline) return;
 
@@ -106,7 +106,7 @@ public class Rifle : PlayerBase
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
+        if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
         {   // ÉXÉLÉã
             if (m_IsZipline) return;
 

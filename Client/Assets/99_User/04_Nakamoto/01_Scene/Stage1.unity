@@ -1889,11 +1889,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &420946193 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  m_PrefabInstance: {fileID: 1159229251}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &448944410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1996,6 +1991,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5359299794365042959, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
   m_PrefabInstance: {fileID: 448944410}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &457441512
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 597312972180860245, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_Name
+      value: Rifle
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.7934644
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.3985882
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
 --- !u!1 &473139134
 GameObject:
   m_ObjectHideFlags: 0
@@ -3141,9 +3193,6 @@ MonoBehaviour:
   - {fileID: 3488628306998136812, guid: b2b73b729aea6dc408fcf80d5f07945e, type: 3}
   - {fileID: 2717074539250444405, guid: 3092e870d5df0e24a9fbe5eddd4edd96, type: 3}
   emitEnemyTypes: 0000000001000000
-  distMinSpawnPos: 3
-  xRadius: 10
-  yRadius: 6
   bossTerminal: {fileID: 814019638}
   bossId: 4
 --- !u!213 &672613744
@@ -13486,6 +13535,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sword
       objectReference: {fileID: 0}
+    - target: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.65
@@ -15096,6 +15149,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6487254726713860379, guid: 21540368c1043774e9c729d8b77d17b6, type: 3}
   m_PrefabInstance: {fileID: 1529825718}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1536515512 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 597312972180860245, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+  m_PrefabInstance: {fileID: 457441512}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1544159974
 GameObject:
   m_ObjectHideFlags: 0
@@ -15147,7 +15205,7 @@ MonoBehaviour:
   - {fileID: 1508921696}
   - {fileID: 519303592}
   charaSwordPrefab: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  playerObjSelf: {fileID: 420946193}
+  playerObjSelf: {fileID: 1536515512}
 --- !u!1 &1594664040
 GameObject:
   m_ObjectHideFlags: 0
@@ -16623,7 +16681,7 @@ MonoBehaviour:
   FollowSpeed: 15
   Target: {fileID: 0}
   shakeDuration: 0
-  shakeAmount: 0.1
+  shakeAmount: 0.05
   decreaseFactor: 55
 --- !u!114 &1890321819
 MonoBehaviour:
@@ -40095,7 +40153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da43427a53e02f24694be8b8b55a4087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 0
   bossPrefab: {fileID: 2717074539250444405, guid: 9d8dfa9e60155594f8fd2e2613cf89af, type: 3}
   minCameraPos: {fileID: 1980890281}
   maxCameraPos: {fileID: 1873303072}
@@ -40430,3 +40487,4 @@ SceneRoots:
   - {fileID: 1079358174}
   - {fileID: 644022947}
   - {fileID: 1159229251}
+  - {fileID: 457441512}
