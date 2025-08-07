@@ -39,6 +39,19 @@ namespace Shared.Interfaces.StreamingHubs
             VeryHard,
             Hell
         }
+
+        /// <summary>
+        /// ステージ種類
+        /// Author:Nishiura
+        /// </summary>
+        public enum STAGE_TYPE
+        {
+            Rust,
+            Industry,
+            Town,
+            Last
+        }
+
         #endregion
 
         #region キャラクター関連

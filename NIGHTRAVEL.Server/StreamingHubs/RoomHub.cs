@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -103,6 +104,7 @@ namespace StreamingHubs
             // ルームデータから接続IDを指定して自身のデータを取得
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
             playerData.IsDead = false; // 死亡判定をfalseにする
+            this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
 
             // 参加中のユーザー情報を返す
             return this.roomContext.JoinedUserList;
@@ -269,28 +271,32 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        public async Task DropRelicAsync(Vector2 pos)
+        public async Task DropRelicAsync(Stack<Vector2> pos)
         {
             GameDbContext dbContext = new GameDbContext();
 
-            int relicID = new Random().Next(1, dbContext.Relics.ToArray().Length); // 取得するレリックのIDを乱数で指定
+            // 参加人数分ループ
+            for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
+            {
 
-            // レリック情報を検索
-            var relic = dbContext.Relics.Where(relic => relic.id == relicID).First();
+                int relicID = new Random().Next(1, dbContext.Relics.ToArray().Length); // 取得するレリックのIDを乱数で指定
 
-            DropRelicData dropRelicData = new DropRelicData();
+                // レリック情報を検索
+                var relic = dbContext.Relics.Where(relic => relic.id == relicID).First();
 
-            // データを更新
-            dropRelicData.Id = Guid.NewGuid().ToString();
-            dropRelicData.Name = relic.name;
-            dropRelicData.ExplanationText = relic.explanation;
-            dropRelicData.Effect = (int)relic.effect;
-            dropRelicData.RelicType = (EnumManager.RELIC_TYPE)relicID;
-            dropRelicData.SpawnPos = pos;
-            dropRelicData.DroppedVec = new Vector2();
+                DropRelicData dropRelicData = new DropRelicData();
 
-            // ドロップしたレリックリストに追加
-            this.roomContext.dropRelicDataList.Add(dropRelicData);
+                // データを更新
+                dropRelicData.Id = Guid.NewGuid().ToString();
+                dropRelicData.Name = relic.name;
+                dropRelicData.ExplanationText = relic.explanation;
+                dropRelicData.Effect = (int)relic.effect;
+                dropRelicData.RelicType = (EnumManager.RELIC_TYPE)relicID;
+                dropRelicData.SpawnPos = pos.Pop();
+
+                // ドロップしたレリックリストに追加
+                this.roomContext.dropRelicDataList.Add(dropRelicData);
+            }
 
             // ルーム参加者全員に、レリックのIDと生成位置を送信
             this.roomContext.Group.All.OnDropRelic(this.roomContext.dropRelicDataList);
@@ -355,41 +361,48 @@ namespace StreamingHubs
         /// 次ステージ進行同期処理
         /// Autho:Nishiura
         /// </summary>
-        /// <param name="stageID"></param>
-        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
+        public async Task StageClear(Guid conID, bool isAdvance)
         {
             lock (roomContextRepository) // 排他制御
             {
+                this.roomContext.isAdvanceRequest = true;
 
-                if ((stageID == 3 && isBossStage) || stageID != 3) stageID++;   // ステージが3かつラスボスへ進む場合または通常ステージの場合、ステージIDを加算
-                else if (stageID == 3 && !isBossStage) stageID = 1;             // ラスボスへ進まない場合、ステージ1へ移動
+                if (isAdvance)
+                {
+                    this.roomContext.NowStage++; // 現在のステージを加算
 
-                // 生成された敵リストをクリア
-                this.roomContext.spawnedEnemyDataList.Clear();
+                    // 生成された敵リストをクリア
+                    this.roomContext.spawnedEnemyDataList.Clear();
 
-                // 獲得したアイテムリストをクリア
-                this.roomContext.gottenItemList.Clear();
+                    // 獲得したアイテムリストをクリア
+                    this.roomContext.gottenItemList.Clear();
 
-                // 起動した端末リストをクリア
-                this.roomContext.bootedTerminalList.Clear();
+                    // 起動した端末リストをクリア
+                    this.roomContext.bootedTerminalList.Clear();
 
-                // 成功した端末リストをクリア
-                this.roomContext.succededTerminalList.Clear();
+                    // 成功した端末リストをクリア
+                    this.roomContext.succededTerminalList.Clear();
 
-                // 参加者全員にステージの進行を通知
-                this.roomContext.Group.All.OnAdanceNextStage(stageID);
+                    // 参加者全員にステージの進行を通知
+                    this.roomContext.Group.All.OnAdanceNextStage(conID, isAdvance, this.roomContext.NowStage);
+                }
+                else
+                {
+                    
+                }
             }
         }
 
         /// <summary>
         /// ステージ進行完了同期処理
         /// </summary>
-        /// <param name="stageID">ステージID</param>
-        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task AdvancedStageAsync(int stageID, bool isBossStage)
+        public async Task AdvancedStageAsync(Guid conID, bool isAdvance)
         {
             bool canAdvenceStage = true; // ステージ進行済み判定変数
 
@@ -406,8 +419,11 @@ namespace StreamingHubs
             }
 
             // 進行できる場合、進行通知をする
-            if (canAdvenceStage) await AdvanceNextStageAsync(stageID, isBossStage);
-
+            if (canAdvenceStage)
+            {
+                await StageClear(conID, isAdvance);
+                canAdvenceStage = false;
+            }
         }
 
         /// <summary>
@@ -415,13 +431,12 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="conID">接続ID</param>
         /// <param name="isTimeUp">時間切れ判定</param>
-        /// <param name="stageID">ステージID</param>
-        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, int stageID, bool isBossStage)
+        public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance)
         {
             // 時間切れの場合、即座に進行処理をする
-            if (isTimeUp) await AdvanceNextStageAsync(stageID, isBossStage);
+            if (isTimeUp) await StageClear((Guid)conID, isAdvance);
 
             bool canAdvenceStage = true; // ステージ進行判定変数
 
@@ -435,7 +450,7 @@ namespace StreamingHubs
             }
 
             // 進行できる場合、進行通知をする
-            if (canAdvenceStage) await AdvanceNextStageAsync(stageID, isBossStage);
+            if (canAdvenceStage) await StageClear((Guid)conID, isAdvance);
         }
 
         /// <summary>
@@ -484,17 +499,27 @@ namespace StreamingHubs
                 enemDmgData.UpdatedPlayerStats = this.roomContext.characterDataList;    // キャラクターステータス(idk)
 
                 // 敵のHPが0以下になった場合
-                if (enemData.State.hp <= 0)
+                if (enemDmgData.RemainingHp <= 0)
                 {
                     //enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
                     this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
-                    
+
                     // 所持経験値が必要経験値に満ちた場合
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
                     {
                         LevelUp(roomContext.ExpManager); // レベルアップ処理
+                        enemDmgData.LevelUpCount++;
                         enemDmgData.StatUpgradeOptions = this.roomContext.statusOptionList; // 決定した選択肢を代入
                     }
+                    else
+                    {
+                        enemDmgData.LevelUpCount = 0;
+                    }
+                }
+                else
+                {
+                    enemDmgData.GainedExp = 0;
+                    enemDmgData.LevelUpCount = 0;
                 }
 
                 // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知
@@ -705,6 +730,7 @@ namespace StreamingHubs
 
         // <summary>
         /// レベルアップ処理
+        /// Author:Nishiura
         /// </summary>
         protected void LevelUp(ExpManager expManager)
         {
@@ -754,6 +780,18 @@ namespace StreamingHubs
             newStatus.healRate = playerData.Status.healRate;
 
             this.roomContext.characterStatusDataList.Add(this.ConnectionId, newStatus);
+        }
+
+        /// <summary>
+        /// リザルト作成処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        public async Task Result()
+        {
+            ResultData resultData = new ResultData();
+
+            resultData.Difficulty = this.roomContext.NowDifficulty;
         }
     }
 }

@@ -40,6 +40,18 @@ namespace NIGHTRAVEL.Server.Model.Context
         public ExpManager ExpManager { get; set; }
 
         /// <summary>
+        /// 現在のステージ
+        /// Author:Nishiura
+        /// </summary>
+        public EnumManager.STAGE_TYPE NowStage { get; set; }
+
+        /// <summary>
+        /// ステージ進行リクエスト変数
+        /// Author:Nishiura
+        /// </summary>
+        public bool isAdvanceRequest;
+
+        /// <summary>
         /// グループ
         /// Author:Kida
         /// </summary>

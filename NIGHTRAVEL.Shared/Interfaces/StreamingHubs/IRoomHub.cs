@@ -99,10 +99,9 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="conID">接続ID</param>
         /// <param name="isTimeUp">時間切れ判定</param>
-        /// <param name="stageID">ステージID</param>
-        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        Task WaitStageClearAsync(Guid? conID, bool isTimeUp, int stageID, bool isBossStage);
+        Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance);
         #endregion
         #region 敵関連
         /// <summary>
@@ -141,7 +140,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        Task DropRelicAsync(Vector2 pos);
+        Task DropRelicAsync(Stack<Vector2> pos);
 
         /// <summary>
         /// レリック取得
@@ -170,22 +169,22 @@ namespace Shared.Interfaces.StreamingHubs
         Task AscendDifficultyAsync();
 
         /// <summary>
-        /// 次ステージ進行
+        /// ステージクリア
         /// Author:Nishiura
         /// </summary>
-        /// <param name="stageID">ステージID</param>
-        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        Task AdvanceNextStageAsync(int stageID, bool isBossStage);
+        Task StageClear(Guid conID, bool isAdvance);
 
         /// <summary>
         /// ステージ進行完了
         /// Author:Nishiura
         /// </summary>
-        /// <param name="stageID">ステージID</param>
-        /// <param name="isBossStage">ボスステージ判定</param>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        Task AdvancedStageAsync(int stageID, bool isBossStage);
+        Task AdvancedStageAsync(Guid conID, bool isAdvance);
 
         #endregion
         #endregion
@@ -204,6 +203,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="time">タイマーの辞典</param>
         /// <returns></returns>
         Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType);
+
+        /// <summary>
+        /// リザルト
+        /// Author:Nishiura
+        /// </summary>
+        /// <returns></returns>
+        Task Result();
 
         #region 不要になりそうなAPI
         #region ゲーム内
