@@ -16,10 +16,12 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
+using Vector2 = UnityEngine.Vector2;
 #endregion
 
 public class RoomModel : BaseModel, IRoomHubReceiver
@@ -74,7 +76,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<JoinedUser> OnMasteredClient { get; set; }
 
     //オブジェクトの移動回転通知
-    public Action<string, Vector3, Quaternion> OnMovedObject { get; set; }
+    public Action<string, UnityEngine.Vector3, UnityEngine.Quaternion> OnMovedObject { get; set; }
 
     //レリックの生成通知
     public Action<List<DropRelicData>> OnDropedRelic {  get; set; }
@@ -89,7 +91,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnAscendDifficultySyn {  get; set; }
 
     //次ステージ進行通知
-    public Action<int> OnAdanceNextStageSyn { get; set; }
+    public Action<Guid,bool,STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
 
     //プレイヤー体力増減通知
     public Action<int,float> OnPlayerHealthSyn {  get; set; }
@@ -360,7 +362,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
-    public async Task DropRelicAsync(Vector2 pos)
+    public async Task DropRelicAsync(Stack<Vector2> pos)
     {
         await roomHub.DropRelicAsync(pos);
     }
@@ -403,10 +405,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="stageID"></param>
-    public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
-    {
-        await roomHub.AdvanceNextStageAsync(stageID, isBossStage);
-    }
+    //public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
+    //{
+    //    await roomHub.AdvanceNextStageAsync(stageID, isBossStage);
+    //}
 
     /// <summary>
     /// ステージ進行完了の同期
@@ -414,9 +416,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="stageID"></param>
     /// <param name="isBossStage"></param>
     /// <returns></returns>
-    public async Task AdvancedStageAsync(int stageID, bool isBossStage)
+    public async Task AdvancedStageAsync(Guid conID, bool isAdvance)
     {
-        await roomHub.AdvancedStageAsync(stageID, isBossStage);
+        await roomHub.AdvancedStageAsync(conID, isAdvance);
     }
 
     /// <summary>
@@ -424,12 +426,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="conID"></param>
     /// <param name="isTimeUp"></param>
-    /// <param name="stageID"></param>
     /// <param name="isBossStage"></param>
     /// <returns></returns>
-    public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, int stageID, bool isBossStage)
+    public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp,bool isBossStage)
     {
-        await roomHub.WaitStageClearAsync(conID, isTimeUp, stageID, isBossStage);
+        await roomHub.WaitStageClearAsync(conID, isTimeUp,isBossStage);
     }
 
     /// <summary>
@@ -702,9 +703,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="stageID"></param>
-    public void OnAdanceNextStage(int stageID)
+    public void OnAdanceNextStage(Guid conID, bool isAdvance, STAGE_TYPE stageType)
     {
-        OnAdanceNextStageSyn(stageID);
+        OnAdanceNextStageSyn(conID,isAdvance,stageType);
     }
 
     /// <summary>
