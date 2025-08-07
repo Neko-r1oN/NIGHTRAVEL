@@ -54,12 +54,5 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>  
         public Vector2 SpawnPos { get; set; }
-
-        [Key(6)]
-        /// <summary>
-        /// ドロップベクトル
-        /// Author:Nishiura
-        /// </summary>  
-        public Vector2 DroppedVec { get; set; }
     }
 }

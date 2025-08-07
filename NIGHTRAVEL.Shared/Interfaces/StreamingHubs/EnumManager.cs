@@ -41,58 +41,15 @@ namespace Shared.Interfaces.StreamingHubs
         }
 
         /// <summary>
-        /// レア度の種類
-        /// Author:木田晃輔
+        /// ステージ種類
+        /// Author:Nishiura
         /// </summary>
-        public enum RARITY_TYPE
+        public enum STAGE_TYPE
         {
-            Common = 1,
-            Uncommon,
-            Rare,
-            Unique,
-            Legend,
-            Boss
-        }
-        #endregion
-
-        #region アイテム関連
-
-        /// <summary>
-        /// アイテムの種類
-        /// </summary>
-        public enum ITEM_TYPE
-        {
-            DataCube,
-            DataBox,
-            Relic
-        }
-
-        /// <summary>
-        /// レリックの種類
-        /// </summary>
-        public enum RELIC_TYPE
-        {
-            AttackTip = 1,
-            DeffenceTip,
-            MoveSpeedTip,
-            AttackSpeedTip,
-            CoolingFan,
-            HeatingFan,
-            LeakingBattery,
-            BitCoin,
-            RegainCode,
-            ScatterBug,
-            HolographicArmor,
-            Mouse,
-            DigitalMeat,
-            Firewall,
-            BanHammer,
-            LifeScavenger,
-            Rugrouter,
-            BuckupHDMI,
-            IdentificationAI,
-            ChargedCore,
-            CaracalPng
+            Rust,
+            Industry,
+            Town,
+            Last
         }
 
         #endregion
@@ -116,41 +73,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum STAT_UPGRADE_OPTION 
         {
-            Common_HP = 1,
-            Common_Deffence,
-            Common_Attack,
-            Common_JumpingPower,
-            Common_MovementSpeed,
-            Common_AttackSpeed,
-            Common_AutomaticRecovery,
-            Uncommon_HP,
-            Uncommon_Deffence,
-            Uncommon_Attack,
-            Uncommon_JumpingPower,
-            Uncommon_MovementSpeed,
-            Uncommon_AttackSpeed,
-            Uncommon_AutomaticRecovery,
-            Rare_HP,
-            Rare_Deffence,
-            Rare_Attack,
-            Rare_JumpingPower,
-            Rare_MovementSpeed,
-            Rare_AttackSpeed,
-            Rare_AutomaticRecovery,
-            Unique_HP,
-            Unique_Deffence,
-            Unique_Attack,
-            Unique_JumpingPower,
-            Unique_MovementSpeed,
-            Unique_AttackSpeed,
-            Unique_AutomaticRecovery,
-            Legend_HP,
-            Legend_Deffence,
-            Legend_Attack,
-            Legend_JumpingPower,
-            Legend_MovementSpeed,
-            Legend_AttackSpeed,
-            Legend_AutomaticRecovery
+            Sample_0 =0,
+            Sample_1 =1,
+            Sample_2 =2,
+            Sample_3 =3,
+            Max
         }
 
         /// <summary>
@@ -158,7 +85,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum STATUS_TYPE
         {
-            All = 0,
+            All,
             HP,
             Defense,
             Power,
@@ -167,6 +94,14 @@ namespace Shared.Interfaces.StreamingHubs
             MoveSpeedFactor,
             AttackSpeedFactor,
             HealRate
+        }
+
+        /// <summary>
+        /// レリックの種類
+        /// </summary>
+        public enum RELIC_TYPE
+        {
+            Sample
         }
 
         #region 操作キャラ関連

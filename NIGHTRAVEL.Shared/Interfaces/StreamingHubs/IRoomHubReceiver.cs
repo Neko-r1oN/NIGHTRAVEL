@@ -154,8 +154,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// 次ステージ進行通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="stageID">次ステージID</param>
-        void OnAdanceNextStage(int stageID);
+        /// <param name="conID">接続ID</param>
+        /// <param name="isAdvance">次ステージ進行判定</param>
+        /// <param name="stageType">次ステージ</param>
+        void OnAdanceNextStage(Guid conID, bool isAdvance, EnumManager.STAGE_TYPE stageType);
 
         /// <summary>
         /// タイマー通知
