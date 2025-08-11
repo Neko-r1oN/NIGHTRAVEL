@@ -133,6 +133,7 @@ public class Drone : EnemyBase
     /// </summary>
     protected override void Idle()
     {
+        SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
@@ -245,9 +246,10 @@ public class Drone : EnemyBase
                 gunPsController.StartShooting();
                 break;
             default:
-                gunPsController.StopShooting();
                 break;
         }
+
+        if (id != (int)ANIM_ID.Attack) gunPsController.StopShooting();
     }
 
     #endregion
@@ -312,12 +314,12 @@ public class Drone : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        Idle();
         gunPsController.StopShooting();
         isAttacking = true;
         yield return new WaitForSeconds(time);
         isAttacking = false;
         doOnceDecision = true;
-        Idle();
         NextDecision();
         onFinished?.Invoke();
     }

@@ -25,7 +25,8 @@ public class FullMetalBody : EnemyBase
         Open,
         Close,
         Dead,
-        Despown
+        Despown,
+        Attack
     }
 
     /// <summary>
@@ -128,6 +129,7 @@ public class FullMetalBody : EnemyBase
     /// <returns></returns>
     IEnumerator RangeAttack(Action onFinished)
     {
+        SetAnimId((int)ANIM_ID.Attack);
         gunPsControllerList.ForEach(item => { item.StartShooting(); });
 
         Dictionary<Transform, GameObject> targetList = new Dictionary<Transform, GameObject>();
@@ -158,6 +160,7 @@ public class FullMetalBody : EnemyBase
             time += 0.1f;
         }
 
+        SetAnimId((int)ANIM_ID.None);
         gunPsControllerList.ForEach(item => { item.StopShooting(); });
 
         // 銃を元の角度に戻す
@@ -351,6 +354,24 @@ public class FullMetalBody : EnemyBase
         OnEndSpawnAnimEvent();
     }
 
+    /// <summary>
+    /// アニメーション設定
+    /// </summary>
+    /// <param name="id"></param>
+    public override void SetAnimId(int id)
+    {
+        base.SetAnimId(id);
+
+        if (id == (int)ANIM_ID.Attack)
+        {
+            gunPsControllerList.ForEach(item => { item.StartShooting(); });
+        }
+        else
+        {
+            gunPsControllerList.ForEach(item => { item.StopShooting(); });
+        }
+    }
+
     #endregion
 
     #region リアルタイム同期関連
@@ -388,7 +409,6 @@ public class FullMetalBody : EnemyBase
     }
 
     #endregion
-
 
     #region チェック処理関連
 

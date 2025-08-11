@@ -420,7 +420,7 @@ public class UIManager : MonoBehaviour
 
         Debug.Log(type);
 
-        player.ApplyStatusModifierByRate(0.15f, type);
+        player.ApplyMaxStatusModifierByRate(0.15f, type);
     }
 
     /// <summary>
