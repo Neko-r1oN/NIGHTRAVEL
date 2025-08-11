@@ -29677,17 +29677,26 @@ MonoBehaviour:
   characterId: 3
   baseHp: 20
   baseDefense: 20
-  basePower: 0
-  baseJumpPower: 0
+  basePower: 20
+  baseJumpPower: 1
   baseMoveSpeed: 5
+  baseHealRate: 0.001
+  maxHp: 0
+  maxDefense: 0
+  maxPower: 0
+  maxJumpPower: 0
+  maxMoveSpeed: 0
+  maxAttackSpeedFactor: 0
+  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
   jumpPower: 0
   moveSpeed: 0
-  moveSpeedFactor: 0
   attackSpeedFactor: 0
+  healRate: 0
   animator: {fileID: 0}
+  players: []
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 3326093757011905295}
@@ -29706,6 +29715,7 @@ MonoBehaviour:
   canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 4
   canDrawRay: 0
+  baseExp: 100
   exp: 100
   spawnWeight: 1
   patorolRange: 7
@@ -73938,8 +73948,7 @@ MonoBehaviour:
   canAttackEnemy: 0
   canAttackPlayer: 1
   canAttackObject: 0
-  owner: {fileID: 3488628306998136812}
-  damageValue: 2
+  owner: {fileID: 8775603351650350370}
 --- !u!1 &8850494501944022170
 GameObject:
   m_ObjectHideFlags: 0

@@ -164,7 +164,6 @@ namespace Shared.Interfaces.StreamingHubs
             Power,
             JumpPower,
             MoveSpeed,
-            MoveSpeedFactor,
             AttackSpeedFactor,
             HealRate
         }

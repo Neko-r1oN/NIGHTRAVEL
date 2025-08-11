@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class FullMetalBody : EnemyBase
@@ -62,9 +63,6 @@ public class FullMetalBody : EnemyBase
     [Foldout("攻撃関連")]
     [SerializeField]
     List<GunParticleController> gunPsControllerList;
-    [Foldout("攻撃関連")]
-    [SerializeField]
-    float gunBulletWidth = 0;
     [Foldout("攻撃関連")]
     [SerializeField]
     float aimRotetionSpeed = 3f;
@@ -354,6 +352,43 @@ public class FullMetalBody : EnemyBase
     }
 
     #endregion
+
+    #region リアルタイム同期関連
+
+    /// <summary>
+    /// FullMetalBodyData取得処理
+    /// </summary>
+    /// <returns></returns>
+    public override EnemyData GetEnemyData()
+    {
+        List<Quaternion> rotations = new List<Quaternion>();
+        foreach (var item in aimTransformList)
+        {
+            rotations.Add(item.localRotation);
+        }
+
+        var bodyData = new FullMetalBodyData() { GunRotations = rotations };    // 事前にFullMetalBodyData用のプロパティに代入
+        return CreateEnemyData(bodyData);
+    }
+
+    /// <summary>
+    /// ワームのボディの同期情報を更新する
+    /// </summary>
+    /// <param name="enemyData"></param>
+    public override void UpdateEnemy(EnemyData enemyData)
+    {
+        base.UpdateEnemy(enemyData);
+        if (enemyData is FullMetalBodyData data)
+        {
+            for(int i = 0; i<aimTransformList.Count; i++)
+            {
+                aimTransformList[i].localRotation = data.GunRotations[i];
+            }
+        }
+    }
+
+    #endregion
+
 
     #region チェック処理関連
 

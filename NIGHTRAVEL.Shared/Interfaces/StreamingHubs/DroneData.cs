@@ -13,6 +13,6 @@ namespace Shared.Interfaces.StreamingHubs
     public class DroneData : EnemyData
     {
         [Key(12)]
-        public Quaternion RunRotation { get; set; }
+        public Quaternion GunRotation { get; set; }
     }
 }
