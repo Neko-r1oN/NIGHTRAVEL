@@ -6,9 +6,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Unity.VisualScripting;
+using UnityEditor.U2D;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 
 public class RelicManager : MonoBehaviour
@@ -17,11 +21,13 @@ public class RelicManager : MonoBehaviour
     [Header("リスト")]
     [SerializeField] List<Sprite> relicSprites = new List<Sprite>();     // レリックのリスト
     [SerializeField] List<RelicDeta> haveRelicList = new List<RelicDeta>();     // 所持レリックリスト
-    [SerializeField] List<GameObject> relicPrefab = new List<GameObject>();  // レリックプレファブ
+    [SerializeField] List<GameObject> relicPrefabs = new List<GameObject>();  // レリックプレファブ
     #endregion
 
     float elapsedTime;
     GameObject relic;
+
+    [SerializeField] GameObject relicPrefab;
 
     RELIC_RARITY randomRarity;
 
@@ -65,7 +71,7 @@ public class RelicManager : MonoBehaviour
     {
         if (RoomModel.Instance == null) return;
         //モデルでOnSpawnedRelicが呼び出されるとOnSpawnRelicが呼び出される
-        RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
+        //RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
     }
 
     /// <summary>
@@ -134,28 +140,33 @@ public class RelicManager : MonoBehaviour
     [ContextMenu("GenerateRelicTest")]
     public async void GenerateRelicTest()
     {
-        randomRarity = GetRandomRarity();
 
-        List<GameObject> filteredRelics = relicPrefab.
-            Where(prefab =>
-            {
-                Relic relic = prefab.GetComponent<Relic>();
-                return relic != null && relic.Rarity == (int)randomRarity;
-            }).ToList();
+        relic = Instantiate(relicPrefab, new Vector3(0, 0, 0), UnityEngine.Quaternion.identity);
 
-        if (filteredRelics.Count > 0)
-        {
-            int random = Random.Range(0, filteredRelics.Count);
-            GameObject selectedRelic = filteredRelics[random];
-#if UNITY_EDITOR
-            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
-#else
-            //レリックの設定
-            relic = selectedRelic;
-            //レリックの生成同期を実行
-            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
-#endif
-        }
+        relic.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+
+        //        randomRarity = GetRandomRarity();
+
+        //        List<GameObject> filteredRelics = relicPrefabs.
+        //            Where(prefab =>
+        //            {
+        //                Relic relic = prefab.GetComponent<Relic>();
+        //                return relic != null && relic.Rarity == (int)randomRarity;
+        //            }).ToList();
+
+        //        if (filteredRelics.Count > 0)
+        //        {
+        //            int random = Random.Range(0, filteredRelics.Count);
+        //            GameObject selectedRelic = filteredRelics[random];
+        //#if UNITY_EDITOR
+        //            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+        //#else
+        //            //レリックの設定
+        //            relic = selectedRelic;
+        //            //レリックの生成同期を実行
+        //            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
+        //#endif
+        //}
     }
 
     /// <summary>
@@ -165,7 +176,7 @@ public class RelicManager : MonoBehaviour
     /// <param name="pos"></param>
     void OnSpawnRelic(int relicId,Vector2 pos)
     {
-       relic = Instantiate(relicPrefab[relicId], pos,Quaternion.identity);
+       relic = Instantiate(relicPrefabs[relicId], pos,UnityEngine.Quaternion.identity);
     }
 
     [ContextMenu("ShuffleRelic")]
@@ -183,7 +194,7 @@ public class RelicManager : MonoBehaviour
         {
             int relicnum = Random.Range(0, relicSprites.Count);
 
-            relicPrefab[relicnum].GetComponent<Relic>().AddRelic();
+            relicPrefabs[relicnum].GetComponent<Relic>().AddRelic();
         }
     }
 

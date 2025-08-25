@@ -113,14 +113,14 @@ public class SpawnManager : MonoBehaviour
     {
         while (true)
         {
-            if (crashNum >= knockTermsNum)
+            if (crashNum >= knockTermsNum && IsSpawnBoss)
             {
                 SpawnBoss();
             }
 
             if (spawnCnt < maxSpawnCnt && !GameManager.Instance.IsBossDead)
             {// スポーン回数が限界に達しているか
-                if (!SpawnManager.Instance.IsSpawnBoss)
+                if (!isSpawnBoss)
                 {
                     foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
                     {
@@ -524,8 +524,12 @@ public class SpawnManager : MonoBehaviour
         var scale = spawnEnemyData.Scale;
         var eliteType = spawnEnemyData.EliteType;
         GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
+        //if (LevelManager.Instance.GameLevel > 0)
+        //{
+        //    enemyObj.GetComponent<CharacterBase>().ApplyStatusModifierByRate(10 * ((int)LevelManager.Instance.GameLevel));
+        //}
         enemyObj.transform.localScale = scale;
-        enemyObj.GetComponent<EnemyBase>().PromoteToElite(spawnEnemyData.EliteType);
+        enemyObj.GetComponent<EnemyBase>().PromoteToElite(eliteType);
         enemyObj.GetComponent<EnemyBase>().SelfID = spawnEnemyData.EnemyId;
         CharacterManager.Instance.AddEnemies(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
     }
@@ -604,6 +608,8 @@ public class SpawnManager : MonoBehaviour
 
                 //boss.GetComponent<EnemyBase>().SetNearTarget();
             }
+
+            UIManager.Instance.DisplayBossUI();
 
             isSpawnBoss = true;
         }

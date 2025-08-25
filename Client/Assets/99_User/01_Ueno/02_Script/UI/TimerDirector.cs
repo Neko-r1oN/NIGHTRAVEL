@@ -40,7 +40,8 @@ public class TimerDirector : MonoBehaviour
         {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
             timerObj.SetActive(false);
             // ボス出現
-            SpawnManager.Instance.IsSpawnBoss = true;
+            //SpawnManager.Instance.IsSpawnBoss = true;
+            SpawnManager.Instance.SpawnBoss();
         }
         else if (SpawnManager.Instance.IsSpawnBoss == true)
         {// ボスが出現したら
@@ -54,7 +55,7 @@ public class TimerDirector : MonoBehaviour
             // タイマー(UI)の更新
             UpdateTimerDisplay();
 
-            if (elapsedTime > 15)
+            if (elapsedTime > 150)
             {
                 // ゲームレベルアップリクエスト送信
 

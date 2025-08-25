@@ -239,7 +239,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(player == null)
+        if (player == null)
         {
             player = Camera.main.GetComponent<CameraFollow>().Target.gameObject.GetComponent<PlayerBase>();
         }
@@ -278,38 +278,40 @@ public class UIManager : MonoBehaviour
                 {
                     bossWindow.SetActive(true);
                 }
-
-                boss = SpawnManager.Instance.Boss.GetComponent<EnemyBase>();
-                // ボスステータスUI
-                bossHpBar.maxValue = boss.HP;
-            }
-            
-            bossHpBar.value = boss.HP;
-            bossSliderText.text = "" + bossHpBar.maxValue;
-
-            if (boss.HP <= 0)
-            {// ボスのHP表示がマイナスにならないようにする
-                bossHpBar.value = 0;
             }
 
-            bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
-
-            bossStatus.SetActive(true);
-
-            clashNumText.enabled = false;
-        }
-
-        if(player.HP <= 0)
-        {
-            playerHpBar.value = 0;
-            playerSliderText.text = "0";
-            DisplaySpectatingPlayer();
-
-            if (CheckAllPlayersDead())
+            if (player.HP <= 0)
             {
-                ChangTitleScene();
+                playerHpBar.value = 0;
+                playerSliderText.text = "0";
+                DisplaySpectatingPlayer();
+
+                if (CheckAllPlayersDead())
+                {
+                    ChangTitleScene();
+                }
             }
         }
+    }
+
+    public void DisplayBossUI()
+    {// ボスがスポーンした
+        boss = SpawnManager.Instance.Boss.GetComponent<EnemyBase>();
+        // ボスステータスUI
+        bossHpBar.maxValue = boss.HP;
+        bossHpBar.value = boss.HP;
+        bossSliderText.text = "" + bossHpBar.maxValue;
+
+        if (boss.HP <= 0)
+        {// ボスのHP表示がマイナスにならないようにする
+            bossHpBar.value = 0;
+        }
+
+        bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
+
+        bossStatus.SetActive(true);
+
+        clashNumText.enabled = false;
     }
 
     private void ChangTitleScene()
