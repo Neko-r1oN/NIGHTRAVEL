@@ -33,6 +33,8 @@ public class Rifle : PlayerBase
     private const float BEAM_MAG = 1.3f;// ビームの攻撃力倍率
 
     [Foldout("ビーム関連")]
+    [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
+    [Foldout("ビーム関連")]
     [SerializeField] private Transform firePoint;           // 発射地点
     [Foldout("ビーム関連")]
     [SerializeField] private float maxDistance = 20f;       // ビームの長さ
@@ -108,10 +110,11 @@ public class Rifle : PlayerBase
 
         if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
         {   // スキル
-            if (m_IsZipline) return;
+            if (m_IsZipline || !canSkill) return;
 
             isSkill = true;
             canAttack = true;
+            canSkill = false;
             animator.SetInteger("animation_id", (int)GS_ANIM_ID.Skill);
         }
 
@@ -197,6 +200,9 @@ public class Rifle : PlayerBase
     {
         if (!invincible)
         {
+            // 自動回復停止
+            StartCoroutine(RegeneStop());
+
             // ダメージ計算
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
@@ -344,7 +350,22 @@ public class Rifle : PlayerBase
         // ビームエフェクト非表示
         beamEffect.SetActive(false);
         isFiring = false;
+        StartCoroutine(SkillCoolDown());
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
+    }
+
+    /// <summary>
+    /// スキルクールダウン処理
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SkillCoolDown()
+    {
+        UIManager.Instance.DisplayCoolDown(true, skillCoolDown);
+
+        // クールダウン時間待機
+        yield return new WaitForSeconds(skillCoolDown);
+
+        canSkill = true;
     }
 
     /// <summary>

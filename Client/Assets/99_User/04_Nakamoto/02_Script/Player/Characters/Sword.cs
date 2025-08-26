@@ -299,6 +299,7 @@ public class Sword : PlayerBase
         if (Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
 
+        UIManager.Instance.DisplayCoolDown(true, skillCoolDown);
         yield return new WaitForSeconds(skillCoolDown);
         canSkill = true;
     }
@@ -312,6 +313,9 @@ public class Sword : PlayerBase
         // –³“GˆÈŠO‚ÌŽž
         if (!invincible)
         {
+            // Ž©“®‰ñ•œ’âŽ~
+            StartCoroutine(RegeneStop());
+
             // ƒ_ƒ[ƒWŒvŽZ
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 

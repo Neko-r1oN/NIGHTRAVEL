@@ -2,6 +2,7 @@
 // UI管理クラス
 // Author : Souma Ueno
 //----------------------------------------------------
+using DG.Tweening;
 using Pixeye.Unity;
 using System;
 using System.Collections;
@@ -111,7 +112,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject swordSkillUI;          // 剣士スキルUI
     [Foldout("操作UI")]
     [SerializeField] GameObject gunnerSkillUI;         // ガンナースキルUI
-
+    [Foldout("操作UI")]
+    [SerializeField] Image skillCoolDownImage;         // スキルクールダウン表示
+    [Foldout("操作UI")]
+    [SerializeField] Image blinkCoolDownImage;         // ブリンククールダウン表示
     #endregion
 
     int windowCnt = 0;   // ウィンドウが表示できるカウント(一度だけ使う)
@@ -845,6 +849,25 @@ public class UIManager : MonoBehaviour
         {
             swordSkillUI.SetActive(false);
             gunnerSkillUI.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// クールダウン表示
+    /// </summary>
+    /// <param name="skillFlag">true:skill false;blink</param>
+    /// <param name="coolTime">クールタイム</param>
+    public void DisplayCoolDown(bool skillFlag,float coolTime)
+    {
+        if(skillFlag)
+        {
+            skillCoolDownImage.fillAmount = 1f;
+            skillCoolDownImage.DOFillAmount(0f, coolTime);
+        }
+        else
+        {
+            blinkCoolDownImage.fillAmount = 1f;
+            blinkCoolDownImage.DOFillAmount(0f, coolTime);
         }
     }
 }

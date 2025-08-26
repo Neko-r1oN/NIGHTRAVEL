@@ -184,10 +184,12 @@ abstract public class PlayerBase : CharacterBase
     protected bool limitVelOnWallJump = false;// 低fpsで壁のジャンプ距離を制限する
     protected bool isSkill = false;   // スキル使用中フラグ
     protected bool canSkill = true;   // スキル使用可能フラグ
+    protected bool isRegene = true;
     #endregion
 
     #region プレイヤーに関する定数
     protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
+    protected const float REGENE_STOP_TIME = 3.5f;      // 自動回復停止時間
     protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
 
     protected const float GROUNDED_RADIUS = .2f;// 接地確認用の円の半径
@@ -249,7 +251,7 @@ abstract public class PlayerBase : CharacterBase
         {
             if (HP < MaxHP)
             {
-                hp += (int)(MaxHP * REGENE_MAGNIFICATION);
+                if(isRegene) hp += (int)(MaxHP * REGENE_MAGNIFICATION);
 
                 if (HP >= MaxHP)
                 {
@@ -810,20 +812,27 @@ abstract public class PlayerBase : CharacterBase
 
         Destroy(this.gameObject);
     }
+
     /// <summary>
     /// ダッシュ(ブリンク)制限処理
     /// </summary>
     /// <returns></returns>
     protected IEnumerator BlinkCooldown()
     {
+        // ブリンク開始
         animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
         isBlinking = true;
         canBlink = false;
         yield return new WaitForSeconds(blinkTime);  // ブリンク時間
+
+        // ブリンク終了
         gameObject.layer = 20;
         canAttack = true;
         isBlinking = false;
-        yield return new WaitForSeconds(blinkCoolDown);  // クールダウン時間
+
+        // クールダウン時間
+        UIManager.Instance.DisplayCoolDown(false, blinkCoolDown);
+        yield return new WaitForSeconds(blinkCoolDown);
         canBlink = true;
         gameObject.layer = 20;
     }
@@ -893,5 +902,18 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     /// <returns></returns>
     public bool GetGrounded() { return m_Grounded; }
+
+    /// <summary>
+    /// 自動回復一定停止処理
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator RegeneStop()
+    {
+        isRegene = false;
+
+        yield return new WaitForSeconds(REGENE_STOP_TIME);
+
+        isRegene = true;
+    }
     #endregion
 }
