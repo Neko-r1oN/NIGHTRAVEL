@@ -240,7 +240,7 @@ namespace StreamingHubs
             var gottenEnemyDataList = this.roomContext.enemyDataList;
 
             // 敵データの個数分ループして更新
-            for (int i = 0; i < masterClientData.EnemyDatas.Count; i++)
+            for (int i = 1; i < masterClientData.EnemyDatas.Count; i++)
             {
                 // 指定データが存在している場合、代入する
                 if (gottenEnemyDataList[i] != null)
@@ -325,6 +325,19 @@ namespace StreamingHubs
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
             this.roomContext.SetSpawnedEnemyData(spawnEnemyData);
+
+            foreach (var spawnEnemy in spawnEnemyData) 
+            {
+                GameDbContext dbContext = new GameDbContext();
+                var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
+                Enemy enemyData = new Enemy();
+                enemyData.id = spawnEnemy.EnemyId;
+                enemyData.name = enemy.name;
+                enemyData.isBoss = enemy.isBoss;
+                enemyData.exp = enemy.exp;
+
+                this.roomContext.SetEnemyData(enemyData);
+            }
 
             // 自分以外に、取得した敵情報と生成位置を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
