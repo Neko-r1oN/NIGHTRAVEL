@@ -12,10 +12,11 @@ public class RisultManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    async void Update()
     {
         if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Return))
         {
+            await RoomModel.Instance.LeaveAsync();
             SceneManager.LoadScene("Title Ueno");
         }
     }
