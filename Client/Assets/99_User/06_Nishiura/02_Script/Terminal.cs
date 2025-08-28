@@ -3,9 +3,12 @@
 // Author:Nishiura
 // Date:2025/07/01
 //===================
+using DG.Tweening;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 public class Terminal : MonoBehaviour
 {
     // プレイヤーが端末に触れているかの判定変数
@@ -17,12 +20,24 @@ public class Terminal : MonoBehaviour
 
     public int TerminalType { get { return terminalType; } }
 
+    //カウントダウン用のテキスト
+    public Text countDownText;
+
+    //制限時間
+    public int limitTime;
+
+    //端末のアイコン
+    [SerializeField] GameObject terminalIcon;
+
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
 
     List<GameObject> terminalSpawnList;
 
     GameManager gameManager;
+
+    //レリック管理クラス
+    RelicManager relicManager;
 
     private static Terminal instance;
 
@@ -60,6 +75,7 @@ public class Terminal : MonoBehaviour
 
     bool isTerminal;
 
+
     public bool IsTerminal {  get { return isTerminal; } }
 
     private void Awake()
@@ -79,6 +95,9 @@ public class Terminal : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         isTerminal = false;
+
+        //最初はcountDownTextを非表示にする
+        countDownText.enabled = false;
     }
 
     private void Update()
@@ -158,7 +177,13 @@ public class Terminal : MonoBehaviour
                 {   // 各ゴールポイントを表示
                     point.SetActive(true);
                 }
-                Invoke("TimeUp",10f);   // 10秒後タイムアップとする
+                //Invoke("TimeUp",10f);   // 10秒後タイムアップとする
+                
+                //countDownTextを表示する
+                countDownText.enabled = true;
+
+                InvokeRepeating("CountDown", 1, 1); //カウントダウンする
+
                 break;
 
             case (int)TerminalCode.Type_Deal:
@@ -208,6 +233,20 @@ public class Terminal : MonoBehaviour
                 break;
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合
+
+                //カウントダウンを停止する
+                CancelInvoke("CountDown");
+
+                //端末のアイコンを1.5秒かけてフェードアウトする
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
+                //cowntDownTextを1.5秒かけてフェードアウトする
+                countDownText.GetComponent<Text>().material.DOFade(0, 1.5f);
+
+                //レリックを排出する
+                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+
+
                 Debug.Log("OMFG Reward Here!!!!!");
                 break;
             case (int)TerminalCode.Type_Deal:
@@ -256,15 +295,49 @@ public class Terminal : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 時間切れ処理
-    /// </summary>
-    private void TimeUp()
-    {
-        foreach (var point in pointList)
-        {   // 各ゴールポイントを表示
+    ///// <summary>
+    ///// 時間切れ処理
+    ///// </summary>
+    //private void TimeUp()
+    //{
+    //    foreach (var point in pointList)
+    //    {   // 各ゴールポイントを表示
         
-            point.SetActive(false);
+    //        point.SetActive(false);
+    //    }
+    //}
+
+    /// <summary>
+    /// カウントダウン処理
+    /// </summary>
+    public void CountDown()
+    {
+        //limitTImeを1ずつ減らす
+        limitTime--;
+
+        //制限時間をcowntDownTextに反映する
+        countDownText.text=limitTime.ToString();
+
+        //制限時間が0以下になったら(時間切れ)
+        if(limitTime <=0)
+        {
+            //limitTimeを0にする
+            limitTime = 0;
+
+            //カウントダウンを停止する
+            CancelInvoke("CountDown");
+
+            //端末のアイコンを1.5秒かけてフェードアウトする
+            terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
+            //cowntDownTextを1.5秒かけてフェードアウトする
+            countDownText.GetComponent<Text>().material.DOFade(0, 1.5f);
+
+            //ゴールポイントを削除する
+            foreach (GameObject obj in pointList)
+            {
+                Destroy(obj);
+            }
         }
     }
 }
