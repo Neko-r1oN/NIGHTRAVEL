@@ -134,6 +134,14 @@ namespace Shared.Interfaces.StreamingHubs
 
         #endregion
         #region レリック関連
+
+        /// <summary>
+        /// レリックの情報を取得
+        /// Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        Task GetRelicIntelligenceAsync();
+
         /// <summary>
         /// レリック位置
         /// Author:Nishiura

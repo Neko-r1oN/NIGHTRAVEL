@@ -616,6 +616,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     #endregion
     #region レリック通知関連
+
+    public void OnGetIntelligence()
+    {
+
+    }
+
     /// <summary>
     /// レリック生成通知
     /// Aughter:木田晃輔
