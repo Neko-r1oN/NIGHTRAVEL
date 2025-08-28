@@ -240,8 +240,8 @@ public class Terminal : MonoBehaviour
                 //端末のアイコンを1.5秒かけてフェードアウトする
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
-                //cowntDownTextを1.5秒かけてフェードアウトする
-                countDownText.GetComponent<Text>().material.DOFade(0, 1.5f);
+                //cowntDownTextを削除
+                Destroy(countDownText);
 
                 //レリックを排出する
                 RelicManager.Instance.GenerateRelic(Instance.transform.position);
@@ -330,8 +330,8 @@ public class Terminal : MonoBehaviour
             //端末のアイコンを1.5秒かけてフェードアウトする
             terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
-            //cowntDownTextを1.5秒かけてフェードアウトする
-            countDownText.GetComponent<Text>().material.DOFade(0, 1.5f);
+            //cowntDownTextを削除
+            Destroy(countDownText);
 
             //ゴールポイントを削除する
             foreach (GameObject obj in pointList)
