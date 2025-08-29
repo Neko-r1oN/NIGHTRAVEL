@@ -278,135 +278,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(player.GetGrounded())
-        {
-            gunSkillLockObj.SetActive(false);
-        }
-        else
-        {
-            gunSkillLockObj.SetActive(true);
-        }
-
-        // キーボード or ゲームパッドの入力でUI変化
-        if (Input.anyKeyDown)
-        {
-            ChangeOperationUI("Keyboard");
-        }
-        else if (Input.GetButtonDown("Jump") || Input.GetButtonDown("Blink") || Input.GetButtonDown("Attack1") || Input.GetButtonDown("Attack2"))
-        {
-            ChangeOperationUI("Gamepad");
-        }
-
-        // キー入力 or ボタン入力でUIリアクション
-
-        // 通常攻撃
-        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
-        {
-            if(player.PlayerType == Player_Type.Sword)
-            {   // 剣士アイコン
-                swordIconObjs[0].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                swordIconImages[0].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-            else
-            {   // ガンナーアイコン
-                gunIconObjs[0].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                gunIconImages[0].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-        }
-        else if(Input.GetMouseButtonUp(0) || Input.GetButtonUp("Attack1"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {
-                swordIconObjs[0].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                swordIconImages[0].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-            else
-            {
-                gunIconObjs[0].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                gunIconImages[0].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-        }
-        // スキル攻撃
-        if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {   // 剣士アイコン
-                swordIconObjs[1].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                swordIconImages[1].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-            else
-            {   // ガンナーアイコン
-                gunIconObjs[1].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                gunIconImages[1].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-        }
-        else if (Input.GetMouseButtonUp(1) || Input.GetButtonUp("Attack2"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {
-                swordIconObjs[1].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                swordIconImages[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-            else
-            {
-                gunIconObjs[1].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                gunIconImages[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-        }
-        // ブリンク
-        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Blink"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {   // 剣士アイコン
-                swordIconObjs[2].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                swordIconImages[2].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-            else
-            {   // ガンナーアイコン
-                gunIconObjs[2].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                gunIconImages[2].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetButtonUp("Blink"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {
-                swordIconObjs[2].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                swordIconImages[2].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-            else
-            {
-                gunIconObjs[2].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                gunIconImages[2].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-        }
-        // ジャンプ
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {   // 剣士アイコン
-                swordIconObjs[3].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                swordIconImages[3].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-            else
-            {   // ガンナーアイコン
-                gunIconObjs[3].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
-                gunIconImages[3].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
-            }
-        }
-        else if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonUp("Jump"))
-        {
-            if (player.PlayerType == Player_Type.Sword)
-            {
-                swordIconObjs[3].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                swordIconImages[3].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-            else
-            {
-                gunIconObjs[3].localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                gunIconImages[3].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-        }
+        // 操作UI変更処理
+        InputChangeUI();
 
         if (player == null)
         {
@@ -953,6 +826,25 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
+    /// クールダウン表示
+    /// </summary>
+    /// <param name="skillFlag">true:skill false;blink</param>
+    /// <param name="coolTime">クールタイム</param>
+    public void DisplayCoolDown(bool skillFlag,float coolTime)
+    {
+        if(skillFlag)
+        {
+            skillCoolDownImage.fillAmount = 1f;
+            skillCoolDownImage.DOFillAmount(0f, coolTime);
+        }
+        else
+        {
+            blinkCoolDownImage.fillAmount = 1f;
+            blinkCoolDownImage.DOFillAmount(0f, coolTime);
+        }
+    }
+
+    /// <summary>
     /// 操作UI変化処理
     /// </summary>
     /// <param name="keyBoardFlag"></param>
@@ -963,7 +855,7 @@ public class UIManager : MonoBehaviour
             gamePadUI.SetActive(false);
             keyBoardUI.SetActive(true);
         }
-        else if(mode == "Gamepad")
+        else if (mode == "Gamepad")
         {
             gamePadUI.SetActive(true);
             keyBoardUI.SetActive(false);
@@ -989,21 +881,141 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// クールダウン表示
+    /// 入力時のUI変更
     /// </summary>
-    /// <param name="skillFlag">true:skill false;blink</param>
-    /// <param name="coolTime">クールタイム</param>
-    public void DisplayCoolDown(bool skillFlag,float coolTime)
+    private void InputChangeUI()
     {
-        if(skillFlag)
+        // ガンナースキルロック処理
+        if (!player.GetGrounded() && player.PlayerType == Player_Type.Gunner)
         {
-            skillCoolDownImage.fillAmount = 1f;
-            skillCoolDownImage.DOFillAmount(0f, coolTime);
+            gunSkillLockObj.SetActive(true);
         }
         else
         {
-            blinkCoolDownImage.fillAmount = 1f;
-            blinkCoolDownImage.DOFillAmount(0f, coolTime);
+            gunSkillLockObj.SetActive(false);
+        }
+
+        // キーボード or ゲームパッドの入力でUI変化
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.Space)
+            || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+        {
+            ChangeOperationUI("Keyboard");
+        }
+
+        if (Input.GetButtonDown("Jump") || Input.GetButtonDown("Blink") || Input.GetButtonDown("Attack1") || Input.GetButtonDown("Attack2"))
+        {
+            ChangeOperationUI("Gamepad");
+        }
+
+        // キー入力 or ボタン入力でUIリアクション
+
+        // 通常攻撃
+        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {   // 剣士アイコン
+                swordIconObjs[0].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                swordIconImages[0].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+            else
+            {   // ガンナーアイコン
+                gunIconObjs[0].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                gunIconImages[0].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+        }
+        else if (Input.GetMouseButtonUp(0) || Input.GetButtonUp("Attack1"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {
+                swordIconObjs[0].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                swordIconImages[0].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+            else
+            {
+                gunIconObjs[0].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                gunIconImages[0].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+        }
+        // スキル攻撃
+        if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {   // 剣士アイコン
+                swordIconObjs[1].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                swordIconImages[1].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+            else
+            {   // ガンナーアイコン
+                gunIconObjs[1].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                gunIconImages[1].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+        }
+        else if (Input.GetMouseButtonUp(1) || Input.GetButtonUp("Attack2"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {
+                swordIconObjs[1].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                swordIconImages[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+            else
+            {
+                gunIconObjs[1].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                gunIconImages[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+        }
+        // ブリンク
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Blink"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {   // 剣士アイコン
+                swordIconObjs[2].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                swordIconImages[2].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+            else
+            {   // ガンナーアイコン
+                gunIconObjs[2].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                gunIconImages[2].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetButtonUp("Blink"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {
+                swordIconObjs[2].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                swordIconImages[2].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+            else
+            {
+                gunIconObjs[2].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                gunIconImages[2].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+        }
+        // ジャンプ
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {   // 剣士アイコン
+                swordIconObjs[3].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                swordIconImages[3].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+            else
+            {   // ガンナーアイコン
+                gunIconObjs[3].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
+                gunIconImages[3].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
+            }
+        }
+        else if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonUp("Jump"))
+        {
+            if (player.PlayerType == Player_Type.Sword)
+            {
+                swordIconObjs[3].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                swordIconImages[3].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+            else
+            {
+                gunIconObjs[3].localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                gunIconImages[3].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
         }
     }
 }

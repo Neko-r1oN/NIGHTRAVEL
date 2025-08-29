@@ -78,8 +78,8 @@ MonoBehaviour:
   wallJumpPower: 2
   m_AirControl: 1
   canDoubleJump: 1
-  m_BlinkForce: 25
-  blinkTime: 0.1
+  m_BlinkForce: 22
+  blinkTime: 0.2
   blinkCoolDown: 1
   m_ZipJumpForceX: 60
   m_ZipJumpForceY: 40
@@ -102,10 +102,10 @@ MonoBehaviour:
   particleJumpUp: {fileID: 7451436524934811610}
   particleJumpDown: {fileID: 6542532741988937408}
   ziplineSpark: {fileID: 7698365479778346394}
+  skillCoolDown: 3
   firePoint: {fileID: 3568435395602818575}
   maxDistance: 75
-  beamRadius: 0.4
-  beamWidthScale: 1
+  beamRadius: 0.45
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
@@ -409,7 +409,7 @@ Transform:
   m_GameObject: {fileID: 2687368310257538447}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1, y: 0, z: 0}
+  m_LocalPosition: {x: 0.75, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -665,8 +665,8 @@ abstract public class PlayerBase : CharacterBase
         // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
         nextLvExp = (int)Math.Pow(nowLv + 1, 3) - (int)Math.Pow(nowLv, 3);  
 
-        // HP反映処理
-        CalcHP();
+        // レベルアップによるステータス変化
+        LevelUpStatusChange();
     }
 
     /// <summary>
