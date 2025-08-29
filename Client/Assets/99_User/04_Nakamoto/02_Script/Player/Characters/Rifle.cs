@@ -33,6 +33,8 @@ public class Rifle : PlayerBase
     private const float BEAM_MAG = 1.3f;// ビームの攻撃力倍率
 
     [Foldout("ビーム関連")]
+    [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
+    [Foldout("ビーム関連")]
     [SerializeField] private Transform firePoint;           // 発射地点
     [Foldout("ビーム関連")]
     [SerializeField] private float maxDistance = 20f;       // ビームの長さ
@@ -86,7 +88,7 @@ public class Rifle : PlayerBase
     {
         int id = animator.GetInteger("animation_id");
 
-        if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
+        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
         {   // 通常攻撃
             if (isBlink || isSkill || id == 3 || m_IsZipline) return;
 
@@ -106,16 +108,18 @@ public class Rifle : PlayerBase
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
+        if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
         {   // スキル
-            if (m_IsZipline) return;
+            if (m_IsZipline || !canSkill || isBlinking || isSkill || isRailgun || !m_Grounded) return;
 
             isSkill = true;
             canAttack = true;
+            StartCoroutine(SkillCoolDown());
+            canSkill = false;
             animator.SetInteger("animation_id", (int)GS_ANIM_ID.Skill);
         }
 
-        if (id == (int)GS_ANIM_ID.BeamReady || id == (int)GS_ANIM_ID.Skill) return;
+        if (isFiring) return;
 
         base.Update();
     }
@@ -128,25 +132,27 @@ public class Rifle : PlayerBase
     /// <param name="blink">ダッシュ入力</param>
     protected override void Move(float move, bool jump, bool blink)
     {
-        if (isSkill)
+        if (blink)
+        {
+            // スキル発動中の場合はキャンセル
+            if (isRailgun == true) isRailgun = false;
+            if (isSkill == true) isSkill = false;
+        }
+
+        // ダッシュ中の場合
+        if (isBlinking)
+        {
+            // クールダウンに入るまで加速
+            m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
+        }
+
+        if (isSkill || isRailgun)
         {   // 銃変形中は動けないように
             m_Rigidbody2D.linearVelocity = new Vector2(0,m_Rigidbody2D.linearVelocityY);
             return;
         }
 
         base.Move(move, jump, blink);
-
-        // ダッシュ中の場合
-        if (isBlinking)
-        {   // クールダウンに入るまで加速
-            m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
-        }
-
-        // 銃変形時の移動制限
-        if (isRailgun)
-        {
-            m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocityY);
-        }
 
         // 発射時後ろに少しだけ後ろに
         if (isFiring)
@@ -197,6 +203,9 @@ public class Rifle : PlayerBase
     {
         if (!invincible)
         {
+            // 自動回復停止
+            StartCoroutine(RegeneStop());
+
             // ダメージ計算
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
@@ -345,6 +354,20 @@ public class Rifle : PlayerBase
         beamEffect.SetActive(false);
         isFiring = false;
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
+    }
+
+    /// <summary>
+    /// スキルクールダウン処理
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SkillCoolDown()
+    {
+        UIManager.Instance.DisplayCoolDown(true, skillCoolDown);
+
+        // クールダウン時間待機
+        yield return new WaitForSeconds(skillCoolDown);
+
+        canSkill = true;
     }
 
     /// <summary>

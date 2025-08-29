@@ -54,9 +54,12 @@ public class Bullet : MonoBehaviour
         else if (collision.gameObject.tag == "Object")
         {
             collision.gameObject.GetComponent<ObjectBase>().ApplyDamage();
-        }else if(collision.gameObject.tag == "Default" || collision.gameObject.tag == "ground")
+        }
+        else if(collision.gameObject.layer == LayerMask.NameToLayer("Gimmick") || collision.gameObject.tag == "ground")
         {
             Destroy(gameObject);
         }
     }
+
+
 }

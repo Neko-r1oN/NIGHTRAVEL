@@ -88,7 +88,7 @@ public class Sword : PlayerBase
     {
         base.Update();
 
-        if (Input.GetKeyDown(KeyCode.X) || Input.GetButtonDown("Attack1"))
+        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
         {   // í èÌçUåÇ
             int id = animator.GetInteger("animation_id");
 
@@ -114,7 +114,7 @@ public class Sword : PlayerBase
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.V) || Input.GetButtonDown("Attack2"))
+        if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
         {   // çUåÇ2
             if (canSkill && canAttack)
             {
@@ -299,6 +299,7 @@ public class Sword : PlayerBase
         if (Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
 
+        UIManager.Instance.DisplayCoolDown(true, skillCoolDown);
         yield return new WaitForSeconds(skillCoolDown);
         canSkill = true;
     }
@@ -312,6 +313,9 @@ public class Sword : PlayerBase
         // ñ≥ìGà»äOÇÃéû
         if (!invincible)
         {
+            // é©ìÆâÒïúí‚é~
+            StartCoroutine(RegeneStop());
+
             // É_ÉÅÅ[ÉWåvéZ
             var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
