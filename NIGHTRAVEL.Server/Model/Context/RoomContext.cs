@@ -101,6 +101,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new Dictionary<int, SpawnEnemyData>();
 
         /// <summary>
+        /// レリックの情報リスト
+        /// </summary>
+        public List<Relic> relicDataList {  get; } = new List<Relic>();
+
+        /// <summary>
         /// ドロップレリックリスト
         /// </summary>
         public List<DropRelicData> dropRelicDataList { get; } = new List<DropRelicData>();

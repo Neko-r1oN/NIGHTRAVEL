@@ -78,6 +78,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //オブジェクトの移動回転通知
     public Action<string, UnityEngine.Vector3, UnityEngine.Quaternion> OnMovedObject { get; set; }
 
+    //レリックの情報取得通知
+    public Action OnGetIntelligenced {  get; set; }
+
     //レリックの生成通知
     public Action<List<DropRelicData>> OnDropedRelic {  get; set; }
 
@@ -616,6 +619,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     #endregion
     #region レリック通知関連
+
+    /// <summary>
+    /// レリックの情報取得
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnGetIntelligence()
+    {
+
+    }
+
     /// <summary>
     /// レリック生成通知
     /// Aughter:木田晃輔
@@ -727,6 +740,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnTimerSyn(timerType);
     }
     #endregion
+
+    /// <summary>
+    /// 同時開始
+    /// Aughtor:木田晃輔
+    /// </summary>
+    public void OnStart()
+    {
+
+    }
 
     /// <summary>
     /// ステージ進行通知

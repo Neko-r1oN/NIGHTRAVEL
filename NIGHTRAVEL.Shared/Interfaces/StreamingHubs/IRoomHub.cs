@@ -134,6 +134,14 @@ namespace Shared.Interfaces.StreamingHubs
 
         #endregion
         #region レリック関連
+
+        /// <summary>
+        /// レリックの情報を取得
+        /// Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        Task GetRelicIntelligenceAsync();
+
         /// <summary>
         /// レリック位置
         /// Author:Nishiura
@@ -152,6 +160,14 @@ namespace Shared.Interfaces.StreamingHubs
         Task GetRelicAsync(int relicID, string relicName);
         #endregion
         #region ゲーム内UI、仕様関連
+
+        /// <summary>
+        /// 同時開始処理
+        /// Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        Task StartAsync();
+
         /// <summary>
         /// ギミック起動
         /// Author:Nishiura

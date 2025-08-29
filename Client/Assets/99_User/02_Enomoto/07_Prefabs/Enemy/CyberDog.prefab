@@ -1990,7 +1990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3c588392de9b6a4db890f174a47c438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 0
+  characterId: 1
   baseHp: 100
   baseDefense: 15
   basePower: 35
@@ -2004,6 +2004,7 @@ MonoBehaviour:
   moveSpeedFactor: 0
   attackSpeedFactor: 0
   animator: {fileID: 55089399200334659}
+  players: []
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 8821416632199840584}

@@ -163,6 +163,31 @@ namespace StreamingHubs
             // ゲームが開始できる場合、開始通知をする
             if (canStartGame) this.roomContext.Group.All.OnStartGame();
         }
+
+        /// <summary>
+        /// 開始処理
+        /// Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        public async Task StartAsync()
+        {
+
+            bool canStartGame = true; // ゲーム開始可能判定変数
+
+            // 自身のデータを取得
+            var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
+            joinedUser.IsReady = true; // 準備完了にする
+
+
+            foreach (var user in this.roomContext.JoinedUserList)
+            { // 現在の参加者数分ループ
+                if (user.Value.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
+            }
+
+            // ゲームが開始できる場合、開始通知をする
+            if (canStartGame) this.roomContext.Group.All.OnStart();
+        }
+
         #endregion
 
         #region ゲーム内での処理
@@ -240,7 +265,7 @@ namespace StreamingHubs
             var gottenEnemyDataList = this.roomContext.enemyDataList;
 
             // 敵データの個数分ループして更新
-            for (int i = 0; i < masterClientData.EnemyDatas.Count; i++)
+            for (int i = 1; i < masterClientData.EnemyDatas.Count; i++)
             {
                 // 指定データが存在している場合、代入する
                 if (gottenEnemyDataList[i] != null)
@@ -263,6 +288,31 @@ namespace StreamingHubs
 
             // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnUpdateMasterClient(masterClientData);
+        }
+
+        /// <summary>
+        /// レリックの情報を取得
+        /// Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetRelicIntelligenceAsync()
+        {
+            GameDbContext dbContext = new GameDbContext();
+            List<Relic> relicList = new List<Relic>();
+
+            var intelligences = dbContext.Relics;
+
+            foreach ( var intel in intelligences )
+            {
+                if (roomContext.relicDataList==null)
+                {
+                    relicList.Add(intel);
+                }
+            }
+
+            // ルーム参加者全員に、レリックのIDと生成位置を送信
+            this.roomContext.Group.All.OnGetIntelligence();
+
         }
 
         /// <summary>
@@ -325,6 +375,19 @@ namespace StreamingHubs
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
             this.roomContext.SetSpawnedEnemyData(spawnEnemyData);
+
+            foreach (var spawnEnemy in spawnEnemyData) 
+            {
+                GameDbContext dbContext = new GameDbContext();
+                var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
+                Enemy enemyData = new Enemy();
+                enemyData.id = spawnEnemy.EnemyId;
+                enemyData.name = enemy.name;
+                enemyData.isBoss = enemy.isBoss;
+                enemyData.exp = enemy.exp;
+
+                this.roomContext.SetEnemyData(enemyData);
+            }
 
             // 自分以外に、取得した敵情報と生成位置を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);

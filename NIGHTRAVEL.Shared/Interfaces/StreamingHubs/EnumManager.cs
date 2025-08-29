@@ -123,7 +123,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum ENEMY_TYPE
         {
-            CyberDog = 0,
+            CyberDog = 1,
             Drone,
             CyberDog_ByWorm,
             Drone_ByWorm,
