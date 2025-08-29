@@ -163,6 +163,17 @@ namespace StreamingHubs
             // ゲームが開始できる場合、開始通知をする
             if (canStartGame) this.roomContext.Group.All.OnStartGame();
         }
+
+        /// <summary>
+        /// 開始処理
+        /// Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        public async Task StartAsync()
+        {
+            this.roomContext.Group.All.OnStart();
+        }
+
         #endregion
 
         #region ゲーム内での処理
