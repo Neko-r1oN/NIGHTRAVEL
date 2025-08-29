@@ -110,15 +110,16 @@ public class Rifle : PlayerBase
 
         if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
         {   // スキル
-            if (m_IsZipline || !canSkill) return;
+            if (m_IsZipline || !canSkill || isBlinking || isSkill || isRailgun || !m_Grounded) return;
 
             isSkill = true;
             canAttack = true;
+            StartCoroutine(SkillCoolDown());
             canSkill = false;
             animator.SetInteger("animation_id", (int)GS_ANIM_ID.Skill);
         }
 
-        if (id == (int)GS_ANIM_ID.BeamReady || id == (int)GS_ANIM_ID.Skill) return;
+        if (isFiring) return;
 
         base.Update();
     }
@@ -131,25 +132,27 @@ public class Rifle : PlayerBase
     /// <param name="blink">ダッシュ入力</param>
     protected override void Move(float move, bool jump, bool blink)
     {
-        if (isSkill)
+        if (blink)
+        {
+            // スキル発動中の場合はキャンセル
+            if (isRailgun == true) isRailgun = false;
+            if (isSkill == true) isSkill = false;
+        }
+
+        // ダッシュ中の場合
+        if (isBlinking)
+        {
+            // クールダウンに入るまで加速
+            m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
+        }
+
+        if (isSkill || isRailgun)
         {   // 銃変形中は動けないように
             m_Rigidbody2D.linearVelocity = new Vector2(0,m_Rigidbody2D.linearVelocityY);
             return;
         }
 
         base.Move(move, jump, blink);
-
-        // ダッシュ中の場合
-        if (isBlinking)
-        {   // クールダウンに入るまで加速
-            m_Rigidbody2D.linearVelocity = new Vector2(transform.localScale.x * m_BlinkForce, 0);
-        }
-
-        // 銃変形時の移動制限
-        if (isRailgun)
-        {
-            m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocityY);
-        }
 
         // 発射時後ろに少しだけ後ろに
         if (isFiring)
@@ -350,7 +353,6 @@ public class Rifle : PlayerBase
         // ビームエフェクト非表示
         beamEffect.SetActive(false);
         isFiring = false;
-        StartCoroutine(SkillCoolDown());
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
     }
 

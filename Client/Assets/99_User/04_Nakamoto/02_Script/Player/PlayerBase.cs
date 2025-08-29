@@ -87,6 +87,12 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region ステータス外部参照用プロパティ
+
+    /// <summary>
+    /// プレイヤーの動作制御フラグ
+    /// </summary>
+    public bool CanMove { get { return canMove; } set { canMove = value; } }
+
     /// <summary>
     /// 現レベル
     /// </summary>
