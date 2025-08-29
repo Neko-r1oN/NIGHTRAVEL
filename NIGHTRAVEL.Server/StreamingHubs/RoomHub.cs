@@ -171,7 +171,21 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task StartAsync()
         {
-            this.roomContext.Group.All.OnStart();
+
+            bool canStartGame = true; // ゲーム開始可能判定変数
+
+            // 自身のデータを取得
+            var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
+            joinedUser.IsReady = true; // 準備完了にする
+
+
+            foreach (var user in this.roomContext.JoinedUserList)
+            { // 現在の参加者数分ループ
+                if (user.Value.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
+            }
+
+            // ゲームが開始できる場合、開始通知をする
+            if (canStartGame) this.roomContext.Group.All.OnStart();
         }
 
         #endregion
