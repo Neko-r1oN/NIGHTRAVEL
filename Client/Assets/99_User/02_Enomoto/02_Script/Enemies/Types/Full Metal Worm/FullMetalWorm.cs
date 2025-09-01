@@ -101,7 +101,6 @@ public class FullMetalWorm : EnemyBase
     float decisionTimeMin = 2f;
 
     float randomDecision;
-    bool endDecision;
     #endregion
 
     #region 状態管理
@@ -133,7 +132,6 @@ public class FullMetalWorm : EnemyBase
         base.Start();
         isAttacking = false;
         doOnceDecision = false;
-        endDecision = true;
         bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
     }
 

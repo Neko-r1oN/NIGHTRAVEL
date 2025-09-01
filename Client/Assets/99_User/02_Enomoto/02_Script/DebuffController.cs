@@ -127,10 +127,9 @@ public class DebuffController : MonoBehaviour
                         tmpMoveSpeedRates.Add(effectType, freezeRatio);
                         tmpMoveSpeedFactorRates.Add(effectType, freezeRatio);
                         tmpAttackSpeedFactorRates.Add(effectType, freezeRatio);
-                        characterBase.ApplyStatusModifierByRate(
+                        characterBase.ApplyMaxStatusModifierByRate(
                             freezeRatio,
                             STATUS_TYPE.MoveSpeed,
-                            STATUS_TYPE.MoveSpeedFactor,
                             STATUS_TYPE.AttackSpeedFactor
                         );
                     }
@@ -171,10 +170,9 @@ public class DebuffController : MonoBehaviour
             DEBUFF_TYPE.Freeze => () => {
                 // 移動速度・攻撃速度の減算されていた分の値をステータスに加算する
                 float freezeRatio = freezeEffect;
-                characterBase.ApplyStatusModifierByRate(
+                characterBase.ApplyMaxStatusModifierByRate(
                         freezeRatio,
                         STATUS_TYPE.MoveSpeed,
-                        STATUS_TYPE.MoveSpeedFactor,
                         STATUS_TYPE.AttackSpeedFactor
                     );
                 tmpMoveSpeedRates.Remove(effectType);

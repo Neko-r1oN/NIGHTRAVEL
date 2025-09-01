@@ -13,6 +13,7 @@ using DG.Tweening;
 using UnityEngine.Playables;
 using System.Linq;
 using System.Data;
+using Unity.VisualScripting;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -43,7 +44,6 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     const float updateSec = 0.1f;
-    bool isAwake = false;
 
     static CharacterManager instance;
     public static CharacterManager Instance
@@ -77,7 +77,6 @@ public class CharacterManager : MonoBehaviour
         }
         DestroyExistingPlayer();
         GenerateCharacters();
-        isAwake = true;
 
         // 通知処理を登録
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
@@ -202,7 +201,6 @@ public class CharacterManager : MonoBehaviour
                 STATUS_TYPE.Defense, 
                 STATUS_TYPE.JumpPower, 
                 STATUS_TYPE.MoveSpeed, 
-                STATUS_TYPE.MoveSpeedFactor, 
                 STATUS_TYPE.AttackSpeedFactor};
         }
         character.OverridCurrentStatus(stateData, STATUS_TYPE.All);
@@ -213,6 +211,12 @@ public class CharacterManager : MonoBehaviour
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
         character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
+
+        // 敵の場合は専用の同期情報を更新する
+        if (character.tag == "Enemy" && characterData is EnemyData enemyData)
+        {
+            character.gameObject.GetComponent<EnemyBase>().UpdateEnemy(enemyData);
+        }
 
         // マスタークライアントの場合、敵が動けるようにする
         if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
@@ -244,7 +248,6 @@ public class CharacterManager : MonoBehaviour
                 defence: player.MaxDefence,
                 power: player.MaxPower,
                 moveSpeed: player.MaxMoveSpeed,
-                moveSpeedFactor: player.MaxMoveSpeedFactor,
                 attackSpeedFactor: player.MaxAttackSpeedFactor,
                 jumpPower: player.MaxJumpPower
                 ),
@@ -253,7 +256,6 @@ public class CharacterManager : MonoBehaviour
                 defence: player.defense,
                 power: player.power,
                 moveSpeed: player.moveSpeed,
-                moveSpeedFactor: player.moveSpeedFactor,
                 attackSpeedFactor: player.attackSpeedFactor,
                 jumpPower: player.jumpPower
                 ),
@@ -281,39 +283,7 @@ public class CharacterManager : MonoBehaviour
         {
             var enemyData = enemies[key];
             var enemy = enemyData.Enemy;
-            var statusEffectController = enemyData.Object.GetComponent<DebuffController>();
-            var data = new EnemyData()
-            {
-                IsActiveSelf = enemy.gameObject.activeInHierarchy,
-                Status = new CharacterStatusData(
-                    hp: enemy.MaxHP,
-                    defence: enemy.MaxDefence,
-                    power: enemy.MaxPower,
-                    moveSpeed: enemy.MaxMoveSpeed,
-                    moveSpeedFactor: enemy.MaxMoveSpeedFactor,
-                    attackSpeedFactor: enemy.MaxAttackSpeedFactor,
-                    jumpPower: enemy.MaxJumpPower
-                ),
-                State = new CharacterStatusData(
-                    hp: enemy.HP,
-                    defence: enemy.defense,
-                    power: enemy.power,
-                    moveSpeed: enemy.moveSpeed,
-                    moveSpeedFactor: enemy.moveSpeedFactor,
-                    attackSpeedFactor: enemy.attackSpeedFactor,
-                    jumpPower: enemy.jumpPower
-                ),
-                Position = enemy.transform.position,
-                Scale = enemy.transform.localScale,
-                Rotation = enemy.transform.rotation,
-                AnimationId = enemy.GetAnimId(),
-                DebuffList = statusEffectController.GetAppliedStatusEffects(),
-
-                // 以下は専用変数
-                EnemyID = key,
-                EnemyName = enemyData.Object.name,
-                isBoss = enemy.IsBoss,
-            };
+            var data = enemy.GetEnemyData();
             enemyDatas.Add(data);
         }
         return enemyDatas;

@@ -3,6 +3,7 @@
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using Unity.VisualScripting;
@@ -75,10 +76,6 @@ public class Drone : EnemyBase
     Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     #endregion
 
-    #region ターゲットとの距離
-    [SerializeField] float disToTargetMin = 2.5f;
-    #endregion
-
     #region 抽選関連
     float decisionTimeMax = 2f;
     float randomDecision;
@@ -136,6 +133,7 @@ public class Drone : EnemyBase
     /// </summary>
     protected override void Idle()
     {
+        SetAnimId((int)ANIM_ID.Idle);
         m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
@@ -244,9 +242,14 @@ public class Drone : EnemyBase
             case (int)ANIM_ID.Hit:
                 animator.Play("Hit");
                 break;
+            case (int)ANIM_ID.Attack:
+                gunPsController.StartShooting();
+                break;
             default:
                 break;
         }
+
+        if (id != (int)ANIM_ID.Attack) gunPsController.StopShooting();
     }
 
     #endregion
@@ -288,10 +291,6 @@ public class Drone : EnemyBase
             // ターゲットのいる方向に向かってエイム
             if (target)
             {
-                // 強すぎので一旦コメントアウト
-                //if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                //    || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-
                 Vector3 direction = (target.transform.position - transform.position).normalized;
                 projectileChecker.RotateAimTransform(direction);
             }
@@ -315,12 +314,12 @@ public class Drone : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        Idle();
         gunPsController.StopShooting();
         isAttacking = true;
         yield return new WaitForSeconds(time);
         isAttacking = false;
         doOnceDecision = true;
-        Idle();
         NextDecision();
         onFinished?.Invoke();
     }
@@ -429,6 +428,33 @@ public class Drone : EnemyBase
     {
         gunPsController.StopShooting();
         SetAnimId((int)ANIM_ID.Dead);
+    }
+
+    #endregion
+
+    #region リアルタイム同期関連
+
+    /// <summary>
+    /// DroneData取得処理
+    /// </summary>
+    /// <returns></returns>
+    public override EnemyData GetEnemyData()
+    {
+        var droneData = new DroneData() { GunRotation = aimTransform.localRotation };    // 事前にDroneData用のプロパティに代入
+        return CreateEnemyData(droneData);
+    }
+
+    /// <summary>
+    /// ドローンの同期情報を更新する
+    /// </summary>
+    /// <param name="enemyData"></param>
+    public override void UpdateEnemy(EnemyData enemyData)
+    {
+        base.UpdateEnemy(enemyData);
+        if (enemyData is DroneData data)
+        {
+            aimTransform.localRotation = data.GunRotation;
+        }
     }
 
     #endregion
