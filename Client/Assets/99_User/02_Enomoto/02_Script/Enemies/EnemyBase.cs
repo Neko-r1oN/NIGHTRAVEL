@@ -484,9 +484,9 @@ abstract public class EnemyBase : CharacterBase
         {
             return;
         }
+        // ギミックや状態異常によるダメージはマスタクライアントのみ処理させる
         else if (RoomModel.Instance && !RoomModel.Instance.IsMaster)
         {
-            // ギミックなどによるダメージはマスタクライアントのみ処理させる
             return;
         }
 
@@ -737,7 +737,7 @@ abstract public class EnemyBase : CharacterBase
         enemyData.AnimationId = this.GetAnimId();
         enemyData.DebuffList = debuffController.GetAppliedStatusEffects();
 
-        // 以下は専用変数
+        // 以下は専用プロパティ
         enemyData.EnemyID = this.SelfID;
         enemyData.EnemyName = this.gameObject.name;
         enemyData.isBoss = this.IsBoss;
