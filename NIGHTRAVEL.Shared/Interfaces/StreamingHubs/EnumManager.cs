@@ -15,6 +15,20 @@ namespace Shared.Interfaces.StreamingHubs
     {
 
         #region システム関連
+
+        /// レア度の種類
+        /// Author:木田晃輔
+        /// </summary>
+        public enum RARITY_TYPE
+        {
+            Common = 1,
+            Uncommon,
+            Rare,
+            Unique,
+            Legend,
+            Boss
+        }
+
         /// <summary>
         /// タイマ-の種類
         /// Author:Nishiura
@@ -73,11 +87,41 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum STAT_UPGRADE_OPTION 
         {
-            Sample_0 =0,
-            Sample_1 =1,
-            Sample_2 =2,
-            Sample_3 =3,
-            Max
+            Common_HP = 1,
+            Common_Deffence,
+            Common_Attack,
+            Common_JumpingPower,
+            Common_MovementSpeed,
+            Common_AttackSpeed,
+            Common_AutomaticRecovery,
+            Uncommon_HP,
+            Uncommon_Deffence,
+            Uncommon_Attack,
+            Uncommon_JumpingPower,
+            Uncommon_MovementSpeed,
+            Uncommon_AttackSpeed,
+            Uncommon_AutomaticRecovery,
+            Rare_HP,
+            Rare_Deffence,
+            Rare_Attack,
+            Rare_JumpingPower,
+            Rare_MovementSpeed,
+            Rare_AttackSpeed,
+            Rare_AutomaticRecovery,
+            Unique_HP,
+            Unique_Deffence,
+            Unique_Attack,
+            Unique_JumpingPower,
+            Unique_MovementSpeed,
+            Unique_AttackSpeed,
+            Unique_AutomaticRecovery,
+            Legend_HP,
+            Legend_Deffence,
+            Legend_Attack,
+            Legend_JumpingPower,
+            Legend_MovementSpeed,
+            Legend_AttackSpeed,
+            Legend_AutomaticRecovery
         }
 
         /// <summary>
@@ -100,7 +144,27 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum RELIC_TYPE
         {
-            Sample
+            AttackTip = 1,
+            DeffenceTip,
+            MoveSpeedTip,
+            AttackSpeedTip,
+            CoolingFan,
+            HeatingFan,
+            LeakingBattery,
+            BitCoin,
+            RegainCode,
+            ScatterBug,
+            HolographicArmor,
+            Mouse,
+            DigitalMeat,
+            Firewall,
+            BanHammer,
+            LifeScavenger,
+            Rugrouter,
+            BuckupHDMI,
+            IdentificationAI,
+            ChargedCore,
+            CaracalPng
         }
 
         #region 操作キャラ関連
