@@ -15,6 +15,9 @@ using Shared.Interfaces.StreamingHubs;
 
 abstract public class CharacterBase : MonoBehaviour
 {
+    //--------------------------------------------------------------
+    // フィールド
+
     #region データ関連
     [Foldout("データ関連")]
     [SerializeField]
@@ -219,6 +222,11 @@ abstract public class CharacterBase : MonoBehaviour
 
     #endregion
 
+    //--------------------------------------------------------------
+    // メソッド
+
+    #region 初期処理
+
     protected virtual void Awake()
     {
         CharacterStatusData baseStatus = new CharacterStatusData(
@@ -251,6 +259,8 @@ abstract public class CharacterBase : MonoBehaviour
         }
     }
 
+    #endregion
+
     /// <summary>
     /// 全てのステータスの種類を取得
     /// </summary>
@@ -274,38 +284,6 @@ abstract public class CharacterBase : MonoBehaviour
         jumpPower = Mathf.Clamp(jumpPower, 0f, maxJumpPower);
         attackSpeedFactor = Mathf.Clamp(attackSpeedFactor, 0f, maxAttackSpeedFactor);
         healRate = Mathf.Clamp(healRate, 0f, maxHealRate);
-    }
-
-    /// <summary>
-    /// 最大値の変更＆それに応じた現在値の変更
-    /// </summary>
-    /// <param name="changeData">強化後のステータス</param>
-    public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
-    {
-        // 最大値の更新
-        maxHp = changeData.hp;
-        maxDefense = changeData.defence;
-        maxPower = changeData.power;
-        maxJumpPower = changeData.jumpPower;
-        maxMoveSpeed = changeData.moveSpeed;
-        maxAttackSpeedFactor = changeData.attackSpeedFactor;
-        maxHealRate = changeData.healRate;
-
-        if (maxPower == 0)
-        {
-            Debug.Log(this.gameObject.name);
-            Debug.Log("僕はエリート：" + GetComponent<EnemyBase>().IsElite);
-        }
-
-        // 変更後の最大値に応じた現在値の変更
-        hp = (int)((float)maxHp * (hp / maxHp));
-        defense = (int)((float)maxDefense * (defense / maxDefense));
-        power = (int)((float)maxPower * (power / maxPower));
-        jumpPower = maxJumpPower * (jumpPower / maxJumpPower);
-        moveSpeed = maxMoveSpeed * (moveSpeed / maxMoveSpeed);
-        attackSpeedFactor = maxAttackSpeedFactor * (attackSpeedFactor / maxAttackSpeedFactor);
-        healRate = maxHealRate * (healRate / maxHealRate);
-        OverrideAnimaterParam();
     }
 
     #region ステータスを上書きする
@@ -346,6 +324,46 @@ abstract public class CharacterBase : MonoBehaviour
             }
         }
         ClampStatus();
+        OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// 最大値の変更＆それに応じた現在値の変更
+    /// </summary>
+    /// <param name="changeData">強化後のステータス</param>
+    public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
+    {
+        // 各ステータスの最大値に対する現在値の割合を計算
+        float hpRate = (float)hp / (float)maxHp;
+        float defenseRate = (float)defense / (float)maxDefense;
+        float powerRate = (float)power / (float)maxPower;
+        float jumpPowerRate = jumpPower / maxJumpPower;
+        float moveSpeedRate = moveSpeed / maxMoveSpeed;
+        float attackSpeedFactorRate = attackSpeedFactor / maxAttackSpeedFactor;
+
+        // 最大値の更新
+        maxHp = changeData.hp;
+        maxDefense = changeData.defence;
+        maxPower = changeData.power;
+        maxJumpPower = changeData.jumpPower;
+        maxMoveSpeed = changeData.moveSpeed;
+        maxAttackSpeedFactor = changeData.attackSpeedFactor;
+        maxHealRate = changeData.healRate;
+
+        if (maxPower == 0)
+        {
+            Debug.Log(this.gameObject.name);
+            Debug.Log("僕はエリート：" + GetComponent<EnemyBase>().IsElite);
+        }
+
+        // 変更後の最大値に応じた現在値の変更
+        hp = (int)((float)maxHp * hpRate);
+        defense = (int)((float)maxDefense * defenseRate);
+        power = (int)((float)maxPower * powerRate);
+        jumpPower = maxJumpPower * jumpPowerRate;
+        moveSpeed = maxMoveSpeed * moveSpeedRate;
+        attackSpeedFactor = maxAttackSpeedFactor * attackSpeedFactorRate;
+
         OverrideAnimaterParam();
     }
 
@@ -396,7 +414,6 @@ abstract public class CharacterBase : MonoBehaviour
         ChangeAccordingStatusToMaximumValue(changeData);
         OverrideAnimaterParam();
     }
-
 
     #endregion
 
@@ -495,40 +512,6 @@ abstract public class CharacterBase : MonoBehaviour
         OverrideAnimaterParam();
     }
 
-    /// <summary>
-    /// 最大値の変更＆それに応じた現在値の変更
-    /// </summary>
-    /// <param name="changeData">強化後のステータス</param>
-    public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
-    {
-        // 各ステータスの最大値に対する現在値の割合を計算
-        float hpRate = (float)hp / (float)maxHp;
-        float defenseRate = (float)defense / (float)maxDefense;
-        float powerRate = (float)power / (float)maxPower;
-        float jumpPowerRate = jumpPower / maxJumpPower;
-        float moveSpeedRate = moveSpeed / maxMoveSpeed;
-        float moveSpeedFactorRate = moveSpeedFactor / maxMoveSpeedFactor;
-        float attackSpeedFactorRate = attackSpeedFactor / maxAttackSpeedFactor;
-
-        // 最大値の更新
-        maxHp = changeData.hp;
-        maxDefense = changeData.defence;
-        maxPower = changeData.power;
-        maxJumpPower = changeData.jumpPower;
-        maxMoveSpeed = changeData.moveSpeed;
-        maxMoveSpeedFactor = changeData.moveSpeedFactor;
-        maxAttackSpeedFactor = changeData.attackSpeedFactor;
-
-        // 変更後の最大値に応じた現在値の変更
-        hp = (int)((float)maxHp * hpRate);
-        defense = (int)((float)maxDefense * defenseRate);
-        power = (int)((float)maxPower * powerRate);
-        jumpPower = maxJumpPower * jumpPowerRate;
-        moveSpeed = maxMoveSpeed * moveSpeedRate;
-        moveSpeedFactor = maxMoveSpeedFactor * moveSpeedFactorRate;
-        attackSpeedFactor = maxAttackSpeedFactor * attackSpeedFactorRate;
-    }
-
     /// <summary>d
     /// レベルアップ時のステータス変化処理
     /// </summary>
@@ -549,6 +532,8 @@ abstract public class CharacterBase : MonoBehaviour
         defense = (int)((float)maxDefense * defenseRate);
         power = (int)((float)maxPower * powerRate);
     }
+
+    #endregion
 
     #region アニメーション関連
 
