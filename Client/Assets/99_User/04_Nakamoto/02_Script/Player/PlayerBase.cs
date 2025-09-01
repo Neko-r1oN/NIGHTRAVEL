@@ -3,8 +3,10 @@
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -77,12 +79,35 @@ abstract public class PlayerBase : CharacterBase
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     [Foldout("共通ステータス")]
-    [SerializeField] protected int testExp = 10;      // デバッグ用獲得経験値
+    [SerializeField] protected int testExp = 10;        // デバッグ用獲得経験値
 
     protected Player_Type playerType;                   // プレイヤータイプ
     protected float horizontalMove = 0f;                // 速度用変数
     protected float gravity;                            // 重力
     protected float timer;                              // タイマー
+
+    #endregion
+
+    #region レリック関連ステータス
+
+    protected Dictionary<DEBUFF_TYPE, float> giveDebuffRates = new Dictionary<DEBUFF_TYPE, float>()
+        {
+            { DEBUFF_TYPE.Burn, 0f },
+            { DEBUFF_TYPE.Freeze, 0f },
+            { DEBUFF_TYPE.Shock, 0f },
+        };                                  // 状態異常付与率
+    protected float pierceRate = 0;         // 防御貫通率
+    protected float dmgHealRate = 0f;       // 与ダメ回復率
+    protected int bombCnt = 2;              // ボム所持数
+    protected float bombDmgRate = 0.2f;     // ボムダメージ倍率
+    protected float dodgeRate = 0;          // 回避率
+    protected int healMeatCnt = 0;          // 回復肉所持数
+    protected float dmgResistRate = 0;      // 被ダメージ軽減率
+    protected float killHpReward = 0;       // キル時HP回復率
+    protected float daRate = 0;             // ダブルアタック率
+    protected int reviveCnt = 0;            // リバイブ回数
+    protected float debuffDmgRate = 0;      // 状態異常ダメージ倍率
+    protected int elecOrbCnt = 0;           // 感電オーブ所持数
 
     #endregion
 
@@ -152,15 +177,21 @@ abstract public class PlayerBase : CharacterBase
     protected PlayerBase m_Player;
     #endregion
 
-    #region パーティクル・エフェクト
-    [Foldout("パーティクル・エフェクト")]
+    #region エフェクト・UI
+    [Foldout("エフェクト・UI")]
     [SerializeField] protected ParticleSystem particleJumpUp;
 
-    [Foldout("パーティクル・エフェクト")]
+    [Foldout("エフェクト・UI")]
     [SerializeField] protected ParticleSystem particleJumpDown;
 
-    [Foldout("パーティクル・エフェクト")]
+    [Foldout("エフェクト・UI")]
     [SerializeField] protected GameObject ziplineSpark;
+
+    [Foldout("エフェクト・UI")]
+    [SerializeField] protected GameObject eIcon;
+
+    [Foldout("エフェクト・UI")]
+    [SerializeField] protected GameObject rbIcon;
     #endregion
 
     #region カメラ
@@ -701,7 +732,27 @@ abstract public class PlayerBase : CharacterBase
         {   // 最も近い復帰点に移動
             MoveCheckPoint();
         }
+
+        // インタラクトオブジェ接触判定
+        if(collision.gameObject.tag == "Interact")
+        {   // インタラクトUI表示
+
+        }
     }
+
+    /// <summary>
+    /// トリガー接触判定
+    /// </summary>
+    /// <param name="collision"></param>
+    protected void OnTriggerExit2D(Collider2D collision)
+    {
+        // インタラクトオブジェ接触判定
+        if (collision.gameObject.tag == "Interact")
+        {   // インタラクトUI非表示
+
+        }
+    }
+
 
     /// <summary>
     /// １番近いオブジェクトを取得する
