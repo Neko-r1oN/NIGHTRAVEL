@@ -706,6 +706,11 @@ abstract public class EnemyBase : CharacterBase
     #region リアルタイム同期関連
 
     /// <summary>
+    /// マスタクライアント切り替え時に状態をリセットする
+    /// </summary>
+    abstract public void ResetAllStates();
+
+    /// <summary>
     /// EnemyDataを作成する
     /// </summary>
     /// <param name="enemyData">型を指定</param>

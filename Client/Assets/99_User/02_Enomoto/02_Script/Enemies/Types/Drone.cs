@@ -435,13 +435,30 @@ public class Drone : EnemyBase
     #region リアルタイム同期関連
 
     /// <summary>
+    /// マスタクライアント切り替え時に状態をリセットする
+    /// </summary>
+    public override void ResetAllStates()
+    {
+        StopAllManagedCoroutines();
+
+        //isStun = false;
+        //isInvincible = false;
+        //doOnceDecision = false;
+        //isAttacking = false;
+        //isDead = false;
+        //isPatrolPaused = false;
+        //isSpawn = false;
+    }
+
+    /// <summary>
     /// DroneData取得処理
     /// </summary>
     /// <returns></returns>
     public override EnemyData GetEnemyData()
     {
-        var droneData = new DroneData() { GunRotation = aimTransform.localRotation };    // 事前にDroneData用のプロパティに代入
-        return CreateEnemyData(droneData);
+        EnemyData enemyData = new EnemyData();
+        enemyData.Quatarnions.Add(aimTransform.localRotation);
+        return CreateEnemyData(enemyData);
     }
 
     /// <summary>
@@ -451,10 +468,7 @@ public class Drone : EnemyBase
     public override void UpdateEnemy(EnemyData enemyData)
     {
         base.UpdateEnemy(enemyData);
-        if (enemyData is DroneData data)
-        {
-            aimTransform.localRotation = data.GunRotation;
-        }
+        aimTransform.localRotation = enemyData.Quatarnions[0];
     }
 
     #endregion

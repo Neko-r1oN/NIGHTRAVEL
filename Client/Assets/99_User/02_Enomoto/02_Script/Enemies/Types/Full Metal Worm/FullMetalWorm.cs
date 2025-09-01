@@ -534,6 +534,26 @@ public class FullMetalWorm : EnemyBase
 
     #endregion
 
+    #region リアルタイム同期関連
+
+    /// <summary>
+    /// マスタクライアント切り替え時に状態をリセットする
+    /// </summary>
+    public override void ResetAllStates()
+    {
+        StopAllManagedCoroutines();
+
+        //isStun = false;
+        //isInvincible = false;
+        //doOnceDecision = false;
+        //isAttacking = false;
+        //isDead = false;
+        //isPatrolPaused = false;
+        //isSpawn = false;
+    }
+
+    #endregion
+
     #region チェック処理関連
 
     /// <summary>

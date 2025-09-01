@@ -377,19 +377,33 @@ public class FullMetalBody : EnemyBase
     #region リアルタイム同期関連
 
     /// <summary>
+    /// マスタクライアント切り替え時に状態をリセットする
+    /// </summary>
+    public override void ResetAllStates()
+    {
+        StopAllManagedCoroutines();
+
+        //isStun = false;
+        //isInvincible = false;
+        //doOnceDecision = false;
+        //isAttacking = false;
+        //isDead = false;
+        //isPatrolPaused = false;
+        //isSpawn = false;
+    }
+
+    /// <summary>
     /// FullMetalBodyData取得処理
     /// </summary>
     /// <returns></returns>
     public override EnemyData GetEnemyData()
     {
-        List<Quaternion> rotations = new List<Quaternion>();
+        EnemyData enemyData = new EnemyData();
         foreach (var item in aimTransformList)
         {
-            rotations.Add(item.localRotation);
+            enemyData.Quatarnions.Add(item.localRotation);
         }
-
-        var bodyData = new FullMetalBodyData() { GunRotations = rotations };    // 事前にFullMetalBodyData用のプロパティに代入
-        return CreateEnemyData(bodyData);
+        return CreateEnemyData(enemyData);
     }
 
     /// <summary>
@@ -399,12 +413,9 @@ public class FullMetalBody : EnemyBase
     public override void UpdateEnemy(EnemyData enemyData)
     {
         base.UpdateEnemy(enemyData);
-        if (enemyData is FullMetalBodyData data)
+        for (int i = 0; i < aimTransformList.Count; i++)
         {
-            for(int i = 0; i<aimTransformList.Count; i++)
-            {
-                aimTransformList[i].localRotation = data.GunRotations[i];
-            }
+            aimTransformList[i].localRotation = enemyData.Quatarnions[i];
         }
     }
 

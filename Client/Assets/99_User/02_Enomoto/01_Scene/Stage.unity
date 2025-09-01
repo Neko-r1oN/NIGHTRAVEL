@@ -2974,7 +2974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnRange: {x: 5.45, y: 7.29}
   spawnRangeOffset: 5.7
-  maxSpawnCnt: 50
+  maxSpawnCnt: 0
   knockTermsNum: 5
   spawnProbability: 0.05
   stageMin: {fileID: 2032298648}
@@ -2987,7 +2987,7 @@ MonoBehaviour:
   - {fileID: 5504973916346317349, guid: df59c69a4b1a76c4299f5b9c13c04f6a, type: 3}
   - {fileID: 3488628306998136812, guid: b2b73b729aea6dc408fcf80d5f07945e, type: 3}
   - {fileID: 2717074539250444405, guid: 3092e870d5df0e24a9fbe5eddd4edd96, type: 3}
-  emitEnemyTypes: 0000000001000000
+  emitEnemyTypes: 0200000001000000
   bossTerminal: {fileID: 0}
   bossId: 4
 --- !u!213 &672613744
@@ -15966,6 +15966,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCamera: {fileID: 1890321821}
   aspectVec: {x: 1980, y: 1080}
+--- !u!1001 &1891480340
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572801596146378588, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047601142500118110, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
+      propertyPath: m_Name
+      value: Drone
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 43c0b111f99e05c47ba3390848137a17, type: 3}
 --- !u!213 &1936398612
 Sprite:
   m_ObjectHideFlags: 0
@@ -39351,3 +39408,4 @@ SceneRoots:
   - {fileID: 1079358174}
   - {fileID: 644022947}
   - {fileID: 1159229251}
+  - {fileID: 1891480340}

@@ -39,5 +39,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         public int Exp { get; set; }
+
+        [Key(12)]
+        /// <summary>
+        /// Quaternionのオプション
+        /// Author:Enomoto
+        /// </summary>
+        public List<Quaternion> Quatarnions { get; set; } = new List<Quaternion>();
     }
 }

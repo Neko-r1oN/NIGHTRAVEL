@@ -212,12 +212,6 @@ public class CharacterManager : MonoBehaviour
         character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
 
-        // 敵の場合は専用の同期情報を更新する
-        if (character.tag == "Enemy" && characterData is EnemyData enemyData)
-        {
-            character.gameObject.GetComponent<EnemyBase>().UpdateEnemy(enemyData);
-        }
-
         // マスタークライアントの場合、敵が動けるようにする
         if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
         {
@@ -370,6 +364,7 @@ public class CharacterManager : MonoBehaviour
 
             var enemy = enemies[enemyData.EnemyID].Enemy;
             UpdateCharacter(enemyData, enemy);
+            enemy.UpdateEnemy(enemyData);
         }
     }
 
