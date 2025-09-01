@@ -213,6 +213,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     #region 同期の処理
+    /// <summary>
+    /// 同時開始
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask StartAsync()
+    {
+        await roomHub.StartAsync();
+    }
     #region 入室・退室・準備完了同期
     /// <summary>
     /// 入室同期
