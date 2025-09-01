@@ -43,29 +43,5 @@ namespace Shared.Interfaces.StreamingHubs
         /// 敵へのダメージ量
         /// </summary>
         public int Damage { get; set; }
-
-        [Key(5)]
-        /// <summary>
-        /// 獲得経験値量
-        /// </summary>
-        public int GainedExp { get; set; }
-
-        [Key(6)]
-        /// <summary>
-        /// レベルアップ数
-        /// </summary>
-        public int LevelUpCount { get; set; }
-
-        [Key(7)]
-        /// <summary>
-        /// ステータス強化の選択肢
-        /// </summary>
-        public List<STAT_UPGRADE_OPTION> StatUpgradeOptions { get; set; }
-
-        [Key(8)]
-        /// <summary>
-        /// レベルアップ後の全プレイヤーのステータス
-        /// </summary>
-        public Dictionary<Guid, CharacterData> UpdatedPlayerStats { get; set; }
     }
 }

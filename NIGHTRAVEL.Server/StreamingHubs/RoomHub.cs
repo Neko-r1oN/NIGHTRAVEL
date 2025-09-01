@@ -544,8 +544,6 @@ namespace StreamingHubs
                 enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
                 enemDmgData.DebuffList = debuffType;    // 付与デバフ
-                enemDmgData.GainedExp = enemData.Exp;   // 獲得経験値
-                enemDmgData.UpdatedPlayerStats = this.roomContext.characterDataList;    // キャラクターステータス(idk)
 
                 // 敵のHPが0以下になった場合
                 if (enemDmgData.RemainingHp <= 0)
@@ -557,18 +555,7 @@ namespace StreamingHubs
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
                     {
                         LevelUp(roomContext.ExpManager); // レベルアップ処理
-                        enemDmgData.LevelUpCount++;
-                        enemDmgData.StatUpgradeOptions = this.roomContext.statusOptionList; // 決定した選択肢を代入
                     }
-                    else
-                    {
-                        enemDmgData.LevelUpCount = 0;
-                    }
-                }
-                else
-                {
-                    enemDmgData.GainedExp = 0;
-                    enemDmgData.LevelUpCount = 0;
                 }
 
                 // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知

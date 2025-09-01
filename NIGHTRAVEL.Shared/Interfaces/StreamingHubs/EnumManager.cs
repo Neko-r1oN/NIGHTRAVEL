@@ -66,6 +66,16 @@ namespace Shared.Interfaces.StreamingHubs
             Last
         }
 
+        /// <summary>
+        /// アイテムの種類
+        /// </summary>
+        public enum ITEM_TYPE
+        {
+            Relic,
+            DataCube,
+            DataBox
+        }
+
         #endregion
 
         #region キャラクター関連
