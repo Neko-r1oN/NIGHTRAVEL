@@ -29,6 +29,7 @@ public class SpawnManager : MonoBehaviour
     public int KnockTermsNum { get { return knockTermsNum; } }
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
     int fivePercentOfMaxFloor;
+    List<Vector3> enemySpawnPosList = new List<Vector3>();
     #endregion
 
     #region ステージ情報
@@ -105,7 +106,7 @@ public class SpawnManager : MonoBehaviour
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(1000000000000000f));
+        StartCoroutine(WaitAndStartCoroutine(5f));
     }
 
     private void OnDisable()
@@ -133,7 +134,7 @@ public class SpawnManager : MonoBehaviour
                         if (!player) continue;
                         if (spawnCnt < maxSpawnCnt / 2)
                         {// 敵が100体いない場合
-                            GenerateEnemy(Random.Range(3, 5),player.transform.position);
+                            GenerateEnemy(Random.Range(6, 11),player.transform.position);
                         }
                         else
                         {// いる場合
@@ -218,8 +219,11 @@ public class SpawnManager : MonoBehaviour
                  (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
 
             Vector2? pos = IsGroundCheck(spawnPos);
-            if (pos != null)
+            if (pos != null && !enemySpawnPosList.Contains(spawnPos))
             {
+                // listの中にない場合、リストにadd
+                enemySpawnPosList.Add(spawnPos);
+
                 LayerMask mask = LayerMask.GetMask("Default");
 
                 Vector2 result = (Vector2)pos;
@@ -305,6 +309,8 @@ public class SpawnManager : MonoBehaviour
                 spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
             }
         }
+        // 生成スポーンリスト初期化
+        enemySpawnPosList.Clear();
         SpawnEnemyRequest(spawnEnemyDatas.ToArray());
     }
 
@@ -564,6 +570,7 @@ public class SpawnManager : MonoBehaviour
         {
             if (spawnEnemyData == null) continue;
             SpawnEnemy(spawnEnemyData);
+
         }
     }
 
