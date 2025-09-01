@@ -3,9 +3,12 @@
 // Author:Nishiura
 // Date:2025/07/01
 //===================
+using DG.Tweening;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 public class Terminal : MonoBehaviour
 {
     // プレイヤーが端末に触れているかの判定変数
@@ -17,12 +20,26 @@ public class Terminal : MonoBehaviour
 
     public int TerminalType { get { return terminalType; } }
 
+    //カウントダウン用のテキスト
+    public Text countDownText;
+
+    //制限時間
+    public int limitTime;
+
+    //端末のアイコン
+    [SerializeField] GameObject terminalIcon;
+
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
 
     List<GameObject> terminalSpawnList;
 
     GameManager gameManager;
+
+    PlayerBase player;
+
+    //レリック管理クラス
+    RelicManager relicManager;
 
     private static Terminal instance;
 
@@ -60,6 +77,7 @@ public class Terminal : MonoBehaviour
 
     bool isTerminal;
 
+
     public bool IsTerminal {  get { return isTerminal; } }
 
     private void Awake()
@@ -68,17 +86,20 @@ public class Terminal : MonoBehaviour
         {
             instance = this;
         }
-        else
-        {
-            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
-            Destroy(gameObject);
-        }
+        //else
+        //{
+        //    // インスタンスが複数存在しないように、既に存在していたら自身を消去する
+        //    Destroy(gameObject);
+        //}
     }
 
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         isTerminal = false;
+
+        //最初はcountDownTextを非表示にする
+        countDownText.enabled = false;
     }
 
     private void Update()
@@ -89,12 +110,6 @@ public class Terminal : MonoBehaviour
             Debug.Log("Terminal Booted");
             BootTerminal(); // 端末を起動
         }
-
-
-        /*if (SpawnManager.Instance.EnemiesByTerminal.Count <= 0)
-        {
-
-        }*/
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -147,7 +162,15 @@ public class Terminal : MonoBehaviour
                 }
 
                 SpawnManager.Instance.TerminalGenerateEnemy(rndNum, children[0].position, children[1].position);   // 敵生成
+
                 isTerminal = true;
+
+                //カウントダウンする
+                InvokeRepeating("CountDown", 1, 1);
+
+                //countDownTextを表示する
+                countDownText.enabled = true;
+
                 break;
 
             case (int)TerminalCode.Type_Speed:
@@ -158,13 +181,25 @@ public class Terminal : MonoBehaviour
                 {   // 各ゴールポイントを表示
                     point.SetActive(true);
                 }
-                Invoke("TimeUp",10f);   // 10秒後タイムアップとする
+                
+                //countDownTextを表示する
+                countDownText.enabled = true;
+
+                //カウントダウンする
+                InvokeRepeating("CountDown", 1, 1); 
+
                 break;
 
             case (int)TerminalCode.Type_Deal:
                 // 取引の場合
+
                 isUsed = true;  // 使用済みにする
                 rndNum = rand.Next(0, 6); // 生成数を乱数(0-5)で設定
+
+                if (terminalType == 3 && isUsed == true)
+                {
+                    DealDamage();
+                }
 
                 break;
 
@@ -199,20 +234,54 @@ public class Terminal : MonoBehaviour
     /// </summary>
     public void GiveReward()
     {
+
         // 端末タイプで処理を分ける
         switch (terminalType)
         {
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
                 isUsed = true;
+
+                    //カウントダウンを停止する
+                    CancelInvoke("CountDown");
+
+                    //端末のアイコンを1.5秒かけてフェードアウトする
+                    terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
+                    //cowntDownTextを削除
+                    Destroy(countDownText);
+
+                    //レリックを排出する
+                    RelicManager.Instance.GenerateRelic(Instance.transform.position);
+
                 break;
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合
+
+                //カウントダウンを停止する
+                CancelInvoke("CountDown");
+
+                //端末のアイコンを1.5秒かけてフェードアウトする
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
+                //cowntDownTextを削除
+                Destroy(countDownText);
+
+                //レリックを排出する
+                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+
+
                 Debug.Log("OMFG Reward Here!!!!!");
                 break;
             case (int)TerminalCode.Type_Deal:
                 // 取引の場合
                 isUsed = true;  // 使用済みにする
+
+                //端末のアイコンを1.5秒かけてフェードアウトする
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
+                //レリックを排出する
+                RelicManager.Instance.GenerateRelic(Instance.transform.position);
 
                 break;
             case (int)TerminalCode.Type_Jumble:
@@ -257,14 +326,67 @@ public class Terminal : MonoBehaviour
     }
 
     /// <summary>
-    /// 時間切れ処理
+    /// カウントダウン処理
     /// </summary>
-    private void TimeUp()
+    public void CountDown()
     {
-        foreach (var point in pointList)
-        {   // 各ゴールポイントを表示
-        
-            point.SetActive(false);
+        //limitTImeを1ずつ減らす
+        limitTime--;
+
+        //制限時間をcowntDownTextに反映する
+        countDownText.text=limitTime.ToString();
+
+        //制限時間が0以下になったら(時間切れ)
+        if(limitTime <=0)
+        {
+            //limitTimeを0にする
+            limitTime = 0;
+
+            //カウントダウンを停止する
+            CancelInvoke("CountDown");
+
+            //端末のアイコンを1.5秒かけてフェードアウトする
+            terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
+            //cowntDownTextを削除
+            Destroy(countDownText);
+
+            //ゴールポイントを削除する
+            foreach (GameObject obj in pointList)
+            {
+                Destroy(obj);
+            }
         }
+    }
+
+    /// <summary>
+    /// 取引端末で減らすHPの量の計算
+    /// </summary>
+    public void DealDamage()
+    {
+        //player = gameObject.GetComponent<PlayerBase>();
+        int HP = 400;
+
+        //減らす量は現在のHPの10%
+        int damege = Mathf.FloorToInt(HP * 0.5f);
+
+        //dealDamageが0より小さいか0だったら
+        if (damege <= 0)
+        {
+            //dealDamageを1にする
+            damege = 1;
+        }
+
+        //現在のHPが1より小さいか1だったら
+        if(HP<=1)
+        {
+            //利用できないことにする
+            isUsed = false;
+        }
+
+        Debug.Log(HP);
+
+        //HPを減らす
+        //player.ApplyDamage(damege);
     }
 }
