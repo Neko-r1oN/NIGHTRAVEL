@@ -66,6 +66,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new Dictionary<Guid, JoinedUser>();
 
         /// <summary>
+        /// 読み込み完了したプレイヤー数
+        /// </summary>
+        public int LoadedPlayer { get; set; } = new int();
+
+        /// <summary>
         /// ルームデータリスト
         /// Author:Nishiura
         /// </summary>

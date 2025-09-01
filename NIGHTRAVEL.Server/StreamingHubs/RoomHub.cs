@@ -170,8 +170,13 @@ namespace StreamingHubs
         /// </summary>
         /// <returns></returns>
         public async Task SameStartAsync()
-        { 
-            this.roomContext.Group.All.OnSameStart();
+        {
+            this.roomContext.LoadedPlayer += 1;
+
+            if(this.roomContext.LoadedPlayer == this.roomContext.JoinedUserList.Count)
+            {
+                this.roomContext.Group.All.OnSameStart();
+            }
         }
 
         #endregion
