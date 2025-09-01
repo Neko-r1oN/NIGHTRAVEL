@@ -68,6 +68,12 @@ abstract public class EnemyBase : CharacterBase
     [SerializeField]
     protected float hitTime = 0.5f;
 
+    [Foldout("ステータス")]
+    private EnumManager.SPAWN_ENEMY_TYPE spawnEnemyType;
+
+    #endregion
+
+    #region オプション
     [Foldout("オプション")]
     [SerializeField]
     protected bool isBoss = false;
@@ -75,9 +81,7 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("オプション")]
     [SerializeField]
     protected bool isElite = false;
-    #endregion
 
-    #region オプション
     [Foldout("オプション")]
     [Tooltip("常に動き回ることが可能")]
     [SerializeField] 
@@ -149,6 +153,9 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("システム")]
     [SerializeField]
     protected int spawnWeight = 1;  // スポーンの抽選する際の重み
+
+    [Foldout("システム")]
+    private Terminal terminalManager;
     #endregion
 
     #region 外部参照用プロパティ
@@ -168,6 +175,10 @@ abstract public class EnemyBase : CharacterBase
     public bool IsElite { get { return isElite; } }
 
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
+
+    public EnumManager.SPAWN_ENEMY_TYPE SpawnEnemyType { get { return spawnEnemyType; } set { spawnEnemyType = value; } }
+
+    public Terminal TerminalManager { get { return terminalManager; } set { terminalManager = value; } }
     #endregion
 
     #region ID
@@ -543,7 +554,22 @@ abstract public class EnemyBase : CharacterBase
                     player.GetExp(exp);
             }
 
-            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
+            if (spawnEnemyType == SPAWN_ENEMY_TYPE.ByTerminal)
+            {// 生成タイプがターミナルなら
+                // 死んだ敵をリストから削除
+                terminalManager.TerminalSpawnList.Remove(this.gameObject);
+                if(terminalManager.TerminalSpawnList.Count <= 0)
+                {// リストのカウントが0なら
+                    // レリックの生成
+                    RelicManager.Instance.GenerateRelicTest();
+                }
+            }
+            else
+            {
+                // Instanceがあるなら敵撃破関数を呼ぶ
+                if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
+            }
+
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             yield return new WaitForSeconds(destroyWaitSec);
             Destroy(gameObject);

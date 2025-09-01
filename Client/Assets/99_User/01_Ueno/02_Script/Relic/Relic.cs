@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 
 public class Relic : MonoBehaviour
@@ -12,6 +11,9 @@ public class Relic : MonoBehaviour
 
     private void Start()
     {
+        // レリック情報の取得(サーバー)
+
+        // レリック情報の登録
         relicDeta = new RelicDeta(id,rarity);
     }
 
@@ -30,6 +32,8 @@ public class Relic : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // レリック取得通知
+
         if (collision.gameObject.tag == "Player")
         {
             AddRelic();
