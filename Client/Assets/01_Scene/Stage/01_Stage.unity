@@ -3702,6 +3702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa05f7523eb8d1748954ec754844bf04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fadeSpeed: 0
 --- !u!19719996 &798525387
 TilemapCollider2D:
   m_ObjectHideFlags: 0
@@ -21013,7 +21014,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1497565624
 Transform:
   m_ObjectHideFlags: 0
@@ -21440,6 +21441,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terminalType: 2
+  maxSpawnEnemy: 0
+  countDownText: {fileID: 0}
+  limitTime: 0
+  terminalIcon: {fileID: 0}
   pointList:
   - {fileID: 1814235571}
   - {fileID: 175350348}
@@ -70809,14 +70814,9 @@ MonoBehaviour:
   - {fileID: -8485438555329834472, guid: fa59307c939c1c7469aee1750e0c16b5, type: 3}
   - {fileID: -1183681620893836794, guid: 5cd7f99ff987be746afa7e9a9595b0b3, type: 3}
   - {fileID: 6559029749142894935, guid: 9bbaf474954ef3d49aacb9f28bc2de7c, type: 3}
-  relicPrefab:
-  - {fileID: 375430429339535191, guid: 8ccdd04fed212594eba1855ef07a159f, type: 3}
-  - {fileID: 5853696203698968149, guid: 32beddca6ecb0ef419f3ea9b6145849e, type: 3}
-  - {fileID: 9190189327039805968, guid: 45887936193796c43bfcc2f3978af710, type: 3}
-  - {fileID: 751796750881708082, guid: 51fa509c7f291cf409d79dce237b0014, type: 3}
-  - {fileID: 2444652248374184145, guid: 028a6623273ccfd4b84be5ef47a1fc60, type: 3}
-  - {fileID: 2556410987227458292, guid: 30c0256d1459ea5408858702f35e5015, type: 3}
-  - {fileID: 3457039329859518495, guid: f78f20a313cee4841a3e01c0ad740a5b, type: 3}
+  relicPrefabs: []
+  defaultSpriteMaterial: {fileID: 0}
+  relicPrefab: {fileID: 0}
 --- !u!1001 &2147338828
 PrefabInstance:
   m_ObjectHideFlags: 0
