@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class FullMetalBody : EnemyBase
@@ -24,7 +25,8 @@ public class FullMetalBody : EnemyBase
         Open,
         Close,
         Dead,
-        Despown
+        Despown,
+        Attack
     }
 
     /// <summary>
@@ -62,9 +64,6 @@ public class FullMetalBody : EnemyBase
     [Foldout("攻撃関連")]
     [SerializeField]
     List<GunParticleController> gunPsControllerList;
-    [Foldout("攻撃関連")]
-    [SerializeField]
-    float gunBulletWidth = 0;
     [Foldout("攻撃関連")]
     [SerializeField]
     float aimRotetionSpeed = 3f;
@@ -130,6 +129,7 @@ public class FullMetalBody : EnemyBase
     /// <returns></returns>
     IEnumerator RangeAttack(Action onFinished)
     {
+        SetAnimId((int)ANIM_ID.Attack);
         gunPsControllerList.ForEach(item => { item.StartShooting(); });
 
         Dictionary<Transform, GameObject> targetList = new Dictionary<Transform, GameObject>();
@@ -160,6 +160,7 @@ public class FullMetalBody : EnemyBase
             time += 0.1f;
         }
 
+        SetAnimId((int)ANIM_ID.None);
         gunPsControllerList.ForEach(item => { item.StopShooting(); });
 
         // 銃を元の角度に戻す
@@ -351,6 +352,60 @@ public class FullMetalBody : EnemyBase
     public void OnEndSpawnAnimEventByBody()
     {
         OnEndSpawnAnimEvent();
+    }
+
+    /// <summary>
+    /// アニメーション設定
+    /// </summary>
+    /// <param name="id"></param>
+    public override void SetAnimId(int id)
+    {
+        base.SetAnimId(id);
+
+        if (id == (int)ANIM_ID.Attack)
+        {
+            gunPsControllerList.ForEach(item => { item.StartShooting(); });
+        }
+        else
+        {
+            gunPsControllerList.ForEach(item => { item.StopShooting(); });
+        }
+    }
+
+    #endregion
+
+    #region リアルタイム同期関連
+
+    /// <summary>
+    /// FullMetalBodyData取得処理
+    /// </summary>
+    /// <returns></returns>
+    public override EnemyData GetEnemyData()
+    {
+        List<Quaternion> rotations = new List<Quaternion>();
+        foreach (var item in aimTransformList)
+        {
+            rotations.Add(item.localRotation);
+        }
+
+        var bodyData = new FullMetalBodyData() { GunRotations = rotations };    // 事前にFullMetalBodyData用のプロパティに代入
+        return CreateEnemyData(bodyData);
+    }
+
+    /// <summary>
+    /// ワームのボディの同期情報を更新する
+    /// </summary>
+    /// <param name="enemyData"></param>
+    public override void UpdateEnemy(EnemyData enemyData)
+    {
+        base.UpdateEnemy(enemyData);
+        if (enemyData is FullMetalBodyData data)
+        {
+            for(int i = 0; i<aimTransformList.Count; i++)
+            {
+                aimTransformList[i].localRotation = data.GunRotations[i];
+            }
+        }
     }
 
     #endregion

@@ -15,6 +15,9 @@ using Shared.Interfaces.StreamingHubs;
 
 abstract public class CharacterBase : MonoBehaviour
 {
+    //--------------------------------------------------------------
+    // フィールド
+
     #region データ関連
     [Foldout("データ関連")]
     [SerializeField]
@@ -44,10 +47,11 @@ abstract public class CharacterBase : MonoBehaviour
     protected float baseMoveSpeed = 1f;   // 移動速度
 
     [Foldout("ステータス")]
-    protected float baseMoveSpeedFactor = 1f;    // 移動速度(Animatorの係数)
+    protected float baseAttackSpeedFactor = 1f;    // 攻撃速度(Animatorの係数)
 
     [Foldout("ステータス")]
-    protected float baseAttackSpeedFactor = 1f;    // 攻撃速度(Animatorの係数)
+    [SerializeField]
+    protected float baseHealRate = 0.001f;  // 自動回復倍の倍率
     #endregion
 
     #region 初期ステータス外部参照用プロパティ
@@ -77,24 +81,24 @@ abstract public class CharacterBase : MonoBehaviour
     public float BaseMoveSpeed { get { return baseMoveSpeed; } }
 
     /// <summary>
-    /// 移動速度(Animatorの係数)
-    /// </summary>
-    public float BaseMoveSpeedFactor {  get { return baseMoveSpeedFactor; } }
-
-    /// <summary>
     /// 攻撃速度(Animatorの係数)
     /// </summary>
     public float BaseAttackSpeedFactor { get { return baseAttackSpeedFactor; } }
+
+    /// <summary>
+    /// 自動回復の倍率
+    /// </summary>
+    public float BaseHealRate {  get { return baseHealRate; } }
     #endregion
         
-    #region 現在のステータスの上限値関連(マイナスの値を許容しないもののみ)
-    protected int maxHp;
-    protected int maxDefense;
-    protected int maxPower;
-    protected float maxJumpPower;
-    protected float maxMoveSpeed;
-    protected float maxMoveSpeedFactor;
-    protected float maxAttackSpeedFactor;
+    #region 現在のステータスの上限値関連
+    public int maxHp;
+    public int maxDefense;
+    public int maxPower;
+    public float maxJumpPower;
+    public float maxMoveSpeed;
+    public float maxAttackSpeedFactor;
+    public float maxHealRate;
     #endregion
 
     #region 現在のステータスの上限値外部参照用プロパティ
@@ -121,14 +125,14 @@ abstract public class CharacterBase : MonoBehaviour
     public float MaxMoveSpeed { get { return maxMoveSpeed; } }
 
     /// <summary>
-    /// 最大移動速度係数(Animator用)
-    /// </summary>
-    public float MaxMoveSpeedFactor { get { return maxMoveSpeedFactor; } }
-
-    /// <summary>
     /// 最大攻撃速度係数(Animator用)
     /// </summary>
     public float MaxAttackSpeedFactor { get { return maxAttackSpeedFactor; } }
+
+    /// <summary>
+    /// 最大自動回復の倍率
+    /// </summary>
+    public float MaxHealRate { get {return maxHealRate; } }
     #endregion
 
     #region 現在のステータス関連
@@ -145,9 +149,9 @@ abstract public class CharacterBase : MonoBehaviour
     [Foldout("[Debug用] 現在のステータス")]
     public float moveSpeed;
     [Foldout("[Debug用] 現在のステータス")]
-    public float moveSpeedFactor;
-    [Foldout("[Debug用] 現在のステータス")]
     public float attackSpeedFactor;
+    [Foldout("[Debug用] 現在のステータス")]
+    public float healRate;
 
     protected DebuffController effectController;
     #endregion
@@ -179,14 +183,14 @@ abstract public class CharacterBase : MonoBehaviour
     public float MoveSpeed { get { return moveSpeed; } set { moveSpeed = value; } }
 
     /// <summary>
-    /// 移動速度(Animatorの係数)
-    /// </summary>
-    public float MoveSpeedFactor { get { return moveSpeedFactor; }  set { moveSpeedFactor = value; } }
-
-    /// <summary>
     /// 攻撃速度(Animatorの係数)
     /// </summary>
     public float AttackSpeedFactor { get { return attackSpeedFactor; } set { attackSpeedFactor = value; } }
+
+    /// <summary>
+    /// 自動回復の倍率
+    /// </summary>
+    public float HealRate { get { return healRate; } set { healRate = value; } }
 
     /// <summary>
     /// 状態異常管理のコンポーネント
@@ -212,9 +216,30 @@ abstract public class CharacterBase : MonoBehaviour
     }
     #endregion
 
+    #region 定数
+
+    private const float LEVEL_UP_RATE = 0.05f; // レベルアップ時のステータス上昇率
+
+    #endregion
+
+    //--------------------------------------------------------------
+    // メソッド
+
+    #region 初期処理
+
     protected virtual void Awake()
     {
-        ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
+        CharacterStatusData baseStatus = new CharacterStatusData(
+                hp: baseHp,
+                defence: baseDefense,
+                power: basePower,
+                moveSpeed: baseMoveSpeed,
+                attackSpeedFactor: baseAttackSpeedFactor,
+                jumpPower: baseJumpPower,
+                healRate: baseHealRate
+            );
+        OverridMaxStatus(baseStatus, STATUS_TYPE.All);
+        OverridCurrentStatus(baseStatus, STATUS_TYPE.All);
         if (!animator) animator = GetComponent<Animator>();
         effectController = GetComponent<DebuffController>();
     }
@@ -234,6 +259,19 @@ abstract public class CharacterBase : MonoBehaviour
         }
     }
 
+    #endregion
+
+    /// <summary>
+    /// 全てのステータスの種類を取得
+    /// </summary>
+    /// <returns></returns>
+    List<STATUS_TYPE> GetAllStatusType()
+    {
+        return new List<STATUS_TYPE> { 
+            STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
+                STATUS_TYPE.MoveSpeed, STATUS_TYPE.AttackSpeedFactor, STATUS_TYPE.HealRate};
+    }
+
     /// <summary>
     /// 現在のステータスを上下限に制限する
     /// </summary>
@@ -242,11 +280,13 @@ abstract public class CharacterBase : MonoBehaviour
         hp = Mathf.Clamp(hp, 0, maxHp);
         defense = Mathf.Clamp(defense, 0, defense);
         power = Mathf.Clamp(power, 0, maxPower);
-        moveSpeed = Mathf.Clamp(moveSpeed, 0, maxPower);
-        jumpPower = Mathf.Clamp(jumpPower, 0, maxJumpPower);
-        moveSpeedFactor = Mathf.Clamp(moveSpeedFactor, 0, maxMoveSpeedFactor);
-        attackSpeedFactor = Mathf.Clamp(attackSpeedFactor, 0, maxAttackSpeedFactor);
+        moveSpeed = Mathf.Clamp(moveSpeed, 0f, maxPower);
+        jumpPower = Mathf.Clamp(jumpPower, 0f, maxJumpPower);
+        attackSpeedFactor = Mathf.Clamp(attackSpeedFactor, 0f, maxAttackSpeedFactor);
+        healRate = Mathf.Clamp(healRate, 0f, maxHealRate);
     }
+
+    #region ステータスを上書きする
 
     /// <summary>
     /// 現在のステータスを上書きする
@@ -254,13 +294,7 @@ abstract public class CharacterBase : MonoBehaviour
     public void OverridCurrentStatus(CharacterStatusData statusData, params STATUS_TYPE[] types)
     {
         List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
-        if (statusList.Contains(STATUS_TYPE.All))
-        {
-            statusList = new List<STATUS_TYPE> {
-                STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
-                STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor, STATUS_TYPE.AttackSpeedFactor
-            };
-        }
+        if (statusList.Contains(STATUS_TYPE.All)) statusList = GetAllStatusType();
 
         foreach (STATUS_TYPE type in statusList)
         {
@@ -281,157 +315,15 @@ abstract public class CharacterBase : MonoBehaviour
                 case STATUS_TYPE.MoveSpeed:
                     moveSpeed = statusData.moveSpeed;
                     break;
-                case STATUS_TYPE.MoveSpeedFactor:
-                    moveSpeedFactor = statusData.moveSpeedFactor;
-                    break;
                 case STATUS_TYPE.AttackSpeedFactor:
                     attackSpeedFactor = statusData.attackSpeedFactor;
                     break;
-            }
-        }
-        ClampStatus();
-        OverrideAnimaterParam();
-    }
-
-    /// <summary>
-    /// ステータスを指定して、一括で現在のステータスに加減する処理
-    /// </summary>
-    public void ApplyStatusBonus(float bonus, params STATUS_TYPE[] types)
-    {
-        var requestData = new CharacterStatusData();
-        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
-        if (statusList.Contains(STATUS_TYPE.All))
-        {
-            statusList = new List<STATUS_TYPE> {
-                STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
-                STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor, STATUS_TYPE.AttackSpeedFactor
-            };
-        }
-
-        foreach (STATUS_TYPE type in statusList)
-        {
-            switch (type)
-            {
-                case STATUS_TYPE.HP:
-                    requestData.hp = (int)bonus;
-                    break;
-                case STATUS_TYPE.Defense:
-                    requestData.defence = (int)bonus;
-                    break;
-                case STATUS_TYPE.Power:
-                    requestData.power = (int)bonus;
-                    break;
-                case STATUS_TYPE.JumpPower:
-                    requestData.jumpPower = bonus;
-                    break;
-                case STATUS_TYPE.MoveSpeed:
-                    requestData.moveSpeed = bonus;
-                    break;
-                case STATUS_TYPE.MoveSpeedFactor:
-                    requestData.moveSpeedFactor = bonus;
-                    break;
-                case STATUS_TYPE.AttackSpeedFactor:
-                    requestData.attackSpeedFactor = bonus;
-                    break;
-            }
-        }
-        ApplyStatusBonus(requestData);
-    }
-
-    /// <summary>
-    /// 一括で現在のステータスに加減する処理
-    /// </summary>
-    public void ApplyStatusBonus(CharacterStatusData addStatusData)
-    {
-        hp += addStatusData.hp;
-        defense += addStatusData.defence;
-        power += addStatusData.power;
-        moveSpeed += addStatusData.moveSpeed;
-        jumpPower += addStatusData.jumpPower;
-        moveSpeedFactor += addStatusData.moveSpeedFactor;
-        attackSpeedFactor += addStatusData.attackSpeedFactor;
-        ClampStatus();
-        OverrideAnimaterParam();
-    }
-
-    /// <summary>
-    /// 割合を指定して、ステータスに変化を適用させる
-    /// </summary>
-    /// <param name="rate"></param>
-    /// <param name="types"></param>
-    public void ApplyStatusModifierByRate(float rate, params STATUS_TYPE[] types)
-    {
-        ApplyStatusModifierByRate(rate, false, types);
-    }
-
-    /// <summary>
-    /// 割合を指定して、ステータスに変化を適用させる
-    /// </summary>
-    /// <param name="rate"></param>
-    /// <param name="canResetHpToMax"></param>
-    /// <param name="types"></param>
-    public void ApplyStatusModifierByRate(float rate, bool canResetHpToMax, params STATUS_TYPE[] types)
-    {
-        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
-        if (statusList.Contains(STATUS_TYPE.All)) 
-        {
-            statusList = new List<STATUS_TYPE> {
-                STATUS_TYPE.HP, STATUS_TYPE.Defense, STATUS_TYPE.Power, STATUS_TYPE.JumpPower,
-                STATUS_TYPE.MoveSpeed, STATUS_TYPE.MoveSpeedFactor, STATUS_TYPE.AttackSpeedFactor
-            };
-        }
-
-        foreach (STATUS_TYPE type in statusList)
-        {
-            switch (type)
-            {
-                case STATUS_TYPE.HP:
-                    maxHp += (int)(baseHp * rate);
-                    int applyHp = maxHp < 0 ? 0 : maxHp;
-                    if (canResetHpToMax) hp = maxHp;
-                    else hp = applyHp < hp ? applyHp : hp;
-                    break;
-                case STATUS_TYPE.Defense:
-                    maxDefense += (int)(baseDefense * rate);
-                    defense += maxDefense < 0 ? 0 : maxDefense;
-                    break;
-                case STATUS_TYPE.Power:
-                    maxPower += (int)(basePower * rate);
-                    power = maxPower < 0 ? 0 : maxPower;
-                    break;
-                case STATUS_TYPE.JumpPower:
-                    maxJumpPower += baseJumpPower * rate;
-                    jumpPower = maxJumpPower < 0 ? 0 : maxJumpPower;
-                    break;
-                case STATUS_TYPE.MoveSpeed:
-                    maxMoveSpeed += baseMoveSpeed * rate;
-                    moveSpeed = maxMoveSpeed < 0 ? 0 : maxMoveSpeed;
-                    break;
-                case STATUS_TYPE.MoveSpeedFactor:
-                    maxMoveSpeedFactor += baseMoveSpeedFactor * rate;
-                    moveSpeedFactor = maxMoveSpeedFactor < 0 ? 0 : maxMoveSpeedFactor;
-                    break;
-                case STATUS_TYPE.AttackSpeedFactor:
-                    maxAttackSpeedFactor += baseAttackSpeedFactor * rate;
-                    attackSpeedFactor = maxAttackSpeedFactor < 0 ? 0 : maxAttackSpeedFactor;
+                case STATUS_TYPE.HealRate:
+                    healRate = statusData.healRate;
                     break;
             }
         }
         ClampStatus();
-        OverrideAnimaterParam();
-    }
-
-    /// <summary>
-    /// 現在のステータスを最大値の大きさに戻す
-    /// </summary>
-    public void RecoverAllStats()
-    {
-        hp = maxHp;
-        power = maxPower;
-        jumpPower = maxJumpPower;
-        moveSpeed = maxMoveSpeed;
-        moveSpeedFactor = maxMoveSpeedFactor;
-        attackSpeedFactor = maxAttackSpeedFactor;
         OverrideAnimaterParam();
     }
 
@@ -441,24 +333,207 @@ abstract public class CharacterBase : MonoBehaviour
     /// <param name="changeData">強化後のステータス</param>
     public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
     {
+        // 各ステータスの最大値に対する現在値の割合を計算
+        float hpRate = (float)hp / (float)maxHp;
+        float defenseRate = (float)defense / (float)maxDefense;
+        float powerRate = (float)power / (float)maxPower;
+        float jumpPowerRate = jumpPower / maxJumpPower;
+        float moveSpeedRate = moveSpeed / maxMoveSpeed;
+        float attackSpeedFactorRate = attackSpeedFactor / maxAttackSpeedFactor;
+
         // 最大値の更新
         maxHp = changeData.hp;
         maxDefense = changeData.defence;
         maxPower = changeData.power;
         maxJumpPower = changeData.jumpPower;
         maxMoveSpeed = changeData.moveSpeed;
-        maxMoveSpeedFactor = changeData.moveSpeedFactor;
         maxAttackSpeedFactor = changeData.attackSpeedFactor;
+        maxHealRate = changeData.healRate;
+
+        if (maxPower == 0)
+        {
+            Debug.Log(this.gameObject.name);
+            Debug.Log("僕はエリート：" + GetComponent<EnemyBase>().IsElite);
+        }
 
         // 変更後の最大値に応じた現在値の変更
-        hp = (int)((float)maxHp * (hp / maxHp));
-        defense = (int)((float)maxDefense * (defense / maxDefense));
-        power = (int)((float)maxPower * (power / maxPower));
-        jumpPower = (int)((float)maxJumpPower * (jumpPower / maxJumpPower));
-        moveSpeed = (int)((float)maxMoveSpeed * (moveSpeed / maxMoveSpeedFactor));
-        moveSpeedFactor = (int)((float)maxMoveSpeedFactor * (moveSpeedFactor / maxMoveSpeedFactor));
-        attackSpeedFactor = (int)((float)maxAttackSpeedFactor * (attackSpeedFactor / maxAttackSpeedFactor));
+        hp = (int)((float)maxHp * hpRate);
+        defense = (int)((float)maxDefense * defenseRate);
+        power = (int)((float)maxPower * powerRate);
+        jumpPower = maxJumpPower * jumpPowerRate;
+        moveSpeed = maxMoveSpeed * moveSpeedRate;
+        attackSpeedFactor = maxAttackSpeedFactor * attackSpeedFactorRate;
+
+        OverrideAnimaterParam();
     }
+
+    /// <summary>
+    /// 現在の最大ステータスを上書きし、それに応じて現在のステータスを更新する
+    /// </summary>
+    public void OverridMaxStatus(CharacterStatusData statusData, params STATUS_TYPE[] types)
+    {
+        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
+        if (statusList.Contains(STATUS_TYPE.All)) statusList = GetAllStatusType();
+
+        foreach (STATUS_TYPE type in statusList)
+        {
+            switch (type)
+            {
+                case STATUS_TYPE.HP:
+                    maxHp = statusData.hp;
+                    break;
+                case STATUS_TYPE.Defense:
+                    maxDefense = statusData.defence;
+                    break;
+                case STATUS_TYPE.Power:
+                    maxPower = statusData.power;
+                    break;
+                case STATUS_TYPE.JumpPower:
+                    maxJumpPower = statusData.jumpPower;
+                    break;
+                case STATUS_TYPE.MoveSpeed:
+                    maxMoveSpeed = statusData.moveSpeed;
+                    break;
+                case STATUS_TYPE.AttackSpeedFactor:
+                    maxAttackSpeedFactor = statusData.attackSpeedFactor;
+                    break;
+                case STATUS_TYPE.HealRate:
+                    maxHealRate = statusData.healRate;
+                    break;
+            }
+        }
+        CharacterStatusData changeData = new CharacterStatusData(
+            hp: maxHp,
+            defence: maxDefense,
+            power: maxPower,
+            moveSpeed: maxMoveSpeed,
+            attackSpeedFactor: maxAttackSpeedFactor,
+            jumpPower: maxJumpPower,
+            healRate: maxHealRate
+            );
+        ChangeAccordingStatusToMaximumValue(changeData);
+        OverrideAnimaterParam();
+    }
+
+    #endregion
+
+    #region 割合を指定してステータスに加算する
+
+    /// <summary>
+    /// 割合を指定して最大ステータスに加算し、それに応じて現在のステータスを更新する
+    /// </summary>
+    /// <param name="rate"></param>
+    /// <param name="canResetHpToMax"></param>
+    /// <param name="types"></param>
+    public void ApplyMaxStatusModifierByRate(float rate, params STATUS_TYPE[] types)
+    {
+        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
+        if (statusList.Contains(STATUS_TYPE.All)) statusList = GetAllStatusType();
+
+        foreach (STATUS_TYPE type in statusList)
+        {
+            switch (type)
+            {
+                case STATUS_TYPE.HP:
+                    maxHp += (int)(baseHp * rate);
+                    break;
+                case STATUS_TYPE.Defense:
+                    maxDefense += (int)(baseDefense * rate);
+                    break;
+                case STATUS_TYPE.Power:
+                    maxPower += (int)(basePower * rate);
+                    break;
+                case STATUS_TYPE.JumpPower:
+                    maxJumpPower = baseJumpPower * rate;
+                    break;
+                case STATUS_TYPE.MoveSpeed:
+                    maxMoveSpeed += baseMoveSpeed * rate;
+                    break;
+                case STATUS_TYPE.AttackSpeedFactor:
+                    maxAttackSpeedFactor += baseAttackSpeedFactor * rate;
+                    break;
+                case STATUS_TYPE.HealRate:
+                    maxHealRate += baseHealRate * rate;
+                    break;
+            }
+        }
+        CharacterStatusData changeData = new CharacterStatusData(
+            hp: maxHp,
+            defence: maxDefense,
+            power: maxPower,
+            moveSpeed: maxMoveSpeed,
+            attackSpeedFactor: maxAttackSpeedFactor,
+            jumpPower: maxJumpPower,
+            healRate: maxHealRate
+            );
+        ChangeAccordingStatusToMaximumValue(changeData);
+        OverrideAnimaterParam();
+    }
+
+    /// <summary>
+    /// 割合の値分、現在のステータスに加算する
+    /// </summary>
+    /// <param name="rate"></param>
+    /// <param name="canResetHpToMax"></param>
+    /// <param name="types"></param>
+    public void ApplyCurrentStatusModifierByRate(float rate, params STATUS_TYPE[] types)
+    {
+        List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
+        if (statusList.Contains(STATUS_TYPE.All)) statusList = GetAllStatusType();
+
+        foreach (STATUS_TYPE type in statusList)
+        {
+            switch (type)
+            {
+                case STATUS_TYPE.HP:
+                    hp += (int)(baseHp * rate);
+                    break;
+                case STATUS_TYPE.Defense:
+                    defense += (int)(baseDefense * rate);
+                    break;
+                case STATUS_TYPE.Power:
+                    power += (int)(basePower * rate);
+                    break;
+                case STATUS_TYPE.JumpPower:
+                    jumpPower = baseJumpPower * rate;
+                    break;
+                case STATUS_TYPE.MoveSpeed:
+                    moveSpeed += baseMoveSpeed * rate;
+                    break;
+                case STATUS_TYPE.AttackSpeedFactor:
+                    attackSpeedFactor += baseAttackSpeedFactor * rate;
+                    break;
+                case STATUS_TYPE.HealRate:
+                    //healRate += baseHealRate * rate;
+                    break;
+            }
+        }
+        ClampStatus();
+        OverrideAnimaterParam();
+    }
+
+    /// <summary>d
+    /// レベルアップ時のステータス変化処理
+    /// </summary>
+    public void LevelUpStatusChange()
+    {
+        // 各ステータスの最大値に対する現在値の割合を計算
+        float hpRate = (float)hp / (float)maxHp;
+        float defenseRate = (float)defense / (float)maxDefense;
+        float powerRate = (float)power / (float)maxPower;
+
+        // 最大値の更新
+        maxHp = maxHp + (int)(maxHp * LEVEL_UP_RATE);
+        maxDefense = maxDefense + (int)(maxDefense * LEVEL_UP_RATE);
+        maxPower = maxPower + (int)(maxPower * LEVEL_UP_RATE);
+
+        // 変更後の最大値に応じた現在値の変更
+        hp = (int)((float)maxHp * hpRate);
+        defense = (int)((float)maxDefense * defenseRate);
+        power = (int)((float)maxPower * powerRate);
+    }
+
+    #endregion
 
     #region アニメーション関連
 
@@ -470,7 +545,7 @@ abstract public class CharacterBase : MonoBehaviour
         if (animator)
         {
             animator.SetFloat("attack_speed", attackSpeedFactor);
-            animator.SetFloat("move_speed", moveSpeedFactor);
+            animator.SetFloat("move_speed", maxMoveSpeed / moveSpeed);
         }
     }
 

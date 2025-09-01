@@ -34,8 +34,7 @@ public class GunParticleController : MonoBehaviour
     bool canAttackObject;
     #endregion
 
-    [SerializeField] GameObject owner;
-    [SerializeField] int damageValue;
+    [SerializeField] CharacterBase owner;
 
     /// <summary>
     /// åÇÇøénÇﬂÇÈèàóù
@@ -49,7 +48,7 @@ public class GunParticleController : MonoBehaviour
             effectType = owner.GetComponent<EnemyBase>().GetStatusEffectToApply();
         }
 
-        gunBulletParticle.Initialize(owner.tag, damageValue, effectType);
+        gunBulletParticle.Initialize(owner, effectType);
         gunParticleParent.SetActive(true);
     }
 
