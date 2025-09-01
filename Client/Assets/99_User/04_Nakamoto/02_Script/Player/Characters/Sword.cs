@@ -317,7 +317,8 @@ public class Sword : PlayerBase
             StartCoroutine(RegeneStop());
 
             // ダメージ計算
-            var damage = Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
+            int damage = (type == null) ? Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense)): power;
+            damage = (kbPow == null) ? power : Mathf.Abs(CalculationLibrary.CalcDamage(power, Defense));
 
             // ダメージ表記
             UIManager.Instance.PopDamageUI(damage, transform.position, true);

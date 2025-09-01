@@ -106,7 +106,7 @@ public class Terminal : MonoBehaviour
         isTerminal = false;
 
         //Å‰‚ÍcountDownText‚ğ”ñ•\¦‚É‚·‚é
-        countDownText.enabled = false;
+        //countDownText.enabled = false;
         spawnManager = SpawnManager.Instance;
     }
 

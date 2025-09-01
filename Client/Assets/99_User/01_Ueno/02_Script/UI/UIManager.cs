@@ -128,6 +128,10 @@ public class UIManager : MonoBehaviour
     [Foldout("ACTアイコンUI")]
     [SerializeField] GameObject gunSkillLockObj;    // ブリンククールダウン
 
+    private bool isInputGamePad;                    // ゲームパッド入力かどうか
+
+    public bool IsInputGamePad { get { return isInputGamePad; } }
+
     #endregion
 
     // 定数
@@ -854,11 +858,13 @@ public class UIManager : MonoBehaviour
     {
         if (mode == "Keyboard")
         {
+            isInputGamePad = false;
             gamePadUI.SetActive(false);
             keyBoardUI.SetActive(true);
         }
         else if (mode == "Gamepad")
         {
+            isInputGamePad = true;
             gamePadUI.SetActive(true);
             keyBoardUI.SetActive(false);
         }
