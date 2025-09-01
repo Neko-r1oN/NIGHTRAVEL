@@ -166,7 +166,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:木田晃輔
         /// </summary>
         /// <returns></returns>
-        Task StartAsync();
+        Task SameStartAsync();
 
         /// <summary>
         /// ギミック起動

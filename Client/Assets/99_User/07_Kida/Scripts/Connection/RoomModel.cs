@@ -219,7 +219,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask StartAsync()
     {
-        await roomHub.StartAsync();
+        await roomHub.SameStartAsync();
     }
     #region 入室・退室・準備完了同期
     /// <summary>
@@ -753,7 +753,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 同時開始
     /// Aughtor:木田晃輔
     /// </summary>
-    public void OnStart()
+    public void OnSameStart()
     {
 
     }
