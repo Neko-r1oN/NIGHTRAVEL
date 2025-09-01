@@ -5,6 +5,7 @@
 //===================
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,8 +21,11 @@ public class Terminal : MonoBehaviour
 
     public int TerminalType { get { return terminalType; } }
 
-    //カウントダウン用のテキスト
-    public Text countDownText;
+    //UIManager
+    UIManager uiManager;
+
+    //TimerDirecter
+    TimerDirector timerDirector;
 
     //制限時間
     public int limitTime;
@@ -49,7 +53,7 @@ public class Terminal : MonoBehaviour
     }
 
     // 端末タイプ列挙型
-    public enum TerminalCode 
+    public enum TerminalCode
     {
         None = 0,
         Type_Enemy,
@@ -77,8 +81,11 @@ public class Terminal : MonoBehaviour
 
     bool isTerminal;
 
+    //端末用の制限時間
+    float terminalTimer;
 
-    public bool IsTerminal {  get { return isTerminal; } }
+
+    public bool IsTerminal { get { return isTerminal; } }
 
     private void Awake()
     {
@@ -96,10 +103,8 @@ public class Terminal : MonoBehaviour
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        uiManager = UIManager.Instance;
         isTerminal = false;
-
-        //最初はcountDownTextを非表示にする
-        countDownText.enabled = false;
     }
 
     private void Update()
@@ -136,7 +141,7 @@ public class Terminal : MonoBehaviour
     /// 端末起動処理
     /// </summary>
     private void BootTerminal()
-    {     
+    {
         System.Random rand = new System.Random();
         int rndNum;
 
@@ -156,7 +161,7 @@ public class Terminal : MonoBehaviour
 
                 List<Transform> children = new List<Transform>();
 
-                for ( int i = 0;i < childrenCnt; i++)
+                for (int i = 0; i < childrenCnt; i++)
                 {
                     children.Add(this.gameObject.transform.GetChild(i));
                 }
@@ -168,8 +173,8 @@ public class Terminal : MonoBehaviour
                 //カウントダウンする
                 InvokeRepeating("CountDown", 1, 1);
 
-                //countDownTextを表示する
-                countDownText.enabled = true;
+                ////countdownTextを表示する
+                //countdownText.enabled = true;
 
                 break;
 
@@ -181,12 +186,9 @@ public class Terminal : MonoBehaviour
                 {   // 各ゴールポイントを表示
                     point.SetActive(true);
                 }
-                
-                //countDownTextを表示する
-                countDownText.enabled = true;
 
                 //カウントダウンする
-                InvokeRepeating("CountDown", 1, 1); 
+                InvokeRepeating("CountDown", 1, 1);
 
                 break;
 
@@ -234,7 +236,6 @@ public class Terminal : MonoBehaviour
     /// </summary>
     public void GiveReward()
     {
-
         // 端末タイプで処理を分ける
         switch (terminalType)
         {
@@ -242,17 +243,15 @@ public class Terminal : MonoBehaviour
                 // 敵生成の場合
                 isUsed = true;
 
-                    //カウントダウンを停止する
-                    CancelInvoke("CountDown");
+                //カウントダウンを停止する
+                CancelInvoke("CountDown");
 
-                    //端末のアイコンを1.5秒かけてフェードアウトする
-                    terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+                //端末のアイコンを1.5秒かけてフェードアウトする
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
-                    //cowntDownTextを削除
-                    Destroy(countDownText);
-
-                    //レリックを排出する
-                    RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                //レリックを排出する
+                //RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Speed:
@@ -264,14 +263,9 @@ public class Terminal : MonoBehaviour
                 //端末のアイコンを1.5秒かけてフェードアウトする
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
-                //cowntDownTextを削除
-                Destroy(countDownText);
-
                 //レリックを排出する
                 RelicManager.Instance.GenerateRelic(Instance.transform.position);
 
-
-                Debug.Log("OMFG Reward Here!!!!!");
                 break;
             case (int)TerminalCode.Type_Deal:
                 // 取引の場合
@@ -315,12 +309,17 @@ public class Terminal : MonoBehaviour
     {
         if (pointList.Contains(obj))    // 渡されたオブジェクトがリスト内にあった場合
         {
+            //isTerminalをfalseにする
+            isTerminal = false;
+
             pointList.Remove(obj);  // それを除去する
             Destroy(obj);   // それを破壊する
 
-            if(pointList.Count <= 0)
+            if (pointList.Count <= 0)
             { // リストが空になった場合、報酬を付与する
                 GiveReward();
+
+                uiManager.DisplayTimeInstructions();
             }
         }
     }
@@ -334,11 +333,15 @@ public class Terminal : MonoBehaviour
         limitTime--;
 
         //制限時間をcowntDownTextに反映する
-        countDownText.text=limitTime.ToString();
+        var span = new TimeSpan(0, 0, (int)limitTime);
+        TimerDirector.Instance.Timer.text = span.ToString(@"mm\:ss");
 
         //制限時間が0以下になったら(時間切れ)
-        if(limitTime <=0)
+        if (limitTime <= 0)
         {
+            //isTerminalをfalseにする
+            isTerminal = false;
+
             //limitTimeを0にする
             limitTime = 0;
 
@@ -347,9 +350,6 @@ public class Terminal : MonoBehaviour
 
             //端末のアイコンを1.5秒かけてフェードアウトする
             terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
-
-            //cowntDownTextを削除
-            Destroy(countDownText);
 
             //ゴールポイントを削除する
             foreach (GameObject obj in pointList)
@@ -364,8 +364,8 @@ public class Terminal : MonoBehaviour
     /// </summary>
     public void DealDamage()
     {
-        //player = gameObject.GetComponent<PlayerBase>();
-        int HP = 400;
+        player = gameObject.GetComponent<PlayerBase>();
+        int HP = player.HP;
 
         //減らす量は現在のHPの10%
         int damege = Mathf.FloorToInt(HP * 0.5f);
@@ -378,7 +378,7 @@ public class Terminal : MonoBehaviour
         }
 
         //現在のHPが1より小さいか1だったら
-        if(HP<=1)
+        if (HP <= 1)
         {
             //利用できないことにする
             isUsed = false;
@@ -387,6 +387,6 @@ public class Terminal : MonoBehaviour
         Debug.Log(HP);
 
         //HPを減らす
-        //player.ApplyDamage(damege);
+        player.ApplyDamage(damege);
     }
 }
