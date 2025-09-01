@@ -212,6 +212,12 @@ abstract public class CharacterBase : MonoBehaviour
     }
     #endregion
 
+    #region 定数
+
+    private const float LEVEL_UP_RATE = 0.05f; // レベルアップ時のステータス上昇率
+
+    #endregion
+
     protected virtual void Awake()
     {
         ApplyStatusModifierByRate(1f, true, STATUS_TYPE.All);
@@ -441,6 +447,15 @@ abstract public class CharacterBase : MonoBehaviour
     /// <param name="changeData">強化後のステータス</param>
     public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
     {
+        // 各ステータスの最大値に対する現在値の割合を計算
+        float hpRate = (float)hp / (float)maxHp;
+        float defenseRate = (float)defense / (float)maxDefense;
+        float powerRate = (float)power / (float)maxPower;
+        float jumpPowerRate = jumpPower / maxJumpPower;
+        float moveSpeedRate = moveSpeed / maxMoveSpeed;
+        float moveSpeedFactorRate = moveSpeedFactor / maxMoveSpeedFactor;
+        float attackSpeedFactorRate = attackSpeedFactor / maxAttackSpeedFactor;
+
         // 最大値の更新
         maxHp = changeData.hp;
         maxDefense = changeData.defence;
@@ -451,13 +466,34 @@ abstract public class CharacterBase : MonoBehaviour
         maxAttackSpeedFactor = changeData.attackSpeedFactor;
 
         // 変更後の最大値に応じた現在値の変更
-        hp = (int)((float)maxHp * (hp / maxHp));
-        defense = (int)((float)maxDefense * (defense / maxDefense));
-        power = (int)((float)maxPower * (power / maxPower));
-        jumpPower = (int)((float)maxJumpPower * (jumpPower / maxJumpPower));
-        moveSpeed = (int)((float)maxMoveSpeed * (moveSpeed / maxMoveSpeedFactor));
-        moveSpeedFactor = (int)((float)maxMoveSpeedFactor * (moveSpeedFactor / maxMoveSpeedFactor));
-        attackSpeedFactor = (int)((float)maxAttackSpeedFactor * (attackSpeedFactor / maxAttackSpeedFactor));
+        hp = (int)((float)maxHp * hpRate);
+        defense = (int)((float)maxDefense * defenseRate);
+        power = (int)((float)maxPower * powerRate);
+        jumpPower = maxJumpPower * jumpPowerRate;
+        moveSpeed = maxMoveSpeed * moveSpeedRate;
+        moveSpeedFactor = maxMoveSpeedFactor * moveSpeedFactorRate;
+        attackSpeedFactor = maxAttackSpeedFactor * attackSpeedFactorRate;
+    }
+
+    /// <summary>d
+    /// レベルアップ時のステータス変化処理
+    /// </summary>
+    public void LevelUpStatusChange()
+    {
+        // 各ステータスの最大値に対する現在値の割合を計算
+        float hpRate = (float)hp / (float)maxHp;
+        float defenseRate = (float)defense / (float)maxDefense;
+        float powerRate = (float)power / (float)maxPower;
+
+        // 最大値の更新
+        maxHp = maxHp + (int)(maxHp * LEVEL_UP_RATE);
+        maxDefense = maxDefense + (int)(maxDefense * LEVEL_UP_RATE);
+        maxPower = maxPower + (int)(maxPower * LEVEL_UP_RATE);
+
+        // 変更後の最大値に応じた現在値の変更
+        hp = (int)((float)maxHp * hpRate);
+        defense = (int)((float)maxDefense * defenseRate);
+        power = (int)((float)maxPower * powerRate);
     }
 
     #region アニメーション関連
