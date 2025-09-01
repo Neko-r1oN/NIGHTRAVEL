@@ -5,10 +5,12 @@
 //===================
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 public class Terminal : MonoBehaviour
 {
     // プレイヤーが端末に触れているかの判定変数
@@ -258,7 +260,7 @@ public class Terminal : MonoBehaviour
                     Destroy(countDownText);
 
                     //レリックを排出する
-                    RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                    RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Speed:
@@ -274,7 +276,7 @@ public class Terminal : MonoBehaviour
                 Destroy(countDownText);
 
                 //レリックを排出する
-                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                RelicManager.Instance.GenerateRelicTest();
 
 
                 Debug.Log("OMFG Reward Here!!!!!");
@@ -287,7 +289,7 @@ public class Terminal : MonoBehaviour
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 //レリックを排出する
-                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Jumble:
