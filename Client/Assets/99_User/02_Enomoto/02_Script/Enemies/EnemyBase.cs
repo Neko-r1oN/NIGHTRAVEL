@@ -547,15 +547,18 @@ abstract public class EnemyBase : CharacterBase
             }
 
             if (spawnEnemyType == SPAWN_ENEMY_TYPE.ByTerminal)
-            {
+            {// 生成タイプがターミナルなら
+                // 死んだ敵をリストから削除
                 terminalManager.TerminalSpawnList.Remove(this.gameObject);
                 if(terminalManager.TerminalSpawnList.Count <= 0)
-                {
+                {// リストのカウントが0なら
+                    // レリックの生成
                     RelicManager.Instance.GenerateRelicTest();
                 }
             }
             else
             {
+                // Instanceがあるなら敵撃破関数を呼ぶ
                 if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             }
 
