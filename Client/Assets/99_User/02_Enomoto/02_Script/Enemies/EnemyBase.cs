@@ -140,7 +140,11 @@ abstract public class EnemyBase : CharacterBase
 
     [Foldout("システム")]
     [SerializeField]
-    protected int exp = 100;
+    protected int baseExp = 100;    // 初期の獲得可能経験値量
+
+    [Foldout("システム")]
+    [SerializeField]
+    protected int exp = 100;    // 現在の獲得可能経験値量
 
     [Foldout("システム")]
     [SerializeField]
@@ -149,15 +153,19 @@ abstract public class EnemyBase : CharacterBase
 
     #region 外部参照用プロパティ
 
+    public int SpawnWeight { get { return spawnWeight; } }
+
+    public int BaseExp { get { return baseExp; } }
+
+    public int Exp { get { return exp; } set { exp = value; } }
+
     public float AttackDist { get { return attackDist; } }
+
+    public float SpawnGroundOffset { get { return spawnGroundOffset; } }
 
     public bool IsBoss { get { return isBoss; } set { isBoss = value; } }
 
     public bool IsElite { get { return isElite; } }
-
-    public int SpawnWeight { get { return spawnWeight; } }
-
-    public float SpawnGroundOffset { get { return spawnGroundOffset; } }
 
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
@@ -368,7 +376,7 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     public void PromoteToElite(EnumManager.ENEMY_ELITE_TYPE type)
     {
-        if (!isElite)
+        if (!isElite && type != ENEMY_ELITE_TYPE.None)
         {
             isElite = true;
             if (!enemyElite) enemyElite = GetComponent<EnemyElite>();
@@ -667,6 +675,72 @@ abstract public class EnemyBase : CharacterBase
 
         managedCoroutines.Clear();
     }
+    #endregion
+
+    #region リアルタイム同期関連
+
+    /// <summary>
+    /// EnemyDataを作成する
+    /// </summary>
+    /// <param name="enemyData">型を指定</param>
+    /// <returns></returns>
+    protected EnemyData CreateEnemyData(EnemyData enemyData)
+    {
+        var debuffController = GetComponent<DebuffController>();
+
+        enemyData.IsActiveSelf = this.gameObject.activeInHierarchy;
+        enemyData.Status = new CharacterStatusData(
+            hp: this.MaxHP,
+            defence: this.MaxDefence,
+            power: this.MaxPower,
+            moveSpeed: this.MaxMoveSpeed,
+            attackSpeedFactor: this.MaxAttackSpeedFactor,
+            jumpPower: this.MaxJumpPower
+        );
+        enemyData.State = new CharacterStatusData(
+            hp: this.HP,
+            defence: this.defense,
+            power: this.power,
+            moveSpeed: this.moveSpeed,
+            attackSpeedFactor: this.attackSpeedFactor,
+            jumpPower: this.jumpPower
+        );
+        enemyData.Position = this.transform.position;
+        enemyData.Scale = this.transform.localScale;
+        enemyData.Rotation = this.transform.rotation;
+        enemyData.AnimationId = this.GetAnimId();
+        enemyData.DebuffList = debuffController.GetAppliedStatusEffects();
+
+        // 以下は専用変数
+        enemyData.EnemyID = this.SelfID;
+        enemyData.EnemyName = this.gameObject.name;
+        enemyData.isBoss = this.IsBoss;
+        Exp = this.Exp;
+
+        return enemyData;
+    }
+
+    /// <summary>
+    /// EnemyData取得処理
+    /// </summary>
+    /// <returns></returns>
+    public virtual EnemyData GetEnemyData()
+    {
+        return CreateEnemyData(new EnemyData());
+    }
+
+    /// <summary>
+    /// 敵の同期情報を更新する
+    /// </summary>
+    /// <param name="enemyData"></param>
+    public virtual void UpdateEnemy(EnemyData enemyData)
+    {
+        selfID = enemyData.EnemyID;
+        gameObject.name = enemyData.EnemyName;
+        isBoss = enemyData.isBoss;
+        exp = enemyData.Exp;
+    }
+
     #endregion
 
     #region Debug描画処理関連

@@ -11,18 +11,18 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 public class GunBulletParticle : MonoBehaviour
 {
     DEBUFF_TYPE? effectType = null;
+    CharacterBase owner;
     string ownerTag;
-    int damageValue;
 
     /// <summary>
     /// èâä˙âªèàóù
     /// </summary>
     /// <param name="damageValue"></param>
     /// <param name="enemyTag"></param>
-    public void Initialize(string ownerTag, int damageValue, DEBUFF_TYPE? effectType)
+    public void Initialize(CharacterBase owner, DEBUFF_TYPE? effectType)
     {
-        this.ownerTag = ownerTag;
-        this.damageValue = damageValue;
+        this.ownerTag = owner.gameObject.tag;
+        this.owner = owner;
         this.effectType = effectType;
     }
 
@@ -36,12 +36,12 @@ public class GunBulletParticle : MonoBehaviour
 
         if (other.tag == "Player")
         {
-            other.GetComponent<PlayerBase>().ApplyDamage(damageValue, null,null, effectType);
+            other.GetComponent<PlayerBase>().ApplyDamage(owner.Power, null,null, effectType);
         }
         else if (other.tag == "Enemy")
         {
             Debug.Log(other.gameObject.name);
-            other.GetComponent<EnemyBase>().ApplyDamageRequest(damageValue);
+            other.GetComponent<EnemyBase>().ApplyDamageRequest(owner.Power);
         }
         else if (other.tag == "Object")
         {
