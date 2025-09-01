@@ -27,6 +27,8 @@ public class RelicManager : MonoBehaviour
     float elapsedTime;
     GameObject relic;
 
+    public Material defaultSpriteMaterial;
+
     [SerializeField] GameObject relicPrefab;
 
     RELIC_RARITY randomRarity;
@@ -140,34 +142,47 @@ public class RelicManager : MonoBehaviour
     [ContextMenu("GenerateRelicTest")]
     public async void GenerateRelicTest()
     {
+        relic = Instantiate(relicPrefab, new Vector3(0, 0, -0.1f), UnityEngine.Quaternion.identity);
 
-        relic = Instantiate(relicPrefab, new Vector3(0, 0, 0), UnityEngine.Quaternion.identity);
+        SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
 
-        relic.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+        }
 
-        //        randomRarity = GetRandomRarity();
+        if (sr != null)
+        {
+            // ここでマテリアルを割り当て
+            sr.material = defaultSpriteMaterial;
+        }
 
-        //        List<GameObject> filteredRelics = relicPrefabs.
-        //            Where(prefab =>
-        //            {
-        //                Relic relic = prefab.GetComponent<Relic>();
-        //                return relic != null && relic.Rarity == (int)randomRarity;
-        //            }).ToList();
+            //relic.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = relicSprites[Random.Range(0, relicSprites.Count)];
 
-        //        if (filteredRelics.Count > 0)
-        //        {
-        //            int random = Random.Range(0, filteredRelics.Count);
-        //            GameObject selectedRelic = filteredRelics[random];
-        //#if UNITY_EDITOR
-        //            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
-        //#else
-        //            //レリックの設定
-        //            relic = selectedRelic;
-        //            //レリックの生成同期を実行
-        //            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
-        //#endif
-        //}
-    }
+            //        randomRarity = GetRandomRarity();
+
+            //        List<GameObject> filteredRelics = relicPrefabs.
+            //            Where(prefab =>
+            //            {
+            //                Relic relic = prefab.GetComponent<Relic>();
+            //                return relic != null && relic.Rarity == (int)randomRarity;
+            //            }).ToList();
+
+            //        if (filteredRelics.Count > 0)
+            //        {
+            //            int random = Random.Range(0, filteredRelics.Count);
+            //            GameObject selectedRelic = filteredRelics[random];
+            //#if UNITY_EDITOR
+            //            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+            //#else
+            //            //レリックの設定
+            //            relic = selectedRelic;
+            //            //レリックの生成同期を実行
+            //            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
+            //#endif
+            //}
+        }
 
     /// <summary>
     /// レリックの生成の通知
