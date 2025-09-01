@@ -38,7 +38,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         //合計端末機同数
         public int TotalActivedTerminal { get; set; }
 
-        //合計獲得アイテム？
+        //合計獲得アイテム
         public int TotalGottenItem { get; set; }
 
     }
