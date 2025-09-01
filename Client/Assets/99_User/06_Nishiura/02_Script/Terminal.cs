@@ -5,10 +5,12 @@
 //===================
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 public class Terminal : MonoBehaviour
 {
     // プレイヤーが端末に触れているかの判定変数
@@ -17,6 +19,8 @@ public class Terminal : MonoBehaviour
     private bool isUsed = false;
     // 端末の種別
     public int terminalType;
+
+    [SerializeField] int maxSpawnEnemy;
 
     public int TerminalType { get { return terminalType; } }
 
@@ -32,9 +36,12 @@ public class Terminal : MonoBehaviour
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
 
-    List<GameObject> terminalSpawnList;
+    List<GameObject> terminalSpawnList = new List<GameObject>();
+    public List<GameObject> TerminalSpawnList { get {  return terminalSpawnList; } set { terminalSpawnList = value; } }
+    //List<GameObject> terminalEnemyList = new List<GameObject>();
 
     GameManager gameManager;
+    SpawnManager spawnManager;
 
     PlayerBase player;
 
@@ -100,6 +107,7 @@ public class Terminal : MonoBehaviour
 
         //最初はcountDownTextを非表示にする
         countDownText.enabled = false;
+        spawnManager = SpawnManager.Instance;
     }
 
     private void Update()
@@ -150,7 +158,7 @@ public class Terminal : MonoBehaviour
                 isUsed = true;  // 使用済みにする
                 isTerminal = true;
 
-                rndNum = rand.Next(6, 11); // 生成数を乱数(6-10)で設定
+                rndNum = rand.Next(1, maxSpawnEnemy); // 生成数を乱数(6-10)で設定
 
                 int childrenCnt = this.gameObject.transform.childCount;
 
@@ -161,7 +169,7 @@ public class Terminal : MonoBehaviour
                     children.Add(this.gameObject.transform.GetChild(i));
                 }
 
-                SpawnManager.Instance.TerminalGenerateEnemy(rndNum, children[0].position, children[1].position);   // 敵生成
+                TerminalGenerateEnemy(rndNum, children[0].position, children[1].position);   // 敵生成
 
                 isTerminal = true;
 
@@ -252,7 +260,7 @@ public class Terminal : MonoBehaviour
                     Destroy(countDownText);
 
                     //レリックを排出する
-                    RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                    RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Speed:
@@ -268,7 +276,7 @@ public class Terminal : MonoBehaviour
                 Destroy(countDownText);
 
                 //レリックを排出する
-                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                RelicManager.Instance.GenerateRelicTest();
 
 
                 Debug.Log("OMFG Reward Here!!!!!");
@@ -281,7 +289,7 @@ public class Terminal : MonoBehaviour
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 //レリックを排出する
-                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Jumble:
@@ -358,6 +366,43 @@ public class Terminal : MonoBehaviour
             }
         }
     }
+
+    private void TerminalGenerateEnemy(int num, Vector2 minPos, Vector2 maxPos)
+    {
+        int enemyCnt = 0;
+
+        while (enemyCnt < num)
+        {
+            // 生成する敵の抽選
+            var emitResult = spawnManager.EmitEnemy(spawnManager.EmitEnemyTypes.ToArray());
+            if (emitResult == null)
+            {
+                Debug.LogWarning("生成する敵の抽選結果がnullのため、以降の処理をスキップします。");
+                continue;
+            }
+            ENEMY_TYPE enemyType = (ENEMY_TYPE)emitResult;
+
+            EnemyBase enemyBase = spawnManager.IdEnemyPrefabPairs[enemyType].GetComponent<EnemyBase>();
+
+            // ランダムな位置を生成
+            var spawnPostions = spawnManager.CreateEnemyTerminalSpawnPosition(minPos, maxPos);
+
+            Vector3? spawnPos = spawnManager.GenerateEnemySpawnPosition(spawnPostions.minRange, spawnPostions.maxRange, enemyBase);
+
+            if (spawnPos != null)
+            {
+                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
+                Vector3 scale = Vector3.one;    // 一旦このまま
+                var spawnData = spawnManager.CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+
+                spawnManager.SpawnTerminalEnemyRequest(this,spawnData);
+            }
+
+            enemyCnt++;
+        }   
+    }
+
+
 
     /// <summary>
     /// 取引端末で減らすHPの量の計算

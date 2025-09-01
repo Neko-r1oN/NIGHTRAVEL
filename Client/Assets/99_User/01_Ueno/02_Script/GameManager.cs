@@ -144,8 +144,8 @@ public class GameManager : MonoBehaviour
 
         UIManager.Instance.CountTermsText(SpawnManager.Instance.CrashNum);
 
-        var result = CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByManager);
-        
+        //var result = CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByManager);
+
         if (enemy.IsBoss)
         {
             DeathBoss();
