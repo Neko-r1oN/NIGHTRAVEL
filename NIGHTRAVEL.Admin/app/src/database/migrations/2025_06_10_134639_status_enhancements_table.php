@@ -17,7 +17,10 @@ return new class extends Migration {
             $table->integer('rarity');//rarityカラム
             $table->string('explanation');//explanationカラム
             $table->integer('type');//typeカラム
-            $table->float('effect');//effectカラム
+            $table->float('const_effect1');//const_effect_aカラム(固定値)
+            $table->float('probability_effect1');//probability_effect_aカラム(確率)
+            $table->float('const_effect2');//const_effect_bカラム(固定値)
+            $table->float('probability_effect2');//probability_effect_bカラム(確率)
             $table->string('enhancement_type'); //enhancement_typeカラム
             $table->boolean('duplication');//duplicationカラム
             $table->timestamps();                           //created_atとupdated_at

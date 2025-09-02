@@ -14,7 +14,8 @@ return new class extends Migration {
         Schema::create('relics', function (Blueprint $table) {
             $table->id();                                        //idカラム
             $table->string('name', 20);             //nameカラム
-            $table->float('effect');                     //effectカラム
+            $table->float('const_effect');                     //effectカラム
+            $table->float('probability_effect');                     //effectカラム
             $table->string('explanation');               //explanationカラム
             $table->integer('rarity');               //rarityカラム
             $table->timestamps();                               //created_atとupdated_at

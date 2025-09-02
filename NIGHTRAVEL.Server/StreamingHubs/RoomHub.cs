@@ -117,6 +117,7 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task LeavedAsync()
         {
+            // Nullチェック入れる
             //　退室するユーザーを取得
             var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
 

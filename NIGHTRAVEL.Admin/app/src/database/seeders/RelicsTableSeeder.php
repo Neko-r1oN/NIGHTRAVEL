@@ -15,19 +15,22 @@ class RelicsTableSeeder extends Seeder
     {
         Relic::create([
             'name' => 'アタックチップ',
-            'effect' => 1.05,
+            'const_effect' => 0,
+            'probability_effect' => 1.05,
             'explanation' => '攻撃力上昇+5%',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'ディフェンスチップ',
-            'effect' => 1.03,
+            'const_effect' => 0,
+            'probability_effect' => 1.03,
             'explanation' => '防御力上昇+3%',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'ムーブスピードスチップ',
-            'effect' => 2.0,
+            'const_effect' => 0,
+            'probability_effect' => 1.05,
             'explanation' => '移動速度+2',
             'rarity' => 1,
         ]);
