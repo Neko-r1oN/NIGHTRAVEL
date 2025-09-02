@@ -76,6 +76,15 @@ namespace Shared.Interfaces.StreamingHubs
             DataBox
         }
 
+        /// <summary>
+        /// 計算方法の種類
+        /// </summary>
+        public enum CalculationType
+        {
+            Additive = 0,   // 加算 (+10, +20など)
+            Multiplicative // 乗算 (×1.1, ×1.5など)
+        }
+
         #endregion
 
         #region キャラクター関連
