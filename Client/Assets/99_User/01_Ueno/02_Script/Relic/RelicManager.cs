@@ -110,33 +110,33 @@ public class RelicManager : MonoBehaviour
     /// <summary>
     /// ƒŒƒŠƒbƒN‚ğ¶¬‚·‚éˆ—
     /// </summary>
-    //public void GenerateRelic(Vector3 bossPos)
-    //{
-    //    randomRarity = GetRandomRarity();
+    public void GenerateRelic(Vector3 bossPos)
+    {
+        randomRarity = GetRandomRarity();
 
-    //    List<GameObject> filteredRelics = relicPrefab.
-    //        Where(prefab =>
-    //        {
-    //            Relic relic = prefab.GetComponent<Relic>();
-    //            return relic != null && relic.Rarity == (int)randomRarity;
-    //        }).ToList();
+        List<GameObject> filteredRelics = relicPrefab.
+            Where(prefab =>
+            {
+                Relic relic = prefab.GetComponent<Relic>();
+                return relic != null && relic.Rarity == (int)randomRarity;
+            }).ToList();
 
-    //    if (filteredRelics.Count > 0)
-    //    {
-    //        int random = Random.Range(0, filteredRelics.Count);
-    //        GameObject selectedRelic = filteredRelics[random];
-    //        relic = Instantiate(selectedRelic, bossPos, Quaternion.identity);
-    //    }
+        if (filteredRelics.Count > 0)
+        {
+            int random = Random.Range(0, filteredRelics.Count);
+            GameObject selectedRelic = filteredRelics[random];
+            relic = Instantiate(selectedRelic, bossPos, Quaternion.identity);
+        }
 
-    //    if (relic != null)
-    //    {
-    //        Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbody‚ğæ“¾
-    //        float boundRnd = Random.Range(2f, 6f);
-    //        boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
-    //        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // —Í‚ğİ’è
-    //        rb.AddForce(force, ForceMode2D.Impulse);             // —Í‚ğ‰Á‚¦‚é
-    //    }
-    //}
+        if (relic != null)
+        {
+            Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbody‚ğæ“¾
+            float boundRnd = Random.Range(2f, 6f);
+            boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
+            Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // —Í‚ğİ’è
+            rb.AddForce(force, ForceMode2D.Impulse);             // —Í‚ğ‰Á‚¦‚é
+        }
+    }
 
 
     [ContextMenu("GenerateRelicTest")]

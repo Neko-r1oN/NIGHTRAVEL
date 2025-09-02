@@ -13,9 +13,34 @@ public class TimerDirector : MonoBehaviour
     float elapsedTime = 0f; // 経過時間
     float initMinute;       // 初期設定(分)
 
+
     [SerializeField] GameObject timerObj; // タイマーテキストの親
+    public GameObject TimerObj { get { return timerObj; } set { timerObj = value; } }
     [SerializeField] Text timer;          // タイマーテキスト
+
+    public Text Timer { get { return timer; } set { timer = value; } }
+
     #endregion
+
+    private static TimerDirector instance;
+    public static TimerDirector Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -27,8 +52,7 @@ public class TimerDirector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        return;
-        if (Terminal.Instance.IsTerminal)
+        if (Terminal.Instance.IsTerminal&&Terminal.Instance.code!=(Terminal.TerminalCode)2)
         {
             timerObj.SetActive(false);
         }
@@ -53,8 +77,11 @@ public class TimerDirector : MonoBehaviour
         {// ボスが出現していなかったら
             elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
 
-            // タイマー(UI)の更新
-            UpdateTimerDisplay();
+            if(!Terminal.Instance.IsTerminal)
+            {
+                // タイマー(UI)の更新
+                UpdateTimerDisplay();
+            }
 
             if (elapsedTime > 150)
             {

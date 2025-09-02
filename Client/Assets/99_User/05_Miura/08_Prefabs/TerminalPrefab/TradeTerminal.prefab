@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 1cf8e8ae18e8b7043a01480697c399ae, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -166,7 +166,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: e5c9779a9ef3d5a4da7bc27b621fbf11, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -268,8 +268,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terminalType: 0
-  pointList: []
+  limitTime: 0
   terminalIcon: {fileID: 5030000705969063729}
+  pointList: []
   code: 0
 --- !u!61 &7630517672251388469
 BoxCollider2D:
