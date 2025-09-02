@@ -192,7 +192,7 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void OnEnable()
     {
-        if (!isStartComp) return;
+        if (!isStartComp || hp <= 0 || isDead) return;
         ResetAllStates();
     }
 
