@@ -275,7 +275,7 @@ public class Terminal : MonoBehaviour
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 //ƒŒƒŠƒbƒN‚ğ”ro‚·‚é
-                RelicManager.Instance.GenerateRelic(Instance.transform.position);
+                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Jumble:
