@@ -52,6 +52,24 @@ namespace NIGHTRAVEL.Server.Model.Context
         public bool isAdvanceRequest;
 
         /// <summary>
+        /// 合計付与ダメージ
+        /// Author:Nishiura
+        /// </summary>
+        public int totalGaveDamage = 0;
+
+        /// <summary>
+        /// 合計キル数
+        /// Author:Nishiura
+        /// </summary>
+        public int totalKillCount = 0;
+
+        /// <summary>
+        ///  合計被弾数
+        /// Author:Nishiura
+        /// </summary>
+        public int totalGainDamage = 0;
+
+        /// <summary>
         /// グループ
         /// Author:Kida
         /// </summary>
@@ -106,14 +124,14 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new Dictionary<int, SpawnEnemyData>();
 
         /// <summary>
+        /// ドロップレリックリスト
+        /// </summary>
+        public Dictionary<string, DropRelicData> dropRelicDataList { get; } = new Dictionary<string, DropRelicData>();
+
+        /// <summary>
         /// レリックの情報リスト
         /// </summary>
         public List<Relic> relicDataList {  get; } = new List<Relic>();
-
-        /// <summary>
-        /// ドロップレリックリスト
-        /// </summary>
-        public List<DropRelicData> dropRelicDataList { get; } = new List<DropRelicData>();
 
         /// <summary>
         /// 起動済み端末IDリスト

@@ -90,9 +90,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// アイテム獲得
         /// Author:Nishiura
         /// </summary>
+        /// <param name="itemType">アイテムの種類</param>
         /// <param name="itemID">識別ID(文字列)</param>
         /// <returns></returns>
-        Task GetItemAsync(string itemID);
+        Task GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID);
 
         /// <summary>
         /// ステージクリア待機
@@ -102,6 +103,15 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
         Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance);
+
+        /// <summary>
+        /// 弾発射
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="spawnPos">生成位置</param>
+        /// <param name="shootVec">発射ベクトル</param>
+        /// <returns></returns>
+        Task ShootBulletAsync(Vector2 spawnPos, Vector2 shootVec);
         #endregion
         #region 敵関連
         /// <summary>

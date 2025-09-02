@@ -2,6 +2,7 @@
 // リザルトのデータスクリプト
 // Author:木田晃輔 Data:07/29
 //=============================
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         public int EnemyKillCount {  get; set; }
 
         //取得レリックリスト
-        public List<int> GottenRelicList { get; set; }
+        public List<Relic> GottenRelicList { get; set; }
 
         //合計被ダメージ
         public int TotalReceivedDamage { get; set; }
