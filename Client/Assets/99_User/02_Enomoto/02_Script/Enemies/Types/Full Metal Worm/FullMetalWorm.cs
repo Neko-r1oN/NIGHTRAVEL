@@ -40,7 +40,7 @@ public class FullMetalWorm : EnemyBase
     public enum DECIDE_TYPE
     {
         None = 0,
-        Move = 1,
+        Move,
         Attack,
     }
     DECIDE_TYPE nextDecide = DECIDE_TYPE.None;
@@ -164,7 +164,7 @@ public class FullMetalWorm : EnemyBase
         {
             doOnceDecision = false;
             RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
-            nextDecide = DECIDE_TYPE.Attack;
+
             if (nextDecide == DECIDE_TYPE.Attack)
             {
                 generatedEnemyCnt = CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByWorm).Count;
@@ -304,7 +304,6 @@ public class FullMetalWorm : EnemyBase
 
     #region 攻撃処理関連
 
-    [ContextMenu("ExecuteAllPartActions")]
     /// <summary>
     /// 全ての部位の行動を実行
     /// </summary>
@@ -541,15 +540,35 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     public override void ResetAllStates()
     {
-        StopAllManagedCoroutines();
+        base.ResetAllStates();
 
-        //isStun = false;
-        //isInvincible = false;
-        //doOnceDecision = false;
-        //isAttacking = false;
-        //isDead = false;
-        //isPatrolPaused = false;
-        //isSpawn = false;
+        bool isAttacking = IsBodyAttacking();
+        foreach (var body in bodys)
+        {
+            body.ResetAllStates();
+        }
+
+        nextDecide = isAttacking ? DECIDE_TYPE.Attack : DECIDE_TYPE.None;
+        MeleeAttack();
+        DecideBehavior();
+    }
+
+    /// <summary>
+    /// 一つでもbodyが攻撃中かどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsBodyAttacking()
+    {
+        bool isAttacking = false;
+        foreach (var body in bodys)
+        {
+            FullMetalBody.ANIM_ID animId = (FullMetalBody.ANIM_ID)body.GetAnimId();
+            if (animId == FullMetalBody.ANIM_ID.Attack)
+            {
+                isAttacking = true; break;
+            }
+        }
+        return isAttacking;
     }
 
     #endregion
