@@ -190,6 +190,12 @@ abstract public class EnemyBase : CharacterBase
     public int SelfID { get { return selfID; } set { selfID = value; } }
     #endregion
 
+    protected virtual void OnEnable()
+    {
+        if (!isStartComp) return;
+        ResetAllStates();
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -695,7 +701,7 @@ abstract public class EnemyBase : CharacterBase
         {
             foreach (var coroutine in managedCoroutines.Values)
             {
-                if (coroutine != null) StopCoroutine(coroutine);
+                StopCoroutine(coroutine);
             }
         }
 
@@ -708,14 +714,22 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// マスタクライアント切り替え時に状態をリセットする
     /// </summary>
-    abstract public void ResetAllStates();
+    public virtual void ResetAllStates()
+    {
+        StopAllManagedCoroutines();
+        isAttacking = false;
+        isStun = false;
+        isInvincible = false;
+        doOnceDecision = true;
+        isPatrolPaused = false;
+    }
 
     /// <summary>
     /// EnemyDataを作成する
     /// </summary>
     /// <param name="enemyData">型を指定</param>
     /// <returns></returns>
-    protected EnemyData CreateEnemyData(EnemyData enemyData)
+    protected EnemyData SetEnemyData(EnemyData enemyData)
     {
         var debuffController = GetComponent<DebuffController>();
 
@@ -757,7 +771,7 @@ abstract public class EnemyBase : CharacterBase
     /// <returns></returns>
     public virtual EnemyData GetEnemyData()
     {
-        return CreateEnemyData(new EnemyData());
+        return SetEnemyData(new EnemyData());
     }
 
     /// <summary>

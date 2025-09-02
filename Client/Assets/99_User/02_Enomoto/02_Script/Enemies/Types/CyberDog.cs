@@ -263,7 +263,7 @@ public class CyberDog : EnemyBase
     }
 
     /// <summary>
-    /// €–S‚·‚é‚Æ‚«‚ÉŒÄ‚Î‚ê‚éˆ—ˆ—
+    /// €–S‚·‚é‚Æ‚«‚ÉŒÄ‚Î‚ê‚éˆ—
     /// </summary>
     /// <returns></returns>
     protected override void OnDead()
@@ -324,15 +324,8 @@ public class CyberDog : EnemyBase
     /// </summary>
     public override void ResetAllStates()
     {
-        StopAllManagedCoroutines();
-
-        //isStun = false;
-        //isInvincible = false;
-        //doOnceDecision = false;
-        //isAttacking = false;
-        //isDead = false;
-        //isPatrolPaused = false;
-        //isSpawn = false;
+        base.ResetAllStates();
+        DecideBehavior();
     }
 
     #endregion

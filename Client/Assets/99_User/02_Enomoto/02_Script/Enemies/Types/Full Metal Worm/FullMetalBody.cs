@@ -381,15 +381,10 @@ public class FullMetalBody : EnemyBase
     /// </summary>
     public override void ResetAllStates()
     {
-        StopAllManagedCoroutines();
+        base.ResetAllStates();
 
-        //isStun = false;
-        //isInvincible = false;
-        //doOnceDecision = false;
-        //isAttacking = false;
-        //isDead = false;
-        //isPatrolPaused = false;
-        //isSpawn = false;
+        SetAnimId((int)ANIM_ID.None);
+        gunPsControllerList.ForEach(item => { item.StopShooting(); });
     }
 
     /// <summary>
@@ -403,7 +398,7 @@ public class FullMetalBody : EnemyBase
         {
             enemyData.Quatarnions.Add(item.localRotation);
         }
-        return CreateEnemyData(enemyData);
+        return SetEnemyData(enemyData);
     }
 
     /// <summary>
