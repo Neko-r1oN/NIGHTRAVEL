@@ -6,6 +6,7 @@
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;

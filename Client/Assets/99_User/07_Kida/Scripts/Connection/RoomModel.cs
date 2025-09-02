@@ -82,13 +82,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnGetIntelligenced {  get; set; }
 
     //レリックの生成通知
-    public Action<List<DropRelicData>> OnDropedRelic {  get; set; }
+    public Action<Dictionary<string, DropRelicData>> OnDropedRelic {  get; set; }
 
     //レリックの取得通知
     public Action<int , string> OnGotRelic {  get; set; }
 
     //ギミックの起動通知
     public Action<GimmickData> OnBootedGimmick { get; set; }
+
+    public Action<Vector2,Vector2> OnShootedBullet { get; set; }
 
     //難易度上昇通知
     public Action<int> OnAscendDifficultySyn {  get; set; }
@@ -109,7 +111,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnEXPSyn {  get; set; }
 
     //レベルアップ通知
-    public Action OnLevelUpSyn { get; set; }
+    public Action<int, int, Dictionary<Guid, CharacterStatusData>, List<EnumManager.STAT_UPGRADE_OPTION>> OnLevelUpSyn { get; set; }
 
     //プレイヤーダウン通知
     public Action<Guid> OnPlayerDeadSyn {  get; set; }
@@ -580,9 +582,18 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// プレイヤーのレベルアップ通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnLevelUp()
+    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList)
     {
-        OnLevelUpSyn();
+        OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
+    }
+
+    /// <summary>
+    /// 弾発射通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnShootBullet(Vector2 spawnPos, Vector2 shootVec)
+    {
+        OnShootedBullet(spawnPos, shootVec);
     }
     #endregion
     #region 敵通知関連
@@ -643,7 +654,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="relicID"></param>
     /// <param name="pos"></param>
-    public void OnDropRelic(List<DropRelicData> relicDatas)
+    public void OnDropRelic(Dictionary<string, DropRelicData> relicDatas)
     {
         OnDropedRelic(relicDatas);
     }
