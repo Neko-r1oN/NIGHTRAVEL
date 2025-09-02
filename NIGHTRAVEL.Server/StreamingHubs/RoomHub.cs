@@ -206,8 +206,6 @@ namespace StreamingHubs
             this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
         }
 
-
-
         /// <summary>
         /// プレイヤーの更新
         /// Author:Nishiura
@@ -336,7 +334,7 @@ namespace StreamingHubs
                 dropRelicData.SpawnPos = pos.Pop();
 
                 // ドロップしたレリックリストに追加
-                this.roomContext.dropRelicDataList.Add(dropRelicData);
+                this.roomContext.dropRelicDataList.Add(dropRelicData.Id, dropRelicData);
             }
 
             // ルーム参加者全員に、レリックのIDと生成位置を送信
@@ -420,13 +418,19 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task StageClear(Guid conID, bool isAdvance)
         {
+            // すでに申請済みの場合処理しない
+            if (this.roomContext.isAdvanceRequest == true) return;
             lock (roomContextRepository) // 排他制御
             {
+                // 進行申請を申請済みにするにする
                 this.roomContext.isAdvanceRequest = true;
 
                 if (isAdvance)
                 {
-                    this.roomContext.NowStage++; // 現在のステージを加算
+                    if((int)this.roomContext.NowStage == 3)
+                    {
+                        this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
+                    }else this.roomContext.NowStage++; // 現在のステージを加算
 
                     // 生成された敵リストをクリア
                     this.roomContext.spawnedEnemyDataList.Clear();
@@ -442,10 +446,12 @@ namespace StreamingHubs
 
                     // 参加者全員にステージの進行を通知
                     this.roomContext.Group.All.OnAdanceNextStage(conID, isAdvance, this.roomContext.NowStage);
+                    this.roomContext.isAdvanceRequest = false;  // 未申請にする
                 }
                 else
                 {
-                    
+                    // ゲーム終了を全員に通知
+                    Result();
                 }
             }
         }
@@ -511,8 +517,8 @@ namespace StreamingHubs
         /// プレイヤー体力増減同期処理
         /// Autho:Nishiura
         /// </summary>
-        /// <param name="playerID">敵識別ID</param>
-        /// <param name="playerHP">敵体力</param>
+        /// <param name="playerID">プレイヤー識別ID</param>
+        /// <param name="playerHP">プレイヤー体力</param>
         /// <returns></returns>
         public async Task PlayerHealthAsync(int playerID, float playerHP)
         {
@@ -550,11 +556,16 @@ namespace StreamingHubs
                 enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
                 enemDmgData.DebuffList = debuffType;    // 付与デバフ
 
+                // 合計付与ダメージを加算
+                this.roomContext.totalGaveDamage += enemDmgData.Damage;
+
                 // 敵のHPが0以下になった場合
                 if (enemDmgData.RemainingHp <= 0)
                 {
                     //enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
                     this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
+                    // 合計キル数を加算
+                    this.roomContext.totalKillCount++;
 
                     // 所持経験値が必要経験値に満ちた場合
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
@@ -565,6 +576,32 @@ namespace StreamingHubs
 
                 // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知
                 this.roomContext.Group.All.OnEnemyHealth(enemDmgData);
+            }
+        }
+
+        /// <summary>
+        /// 被ダメージ同期処理   プレイヤーによるダメージ以外
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="dmgAmount">ダメージ量</param>
+        /// <returns></returns>
+        public async Task EnemyHealthAsync(int enemID, int dmgAmount)
+        {
+            lock (roomContextRepository) // 排他制御
+            {
+                // ID指定で敵情報を取得
+                var enemData = this.roomContext.GetEnemyData(enemID);
+                if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
+
+                // 現在のHPを受け取ったダメージ量分減算
+                enemData.State.hp -= dmgAmount;
+
+                // 敵のHPが0以下になった場合
+                if (enemData.State.hp <= 0)
+                {
+                    LevelUp(roomContext.ExpManager); // レベルアップ処理
+                }
             }
         }
 
@@ -600,7 +637,7 @@ namespace StreamingHubs
         public async Task LevelUpAsync()
         {
             // 参加者全員にレベルアップしたことを通知
-            this.roomContext.Group.All.OnLevelUp();
+            //this.roomContext.Group.All.OnLevelUp();
         }
 
         /// <summary>
@@ -622,25 +659,29 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task PlayerDeadAsync(Guid conID)
         {
-            // 全滅判定変数
-            bool isAllDead = true;
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var playerData = this.roomContext.GetPlayerData(conID);
-            playerData.IsDead = true; // 死亡判定をtrueにする
-
-            // 死亡者以外の参加者全員に対象者が死亡したことを通知
-            this.roomContext.Group.Except([conID]).OnPlayerDead(conID);
-
-            foreach(var player in this.roomContext.playerDataList)
+            lock (roomContextRepository) // 排他制御
             {
-                if (player.Value.IsDead == false) // もし誰かが生きていた場合
-                {
-                    isAllDead = false;
-                    break;
-                }
-            }
+                // 全滅判定変数
+                bool isAllDead = true;
+                // ルームデータから接続IDを指定して自身のデータを取得
+                var playerData = this.roomContext.GetPlayerData(conID);
+                playerData.IsDead = true; // 死亡判定をtrueにする
 
-            //if(isAllDead) this.roomContext.Group.All.OnGameEnd();
+                // 死亡者以外の参加者全員に対象者が死亡したことを通知
+                this.roomContext.Group.Except([conID]).OnPlayerDead(conID);
+
+                foreach (var player in this.roomContext.playerDataList)
+                {
+                    if (player.Value.IsDead == false) // もし誰かが生きていた場合
+                    {
+                        isAllDead = false;
+                        break;
+                    }
+                }
+
+                // 全滅した場合、ゲーム終了通知を全員に出す
+                if (isAllDead) Result();
+            }
         }
 
         /// <summary>
@@ -703,14 +744,34 @@ namespace StreamingHubs
         /// アイテム獲得同期処理
         /// Author:Nishiura
         /// </summary>
+        /// <param name="itemType">アイテムの種類</param>
         /// <param name="itemID">識別ID(文字列)</param>
         /// <returns></returns>
-        public async Task GetItemAsync(string itemID)
+        public async Task GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID)
         {
             lock (roomContextRepository) // 排他制御
             {
                 // すでに取得済みである場合、処理しない
                 if (this.roomContext.gottenItemList.Contains(itemID)) return;
+                
+                switch (itemType)   // アイテムの種類に応じて処理を分ける
+                {
+                    case EnumManager.ITEM_TYPE.Relic:       // レリックの場合
+                        var relic = this.roomContext.dropRelicDataList[itemID];
+
+                        //DBからレリック情報取得
+                        GameDbContext dbContext = new GameDbContext();
+                        var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.Id).First();
+                        break;
+
+                    case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合
+                        this.roomContext.ExpManager.nowExp += (int)(this.roomContext.ExpManager.RequiredExp * 0.05f); // 要求経験値の5%を渡す
+                        break;
+                    
+                    case EnumManager.ITEM_TYPE.DataBox:     // データボックスの場合
+                        this.roomContext.ExpManager.nowExp += (int)(this.roomContext.ExpManager.RequiredExp * 0.25f); // 要求経験値の25%を渡す
+                        break;
+                }
 
                 // 取得済みアイテムリストに入れる
                 this.roomContext.gottenItemList.Add(itemID);
@@ -731,15 +792,54 @@ namespace StreamingHubs
             // ルームデータから接続IDを指定して自身のデータを取得
             var playerData = this.roomContext.characterDataList[conID];
 
-            // 各最大値を10%増加(仮)
-            playerData.Status.hp = (int)(playerData.Status.hp * 1.1f);
-            playerData.Status.power = (int)(playerData.Status.power * 1.1f);
-            playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
-            playerData.Status.jumpPower *= 1.1f;
-            playerData.Status.moveSpeed *= 1.1f;
-            playerData.Status.healRate *= 1.1f;
+            //DBからステータス強化選択肢情報取得
+            GameDbContext dbContext = new GameDbContext();
+            var upgrade = dbContext.Status_Enhancements.Where(status => status.id == (int)upgradeOpt).First();
+
+            switch (upgrade.type)   // 各強化をタイプで識別
+            {
+                case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
+                    playerData.Status.hp += (int)upgrade.effect;
+                    break;
+
+                case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
+                    playerData.Status.power += (int)upgrade.effect;
+                    break;
+                
+                case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
+                    playerData.Status.defence += (int)upgrade.effect;
+                    break;
+                
+                case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
+                    playerData.Status.jumpPower += (int)upgrade.effect;
+                    break;
+                
+                case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
+                    playerData.Status.moveSpeed += (int)upgrade.effect;
+                    break;
+                
+                case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
+                    playerData.Status.healRate += (int)upgrade.effect;
+                    break;
+                
+                case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
+                    playerData.Status.attackSpeedFactor += (int)upgrade.effect;
+                    break;
+            }
 
             return playerData.Status;
+        }
+
+        /// <summary>
+        /// 弾発射同期処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="spawnPos">生成位置</param>
+        /// <param name="shootVec">発射ベクトル</param>
+        public async Task ShootBulletAsync(Vector2 spawnPos, Vector2 shootVec)
+        {
+            // 参加者全員に端末の結果を通知
+            this.roomContext.Group.All.OnShootBullet(spawnPos, shootVec);
         }
 
         #endregion
@@ -799,28 +899,36 @@ namespace StreamingHubs
                 }
             } while (this.roomContext.statusOptionList.Count <= 3);
 
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var playerData = this.roomContext.characterDataList[this.ConnectionId];
+            // 参加者リストをループ
+            foreach (var user in this.roomContext.JoinedUserList)
+            {
+                // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
+                var playerData = this.roomContext.characterDataList[user.Key];
 
-            // 各最大値を10%増加(仮)
-            playerData.Status.hp = (int)(playerData.Status.hp * 1.1f);
-            playerData.Status.power = (int)(playerData.Status.power * 1.1f);
-            playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
-            playerData.Status.jumpPower *= 1.1f;
-            playerData.Status.moveSpeed *= 1.1f;
-            playerData.Status.healRate *= 1.1f;
+                // 各最大値を10%増加(仮)
+                playerData.Status.hp = (int)(playerData.Status.hp * 1.1f);
+                playerData.Status.power = (int)(playerData.Status.power * 1.1f);
+                playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
+                playerData.Status.jumpPower *= 1.1f;
+                playerData.Status.moveSpeed *= 1.1f;
+                playerData.Status.healRate *= 1.1f;
 
-            CharacterStatusData newStatus = new CharacterStatusData();
+                CharacterStatusData newStatus = new CharacterStatusData();
 
-            // 最大値を更新
-            newStatus.hp = playerData.Status.hp;
-            newStatus.power = playerData.Status.power;
-            newStatus.defence = playerData.Status.defence;
-            newStatus.jumpPower = playerData.Status.jumpPower;
-            newStatus.moveSpeed = playerData.Status.moveSpeed;
-            newStatus.healRate = playerData.Status.healRate;
+                // 最大値を更新
+                newStatus.hp = playerData.Status.hp;
+                newStatus.power = playerData.Status.power;
+                newStatus.defence = playerData.Status.defence;
+                newStatus.jumpPower = playerData.Status.jumpPower;
+                newStatus.moveSpeed = playerData.Status.moveSpeed;
+                newStatus.healRate = playerData.Status.healRate;
 
-            this.roomContext.characterStatusDataList.Add(this.ConnectionId, newStatus);
+                // 強化後のステータスをGuidをキーにして格納
+                this.roomContext.characterStatusDataList.Add(user.Key, newStatus);
+            }
+
+            // 参加者全員にレベルアップしたことを通知
+            this.roomContext.Group.All.OnLevelUp(expManager.Level, expManager.nowExp, this.roomContext.characterStatusDataList, this.roomContext.statusOptionList);
         }
 
         /// <summary>
@@ -831,8 +939,21 @@ namespace StreamingHubs
         public async Task Result()
         {
             ResultData resultData = new ResultData();
+            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
 
-            resultData.Difficulty = this.roomContext.NowDifficulty;
+            // 必要なデータを代入
+            resultData.Difficulty = this.roomContext.NowDifficulty; // 難易度
+            resultData.Level = this.roomContext.ExpManager.Level;   //レベル
+            resultData.AliveTime = 66666;   // 生存時間(仮)
+            resultData.PlayerClass = playerData.Class;  // プレイヤーのクラス
+            resultData.TotalGottenItem = this.roomContext.gottenItemList.Count; // 総獲得アイテム数
+            resultData.TotalActivedTerminal = this.roomContext.bootedTerminalList.Count;    // 総起動端末数
+            resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;  // 総付与ダメージ数
+            resultData.EnemyKillCount = this.roomContext.totalKillCount;    // 総キルカウント
+            resultData.GottenRelicList = this.roomContext.relicDataList;    // 獲得レリックリスト
+            resultData.TotalReceivedDamage = this.roomContext.totalGainDamage;  // 合計被弾値
+
+            this.roomContext.Group.All.OnGameEnd(resultData);
         }
     }
 }

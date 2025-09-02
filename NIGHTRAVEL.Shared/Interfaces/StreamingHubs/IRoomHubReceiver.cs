@@ -92,6 +92,15 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="termID">端末識別ID</param>
         /// <param name="result">端末結果</param>
         void OnTerminalsResult(int termID, bool result);
+
+
+        /// <summary>
+        /// 弾発射通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="spawnPos">生成位置</param>
+        /// <param name="shootVec">発射ベクトル</param>
+        void OnShootBullet(Vector2 spawnPos, Vector2 shootVec);
         #endregion
         #region 敵関連
 
@@ -131,7 +140,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="relicDatas">レリックリスト</param>
-        void OnDropRelic(List<DropRelicData >relicDatas);
+        void OnDropRelic(Dictionary<string, DropRelicData>relicDatas);
 
         /// <summary>
         /// レリック取得通知
@@ -224,8 +233,13 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// レベルアップ通知
+        /// Author:Nishiura
         /// </summary>
-        void OnLevelUp();
+        /// <param name="level">レベル</param>
+        /// <param name="nowExp">現在の経験値</param>
+        /// <param name="characterStatusDataList">プレイヤーステータスリスト</param>
+        /// <param name="statusOptionList">強化選択肢リスト</param>
+        void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList);
 
         #endregion
         #region ゲーム内UI、仕様
