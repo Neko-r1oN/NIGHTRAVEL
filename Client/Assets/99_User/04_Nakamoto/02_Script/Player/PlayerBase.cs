@@ -2,6 +2,8 @@
 // プレイヤー抽象親クラス [ PlayerBase.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using MessagePack;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Pixeye.Unity;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -95,18 +97,17 @@ abstract public class PlayerBase : CharacterBase
             { DEBUFF_TYPE.Burn, 0f },
             { DEBUFF_TYPE.Freeze, 0f },
             { DEBUFF_TYPE.Shock, 0f },
-        };                                  // 状態異常付与率
+        };  // 状態異常付与率
+    protected float debuffDmgRate = 0;      // 状態異常ダメージ倍率
     protected float pierceRate = 0;         // 防御貫通率
     protected float dmgHealRate = 0f;       // 与ダメ回復率
-    protected int bombCnt = 2;              // ボム所持数
-    protected float bombDmgRate = 0.2f;     // ボムダメージ倍率
     protected float dodgeRate = 0;          // 回避率
-    protected int healMeatCnt = 0;          // 回復肉所持数
     protected float dmgResistRate = 0;      // 被ダメージ軽減率
     protected float killHpReward = 0;       // キル時HP回復率
     protected float daRate = 0;             // ダブルアタック率
+    protected int bombCnt = 2;              // ボム所持数
+    protected int healMeatCnt = 0;          // 回復肉所持数
     protected int reviveCnt = 0;            // リバイブ回数
-    protected float debuffDmgRate = 0;      // 状態異常ダメージ倍率
     protected int elecOrbCnt = 0;           // 感電オーブ所持数
 
     #endregion
@@ -488,6 +489,29 @@ abstract public class PlayerBase : CharacterBase
         Move(horizontalMove * Time.fixedDeltaTime, isJump, isBlink);
         isJump = false;
         isBlink = false;
+    }
+
+    /// <summary>
+    /// 最大値の変更＆それに応じた現在値の変更
+    /// </summary>
+    /// <param name="changeData">強化後のステータス</param>
+    public override void ChangeAccordingStatusToMaximumValue(PlayerStatusData changeData)
+    {
+        base.ChangeAccordingStatusToMaximumValue(changeData);
+
+        // レリック取得によるステータス変化
+        giveDebuffRates = changeData.GiveDebuffRates;
+        debuffDmgRate = changeData.DebuffDmgRate;
+        pierceRate = changeData.PierceRate;
+        dmgHealRate = changeData.DmgHealRate;
+        dodgeRate = changeData.DodgeRate;
+        dmgResistRate = changeData.DmgResistRate;
+        killHpReward = changeData.KillHpReward;
+        daRate = changeData.DARate;
+        bombCnt = changeData.BombCnt;
+        healMeatCnt = changeData.HealMeatCnt;
+        reviveCnt = changeData.ReviveCnt;
+        elecOrbCnt = changeData.ElecOrbCnt;
     }
 
     /// <summary>
