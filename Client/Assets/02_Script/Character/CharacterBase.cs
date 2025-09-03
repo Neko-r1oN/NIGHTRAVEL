@@ -161,7 +161,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// <summary>
     /// ‘Ì—Í
     /// </summary>
-    public int HP { get { return hp; } }
+    public int HP { get { return hp; } set { hp = value; } }
 
     /// <summary>
     /// –hŒä—Í

@@ -226,7 +226,17 @@ public class Sword : PlayerBase
                         break;
                 }
 
-                enemyComponent.ApplyDamageRequest(attackPower, gameObject);
+                // 二回攻撃の抽選
+                if (LotteryDA())
+                {
+                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, LotteryDebuff());
+                    enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, LotteryDebuff());
+                }
+                else
+                {
+                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, LotteryDebuff());
+                }
+
                 processedEnemies.Add(enemyComponent); // 処理済みリストに追加
             }
         }
@@ -327,7 +337,17 @@ public class Sword : PlayerBase
             var id = animator.GetInteger("animation_id");
             if (position != null && id != (int)S_ANIM_ID.Skill) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
-            hp -= damage;
+            // 回避判定
+            if (AttackDodged())
+            {
+                // 回避成功表示
+            }
+            else
+            {
+                // HP減少
+                hp -= damage - (int)(damage * firewallRate);
+            }
+
             Vector2 damageDir = Vector2.zero;
 
             // ノックバック処理
