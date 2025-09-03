@@ -96,7 +96,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnAscendDifficultySyn {  get; set; }
 
     //次ステージ進行通知
-    public Action<Guid,bool,STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
+    public Action<bool,STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
+
 
     //プレイヤー体力増減通知
     public Action<int,float> OnPlayerHealthSyn {  get; set; }
@@ -123,7 +124,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<Dictionary<EnumManager.TIME_TYPE, int>> OnTimerSyn { get; set; }
 
     //ステージ進行通知
-    public Action<Guid> OnAdvancedStageSyn { get; set; }
+    public Action OnAdvancedStageSyn { get; set; }
 
     //ゲーム終了通知
     public Action<ResultData> OnGameEndSyn { get; set; }
@@ -315,9 +316,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="playerID"></param>
     /// <returns></returns>
-    public async Task PlayerDeadAsync(Guid playerID)
+    public async Task PlayerDeadAsync()
     {
-        await roomHub.PlayerDeadAsync(playerID);
+        await roomHub.PlayerDeadAsync();
     }
 
     /// <summary>
@@ -352,9 +353,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="enemHP"></param>
     /// <returns></returns>
-    public async Task EnemyHealthAsync(int enemID,Guid guid, float enemHP, List<DEBUFF_TYPE> debuffList)
+    public async Task EnemyHealthAsync(int enemID,float giverAtack, List<DEBUFF_TYPE> debuffList)
     {
-        await roomHub.EnemyHealthAsync(enemID,guid, enemHP, debuffList);
+        await roomHub.EnemyHealthAsync(enemID,giverAtack, debuffList);
     }
 
     /// <summary>
@@ -429,9 +430,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="stageID"></param>
     /// <param name="isBossStage"></param>
     /// <returns></returns>
-    public async Task AdvancedStageAsync(Guid conID, bool isAdvance)
+    public async Task AdvancedStageAsync(bool isAdvance)
     {
-        await roomHub.AdvancedStageAsync(conID, isAdvance);
+        await roomHub.AdvancedStageAsync(isAdvance);
     }
 
     /// <summary>
@@ -735,9 +736,18 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="stageID"></param>
-    public void OnAdanceNextStage(Guid conID, bool isAdvance, STAGE_TYPE stageType)
+    public void OnAdanceNextStage(bool isAdvance, STAGE_TYPE stageType)
     {
-        OnAdanceNextStageSyn(conID,isAdvance,stageType);
+        OnAdanceNextStageSyn(isAdvance,stageType);
+    }
+
+    /// <summary>
+    /// ステージ進行通知
+    /// Author;木田晃輔
+    /// </summary>
+    public void OnAdvancedStage()
+    {
+        OnAdvancedStageSyn();
     }
 
     /// <summary>
@@ -767,15 +777,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnSameStart()
     {
 
-    }
-
-    /// <summary>
-    /// ステージ進行通知
-    /// </summary>
-    /// <param name="conID"></param>
-    public void OnAdvancedStage(Guid conID)
-    {
-        OnAdvancedStageSyn(conID);
     }
 
     /// <summary>
