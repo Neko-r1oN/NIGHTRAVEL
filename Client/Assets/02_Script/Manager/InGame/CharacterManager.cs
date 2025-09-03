@@ -373,6 +373,7 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
+        GameObject? attacker = playerObjs.GetValueOrDefault(damageData.AttackerId);
         enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, 
             playerObjs[damageData.AttackerId], true, damageData.DebuffList.ToArray());
     }

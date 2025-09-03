@@ -480,22 +480,27 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用リクエスト
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
+    async public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
     {
         GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
         if (isInvincible || isDead || attacker && attacker != playerSelf) return;
 
-        // リアルタイム中、自分による攻撃の場合はダメージ同期をリクエスト
-        if (RoomModel.Instance && attacker && attacker == playerSelf)
+        #region リアルタイム同期用
+        if (RoomModel.Instance)
         {
+            if (attacker && attacker == playerSelf)
+            {
+                // プレイヤーによるダメージ適用
+                //await RoomModel.Instance.EnemyHealthAsync(selfID, power, new List<DEBUFF_TYPE>(debuffList));
+            }
+            else if (RoomModel.Instance.IsMaster)
+            {
+                // ギミックや状態異常によるダメージ適用(マスタクライアントのみリクエスト可能)
+                // await RoomModel.Instance.ApplyDamageToEnemyAsync();
+            }
             return;
         }
-        // ギミックや状態異常によるダメージはマスタクライアントのみ処理させる
-        else if (RoomModel.Instance && !RoomModel.Instance.IsMaster)
-        {
-            return;
-        }
-
+        #endregion
 
         // 以降はローカル || ギミック用
         int damage = CalculationLibrary.CalcDamage(power, Defense);
@@ -506,7 +511,11 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// ダメージ適用処理
     /// </summary>
-    /// <param name="damegeData"></param>
+    /// <param name="damage"></param>
+    /// <param name="remainingHP"></param>
+    /// <param name="attacker"></param>
+    /// <param name="drawDmgText"></param>
+    /// <param name="debuffList"></param>
     public void ApplyDamage(int damage, int remainingHP, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
     {
         if (isInvincible || isDead) return;
