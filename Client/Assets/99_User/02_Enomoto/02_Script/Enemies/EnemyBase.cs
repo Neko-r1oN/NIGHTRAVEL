@@ -491,7 +491,7 @@ abstract public class EnemyBase : CharacterBase
             if (attacker && attacker == playerSelf)
             {
                 // プレイヤーによるダメージ適用
-                //await RoomModel.Instance.EnemyHealthAsync(selfID, power, new List<DEBUFF_TYPE>(debuffList));
+                await RoomModel.Instance.EnemyHealthAsync(selfID, power, new List<DEBUFF_TYPE>(debuffList));
             }
             else if (RoomModel.Instance.IsMaster)
             {
