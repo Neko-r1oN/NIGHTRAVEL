@@ -800,31 +800,31 @@ namespace StreamingHubs
             switch (upgrade.type)   // 各強化をタイプで識別
             {
                 case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
-                    playerData.Status.hp += (int)upgrade.effect;
+                    //playerData.Status.hp += (int)upgrade.effect;
                     break;
 
                 case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
-                    playerData.Status.power += (int)upgrade.effect;
+                    //playerData.Status.power += (int)upgrade.effect;
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
-                    playerData.Status.defence += (int)upgrade.effect;
+                    //playerData.Status.defence += (int)upgrade.effect;
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
-                    playerData.Status.jumpPower += (int)upgrade.effect;
+                    //playerData.Status.jumpPower += (int)upgrade.effect;
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
-                    playerData.Status.moveSpeed += (int)upgrade.effect;
+                    //playerData.Status.moveSpeed += (int)upgrade.effect;
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
-                    playerData.Status.healRate += (int)upgrade.effect;
+                    //playerData.Status.healRate += (int)upgrade.effect;
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                    playerData.Status.attackSpeedFactor += (int)upgrade.effect;
+                    //playerData.Status.attackSpeedFactor += (int)upgrade.effect;
                     break;
             }
 
