@@ -495,23 +495,25 @@ abstract public class PlayerBase : CharacterBase
     /// 最大値の変更＆それに応じた現在値の変更
     /// </summary>
     /// <param name="changeData">強化後のステータス</param>
-    public override void ChangeAccordingStatusToMaximumValue(PlayerStatusData changeData)
+    public override void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
     {
-        base.ChangeAccordingStatusToMaximumValue(changeData);
+        PlayerStatusData playerData = (PlayerStatusData)changeData;
+
+        base.ChangeAccordingStatusToMaximumValue(playerData);
 
         // レリック取得によるステータス変化
-        giveDebuffRates = changeData.GiveDebuffRates;
-        debuffDmgRate = changeData.DebuffDmgRate;
-        pierceRate = changeData.PierceRate;
-        dmgHealRate = changeData.DmgHealRate;
-        dodgeRate = changeData.DodgeRate;
-        dmgResistRate = changeData.DmgResistRate;
-        killHpReward = changeData.KillHpReward;
-        daRate = changeData.DARate;
-        bombCnt = changeData.BombCnt;
-        healMeatCnt = changeData.HealMeatCnt;
-        reviveCnt = changeData.ReviveCnt;
-        elecOrbCnt = changeData.ElecOrbCnt;
+        giveDebuffRates = playerData.GiveDebuffRates;
+        debuffDmgRate = playerData.DebuffDmgRate;
+        pierceRate = playerData.PierceRate;
+        dmgHealRate = playerData.DmgHealRate;
+        dodgeRate = playerData.DodgeRate;
+        dmgResistRate = playerData.DmgResistRate;
+        killHpReward = playerData.KillHpReward;
+        daRate = playerData.DARate;
+        bombCnt = playerData.BombCnt;
+        healMeatCnt = playerData.HealMeatCnt;
+        reviveCnt = playerData.ReviveCnt;
+        elecOrbCnt = playerData.ElecOrbCnt;
     }
 
     /// <summary>
