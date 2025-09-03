@@ -180,7 +180,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">次ステージ進行判定</param>
         /// <param name="stageType">次ステージ</param>
-        void OnAdanceNextStage(Guid conID, bool isAdvance, EnumManager.STAGE_TYPE stageType);
+        void OnAdanceNextStage(bool isAdvance, EnumManager.STAGE_TYPE stageType);
 
         /// <summary>
         /// タイマー通知
@@ -201,7 +201,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author;Nishiura
         /// </summary>
         /// <param name="conID">接続ID</param>
-        void OnAdvancedStage(Guid conID);
+        void OnAdvancedStage();
 
         void OnGameEnd(ResultData result);
 

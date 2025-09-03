@@ -417,7 +417,7 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task StageClear(Guid conID, bool isAdvance)
+        public async Task StageClear(bool isAdvance)
         {
             // すでに申請済みの場合処理しない
             if (this.roomContext.isAdvanceRequest == true) return;
@@ -446,7 +446,7 @@ namespace StreamingHubs
                     this.roomContext.succededTerminalList.Clear();
 
                     // 参加者全員にステージの進行を通知
-                    this.roomContext.Group.All.OnAdanceNextStage(conID, isAdvance, this.roomContext.NowStage);
+                    this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);
                     this.roomContext.isAdvanceRequest = false;  // 未申請にする
                 }
                 else
@@ -463,16 +463,13 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task AdvancedStageAsync(Guid conID, bool isAdvance)
+        public async Task AdvancedStageAsync(bool isAdvance)
         {
             bool canAdvenceStage = true; // ステージ進行済み判定変数
 
             // 自身のデータを取得
             var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
             joinedUser.IsAdvance = true; // 準備完了にする
-
-            // 自分以外の参加者全員に、自分が準備完了した通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnAdvancedStage(this.ConnectionId);
 
             foreach (var user in this.roomContext.JoinedUserList)
             { // 現在の参加者数分ループ
@@ -482,7 +479,7 @@ namespace StreamingHubs
             // 進行できる場合、進行通知をする
             if (canAdvenceStage)
             {
-                await StageClear(conID, isAdvance);
+                await StageClear(isAdvance);
                 canAdvenceStage = false;
             }
         }
@@ -497,7 +494,7 @@ namespace StreamingHubs
         public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance)
         {
             // 時間切れの場合、即座に進行処理をする
-            if (isTimeUp) await StageClear((Guid)conID, isAdvance);
+            if (isTimeUp) await StageClear(isAdvance);
 
             bool canAdvenceStage = true; // ステージ進行判定変数
 
@@ -511,7 +508,7 @@ namespace StreamingHubs
             }
 
             // 進行できる場合、進行通知をする
-            if (canAdvenceStage) await StageClear((Guid)conID, isAdvance);
+            if (canAdvenceStage) await StageClear(isAdvance);
         }
 
         /// <summary>
@@ -536,7 +533,7 @@ namespace StreamingHubs
         /// <param name="giverATK">PLの攻撃力</param>
         /// <param name="debuffType">デバフの種類</param>
         /// <returns></returns>
-        public async Task EnemyHealthAsync(int enemID, Guid conID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType)
+        public async Task EnemyHealthAsync(int enemID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType)
         {
             lock (roomContextRepository) // 排他制御
             {
@@ -551,7 +548,7 @@ namespace StreamingHubs
                 EnemyDamegeData enemDmgData = new EnemyDamegeData();
 
                 // 作成したデータに各情報を代入
-                enemDmgData.AttackerId = conID; // 攻撃者ID
+                enemDmgData.AttackerId = this.ConnectionId; // 攻撃者ID
                 enemDmgData.Damage = (int)((giverATK / 2) - (enemData.State.defence / 4));  // 付与ダメージ
                 enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
@@ -587,24 +584,24 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">ダメージ量</param>
         /// <returns></returns>
-        public async Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount)
-        {
-            lock (roomContextRepository) // 排他制御
-            {
-                // ID指定で敵情報を取得
-                var enemData = this.roomContext.GetEnemyData(enemID);
-                if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
+        //public async Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount)
+        //{
+        //    lock (roomContextRepository) // 排他制御
+        //    {
+        //        // ID指定で敵情報を取得
+        //        var enemData = this.roomContext.GetEnemyData(enemID);
+        //        if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
-                // 現在のHPを受け取ったダメージ量分減算
-                enemData.State.hp -= dmgAmount;
+        //        // 現在のHPを受け取ったダメージ量分減算
+        //        enemData.State.hp -= dmgAmount;
 
-                // 敵のHPが0以下になった場合
-                if (enemData.State.hp <= 0)
-                {
-                    LevelUp(roomContext.ExpManager); // レベルアップ処理
-                }
-            }
-        }
+        //        // 敵のHPが0以下になった場合
+        //        if (enemData.State.hp <= 0)
+        //        {
+        //            LevelUp(roomContext.ExpManager); // レベルアップ処理
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// 敵死亡同期処理
@@ -658,18 +655,18 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="conID">プレイヤーID</param>
         /// <returns></returns>
-        public async Task PlayerDeadAsync(Guid conID)
+        public async Task PlayerDeadAsync()
         {
             lock (roomContextRepository) // 排他制御
             {
                 // 全滅判定変数
                 bool isAllDead = true;
                 // ルームデータから接続IDを指定して自身のデータを取得
-                var playerData = this.roomContext.GetPlayerData(conID);
+                var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
                 playerData.IsDead = true; // 死亡判定をtrueにする
 
                 // 死亡者以外の参加者全員に対象者が死亡したことを通知
-                this.roomContext.Group.Except([conID]).OnPlayerDead(conID);
+                this.roomContext.Group.Except([this.ConnectionId]).OnPlayerDead(this.ConnectionId);
 
                 foreach (var player in this.roomContext.playerDataList)
                 {
@@ -788,10 +785,10 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
-        public async Task<CharacterStatusData> ChooseUpgrade(Guid conID, EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+        public async Task<CharacterStatusData> ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
         {
             // ルームデータから接続IDを指定して自身のデータを取得
-            var playerData = this.roomContext.characterDataList[conID];
+            var playerData = this.roomContext.characterDataList[this.ConnectionId];
 
             //DBからステータス強化選択肢情報取得
             GameDbContext dbContext = new GameDbContext();

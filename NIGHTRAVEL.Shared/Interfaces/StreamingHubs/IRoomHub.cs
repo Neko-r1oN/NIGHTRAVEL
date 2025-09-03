@@ -67,7 +67,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="conID">プレイヤーID</param>
         /// <returns></returns>
-        Task PlayerDeadAsync(Guid conID);
+        Task PlayerDeadAsync();
 
         /// <summary>
         /// 端末起動
@@ -96,15 +96,6 @@ namespace Shared.Interfaces.StreamingHubs
         Task GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID);
 
         /// <summary>
-        /// ステージクリア待機
-        /// </summary>
-        /// <param name="conID">接続ID</param>
-        /// <param name="isTimeUp">時間切れ判定</param>
-        /// <param name="isAdvance">ステージ進行判定</param>
-        /// <returns></returns>
-        Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance);
-
-        /// <summary>
         /// 弾発射
         /// Author:Nishiura
         /// </summary>
@@ -128,11 +119,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemID">敵識別ID</param>
-        /// <param name="conID">ダメージを与えたPLの接続ID</param>
         /// <param name="giverATK">PLの攻撃力</param>
         /// <param name="debuffType">デバフの種類</param>
         /// <returns></returns>
-        Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
+        Task EnemyHealthAsync(int enemID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
 
         /// <summary>
         /// 敵の被ダメージ同期処理   プレイヤーによるダメージ以外
@@ -140,7 +130,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">適用させるダメージ量</param>
         /// <returns></returns>
-        Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount);
+        //Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount);
 
         /// <summary>
         /// ステータス強化選択
@@ -148,7 +138,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
-        Task<CharacterStatusData> ChooseUpgrade(Guid conID, EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
+        Task<CharacterStatusData> ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
 
         #endregion
         #region レリック関連
@@ -209,7 +199,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        Task StageClear(Guid conID, bool isAdvance);
+        Task StageClear(bool isAdvance);
 
         /// <summary>
         /// ステージ進行完了
@@ -218,7 +208,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        Task AdvancedStageAsync(Guid conID, bool isAdvance);
+        Task AdvancedStageAsync(bool isAdvance);
 
         #endregion
         #endregion
@@ -247,6 +237,16 @@ namespace Shared.Interfaces.StreamingHubs
 
         #region 不要になりそうなAPI
         #region ゲーム内
+
+        /// <summary>
+        /// ステージクリア待機
+        /// </summary>
+        /// <param name="conID">接続ID</param>
+        /// <param name="isTimeUp">時間切れ判定</param>
+        /// <param name="isAdvance">ステージ進行判定</param>
+        /// <returns></returns>
+        Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance);
+
         #region プレイヤー関連
         /// <summary>
         /// プレイヤー体力増減
