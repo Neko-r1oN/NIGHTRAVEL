@@ -130,7 +130,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">適用させるダメージ量</param>
         /// <returns></returns>
-        //Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount);
+        Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount);
 
         /// <summary>
         /// ステータス強化選択
