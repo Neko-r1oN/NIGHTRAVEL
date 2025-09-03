@@ -189,10 +189,7 @@ abstract public class PlayerBase : CharacterBase
     [SerializeField] protected GameObject ziplineSpark;
 
     [Foldout("エフェクト・UI")]
-    [SerializeField] protected GameObject eIcon;
-
-    [Foldout("エフェクト・UI")]
-    [SerializeField] protected GameObject rbIcon;
+    [SerializeField] protected Sprite[] interactSprits;         // [0] Pad [1] Key
     #endregion
 
     #region カメラ
@@ -497,23 +494,30 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="changeData">強化後のステータス</param>
     public override void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
     {
-        PlayerStatusData playerData = (PlayerStatusData)changeData;
+        if(changeData is PlayerStatusData)
+        {
+            PlayerStatusData playerData = (PlayerStatusData)changeData;
 
-        base.ChangeAccordingStatusToMaximumValue(playerData);
+            // レリック取得によるステータス変化
+            giveDebuffRates = playerData.GiveDebuffRates;
+            debuffDmgRate = playerData.DebuffDmgRate;
+            pierceRate = playerData.PierceRate;
+            dmgHealRate = playerData.DmgHealRate;
+            dodgeRate = playerData.DodgeRate;
+            dmgResistRate = playerData.DmgResistRate;
+            killHpReward = playerData.KillHpReward;
+            daRate = playerData.DARate;
+            bombCnt = playerData.BombCnt;
+            healMeatCnt = playerData.HealMeatCnt;
+            reviveCnt = playerData.ReviveCnt;
+            elecOrbCnt = playerData.ElecOrbCnt;
 
-        // レリック取得によるステータス変化
-        giveDebuffRates = playerData.GiveDebuffRates;
-        debuffDmgRate = playerData.DebuffDmgRate;
-        pierceRate = playerData.PierceRate;
-        dmgHealRate = playerData.DmgHealRate;
-        dodgeRate = playerData.DodgeRate;
-        dmgResistRate = playerData.DmgResistRate;
-        killHpReward = playerData.KillHpReward;
-        daRate = playerData.DARate;
-        bombCnt = playerData.BombCnt;
-        healMeatCnt = playerData.HealMeatCnt;
-        reviveCnt = playerData.ReviveCnt;
-        elecOrbCnt = playerData.ElecOrbCnt;
+            base.ChangeAccordingStatusToMaximumValue(playerData);
+        }
+        else
+        {
+            base.ChangeAccordingStatusToMaximumValue(changeData);
+        }
     }
 
     /// <summary>
