@@ -49,7 +49,16 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            collision.gameObject.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject);
+            // ìÒâÒçUåÇÇÃíäëI
+            if (player.LotteryDA())
+            {
+                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, player.LotteryDebuff());
+                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, player.LotteryDebuff());
+            }
+            else
+            {
+                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, player.LotteryDebuff());
+            }
         }
         else if (collision.gameObject.tag == "Object")
         {

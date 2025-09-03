@@ -480,6 +480,8 @@ abstract public class EnemyBase : CharacterBase
         GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
         if (isInvincible || isDead || attacker && attacker != playerSelf) return;
 
+        var plBase = attacker.GetComponent<PlayerBase>();
+
         #region リアルタイム同期用
         if (RoomModel.Instance)
         {
@@ -498,7 +500,19 @@ abstract public class EnemyBase : CharacterBase
         #endregion
 
         // 以降はローカル || ギミック用
-        int damage = CalculationLibrary.CalcDamage(power, Defense);
+        int damage = CalculationLibrary.CalcDamage(power, Defense - (int)(Defense * plBase.PierceRate));   // 貫通率適用
+
+        //----------------
+        // レリック適用
+
+        // 自身がデバフを受けている + レリック「識別AI」所有時、ダメージが増加
+        var debuffController = GetComponent<DebuffController>();
+        if(debuffController.GetAppliedStatusEffects().Count != 0) damage = (int)(damage * plBase.DebuffDmgRate);
+
+        // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
+        if(plBase.DmgHealRate >= 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
+
+        // ダメージ計算
         int remainingHp = this.hp - Mathf.Abs(damage);
         ApplyDamage(damage, remainingHp, attacker, drawDmgText, debuffList);
     }
@@ -561,7 +575,10 @@ abstract public class EnemyBase : CharacterBase
             {
                 // 倒したのが自分自身の場合は経験値を与える
                 if (!RoomModel.Instance || RoomModel.Instance && CharacterManager.Instance.PlayerObjSelf == player)
+                {
+                    player.KilledHPRegain();
                     player.GetExp(exp);
+                }
             }
 
             if (CharacterManager.Instance.Enemies[selfID].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)

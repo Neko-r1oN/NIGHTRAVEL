@@ -81,35 +81,39 @@ abstract public class PlayerBase : CharacterBase
     [Foldout("共通ステータス")]
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
-    [Foldout("共通ステータス")]
-    [SerializeField] protected int testExp = 10;        // デバッグ用獲得経験値
-
     protected Player_Type playerType;                   // プレイヤータイプ
     protected float horizontalMove = 0f;                // 速度用変数
     protected float gravity;                            // 重力
-    protected float timer;                              // タイマー
+
+    private float regeneTimer;              //  オートリジェネタイマー
+    private float healGenerateTimer = 0f;   //  回復生成タイマー
 
     #endregion
 
     #region レリック関連ステータス
+
+    [Foldout("レリック関連ステータス")]
+    [SerializeField] protected GameObject healObjectPrefab; // 回復オブジェクトのPrefab
 
     protected Dictionary<DEBUFF_TYPE, float> giveDebuffRates = new Dictionary<DEBUFF_TYPE, float>()
         {
             { DEBUFF_TYPE.Burn, 0f },
             { DEBUFF_TYPE.Freeze, 0f },
             { DEBUFF_TYPE.Shock, 0f },
-        };  // 状態異常付与率
-    protected float debuffDmgRate = 0;      // 状態異常ダメージ倍率
-    protected float pierceRate = 0;         // 防御貫通率
-    protected float dmgHealRate = 0f;       // 与ダメ回復率
-    protected float dodgeRate = 0;          // 回避率
-    protected float dmgResistRate = 0;      // 被ダメージ軽減率
-    protected float killHpReward = 0;       // キル時HP回復率
-    protected float daRate = 0;             // ダブルアタック率
-    protected int bombCnt = 2;              // ボム所持数
-    protected int healMeatCnt = 0;          // 回復肉所持数
-    protected int reviveCnt = 0;            // リバイブ回数
-    protected int elecOrbCnt = 0;           // 感電オーブ所持数
+        };  // 状態異常付与率◎
+    protected float regainCodeRate = 0f;        // 与ダメ回復率◎
+    protected int scatterBugCnt = 0;            // ボム所持数◎
+    protected float holographicArmorRate = 0;   // 回避率◎
+    protected float mouseRate = 0;              // クールダウン短縮率×
+    protected int digitalMeatCnt = 0;           // 回復肉所持数◎
+    protected float firewallRate = 0;           // 被ダメージ軽減率◎
+    protected float lifeScavengerRate = 0;      // キル時HP回復率◎
+    protected float rugrouterRate = 0;          // ダブルアタック率◎
+    protected int buckupHDMICnt = 0;            // リバイブ回数◎
+    protected float identificationAIRate = 0;   // 状態異常ダメージ倍率◎
+    protected float danborDollRate = 0;         // 防御貫通率◎
+    protected int chargedCoreCnt = 0;           // 感電オーブ所持数×
+    protected float illegalScriptRate = 0;      // クリティカルオーバーキル発生率×
 
     #endregion
 
@@ -139,6 +143,24 @@ abstract public class PlayerBase : CharacterBase
     /// 操作キャラのタイプ
     /// </summary>
     public Player_Type PlayerType { get { return playerType; } }
+
+    //-------------------------------------------------------------------
+    // レリック関連ステータス
+
+    /// <summary>
+    /// 防御貫通率
+    /// </summary>
+    public float PierceRate { get { return danborDollRate; } }
+
+    /// <summary>
+    /// 状態異常ダメージ倍率
+    /// </summary>
+    public float DebuffDmgRate { get { return identificationAIRate; } }
+
+    /// <summary>
+    /// 与ダメ回復率
+    /// </summary>
+    public float DmgHealRate { get { return regainCodeRate; } }
 
     #endregion
 
@@ -230,6 +252,7 @@ abstract public class PlayerBase : CharacterBase
     protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
     protected const float REGENE_STOP_TIME = 3.5f;      // 自動回復停止時間
     protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
+    protected const float HEAL_GENERATE_TIME = 25f;     // 回復肉生成間隔
 
     protected const float GROUNDED_RADIUS = .2f;// 接地確認用の円の半径
     protected const float ATTACK_RADIUS = 1.2f; // 攻撃判定の円の半径
@@ -283,10 +306,11 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     virtual protected void Update()
     {
-        timer += Time.deltaTime;
+        regeneTimer += Time.deltaTime;
+        healGenerateTimer += Time.deltaTime;
 
         // 毎秒最大HPの0.1% を基礎値とし、1秒毎に基礎値分回復する
-        if (timer >= REGENE_TIME)
+        if (regeneTimer >= REGENE_TIME)
         {
             if (HP < MaxHP)
             {
@@ -298,7 +322,14 @@ abstract public class PlayerBase : CharacterBase
                 }
             }
 
-            timer = 0;
+            regeneTimer = 0;
+        }
+
+        // 回復オブジェを一定間隔でhealMeatCnt分生成
+        if (healGenerateTimer >= HEAL_GENERATE_TIME)
+        {
+            GenerateHealObject();
+            healGenerateTimer = 0f;
         }
 
         // キャラの移動
@@ -498,17 +529,20 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="changeData">強化後のステータス</param>
     public void ChangeRelicStatusData(PlayerRelicStatusData relicStatus)
     {
-        debuffDmgRate = relicStatus.DebuffDmgRate;  // 状態異常ダメージ倍率
-        pierceRate = relicStatus.PierceRate;        // 防御貫通率
-        dmgHealRate = relicStatus.DmgHealRate;      // 与ダメ回復率
-        dodgeRate = relicStatus.DodgeRate;          // 回避率
-        dmgResistRate = relicStatus.DmgResistRate;  // 被ダメージ軽減率
-        killHpReward = relicStatus.KillHpReward;    // キル時HP回復率
-        daRate = relicStatus.DARate;                // ダブルアタック率
-        bombCnt = relicStatus.BombCnt;              // ボム所持数
-        healMeatCnt = relicStatus.HealMeatCnt;      // 回復肉所持数
-        reviveCnt = relicStatus.ReviveCnt;          // リバイブ回数
-        elecOrbCnt = relicStatus.ElecOrbCnt;        // 感電オーブ所持数
+        giveDebuffRates = relicStatus.GiveDebuffRates;
+        regainCodeRate = relicStatus.RegainCodeRate;
+        scatterBugCnt = relicStatus.ScatterBugCnt;
+        holographicArmorRate = relicStatus.HolographicArmorRate;
+        mouseRate = relicStatus.MouseRate;
+        digitalMeatCnt = relicStatus.DigitalMeatCnt;
+        firewallRate = relicStatus.FirewallRate;
+        lifeScavengerRate = relicStatus.LifeScavengerRate;
+        rugrouterRate = relicStatus.RugrouterRate;
+        buckupHDMICnt = relicStatus.BuckupHDMICnt;
+        identificationAIRate = relicStatus.IdentificationAIRate;
+        danborDollRate = relicStatus.DanborDollRate;
+        chargedCoreCnt = relicStatus.ChargedCoreCnt;
+        illegalScriptRate = relicStatus.IllegalScriptRate;
     }
 
     /// <summary>
@@ -722,18 +756,6 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// HP計算処理
-    /// </summary> ** ローカル **
-    private void CalcHP()
-    {
-        float hpRatio = (float)hp / (float)maxHp;
-        maxHp = (int)(startHp + (int)Math.Pow(nowLv, 2));
-        hp = (int)(maxHp * hpRatio);
-
-        Debug.Log("最大体力：" + maxHp + " 現体力：" + hp);
-    }
-
-    /// <summary>
     /// コライダー接触判定
     /// </summary>
     /// <param name="collision"></param>
@@ -783,7 +805,6 @@ abstract public class PlayerBase : CharacterBase
         }
     }
 
-
     /// <summary>
     /// １番近いオブジェクトを取得する
     /// </summary>
@@ -808,6 +829,43 @@ abstract public class PlayerBase : CharacterBase
 
         // 最後に記録されたオブジェクトを返す
         return result?.transform;
+    }
+
+    /// <summary>
+    /// 回復オブジェクト生成処理
+    /// </summary>
+    private void GenerateHealObject()
+    {
+        if (healObjectPrefab == null || digitalMeatCnt <= 0) return;
+
+        float radius = 1.0f; // プレイヤーからの初期距離
+        float minAngle = -90f;
+        float maxAngle = 90f;
+        float minForce = 150f; // AddForceの最小値
+        float maxForce = 250f; // AddForceの最大値
+
+        for (int i = 0; i < digitalMeatCnt; i++)
+        {
+            // -90°～90°の範囲でランダムな角度を決定
+            float angle = UnityEngine.Random.Range(minAngle, maxAngle);
+            float rad = angle * Mathf.Deg2Rad;
+
+            // プレイヤー中心からradius分だけオフセット
+            Vector3 offset = new Vector3(Mathf.Sin(rad), Mathf.Cos(rad), 0) * radius;
+            Vector3 spawnPos = transform.position + offset;
+
+            // オブジェクト生成
+            GameObject obj = Instantiate(healObjectPrefab, spawnPos, Quaternion.identity);
+
+            // ランダムな力を加える
+            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                float force = UnityEngine.Random.Range(minForce, maxForce);
+                Vector2 forceDir = new Vector2(Mathf.Sin(rad), Mathf.Cos(rad)).normalized;
+                rb.AddForce(forceDir * force);
+            }
+        }
     }
 
     #endregion
@@ -888,6 +946,14 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     protected IEnumerator WaitToDead()
     {
+        if (buckupHDMICnt > 0)
+        {   // 体力回復 & 残機減少
+            hp = maxHp;
+            buckupHDMICnt--;
+            StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
+            yield break;
+        }
+
         animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
         canMove = false;
         invincible = true;
@@ -1001,6 +1067,74 @@ abstract public class PlayerBase : CharacterBase
         yield return new WaitForSeconds(REGENE_STOP_TIME);
 
         isRegene = true;
+    }
+
+    /// <summary>
+    /// 状態異常付与抽選処理
+    /// </summary>
+    /// <returns></returns>
+    public DEBUFF_TYPE[] LotteryDebuff()
+    {
+        List<DEBUFF_TYPE> debuffList = new List<DEBUFF_TYPE>();
+        // 各状態異常の抽選
+        float burnRand = UnityEngine.Random.Range(0f, 100f);
+        if (burnRand <= giveDebuffRates[DEBUFF_TYPE.Burn]) debuffList.Add(DEBUFF_TYPE.Burn);
+
+        float freezeRand = UnityEngine.Random.Range(0f, 100f);
+        if (freezeRand <= giveDebuffRates[DEBUFF_TYPE.Freeze]) debuffList.Add(DEBUFF_TYPE.Freeze);
+
+        float shockRand = UnityEngine.Random.Range(0f, 100f);
+        if (shockRand <= giveDebuffRates[DEBUFF_TYPE.Shock]) debuffList.Add(DEBUFF_TYPE.Shock);
+
+        return debuffList.ToArray();
+    }
+
+    /// <summary>
+    /// 回避抽選処理
+    /// </summary>
+    /// <returns></returns>
+    public bool AttackDodged()
+    {
+        float rand = UnityEngine.Random.Range(0f, 100f);
+        if (rand <= holographicArmorRate)
+        {
+            // 回避成功
+            Debug.Log("回避成功");
+            return true;
+        }
+        else
+        {
+            // 回避失敗
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 敵撃破時HP回復処理
+    /// </summary>
+    public void KilledHPRegain()
+    {
+        HP += (int)(MaxHP * lifeScavengerRate);
+    }
+
+    /// <summary>
+    /// ダブルアタック抽選処理
+    /// </summary>
+    /// <returns></returns>
+    public bool LotteryDA()
+    {
+        float rand = UnityEngine.Random.Range(0f, 100f);
+        if (rand <= rugrouterRate)
+        {
+            // ダブルアタック成功
+            Debug.Log("ダブルアタック成功");
+            return true;
+        }
+        else
+        {
+            // ダブルアタック失敗
+            return false;
+        }
     }
     #endregion
 }

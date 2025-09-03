@@ -216,7 +216,17 @@ public class Rifle : PlayerBase
             var id = animator.GetInteger("animation_id");
             if (position != null && id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
-            hp -= damage;
+            // 回避判定
+            if (AttackDodged())
+            {
+                // 回避成功表示
+            }
+            else
+            {
+                // HP減少
+                hp -= damage - (int)(damage * firewallRate);
+            }
+
             Vector2 damageDir = Vector2.zero;
 
             // ノックバック処理

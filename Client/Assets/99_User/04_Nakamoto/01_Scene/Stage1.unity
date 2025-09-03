@@ -13539,6 +13539,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: baseHp
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: baseDefense
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: healObjectPrefab
+      value: 
+      objectReference: {fileID: 3137824796714772433, guid: bcabd7eeb2088c34583ee0b99ddbbf3b, type: 3}
     - target: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: m_Name
       value: Sword

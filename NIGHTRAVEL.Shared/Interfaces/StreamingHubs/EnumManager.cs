@@ -158,18 +158,28 @@ namespace Shared.Interfaces.StreamingHubs
             HealRate,
 
             // レリックステータス
-            GiveDebuffRates,
-            DebuffDmgRate,
-            PierceRate,
-            DmgHealRate,
-            DodgeRate,
-            DmgResistRate,
-            KillHpReward,
-            DARate,
-            BombCnt,
-            HealMeatCnt,
-            ReviveCnt,
-            ElecOrbCnt,
+            AttackTipRate,          // 攻撃力上昇率
+            DeffenceTipRate,        // 防御力上昇率
+            MoveSpeedRate,          // 移動速度上昇率
+            AttackSpeedRate,        // 攻撃速度上昇率
+            CoolingRate,            // 凍結付与率
+            BurningRate,            // 炎上付与率
+            ShokingRate,            // 感電付与率
+            BitCoinRate,            // 経験値獲得量上昇率
+            RegainCodeRate,         // 与ダメージ回復率
+            ScatterBugCnt,          // ボム所持数
+            HolographicArmorRate,   // 回避率
+            MouseRate,              // クールダウン短縮率
+            DigitalMeatCnt,         // 回復肉所持数
+            FirewallRate,           // 被ダメ軽減率
+            LifeScavengerRate,      // キル時HP回復率
+            RugrouterRate,          // DA率
+            BuckupHDMICnt,          // 自己蘇生回数
+            IdentificationAIRate,   // デバフ的に対するダメUP率
+            DanborDollRate,         // 防御貫通率
+            ChargedCoreCnt,         // 感電オーブ所持数
+            IllegalScriptRate,      // クリティカルオーバーキル発生率
+            CaracalPngRate,         // カラカル
         }
 
         /// <summary>
@@ -191,7 +201,6 @@ namespace Shared.Interfaces.StreamingHubs
             Mouse,
             DigitalMeat,
             Firewall,
-            BanHammer,
             LifeScavenger,
             Rugrouter,
             BuckupHDMI,
