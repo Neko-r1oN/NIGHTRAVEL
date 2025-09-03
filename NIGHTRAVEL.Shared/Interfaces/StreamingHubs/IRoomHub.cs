@@ -134,6 +134,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
 
+        Task EnemyHealthAsync(int enemID, int dmgAmount);
+
         /// <summary>
         /// ステータス強化選択
         /// </summary>

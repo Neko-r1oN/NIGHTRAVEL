@@ -270,7 +270,9 @@ public class Drone : EnemyBase
         string key = COROUTINE.RangeAttack.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(RangeAttack(() => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(RangeAttack(() => { 
+                RemoveCoroutineByKey(key); 
+            }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -439,26 +441,28 @@ public class Drone : EnemyBase
     /// </summary>
     public override void ResetAllStates()
     {
-        StopAllManagedCoroutines();
+        base.ResetAllStates();
+        gunPsController.StopShooting();
 
-        //isStun = false;
-        //isInvincible = false;
-        //doOnceDecision = false;
-        //isAttacking = false;
-        //isDead = false;
-        //isPatrolPaused = false;
-        //isSpawn = false;
+        ANIM_ID id = (ANIM_ID)GetAnimId();
+        nextDecide = id switch
+        {
+            ANIM_ID.Attack => DECIDE_TYPE.Attack,
+            _ => DECIDE_TYPE.Waiting,
+        };
+
+        DecideBehavior();
     }
 
     /// <summary>
-    /// DroneDataæ“¾ˆ—
+    /// ƒIƒŠƒWƒiƒ‹‚ÌEnemyDataæ“¾ˆ—
     /// </summary>
     /// <returns></returns>
     public override EnemyData GetEnemyData()
     {
         EnemyData enemyData = new EnemyData();
         enemyData.Quatarnions.Add(aimTransform.localRotation);
-        return CreateEnemyData(enemyData);
+        return SetEnemyData(enemyData);
     }
 
     /// <summary>
