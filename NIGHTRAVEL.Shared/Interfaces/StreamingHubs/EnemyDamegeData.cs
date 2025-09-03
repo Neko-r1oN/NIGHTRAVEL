@@ -30,7 +30,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 付与する状態異常のリスト
         /// </summary>
-        public List<DEBUFF_TYPE> DebuffList { get; set; }
+        public List<DEBUFF_TYPE> DebuffList { get; set; } = new List<DEBUFF_TYPE>();
 
         [Key(3)]
         /// <summary>

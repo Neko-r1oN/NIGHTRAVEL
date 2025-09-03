@@ -876,7 +876,7 @@ namespace StreamingHubs
                     playerData.Status.healRate += (int)upgrade.const_effect2;
                     playerData.Status.healRate *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.healRate <= 0) playerData.Status.healRate = 1; // 自動回復速度が0を下回った場合、1にする
+                    if (playerData.Status.healRate <= 0) playerData.Status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
@@ -887,7 +887,7 @@ namespace StreamingHubs
                     playerData.Status.attackSpeedFactor += (int)upgrade.const_effect2;
                     playerData.Status.attackSpeedFactor *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.attackSpeedFactor <= 0) playerData.Status.attackSpeedFactor = 1; // 攻撃速度が0を下回った場合、1にする
+                    if (playerData.Status.attackSpeedFactor <= 0) playerData.Status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
                     break;
             }
 
@@ -983,18 +983,8 @@ namespace StreamingHubs
                 playerData.Status.moveSpeed *= 1.1f;
                 playerData.Status.healRate *= 1.1f;
 
-                CharacterStatusData newStatus = new CharacterStatusData();
-
-                // 最大値を更新
-                newStatus.hp = playerData.Status.hp;
-                newStatus.power = playerData.Status.power;
-                newStatus.defence = playerData.Status.defence;
-                newStatus.jumpPower = playerData.Status.jumpPower;
-                newStatus.moveSpeed = playerData.Status.moveSpeed;
-                newStatus.healRate = playerData.Status.healRate;
-
                 // 強化後のステータスをGuidをキーにして格納
-                characterStatusDataList.Add(user.Key, newStatus);
+                characterStatusDataList.Add(user.Key, playerData.Status);
             }
 
             // 参加者全員にレベルアップしたことを通知
