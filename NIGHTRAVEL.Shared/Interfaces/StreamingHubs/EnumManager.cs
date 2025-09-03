@@ -155,7 +155,21 @@ namespace Shared.Interfaces.StreamingHubs
             JumpPower,
             MoveSpeed,
             AttackSpeedFactor,
-            HealRate
+            HealRate,
+
+            // レリックステータス
+            GiveDebuffRates,
+            DebuffDmgRate,
+            PierceRate,
+            DmgHealRate,
+            DodgeRate,
+            DmgResistRate,
+            KillHpReward,
+            DARate,
+            BombCnt,
+            HealMeatCnt,
+            ReviveCnt,
+            ElecOrbCnt,
         }
 
         /// <summary>

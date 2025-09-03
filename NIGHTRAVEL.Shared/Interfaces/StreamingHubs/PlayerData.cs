@@ -3,6 +3,7 @@
 // Author:木田晃輔
 //=============================
 using MessagePack;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
@@ -40,5 +41,11 @@ namespace Shared.Interfaces.StreamingHubs
 
         [Key(11)]
         public EnumManager.Player_Type Class { get; set; }
+
+        [Key(12)]
+        /// <summary>
+        /// レリック関連のステータスデータ
+        /// </summary>
+        public PlayerRelicStatusData RelicStatus { get; set; } = new PlayerRelicStatusData();
     }
 }

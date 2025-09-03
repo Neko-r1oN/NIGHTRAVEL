@@ -332,7 +332,7 @@ abstract public class CharacterBase : MonoBehaviour
     /// 最大値の変更＆それに応じた現在値の変更
     /// </summary>
     /// <param name="changeData">強化後のステータス</param>
-    public virtual void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
+    public void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
     {
         // 各ステータスの最大値に対する現在値の割合を計算
         float hpRate = (float)hp / (float)maxHp;

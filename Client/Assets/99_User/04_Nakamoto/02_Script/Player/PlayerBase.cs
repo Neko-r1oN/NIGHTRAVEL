@@ -492,32 +492,19 @@ abstract public class PlayerBase : CharacterBase
     /// 最大値の変更＆それに応じた現在値の変更
     /// </summary>
     /// <param name="changeData">強化後のステータス</param>
-    public override void ChangeAccordingStatusToMaximumValue(CharacterStatusData changeData)
+    public void ChangeRelicStatusData(PlayerRelicStatusData relicStatus)
     {
-        if(changeData is PlayerStatusData)
-        {
-            PlayerStatusData playerData = (PlayerStatusData)changeData;
-
-            // レリック取得によるステータス変化
-            giveDebuffRates = playerData.GiveDebuffRates;
-            debuffDmgRate = playerData.DebuffDmgRate;
-            pierceRate = playerData.PierceRate;
-            dmgHealRate = playerData.DmgHealRate;
-            dodgeRate = playerData.DodgeRate;
-            dmgResistRate = playerData.DmgResistRate;
-            killHpReward = playerData.KillHpReward;
-            daRate = playerData.DARate;
-            bombCnt = playerData.BombCnt;
-            healMeatCnt = playerData.HealMeatCnt;
-            reviveCnt = playerData.ReviveCnt;
-            elecOrbCnt = playerData.ElecOrbCnt;
-
-            base.ChangeAccordingStatusToMaximumValue(playerData);
-        }
-        else
-        {
-            base.ChangeAccordingStatusToMaximumValue(changeData);
-        }
+        debuffDmgRate = relicStatus.DebuffDmgRate;  // 状態異常ダメージ倍率
+        pierceRate = relicStatus.PierceRate;        // 防御貫通率
+        dmgHealRate = relicStatus.DmgHealRate;      // 与ダメ回復率
+        dodgeRate = relicStatus.DodgeRate;          // 回避率
+        dmgResistRate = relicStatus.DmgResistRate;  // 被ダメージ軽減率
+        killHpReward = relicStatus.KillHpReward;    // キル時HP回復率
+        daRate = relicStatus.DARate;                // ダブルアタック率
+        bombCnt = relicStatus.BombCnt;              // ボム所持数
+        healMeatCnt = relicStatus.HealMeatCnt;      // 回復肉所持数
+        reviveCnt = relicStatus.ReviveCnt;          // リバイブ回数
+        elecOrbCnt = relicStatus.ElecOrbCnt;        // 感電オーブ所持数
     }
 
     /// <summary>
