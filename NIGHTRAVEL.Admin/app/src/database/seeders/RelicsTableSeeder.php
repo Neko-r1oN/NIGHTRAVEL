@@ -16,7 +16,10 @@ class RelicsTableSeeder extends Seeder
         Relic::create([
             'name' => 'アタックチップ',
             'const_effect' => 0,
-            'probability_effect' => 1.05,
+            'rate_effect' => 1.05,
+            'calculation_method' => 1,
+            'max' => 0,
+            'status_type' => '攻撃力',
             'explanation' => '攻撃力上昇+5%',
             'rarity' => 1,
         ]);
