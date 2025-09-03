@@ -19,27 +19,37 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 1.05,
             'calculation_method' => 1,
             'max' => 0,
-            'status_type' => '攻撃力',
+            'status_type' => 'Power',
             'explanation' => '攻撃力上昇+5%',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'ディフェンスチップ',
             'const_effect' => 0,
-            'probability_effect' => 1.03,
+            'rate_effect' => 1.03,
+            'calculation_method' => 1,
+            'max' => 0,
+            'status_type' => 'Defense',
             'explanation' => '防御力上昇+3%',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'ムーブスピードスチップ',
-            'const_effect' => 0,
-            'probability_effect' => 1.05,
+            'const_effect' => 2,
+            'rate_effect' => 1,
+            'calculation_method' => 1,
+            'max' => 0,
+            'status_type' => 'MoveSpeed',
             'explanation' => '移動速度+2',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'アタックスピードスチップ',
-            'effect' => 0.02,
+            'const_effect' => 0.05,
+            'rate_effect' => 1,
+            'calculation_method' => 1,
+            'max' => 0,
+            'status_type' => 'AttackSpeedFactor',
             'explanation' => '攻撃速度+0.05',
             'rarity' => 1,
         ]);
