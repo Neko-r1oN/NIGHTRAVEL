@@ -3,6 +3,7 @@
 // Author:Nishiura
 // Date:2025/07/01
 //===================
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +20,8 @@ public class PressurePlate : MonoBehaviour
         // ƒvƒŒƒCƒ„[‚ªG‚ê‚½ê‡‚©‚Â‰Ÿ‚³‚ê‚½ó‘Ô‚Å‚È‚¢ê‡
         if (collision.transform.tag == "Player" && isPushed != true)
         {
-            isPushed = true;
+            isPushed = true; 
+            this.transform.DOMoveY((this.gameObject.transform.position.y -0.19f), 0.2f);
             PowerOn();
             Debug.Log("Plate Activated");
         }

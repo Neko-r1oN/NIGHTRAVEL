@@ -991,7 +991,7 @@ GameObject:
   - component: {fileID: 81783368}
   m_Layer: 0
   m_Name: SteelDoor (1)
-  m_TagString: Untagged
+  m_TagString: Gimmick/SteelDoor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -72919,9 +72919,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -73896,9 +73904,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -76108,9 +76124,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -78173,9 +78197,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -78404,9 +78436,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -78896,6 +78936,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 293fae76ea26738459d80d3a2e5af57b, type: 3}
+--- !u!1 &781988493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+  m_PrefabInstance: {fileID: 746172052}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &789833030
 GameObject:
   m_ObjectHideFlags: 0
@@ -79011,9 +79056,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -79413,6 +79466,95 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1001 &825990588
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2457894810634244187, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_Name
+      value: PressurePlate 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6463884259110432451, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: linkedGimmick.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: 'linkedGimmick.Array.data[0]'
+      value: 
+      objectReference: {fileID: 781988493}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: 'linkedGimmick.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1922954081}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: 'linkedGimmick.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1422538766}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: 'linkedGimmick.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1024797005}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: 'linkedGimmick.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1598503135}
+    - target: {fileID: 6574099183371956394, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: 'linkedGimmick.Array.data[5]'
+      value: 
+      objectReference: {fileID: 1184440432}
+    - target: {fileID: 6661508011558114374, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3b0ca5df416789c40a56e046f587d854, type: 3}
 --- !u!1001 &828327497
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -80358,9 +80500,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (11)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -82078,6 +82228,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1024797005 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+  m_PrefabInstance: {fileID: 735926389}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1026917808 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9207136420313239124, guid: 293fae76ea26738459d80d3a2e5af57b, type: 3}
@@ -82184,11 +82339,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 102.1
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.2
+      value: 31.7
       objectReference: {fileID: 0}
     - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -83544,9 +83699,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -84649,6 +84812,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3fcbbea29f23c2a4195f3d19ffe3128e, type: 3}
+--- !u!1 &1184440432 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+  m_PrefabInstance: {fileID: 343180328}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1185501638
 GameObject:
   m_ObjectHideFlags: 0
@@ -84744,9 +84912,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 564996714146327080, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
+      objectReference: {fileID: 0}
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -85340,7 +85520,7 @@ GameObject:
   - component: {fileID: 1235171602}
   m_Layer: 0
   m_Name: SteelDoor (3)
-  m_TagString: Untagged
+  m_TagString: Gimmick/SteelDoor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85655,9 +85835,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -85810,7 +85998,7 @@ Transform:
   m_GameObject: {fileID: 1253553933}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 102.009995, y: -0.1000002, z: -10}
+  m_LocalPosition: {x: 24.909996, y: 31.4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -85930,9 +86118,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -87671,9 +87867,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -88433,6 +88637,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 687370209}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+--- !u!1 &1422538766 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+  m_PrefabInstance: {fileID: 1928721479}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1433151043
 GameObject:
   m_ObjectHideFlags: 0
@@ -99633,7 +99842,7 @@ GameObject:
   - component: {fileID: 1494055503}
   m_Layer: 0
   m_Name: SteelDoor (2)
-  m_TagString: Untagged
+  m_TagString: Gimmick/SteelDoor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100578,6 +100787,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1598503135 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+  m_PrefabInstance: {fileID: 1251246713}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1599098568
 GameObject:
   m_ObjectHideFlags: 0
@@ -101543,9 +101757,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -103031,9 +103253,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -103088,9 +103318,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (13)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -103751,9 +103989,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -103993,6 +104239,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 293fae76ea26738459d80d3a2e5af57b, type: 3}
+--- !u!1 &1922954081 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+  m_PrefabInstance: {fileID: 1116765173}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1927803417
 GameObject:
   m_ObjectHideFlags: 0
@@ -104088,9 +104339,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -105130,9 +105389,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -105751,9 +106018,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 751072738}
     m_Modifications:
+    - target: {fileID: 7700897785131832753, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: isPowerd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_Name
       value: SteelDoorSet (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735085867166721943, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
+      propertyPath: m_TagString
+      value: Gimmick/SteelDoor
       objectReference: {fileID: 0}
     - target: {fileID: 8411314388858160972, guid: c1404b9a317cd3b40997c054ddfb1d86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -109593,7 +109868,7 @@ GameObject:
   - component: {fileID: 234184663321719644}
   m_Layer: 0
   m_Name: SteelDoor
-  m_TagString: Untagged
+  m_TagString: Gimmick/SteelDoor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110496,3 +110771,4 @@ SceneRoots:
   - {fileID: 1134285334}
   - {fileID: 2019192822}
   - {fileID: 384270649}
+  - {fileID: 825990588}
