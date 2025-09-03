@@ -193,7 +193,6 @@ abstract public class EnemyBase : CharacterBase
 
     protected override void Start()
     {
-        base.Start();
         players = new List<GameObject>(CharacterManager.Instance.PlayerObjs.Values);
         terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
         m_rb2d = GetComponent<Rigidbody2D>();
@@ -201,6 +200,7 @@ abstract public class EnemyBase : CharacterBase
         chaseAI = GetComponent<EnemyChaseAI>();
         enemyElite = GetComponent<EnemyElite>();
         isStartComp = true;
+        base.Start();
     }
 
     protected virtual void FixedUpdate()
@@ -728,6 +728,7 @@ abstract public class EnemyBase : CharacterBase
         isInvincible = false;
         doOnceDecision = true;
         isPatrolPaused = false;
+        m_rb2d.bodyType = defaultType2D;
     }
 
     /// <summary>

@@ -325,7 +325,11 @@ public class CyberDog : EnemyBase
     public override void ResetAllStates()
     {
         base.ResetAllStates();
-        DecideBehavior();
+        //DecideBehavior();
+        if (target == null)
+        {
+            target = sightChecker.GetTargetInSight();
+        }
     }
 
     #endregion

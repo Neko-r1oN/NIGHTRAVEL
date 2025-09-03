@@ -13,6 +13,7 @@ using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using static UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty;
 
 abstract public class CharacterBase : MonoBehaviour
 {
@@ -223,6 +224,10 @@ abstract public class CharacterBase : MonoBehaviour
 
     #endregion
 
+    #region ÇªÇÃëº
+    protected RigidbodyType2D defaultType2D;
+    #endregion
+
     //--------------------------------------------------------------
     // ÉÅÉ\ÉbÉh
 
@@ -254,6 +259,7 @@ abstract public class CharacterBase : MonoBehaviour
             if (gameObject.tag == "Enemy" || CharacterManager.Instance.PlayerObjSelf != this.gameObject)
             {
                 var rb2d = GetComponent<Rigidbody2D>();
+                defaultType2D = rb2d.bodyType;
                 rb2d.bodyType = RigidbodyType2D.Static;
                 this.enabled = false;
             }
