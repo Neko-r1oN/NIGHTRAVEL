@@ -139,7 +139,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
         Task<CharacterStatusData> ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
-
         #endregion
         #region レリック関連
 

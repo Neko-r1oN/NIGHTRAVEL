@@ -315,15 +315,18 @@ namespace StreamingHubs
         {
             GameDbContext dbContext = new GameDbContext();
 
+            List<int> rndList = new List<int>();
+            for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
+            { 
+                // 取得するレリックのIDを乱数で指定
+                rndList.Add(new Random().Next(1, dbContext.Relics.ToArray().Length));
+            }
+            // レリック情報を検索
+            var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id));
+
             // 参加人数分ループ
             for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
             {
-
-                int relicID = new Random().Next(1, dbContext.Relics.ToArray().Length); // 取得するレリックのIDを乱数で指定
-
-                // レリック情報を検索
-                var relic = dbContext.Relics.Where(relic => relic.id == relicID).First();
-
                 DropRelicData dropRelicData = new DropRelicData();
 
                 // データを更新
@@ -331,7 +334,7 @@ namespace StreamingHubs
                 dropRelicData.Name = relic.name;
                 dropRelicData.ExplanationText = relic.explanation;
                 dropRelicData.Effect = (int)relic.effect;
-                dropRelicData.RelicType = (EnumManager.RELIC_TYPE)relicID;
+                dropRelicData.RelicType = (EnumManager.RELIC_TYPE)rndList[i];
                 dropRelicData.SpawnPos = pos.Pop();
 
                 // ドロップしたレリックリストに追加
@@ -448,6 +451,7 @@ namespace StreamingHubs
                     // 参加者全員にステージの進行を通知
                     this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);
                     this.roomContext.isAdvanceRequest = false;  // 未申請にする
+                    isAdvance = false;
                 }
                 else
                 {
@@ -479,7 +483,10 @@ namespace StreamingHubs
             // 進行できる場合、進行通知をする
             if (canAdvenceStage)
             {
-                await StageClear(isAdvance);
+                //await StageClear(isAdvance);
+                this.roomContext.Group.All.OnStartGame();
+
+                joinedUser.IsAdvance = false; // 準備完了を解除する
                 canAdvenceStage = false;
             }
         }
@@ -588,6 +595,9 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
+                // 敵被弾データを新しく作成
+                EnemyDamegeData enemDmgData = new EnemyDamegeData();
+
                 // ID指定で敵情報を取得
                 var enemData = this.roomContext.GetEnemyData(enemID);
                 if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
@@ -595,11 +605,18 @@ namespace StreamingHubs
                 // 現在のHPを受け取ったダメージ量分減算
                 enemData.State.hp -= dmgAmount;
 
+                enemDmgData.Damage = dmgAmount;  // 付与ダメージ
+                enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
+                enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
+
                 // 敵のHPが0以下になった場合
                 if (enemData.State.hp <= 0)
                 {
                     LevelUp(roomContext.ExpManager); // レベルアップ処理
                 }
+
+                // 参加者全員に受け取ったIDの敵が受け取ったHPになったことを通知
+                this.roomContext.Group.All.OnEnemyHealth(enemDmgData);
             }
         }
 
@@ -797,31 +814,80 @@ namespace StreamingHubs
             switch (upgrade.type)   // 各強化をタイプで識別
             {
                 case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
-                    //playerData.Status.hp += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.hp += (int)upgrade.const_effect1;
+                    playerData.Status.hp *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.hp += (int)upgrade.const_effect2;
+                    playerData.Status.hp *= (int)upgrade.rate_effect2;
+
+                    if(playerData.Status.hp <= 0)playerData.Status.hp = 1; // HPが0を下回った場合、1にする
                     break;
 
                 case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
-                    //playerData.Status.power += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.power += (int)upgrade.const_effect1;
+                    playerData.Status.power *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.power += (int)upgrade.const_effect2;
+                    playerData.Status.power *= (int)upgrade.rate_effect2;
+
+                    if (playerData.Status.power <= 0) playerData.Status.power = 1; // 攻撃力が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
-                    //playerData.Status.defence += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.defence += (int)upgrade.const_effect1;
+                    playerData.Status.defence *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.defence += (int)upgrade.const_effect2;
+                    playerData.Status.defence *= (int)upgrade.rate_effect2;
+
+                    if (playerData.Status.defence <= 0) playerData.Status.defence = 1; // 防御力が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
-                    //playerData.Status.jumpPower += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.jumpPower += (int)upgrade.const_effect1;
+                    playerData.Status.jumpPower *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.jumpPower += (int)upgrade.const_effect2;
+                    playerData.Status.jumpPower *= (int)upgrade.rate_effect2;
+
+                    if (playerData.Status.jumpPower <= 0) playerData.Status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
-                    //playerData.Status.moveSpeed += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.moveSpeed += (int)upgrade.const_effect1;
+                    playerData.Status.moveSpeed *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.moveSpeed += (int)upgrade.const_effect2;
+                    playerData.Status.moveSpeed *= (int)upgrade.rate_effect2;
+
+                    if (playerData.Status.moveSpeed <= 0) playerData.Status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
-                    //playerData.Status.healRate += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.healRate += (int)upgrade.const_effect1;
+                    playerData.Status.healRate *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.healRate += (int)upgrade.const_effect2;
+                    playerData.Status.healRate *= (int)upgrade.rate_effect2;
+
+                    if (playerData.Status.healRate <= 0) playerData.Status.healRate = 1; // 自動回復速度が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                    //playerData.Status.attackSpeedFactor += (int)upgrade.effect;
+                    // 第1効果
+                    playerData.Status.attackSpeedFactor += (int)upgrade.const_effect1;
+                    playerData.Status.attackSpeedFactor *= (int)upgrade.rate_effect1;
+                    // 第2効果
+                    playerData.Status.attackSpeedFactor += (int)upgrade.const_effect2;
+                    playerData.Status.attackSpeedFactor *= (int)upgrade.rate_effect2;
+
+                    if (playerData.Status.attackSpeedFactor <= 0) playerData.Status.attackSpeedFactor = 1; // 攻撃速度が0を下回った場合、1にする
                     break;
             }
 
@@ -883,6 +949,9 @@ namespace StreamingHubs
             // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
+            // 強化選択肢格納リスト
+            List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList = new List<EnumManager.STAT_UPGRADE_OPTION>();
+
             // リストが3になるまでループ
             do
             {
@@ -890,12 +959,15 @@ namespace StreamingHubs
                 var rndOption = new Random().Next(0, (int)EnumManager.STAT_UPGRADE_OPTION.Unique_MovementSpeed);
 
                 // 設定された選択肢がリスト内に無い場合
-                if (!this.roomContext.statusOptionList.Contains((EnumManager.STAT_UPGRADE_OPTION)rndOption))
+                if (!statusOptionList.Contains((EnumManager.STAT_UPGRADE_OPTION)rndOption))
                 {
                     // 選択肢をリストに入れる
-                    this.roomContext.statusOptionList.Add((EnumManager.STAT_UPGRADE_OPTION)rndOption);
+                    statusOptionList.Add((EnumManager.STAT_UPGRADE_OPTION)rndOption);
                 }
-            } while (this.roomContext.statusOptionList.Count <= 3);
+            } while (statusOptionList.Count <= 3);
+
+            // 強化後ステータス格納リスト
+            Dictionary<Guid, CharacterStatusData> characterStatusDataList = new Dictionary<Guid, CharacterStatusData>();
 
             // 参加者リストをループ
             foreach (var user in this.roomContext.JoinedUserList)
@@ -922,11 +994,11 @@ namespace StreamingHubs
                 newStatus.healRate = playerData.Status.healRate;
 
                 // 強化後のステータスをGuidをキーにして格納
-                this.roomContext.characterStatusDataList.Add(user.Key, newStatus);
+                characterStatusDataList.Add(user.Key, newStatus);
             }
 
             // 参加者全員にレベルアップしたことを通知
-            this.roomContext.Group.All.OnLevelUp(expManager.Level, expManager.nowExp, this.roomContext.characterStatusDataList, this.roomContext.statusOptionList);
+            this.roomContext.Group.All.OnLevelUp(expManager.Level, expManager.nowExp, characterStatusDataList, this.roomContext.statusOptionList);
         }
 
         /// <summary>
