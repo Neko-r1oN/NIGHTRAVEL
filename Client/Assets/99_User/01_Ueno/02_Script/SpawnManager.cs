@@ -540,8 +540,7 @@ public class SpawnManager : MonoBehaviour
         enemyObj.transform.localScale = scale;
         enemyObj.GetComponent<EnemyBase>().PromoteToElite(eliteType);
         enemyObj.GetComponent<EnemyBase>().SelfID = spawnEnemyData.EnemyId;
-        enemyObj.GetComponent<EnemyBase>().SpawnEnemyType = spawnEnemyData.SpawnType;
-        CharacterManager.Instance.AddEnemies(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+        CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
         
         return enemyObj;
     }
@@ -559,18 +558,18 @@ public class SpawnManager : MonoBehaviour
             return;
         }
 
-        // ここで敵の生成リクエスト
+        // マスタクライアントのみ敵の生成をリクエスト
         if (RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            // SpawnEnemyAsyncを呼び出す
             await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
+            return;
         }
 
+        // ローカル用
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
         {
             if (spawnEnemyData == null) continue;
             SpawnEnemy(spawnEnemyData);
-
         }
     }
 
