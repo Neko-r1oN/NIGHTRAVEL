@@ -82,6 +82,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser += this.OnLeave;
+        RoomModel.Instance.OnEnemyHealthSyn += this.OnHitEnemy;
     }
 
     private void Start()
@@ -99,6 +100,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser -= this.OnLeave;
+        RoomModel.Instance.OnEnemyHealthSyn -= this.OnHitEnemy;
     }
 
 

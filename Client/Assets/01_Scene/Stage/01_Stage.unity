@@ -3161,6 +3161,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: baseHp
+      value: 4000
+      objectReference: {fileID: 0}
+    - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: basePower
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: jumpPower
       value: 0
       objectReference: {fileID: 0}
@@ -21442,7 +21450,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terminalType: 2
   maxSpawnEnemy: 0
-  countDownText: {fileID: 0}
   limitTime: 0
   terminalIcon: {fileID: 0}
   pointList:
