@@ -157,12 +157,20 @@ public class CharacterManager : MonoBehaviour
     /// 新たな敵をリストに追加する
     /// </summary>
     /// <param name="newEnemies"></param>
-    public void AddEnemies(params SpawnedEnemy[] newEnemies)
+    public void AddEnemiesToList(params SpawnedEnemy[] newEnemies)
     {
         foreach (var enemy in newEnemies)
         {
             enemies.Add(enemy.UniqueId, enemy);
         }
+    }
+
+    /// <summary>
+    /// リストから敵を削除
+    /// </summary>
+    public void RemoveEnemyFromList(int uniqueId)
+    {
+        enemies.Remove(uniqueId);
     }
 
     /// <summary>

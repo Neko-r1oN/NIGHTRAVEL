@@ -68,9 +68,6 @@ abstract public class EnemyBase : CharacterBase
     [SerializeField]
     protected float hitTime = 0.5f;
 
-    [Foldout("ステータス")]
-    private EnumManager.SPAWN_ENEMY_TYPE spawnEnemyType;
-
     #endregion
 
     #region オプション
@@ -176,12 +173,10 @@ abstract public class EnemyBase : CharacterBase
 
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
 
-    public EnumManager.SPAWN_ENEMY_TYPE SpawnEnemyType { get { return spawnEnemyType; } set { spawnEnemyType = value; } }
-
     public Terminal TerminalManager { get { return terminalManager; } set { terminalManager = value; } }
     #endregion
 
-    #region ID
+    #region 生成されたときのID
     int selfID;
 
     /// <summary>
@@ -525,7 +520,7 @@ abstract public class EnemyBase : CharacterBase
         Vector3? attackerPos = null;
         if (attacker != null) attackerPos = attacker.transform.position;
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
-        hp -= Mathf.Abs(damage);
+        hp = remainingHP;
 
         // 状態異常を付与する
         if (debuffList.Length > 0) effectController.ApplyStatusEffect(debuffList);
@@ -569,7 +564,7 @@ abstract public class EnemyBase : CharacterBase
                     player.GetExp(exp);
             }
 
-            if (spawnEnemyType == SPAWN_ENEMY_TYPE.ByTerminal)
+            if (CharacterManager.Instance.Enemies[selfID].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
             {// 生成タイプがターミナルなら
                 // 死んだ敵をリストから削除
                 terminalManager.TerminalSpawnList.Remove(this.gameObject);
@@ -584,6 +579,8 @@ abstract public class EnemyBase : CharacterBase
                 // Instanceがあるなら敵撃破関数を呼ぶ
                 if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             }
+
+            CharacterManager.Instance.RemoveEnemyFromList(selfID);
 
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             yield return new WaitForSeconds(destroyWaitSec);
