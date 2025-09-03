@@ -2,6 +2,7 @@
 // プレイヤー抽象親クラス [ PlayerBase.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using DG.Tweening;
 using MessagePack;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Pixeye.Unity;
@@ -187,6 +188,9 @@ abstract public class PlayerBase : CharacterBase
 
     [Foldout("エフェクト・UI")]
     [SerializeField] protected GameObject ziplineSpark;
+
+    [Foldout("エフェクト・UI")]
+    [SerializeField] protected GameObject interactObj;
 
     [Foldout("エフェクト・UI")]
     [SerializeField] protected Sprite[] interactSprits;         // [0] Pad [1] Key
@@ -753,7 +757,12 @@ abstract public class PlayerBase : CharacterBase
         // インタラクトオブジェ接触判定
         if(collision.gameObject.tag == "Interact")
         {   // インタラクトUI表示
+            SpriteRenderer spriteRenderer = interactObj.gameObject.GetComponent<SpriteRenderer>();
+            spriteRenderer.sprite = (UIManager.Instance.IsInputGamePad) ? interactSprits[0] : interactSprits[1];
 
+            // UIアニメーション
+            spriteRenderer.DOFade(1f, 0.4f);
+            interactObj.GetComponent<Transform>().DOLocalMoveY(0.8f, 0.4f);
         }
     }
 
@@ -766,7 +775,11 @@ abstract public class PlayerBase : CharacterBase
         // インタラクトオブジェ接触判定
         if (collision.gameObject.tag == "Interact")
         {   // インタラクトUI非表示
+            SpriteRenderer spriteRenderer = interactObj.gameObject.GetComponent<SpriteRenderer>();
 
+            // UIアニメーション
+            spriteRenderer.DOFade(0f, 0.4f);
+            interactObj.GetComponent<Transform>().DOLocalMoveY(0.5f, 0.4f);
         }
     }
 
