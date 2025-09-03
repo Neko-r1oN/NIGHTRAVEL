@@ -134,7 +134,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task EnemyHealthAsync(int enemID, Guid rconID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
 
-        Task EnemyHealthAsync(int enemID, int dmgAmount);
+        /// <summary>
+        /// 敵の被ダメージ同期処理   プレイヤーによるダメージ以外
+        /// </summary>
+        /// <param name="enemID">敵識別ID</param>
+        /// <param name="dmgAmount">適用させるダメージ量</param>
+        /// <returns></returns>
+        Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount);
 
         /// <summary>
         /// ステータス強化選択

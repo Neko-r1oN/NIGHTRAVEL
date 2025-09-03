@@ -581,13 +581,13 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// 被ダメージ同期処理   プレイヤーによるダメージ以外
+        /// 敵の被ダメージ同期処理   プレイヤーによるダメージ以外
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">ダメージ量</param>
         /// <returns></returns>
-        public async Task EnemyHealthAsync(int enemID, int dmgAmount)
+        public async Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount)
         {
             lock (roomContextRepository) // 排他制御
             {
