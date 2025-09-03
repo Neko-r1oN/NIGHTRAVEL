@@ -587,24 +587,24 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">ダメージ量</param>
         /// <returns></returns>
-        //public async Task EnemyHealthAsync(int enemID, int dmgAmount)
-        //{
-        //    lock (roomContextRepository) // 排他制御
-        //    {
-        //        // ID指定で敵情報を取得
-        //        var enemData = this.roomContext.GetEnemyData(enemID);
-        //        if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
+        public async Task EnemyHealthAsync(int enemID, int dmgAmount)
+        {
+            lock (roomContextRepository) // 排他制御
+            {
+                // ID指定で敵情報を取得
+                var enemData = this.roomContext.GetEnemyData(enemID);
+                if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
-        //        // 現在のHPを受け取ったダメージ量分減算
-        //        enemData.State.hp -= dmgAmount;
+                // 現在のHPを受け取ったダメージ量分減算
+                enemData.State.hp -= dmgAmount;
 
-        //        // 敵のHPが0以下になった場合
-        //        if (enemData.State.hp <= 0)
-        //        {
-        //            LevelUp(roomContext.ExpManager); // レベルアップ処理
-        //        }
-        //    }
-        //}
+                // 敵のHPが0以下になった場合
+                if (enemData.State.hp <= 0)
+                {
+                    LevelUp(roomContext.ExpManager); // レベルアップ処理
+                }
+            }
+        }
 
         /// <summary>
         /// 敵死亡同期処理
