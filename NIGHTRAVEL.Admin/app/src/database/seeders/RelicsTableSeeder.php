@@ -55,7 +55,11 @@ class RelicsTableSeeder extends Seeder
         ]);
         Relic::create([
             'name' => '冷却ファン',
-            'effect' => 0.15,
+            'const_effect' => 0,
+            'rate_effect' => 1.15,
+            'calculation_method' => 1,
+            'max' => 0.15,
+            'status_type' => 'GiveDebuffRates',
             'explanation' => '攻撃に凍結効果を付与　15%で発動',
             'rarity' => 1,
         ]);
