@@ -218,7 +218,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="conID">接続ID</param>
         /// <returns></returns>
-        Task MasterLostAsync(Guid conID);
+        //Task MasterLostAsync(Guid conID);
 
         /// <summary>
         /// 時間同期処理

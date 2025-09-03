@@ -117,26 +117,37 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task LeavedAsync()
         {
-            // Nullチェック入れる
-            //　退室するユーザーを取得
-            var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
-
-            ////マスタークライアントだったら次の人に譲渡する
-            if (joinedUser.IsMaster == true)
+            lock (roomContextRepository) // 排他制御
             {
-                await MasterLostAsync(this.ConnectionId);
+                // Nullチェック入れる
+                //　退室するユーザーを取得
+                var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
+
+                ////マスタークライアントだったら次の人に譲渡する
+                if (joinedUser.IsMaster == true)
+                {
+                    MasterLostAsync(this.ConnectionId);
+                    foreach(var user in this.roomContext.JoinedUserList)
+                    {
+                        if(user.Value.IsMaster == true)
+                        {
+                            this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
+                        }
+                    }
+                }
+
+                // ルーム参加者全員に、ユーザーの退室通知を送信
+                this.roomContext.Group.All.OnLeave(joinedUser);
+
+                //　ルームから退室
+                this.roomContext.Group.Remove(this.ConnectionId);
+
+                //コンテキストからユーザーを削除
+                roomContext.RemoveUser(this.ConnectionId);
+                // ルームデータから自身のデータを削除
+                roomContext.RemovePlayerData(this.ConnectionId);
+
             }
-
-            // ルーム参加者全員に、ユーザーの退室通知を送信
-            this.roomContext.Group.All.OnLeave(joinedUser);
-
-            //　ルームから退室
-            this.roomContext.Group.Remove(this.ConnectionId);
-
-            //コンテキストからユーザーを削除
-            roomContext.RemoveUser(this.ConnectionId);
-            // ルームデータから自身のデータを削除
-            roomContext.RemovePlayerData(this.ConnectionId);
         }
 
         /// <summary>
@@ -367,23 +378,27 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
-            this.roomContext.SetSpawnedEnemyData(spawnEnemyData);
-
-            foreach (var spawnEnemy in spawnEnemyData) 
+            lock (roomContextRepository) // 排他制御
             {
-                GameDbContext dbContext = new GameDbContext();
-                var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
-                Enemy enemyData = new Enemy();
-                enemyData.id = spawnEnemy.EnemyId;
-                enemyData.name = enemy.name;
-                enemyData.isBoss = enemy.isBoss;
-                enemyData.exp = enemy.exp;
+                this.roomContext.SetSpawnedEnemyData(spawnEnemyData);
 
-                this.roomContext.SetEnemyData(enemyData);
-            }
+                foreach (var spawnEnemy in spawnEnemyData)
+                {
+                    GameDbContext dbContext = new GameDbContext();
+                    var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
+                    Enemy enemyData = new Enemy();
+                    enemyData.id = spawnEnemy.EnemyId;
+                    enemyData.name = enemy.name;
+                    enemyData.isBoss = enemy.isBoss;
+                    enemyData.exp = enemy.exp;
 
-            // 自分以外に、取得した敵情報と生成位置を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
+                    this.roomContext.SetEnemyData(enemyData);
+                    Console.WriteLine("敵が生成されました。");
+                }
+
+                // 自分以外に、取得した敵情報と生成位置を送信
+                this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
+            }   
         }
 
         /// <summary>
@@ -914,7 +929,7 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="conID"></param>
         /// <returns></returns>
-        public async Task MasterLostAsync(Guid conID)
+        void MasterLostAsync(Guid conID)
         {
             // 参加者リストをループ
             foreach (var user in this.roomContext.JoinedUserList)
@@ -924,7 +939,7 @@ namespace StreamingHubs
                 {
                     // その対象をマスタークライアントとし、通知を送る。ループを抜ける
                     user.Value.IsMaster = true;
-                    this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
+                    //this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
                     break;
                 }
             }

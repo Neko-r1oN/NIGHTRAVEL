@@ -145,6 +145,8 @@ public class MatchingManager : MonoBehaviour
     public void OnChangedMasterClient()
     {
         Debug.Log("あなたがマスタークライアントになりました。");
+        RoomModel.Instance.IsMaster = true;
+        //SpawnManager.Instance.SpawnCnt = CharacterManager.Instance.Enemies.Count;
     }
     #endregion
 }

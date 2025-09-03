@@ -14,6 +14,7 @@ using UnityEngine.Playables;
 using System.Linq;
 using System.Data;
 using Unity.VisualScripting;
+using UnityEngine.TextCore.Text;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -83,6 +84,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser += this.OnLeave;
         RoomModel.Instance.OnEnemyHealthSyn += this.OnHitEnemy;
+        RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
     }
 
     private void Start()
@@ -101,6 +103,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser -= this.OnLeave;
         RoomModel.Instance.OnEnemyHealthSyn -= this.OnHitEnemy;
+        RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
     }
 
 
@@ -386,6 +389,19 @@ public class CharacterManager : MonoBehaviour
         GameObject? attacker = playerObjs.GetValueOrDefault(damageData.AttackerId);
         enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, 
             playerObjs[damageData.AttackerId], true, damageData.DebuffList.ToArray());
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    void ActivateAllEnemies()
+    {
+        
+        foreach(var enemy in enemies.Values)
+        {
+            enemy.Enemy.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            enemy.Enemy.enabled = true;
+        }
     }
     #endregion
 }
