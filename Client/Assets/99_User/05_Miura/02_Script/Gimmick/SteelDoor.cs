@@ -27,7 +27,7 @@ public class SteelDoor : GimmickBase
     /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerStay2D(Collider2D collision)
     {//センサー部分にものが触れたら
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && isPowerd == true)
         {//「Player」タグが付いたものが触れたら
             //ドアを開く
             doorObj.transform.DOMoveY(this.transform.position.y+5, 0.5f);
@@ -36,7 +36,7 @@ public class SteelDoor : GimmickBase
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && isPowerd == true)
         {//「Player」タグが付いたものが離れたら
          //ドアを閉じる
             doorObj.transform.DOMoveY(initPos.y, 0.5f);
@@ -45,7 +45,7 @@ public class SteelDoor : GimmickBase
 
     public override void TurnOnPower(int triggerID)
     {
-
+        isPowerd = true;
     }
 
     public override void TruggerRequest()
