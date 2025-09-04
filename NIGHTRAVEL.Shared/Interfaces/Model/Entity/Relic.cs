@@ -19,9 +19,11 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
     {
         public int id { get; set; }                     //レリックのID
         public string name { get; set; }                //レリックの名前
-        public double const_effect { get; set; }              //レリックの効果量
-        public double rate_effect { get; set; }              //レリックの効果量
-        public int calculation_method { get; set; }              //計算方法
+        public double const_effect { get; set; }        //レリックの効果量
+        public double rate_effect { get; set; }         //レリックの効果量
+        public int calculation_method { get; set; }     //計算方法
+        public int max {  get; set; }                   //上昇ステータス最大値
+        public int status_type {  get; set; }           //上昇ステータスの種類
         public string explanation { get; set; }         //レリックの説明文
         public int rarity { get; set; }                 //レリックのレア度
         public DateTime Created_at { get; set; }            //生成日時

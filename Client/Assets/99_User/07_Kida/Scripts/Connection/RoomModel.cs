@@ -176,11 +176,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //}
     #endregion
 
-    private void OnDisable()
-    {
-        Debug.Log("€‚É‚Ü‚µ‚½");
-    }
-
     #region MagicOnionÚ‘±EØ’fˆ—
     /// <summary>
     /// MagicOnionÚ‘±ˆ—
