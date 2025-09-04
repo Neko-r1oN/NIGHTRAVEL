@@ -10,7 +10,8 @@ using UnityEngine.UI;
 
 public class DataBox : MonoBehaviour
 {
-    private bool isTouch;
+    private bool isOpened = false;
+    private bool isTouch = false;
     public GameObject openObj;
     private Image image;
 
@@ -25,20 +26,27 @@ public class DataBox : MonoBehaviour
     void Update()
     {
         //プレイヤーがデータボックスを調べたら
-        if (isTouch == true && Input.GetKey(KeyCode.E))
+        if (isTouch == true && Input.GetKey(KeyCode.E) && isOpened == false)
         {
-            Destroy(this.gameObject);
-            Instantiate(openObj,new Vector2(this.transform.position.x,this.transform.position.y),this.transform.rotation);
+            isOpened = true;
+            Instantiate(openObj, new Vector2(this.transform.position.x, this.transform.position.y), this.transform.rotation);
+            ItemManager.Instance.GetItemRequest(GetComponent<Item>(), CharacterManager.Instance.PlayerObjSelf);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             isTouch= true;
         }
     }
 
-
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
+        {
+            isTouch = false;
+        }
+    }
 }

@@ -24,9 +24,9 @@ class DataCube : MonoBehaviour
     //プレイヤーがデータキューブに触れたら
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
-            Destroy(this.gameObject);
+            ItemManager.Instance.GetItemRequest(GetComponent<Item>(), collision.gameObject);
         }
     }
 }
