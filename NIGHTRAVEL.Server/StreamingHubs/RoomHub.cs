@@ -96,9 +96,6 @@ namespace StreamingHubs
             //　ルームに参加
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
-            // 参加したことを自分以外に通知
-            //this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[this.ConnectionId],
-            //    roomContext.JoinedUserList);
             this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
             // ルームデータから接続IDを指定して自身のデータを取得
@@ -357,18 +354,23 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
-            this.roomContext.SetSpawnedEnemyData(spawnEnemyData);
-
             foreach (var spawnEnemy in spawnEnemyData) 
             {
+                // DBからIDを指定して敵を取得
                 GameDbContext dbContext = new GameDbContext();
                 var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
                 Enemy enemyData = new Enemy();
-                enemyData.id = spawnEnemy.EnemyId;
+
+                // 生成数を加算
+                this.roomContext.spawnEnemyCount++;
+                
+                // 取得した情報をスポーンした敵の情報に代入
+                enemyData.id = this.roomContext.spawnEnemyCount;
                 enemyData.name = enemy.name;
                 enemyData.isBoss = enemy.isBoss;
                 enemyData.exp = enemy.exp;
 
+                // 設定した情報をルームデータに保存
                 this.roomContext.SetEnemyData(enemyData);
             }
 
@@ -384,11 +386,8 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task BootGimmickAsync(int gimID)
         {
-            // ルームデータからギミックのIDを指定してギミックデータを取得
-            GimmickData gimmickData = this.roomContext.GetGimmickData(gimID);
-
-            // 参加者全員にギミック情報を通知？？？？
-            this.roomContext.Group.All.OnBootGimmick(gimmickData);
+            // 参加者全員にギミック情報を通知
+            this.roomContext.Group.All.OnBootGimmick(gimID);
         }
 
         /// <summary>
@@ -425,9 +424,6 @@ namespace StreamingHubs
                     {
                         this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
                     }else this.roomContext.NowStage++; // 現在のステージを加算
-
-                    // 生成された敵リストをクリア
-                    this.roomContext.spawnedEnemyDataList.Clear();
 
                     // 獲得したアイテムリストをクリア
                     this.roomContext.gottenItemList.Clear();
@@ -636,17 +632,6 @@ namespace StreamingHubs
         {
             // 参加者全員に受け取ったEXPの値を通知
             this.roomContext.Group.All.OnEXP(exp);
-        }
-
-        /// <summary>
-        /// レベルアップ同期処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <returns></returns>
-        public async Task LevelUpAsync()
-        {
-            // 参加者全員にレベルアップしたことを通知
-            //this.roomContext.Group.All.OnLevelUp();
         }
 
         /// <summary>

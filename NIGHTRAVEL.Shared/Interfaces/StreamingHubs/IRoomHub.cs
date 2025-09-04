@@ -264,35 +264,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task EXPAsync(int exp);
 
-        /// <summary>
-        /// レベルアップ同期
-        /// Author:Nishiura
-        /// </summary>
-        /// <returns></returns>
-        Task LevelUpAsync();
-
-        #endregion
-        #region 敵関連
-
-        /// <summary>
-        /// 敵死亡
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        /// <returns></returns>
-        Task KilledEnemyAsync(int enemID);
         #endregion
 
-        #region ゲーム内UI、仕様関連
-
-        /// <summary>
-        /// ダメージ表記
-        ///  Author:Nishiura
-        /// </summary>
-        /// <param name="dmg">ダメージ</param>
-        /// <returns></returns>
-        Task DamageAsync(int dmg);
-        #endregion
         #endregion
         #endregion
     }
