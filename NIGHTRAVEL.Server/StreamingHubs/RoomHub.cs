@@ -329,9 +329,6 @@ namespace StreamingHubs
 
                 // データを更新
                 dropRelicData.Id = Guid.NewGuid().ToString();
-                //dropRelicData.Name = relic.name;
-                //dropRelicData.ExplanationText = relic.explanation;
-                //dropRelicData.Effect = (int)relic.effect;
                 dropRelicData.RelicType = (EnumManager.RELIC_TYPE)rndList[i];
                 dropRelicData.SpawnPos = pos.Pop();
 
