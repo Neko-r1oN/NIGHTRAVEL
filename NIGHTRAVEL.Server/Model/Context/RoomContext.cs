@@ -191,6 +191,10 @@ namespace NIGHTRAVEL.Server.Model.Context
         {
             CharacterData characterSetData = new CharacterData();
 
+            // 各ステータスを初期化
+            characterSetData.State = playerDataList[conID].State;
+            characterSetData.Status = playerDataList[conID].Status;
+
             characterDataList.Add(conID, characterSetData);
         }
 
@@ -244,7 +248,21 @@ namespace NIGHTRAVEL.Server.Model.Context
 
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
+            setData.EnemyID = enemData.id;
+            setData.isBoss = enemData.isBoss;
             setData.Exp = enemData.exp;
+
+            // 現在ステータス
+            setData.State.hp = (int)enemData.hp;
+            setData.State.power = (int)enemData.attack;
+            setData.State.defence = (int)enemData.defence;
+            setData.State.moveSpeed = (int)enemData.move_speed;
+
+            // 最大ステータス
+            setData.Status.hp = (int)enemData.hp;
+            setData.Status.power = (int)enemData.attack;
+            setData.Status.defence = (int)enemData.defence;
+            setData.Status.moveSpeed = (int)enemData.move_speed;
 
             enemyDataList.Add(enemData.id, setData);
         }
