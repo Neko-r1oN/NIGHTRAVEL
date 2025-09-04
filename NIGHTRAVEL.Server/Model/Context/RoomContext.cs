@@ -118,6 +118,12 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<string, DropRelicData> dropRelicDataList { get; } = new Dictionary<string, DropRelicData>();
 
         /// <summary>
+        /// ギミックリスト
+        /// Author:Nishiura
+        /// </summary>
+        public Dictionary<int, GimmickData> gimmickList { get; } = new Dictionary<int, GimmickData>();
+
+        /// <summary>
         /// レリックの情報リスト
         /// </summary>
         public List<Relic> relicDataList {  get; } = new List<Relic>();
