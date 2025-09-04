@@ -758,7 +758,7 @@ namespace StreamingHubs
             {
                 // すでに取得済みである場合、処理しない
                 if (this.roomContext.gottenItemList.Contains(itemID)) return;
-                
+
                 switch (itemType)   // アイテムの種類に応じて処理を分ける
                 {
                     case EnumManager.ITEM_TYPE.Relic:       // レリックの場合
@@ -771,9 +771,46 @@ namespace StreamingHubs
                         // ルームデータから接続IDを指定して自身のデータを取得
                         var playerData = this.roomContext.characterDataList[this.ConnectionId];
 
-                        //if(relicData <= (int)EnumManager.STATUS_TYPE.HealRate)
+                        //if (relicData.type <= (int)EnumManager.STATUS_TYPE.HealRate)
                         //{
-                        //    relicData.
+                        //    if(relicData.calculation_method == (int)EnumManager.CalculationType.Additive)
+                        //    {
+                        //        Switch(relicData.type){
+                        //          case EnumManager.STATUS_TYPE.HP:
+                        //              playerData.Status.HP += relicData.const_effect;
+                        //          break;
+
+                        //          case EnumManager.STATUS_TYPE.Defence:
+                        //              playerData.Status.Defence += relicData.const_effect;
+                        //          break;
+
+                        //          case EnumManager.STATUS_TYPE.Power:
+                        //              playerData.Status.Power += relicData.const_effect;
+                        //          break;
+
+                        //          case EnumManager.STATUS_TYPE.JumpPower:
+                        //              playerData.Status.JumpPower += relicData.const_effect;
+                        //          break;
+
+                        //          case EnumManager.STATUS_TYPE.MoveSpeed:
+                        //              playerData.Status.MoveSpeed += relicData.const_effect;
+                        //          break;
+
+                        //          case EnumManager.STATUS_TYPE.AttackSpeedFactor:
+                        //              playerData.Status.AttackSpeedFactor += relicData.const_effect;
+                        //          break;
+
+                        //          case EnumManager.STATUS_TYPE.HealRate:
+                        //              playerData.Status.HealRate += relicData.const_effect;
+                        //          break;
+                        //        }
+                        //        playerData.Status += relicData.const_effect;
+                        //    }
+                        //    else if (relicData.calculation_method == (int)EnumManager.CalculationType.Multiplicative)
+                        //    {
+                        //        relicData.
+                        //    }
+
                         //}
 
                         break;
