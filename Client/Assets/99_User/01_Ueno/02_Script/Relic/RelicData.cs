@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class RelicDeta
+public class RelicData
 {
     public int ID { get; private set; }
     public int Rarity { get; private set; }
+    public string Name { get; private set; }
 
-    public RelicDeta(int id, int rarity)
+    public RelicData(int id, int rarity)
     {
         ID = id;
         Rarity = rarity;

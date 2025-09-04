@@ -6,6 +6,7 @@
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -24,8 +25,10 @@ public class Terminal : MonoBehaviour
 
     public int TerminalType { get { return terminalType; } }
 
+    public GameObject TerminalObj {  get; private set; }
+
     //カウントダウン用のテキスト
-    public Text countDownText;
+    //public Text countDownText;
 
     //制限時間
     public int limitTime;
@@ -65,7 +68,8 @@ public class Terminal : MonoBehaviour
         Type_Recycle,
         Type_Jumble,
         Type_Return,
-        Type_Elite
+        Type_Elite,
+        Type_Boss
     }
 
     public TerminalCode code;
@@ -79,11 +83,12 @@ public class Terminal : MonoBehaviour
         {TerminalCode.Type_Recycle,""},
         {TerminalCode.Type_Jumble,"" },
         {TerminalCode.Type_Return,"" },
-        {TerminalCode.Type_Elite,"" }
+        {TerminalCode.Type_Elite,"出現したエリート敵を全て倒せ" },
+        {TerminalCode.Type_Boss,"" }
     };
 
-    bool isTerminal;
 
+    bool isTerminal;
 
     public bool IsTerminal {  get { return isTerminal; } }
 
@@ -93,11 +98,6 @@ public class Terminal : MonoBehaviour
         {
             instance = this;
         }
-        //else
-        //{
-        //    // インスタンスが複数存在しないように、既に存在していたら自身を消去する
-        //    Destroy(gameObject);
-        //}
     }
 
     private void Start()
@@ -106,7 +106,7 @@ public class Terminal : MonoBehaviour
         isTerminal = false;
 
         //最初はcountDownTextを非表示にする
-        countDownText.enabled = false;
+        //countDownText.enabled = false;
         spawnManager = SpawnManager.Instance;
     }
 
@@ -158,26 +158,24 @@ public class Terminal : MonoBehaviour
                 isUsed = true;  // 使用済みにする
                 isTerminal = true;
 
-                rndNum = rand.Next(1, maxSpawnEnemy); // 生成数を乱数(6-10)で設定
+                rndNum = rand.Next(1,maxSpawnEnemy); // 生成数を乱数(6-10)で設定
 
                 int childrenCnt = this.gameObject.transform.childCount;
 
                 List<Transform> children = new List<Transform>();
 
-                for ( int i = 0;i < childrenCnt; i++)
+                for (int i = 0; i < childrenCnt; i++)
                 {
                     children.Add(this.gameObject.transform.GetChild(i));
                 }
 
                 TerminalGenerateEnemy(rndNum, children[0].position, children[1].position);   // 敵生成
 
-                isTerminal = true;
-
                 //カウントダウンする
-                InvokeRepeating("CountDown", 1, 1);
+                //InvokeRepeating("CountDown", 1, 1);
 
                 //countDownTextを表示する
-                countDownText.enabled = true;
+                //countDownText.enabled = true;
 
                 break;
 
@@ -189,12 +187,12 @@ public class Terminal : MonoBehaviour
                 {   // 各ゴールポイントを表示
                     point.SetActive(true);
                 }
-                
+
                 //countDownTextを表示する
-                countDownText.enabled = true;
+                //countDownText.enabled = true;
 
                 //カウントダウンする
-                InvokeRepeating("CountDown", 1, 1); 
+                InvokeRepeating("CountDown", 1, 1);
 
                 break;
 
@@ -219,7 +217,22 @@ public class Terminal : MonoBehaviour
 
             case (int)TerminalCode.Type_Elite:
                 // エリート敵生成の場合
+                // 敵生成の場合
                 isUsed = true;  // 使用済みにする
+                isTerminal = true;
+
+                rndNum = rand.Next(6, maxSpawnEnemy); // 生成数を乱数(6-10)で設定
+
+                int childCnt = this.gameObject.transform.childCount;
+
+                List<Transform> child = new List<Transform>();
+
+                for (int i = 0; i < childCnt; i++)
+                {
+                    child.Add(this.gameObject.transform.GetChild(i));
+                }
+
+                TerminalGenerateEnemy(rndNum, child[0].position, child[1].position);   // 敵生成
 
                 break;
 
@@ -232,6 +245,16 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Return:
                 // 再帰の場合
                 isUsed = true;  // 使用済みにする
+
+                break;
+
+            case (int)TerminalCode.Type_Boss:
+                if (SpawnManager.Instance.CrashNum >= SpawnManager.Instance.KnockTermsNum)
+                {
+                    isUsed = true;
+
+                    SpawnManager.Instance.SpawnBoss();
+                }
 
                 break;
         }
@@ -249,18 +272,22 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
                 isUsed = true;
+                // ターミナルの効果を終了する
+                isTerminal = false;
 
-                    //カウントダウンを停止する
-                    CancelInvoke("CountDown");
+                ////カウントダウンを停止する
+                //CancelInvoke("CountDown");
 
-                    //端末のアイコンを1.5秒かけてフェードアウトする
-                    terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+                //端末のアイコンを1.5秒かけてフェードアウトする
+                //terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
-                    //cowntDownTextを削除
-                    Destroy(countDownText);
+                //cowntDownTextを削除
+                //Destroy(countDownText);
 
-                    //レリックを排出する
-                    RelicManager.Instance.GenerateRelicTest();
+                UIManager.Instance.DisplayTimeInstructions();
+
+                //レリックを排出する
+                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Speed:
@@ -273,7 +300,7 @@ public class Terminal : MonoBehaviour
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 //cowntDownTextを削除
-                Destroy(countDownText);
+                //Destroy(countDownText);
 
                 //レリックを排出する
                 RelicManager.Instance.GenerateRelicTest();
@@ -299,7 +326,15 @@ public class Terminal : MonoBehaviour
                 break;
             case (int)TerminalCode.Type_Elite:
                 // エリート敵生成の場合
-                isUsed = true;  // 使用済みにする
+                // 敵生成の場合
+                isUsed = true;
+                // ターミナルの効果を終了する
+                isTerminal = false;
+
+                UIManager.Instance.DisplayTimeInstructions();
+
+                //レリックを排出する
+                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Recycle:
@@ -310,6 +345,10 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Return:
                 // 再帰の場合
                 isUsed = true;  // 使用済みにする
+
+                break;
+            case (int)TerminalCode.Type_Boss:
+                isUsed = true;
 
                 break;
         }
@@ -341,8 +380,11 @@ public class Terminal : MonoBehaviour
         //limitTImeを1ずつ減らす
         limitTime--;
 
+        var span = new TimeSpan(0, 0, (int)limitTime);
+        TimerDirector.Instance.Timer.text = span.ToString(@"mm\:ss");
+
         //制限時間をcowntDownTextに反映する
-        countDownText.text=limitTime.ToString();
+        //countDownText.text=limitTime.ToString();
 
         //制限時間が0以下になったら(時間切れ)
         if(limitTime <=0)
@@ -353,11 +395,13 @@ public class Terminal : MonoBehaviour
             //カウントダウンを停止する
             CancelInvoke("CountDown");
 
+            isTerminal = false;
+
             //端末のアイコンを1.5秒かけてフェードアウトする
-            terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+            //terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
             //cowntDownTextを削除
-            Destroy(countDownText);
+            //Destroy(countDownText);
 
             //ゴールポイントを削除する
             foreach (GameObject obj in pointList)
@@ -391,18 +435,27 @@ public class Terminal : MonoBehaviour
 
             if (spawnPos != null)
             {
-                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
-                Vector3 scale = Vector3.one;    // 一旦このまま
-                var spawnData = spawnManager.CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+                if (code == TerminalCode.Type_Elite)
+                {
+                    var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
+                    Vector3 scale = Vector3.one;    // 一旦このまま
+                    var spawnData = spawnManager.CreateTerminalSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
 
-                spawnManager.SpawnTerminalEnemyRequest(this,spawnData);
+                    spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
+                }
+                else
+                {
+                    var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
+                    Vector3 scale = Vector3.one;    // 一旦このまま
+                    var spawnData = spawnManager.CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+
+                    spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
+                }
             }
 
             enemyCnt++;
         }   
     }
-
-
 
     /// <summary>
     /// 取引端末で減らすHPの量の計算

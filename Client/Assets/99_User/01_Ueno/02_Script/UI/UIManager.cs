@@ -71,9 +71,9 @@ public class UIManager : MonoBehaviour
     [Foldout("フェードアウト")]                      
     [SerializeField] float displayDuration = 1f;     // テキストが完全に表示される時間（フェード開始まで）
 
-    [Foldout("ボスステータス関連")]
+    [Foldout("ボス関連")]
     [SerializeField] Slider bossHpBar;               // ボスのHPバー
-    [Foldout("ボスステータス関連")]                  
+    [Foldout("ボス関連")]                  
     [SerializeField] GameObject bossStatus;          // ボスのステータス
                                                      
     [Foldout("ウィンドウ関係")]                      
@@ -766,10 +766,25 @@ public class UIManager : MonoBehaviour
 
     public void DisplayTerminalExplanation()
     {
-        terminalExplanation.SetActive(true);
+        if (Terminal.Instance.code == (Terminal.TerminalCode)2)
+        {
+            TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = 
+                terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
+        }
+        else if(Terminal.Instance.code != (Terminal.TerminalCode)8)
+        {
+            terminalExplanation.SetActive(true);
 
-        terminalExplanationText.text = 
-            terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
+            terminalExplanationText.text =
+                terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
+        }
+    }
+
+    public void DisplayTimeInstructions()
+    {
+        terminalExplanation.SetActive(false);
+        //TimerDirector.Instance.TimerObj.SetActive(true);
+        TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " 敵衛システム復旧まで";
     }
 
     public void DisplayEndGameWindow()

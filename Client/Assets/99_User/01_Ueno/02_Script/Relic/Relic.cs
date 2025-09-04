@@ -5,7 +5,7 @@ public class Relic : MonoBehaviour
     [SerializeField] int id;
     [SerializeField] int rarity;
 
-    RelicDeta relicDeta;
+    RelicData relicData;
 
     public int Rarity { get { return rarity; } }
 
@@ -14,7 +14,7 @@ public class Relic : MonoBehaviour
         // レリック情報の取得(サーバー)
 
         // レリック情報の登録
-        relicDeta = new RelicDeta(id,rarity);
+        relicData = new RelicData(id,rarity);
     }
 
     /// <summary>
@@ -22,9 +22,9 @@ public class Relic : MonoBehaviour
     /// </summary>
     public void AddRelic()
     {
-        relicDeta = new RelicDeta(id, rarity);
+        relicData = new RelicData(id, rarity);
 
-        RelicManager.Instance.AddRelic(relicDeta);
+        RelicManager.Instance.AddRelic(relicData);
     }
 
     /// <summary>

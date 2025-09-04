@@ -561,7 +561,8 @@ abstract public class EnemyBase : CharacterBase
                 if(terminalManager.TerminalSpawnList.Count <= 0)
                 {// リストのカウントが0なら
                     // レリックの生成
-                    RelicManager.Instance.GenerateRelicTest();
+                    terminalManager.GiveReward();
+                    //RelicManager.Instance.GenerateRelic(terminalManager.gameObject.transform.position);
                 }
             }
             else

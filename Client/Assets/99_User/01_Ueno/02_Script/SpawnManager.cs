@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Random = UnityEngine.Random;
@@ -22,7 +23,6 @@ public class SpawnManager : MonoBehaviour
     #endregion
 
     #region 敵生成関連
-    int spawnCnt;                     // 累計スポーン回数(減算禁止)
     [SerializeField] int maxSpawnCnt; // マックススポーン回数
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
@@ -70,6 +70,8 @@ public class SpawnManager : MonoBehaviour
     int crashNum = 0; 　　　　　// 撃破数
     public int CrashNum { get { return crashNum; } set { crashNum = value; } }
 
+    CharacterManager characterManager;
+
     private static SpawnManager instance;
 
     public static SpawnManager Instance
@@ -103,6 +105,8 @@ public class SpawnManager : MonoBehaviour
     {
         SetEnemyPrefabList();
 
+        characterManager = CharacterManager.Instance;
+
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
@@ -125,21 +129,23 @@ public class SpawnManager : MonoBehaviour
                 SpawnBoss();
             }
 
-            if (spawnCnt < maxSpawnCnt && !GameManager.Instance.IsBossDead)
+            if (characterManager.Enemies.Count < maxSpawnCnt && !GameManager.Instance.IsBossDead)
             {// スポーン回数が限界に達しているか
                 if (!isSpawnBoss)
                 {
                     foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
                     {
+                        if (characterManager.Enemies.Count > maxSpawnCnt) break;
                         if (!player) continue;
-                        if (spawnCnt < maxSpawnCnt / 2)
+                        if (characterManager.Enemies.Count < maxSpawnCnt / 2)
                         {// 敵が100体いない場合
-                            GenerateEnemy(Random.Range(6, 11),player.transform.position);
+                            GenerateEnemy(Random.Range(7, 11),player.transform.position);
                         }
                         else
                         {// いる場合
                             GenerateEnemy(1, player.transform.position);
                         }
+                        
                     }
                 }
             }
@@ -253,9 +259,9 @@ public class SpawnManager : MonoBehaviour
         {
             UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
 
-            if (spawnCnt > maxSpawnCnt)
+            if (characterManager.Enemies.Count > maxSpawnCnt)
             {
-                return;
+                return; 
             }
 
             // 生成する敵の抽選
@@ -481,7 +487,6 @@ public class SpawnManager : MonoBehaviour
             Debug.LogWarning("entryData.EnemyTypeがnullだったため、データの生成を中断しました。");
             return null;
         }
-        spawnCnt++;
         ENEMY_ELITE_TYPE eliteType = ENEMY_ELITE_TYPE.None;
 
         if (canPromoteToElite && fivePercentOfMaxFloor > eliteEnemyCnt
@@ -507,7 +512,36 @@ public class SpawnManager : MonoBehaviour
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = spawnCnt,
+            EnemyId = characterManager.Enemies.Count,
+            Position = entryData.Position,
+            Scale = enemyScale,
+            SpawnType = spawnType,
+            EliteType = eliteType,
+        };
+    }
+
+
+    public SpawnEnemyData CreateTerminalSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType)
+    {
+        if (entryData.EnemyType == null)
+        {
+            Debug.LogWarning("entryData.EnemyTypeがnullだったため、データの生成を中断しました。");
+            return null;
+        }
+        ENEMY_ELITE_TYPE eliteType = (EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
+
+        Debug.Log(eliteType);
+
+        // プレイヤーの向きを算出
+        var playerPos = FetchNearObjectWithTag("Player");
+        float scaleX = playerPos.position.x - entryData.Position.x;
+        scaleX = scaleX >= 0 ? 1 : -1;
+        var enemyScale = new Vector3(scaleX, 1, 1);
+
+        return new SpawnEnemyData()
+        {
+            TypeId = (ENEMY_TYPE)entryData.EnemyType,
+            EnemyId = characterManager.Enemies.Count,
             Position = entryData.Position,
             Scale = enemyScale,
             SpawnType = spawnType,
@@ -542,7 +576,7 @@ public class SpawnManager : MonoBehaviour
         enemyObj.GetComponent<EnemyBase>().SelfID = spawnEnemyData.EnemyId;
         enemyObj.GetComponent<EnemyBase>().SpawnEnemyType = spawnEnemyData.SpawnType;
         CharacterManager.Instance.AddEnemies(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
-        
+
         return enemyObj;
     }
 
@@ -570,36 +604,6 @@ public class SpawnManager : MonoBehaviour
         {
             if (spawnEnemyData == null) continue;
             SpawnEnemy(spawnEnemyData);
-
-        }
-    }
-
-    /// <summary>
-    /// ターミナル用敵生成リクエスト
-    /// </summary>
-    /// <param name="spawnEnemy"></param>
-    /// <param name="spawnPos"></param>
-    public async void SpawnTerminalEnemyRequest(params SpawnEnemyData[] spawnDatas)
-    {
-        List<GameObject> enemyObj = new List<GameObject>();
-
-        if (spawnDatas.Any(x => x == null))
-        {
-            Debug.LogWarning("spawnDatasにnullの要素が見つかったため、敵の生成を中断しました。");
-            return;
-        }
-
-        // ここで敵の生成リクエスト
-        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
-        {
-            // SpawnEnemyAsyncを呼び出す
-            await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
-        }
-
-        foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
-        {
-            if (spawnEnemyData == null) continue;
-            enemyObj.Add(SpawnEnemy(spawnEnemyData));
         }
     }
 
@@ -661,6 +665,8 @@ public class SpawnManager : MonoBehaviour
         {
             EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
 
+            List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
+
             int childrenCnt = bossTerminal.transform.childCount;
 
             List<Transform> children = new List<Transform>();
@@ -669,20 +675,25 @@ public class SpawnManager : MonoBehaviour
             {
                 children.Add(bossTerminal.transform.GetChild(i));
             }
+            ENEMY_TYPE enemyType = ENEMY_TYPE.Worm;
 
             Vector3? spawnPos =
                 GenerateEnemySpawnPosition(children[0].position, children[1].position, bossEnemy);
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
-                boss = Instantiate(idEnemyPrefabPairs[bossId], (Vector3)spawnPos, Quaternion.identity);
-
-                //boss.GetComponent<EnemyBase>().SetNearTarget();
+                boss = idEnemyPrefabPairs[bossId];
+                
+                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
+                Vector3 scale = Vector3.one;    // 一旦このまま
+                spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
             }
+
+            isSpawnBoss = true;
 
             UIManager.Instance.DisplayBossUI();
 
-            isSpawnBoss = true;
+            SpawnEnemyRequest(spawnEnemyDatas.ToArray());
         }
     }
 
