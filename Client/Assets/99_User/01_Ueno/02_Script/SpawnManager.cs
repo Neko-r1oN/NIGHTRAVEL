@@ -106,7 +106,7 @@ public class SpawnManager : MonoBehaviour
         // “G¶¬ãŒÀ‚Ì5%‚ğæ“¾
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(5f));
+        StartCoroutine(WaitAndStartCoroutine(2000000f));
     }
 
     private void OnDisable()
@@ -317,7 +317,7 @@ public class SpawnManager : MonoBehaviour
     /// <summary>
     /// ’[––‘€ì‚Ì“G¶¬ˆ—
     /// </summary>
-    public void TerminalGenerateEnemy(int num,Vector2 minPos,Vector2 maxPos)
+    public void TerminalGenerateEnemy(int num, Vector2 minPos, Vector2 maxPos)
     {
         int enemyCnt = 0;
 
@@ -344,8 +344,8 @@ public class SpawnManager : MonoBehaviour
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
                 Vector3 scale = Vector3.one;    // ˆê’U‚±‚Ì‚Ü‚Ü
                 var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
-                
-                SpawnEnemyRequest(null,spawnData);
+
+                SpawnEnemyRequest(null, spawnData);
 
                 // ’[––‚©‚ço‚½“G‚ğƒŠƒXƒg‚É’Ç‰Á
                 terminalEnemyList = CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByTerminal);
