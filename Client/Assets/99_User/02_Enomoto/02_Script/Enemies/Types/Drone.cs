@@ -82,6 +82,12 @@ public class Drone : EnemyBase
     bool endDecision;
     #endregion
 
+    #region オプション
+    [Foldout("オプション")]
+    [SerializeField]
+    bool isByWorm = false; // ワームによって生成された個体かどうか
+    #endregion
+
     Vector2? startPatorolPoint = null;
 
     protected override void Start()
@@ -91,6 +97,17 @@ public class Drone : EnemyBase
         isAttacking = false;
         doOnceDecision = true;
         NextDecision();
+
+        if (isByWorm)
+        {
+            bool isOnlinePlay = RoomModel.Instance;
+            if (!isOnlinePlay || isOnlinePlay && RoomModel.Instance.IsMaster)
+            {
+                if ((int)UnityEngine.Random.Range(0, 2) == 0) Flip();    // 確率で向きが変わる
+                Players = GetAlivePlayers();
+                Target = GetNearPlayer(transform.position);
+            }
+        }
     }
 
     /// <summary>

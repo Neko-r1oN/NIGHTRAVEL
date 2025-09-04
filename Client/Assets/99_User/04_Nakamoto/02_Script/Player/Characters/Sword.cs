@@ -229,12 +229,12 @@ public class Sword : PlayerBase
                 // “ñ‰ñUŒ‚‚Ì’Š‘I
                 if (LotteryDA())
                 {
-                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, LotteryDebuff());
-                    enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, LotteryDebuff());
+                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
+                    enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, true, LotteryDebuff());
                 }
                 else
                 {
-                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, LotteryDebuff());
+                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
                 }
 
                 processedEnemies.Add(enemyComponent); // ˆ—Ï‚İƒŠƒXƒg‚É’Ç‰Á

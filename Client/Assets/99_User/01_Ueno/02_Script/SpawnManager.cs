@@ -507,7 +507,6 @@ public class SpawnManager : MonoBehaviour
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = spawnCnt,
             Position = entryData.Position,
             Scale = enemyScale,
             SpawnType = spawnType,
@@ -545,6 +544,8 @@ public class SpawnManager : MonoBehaviour
         return enemyObj;
     }
 
+    #region リクエスト関連
+
     /// <summary>
     /// 敵生成リクエスト
     /// </summary>
@@ -559,9 +560,9 @@ public class SpawnManager : MonoBehaviour
         }
 
         // マスタクライアントのみ敵の生成をリクエスト
-        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+        if (RoomModel.Instance)
         {
-            await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
+            if (RoomModel.Instance.IsMaster) await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
             return;
         }
 
@@ -593,6 +594,7 @@ public class SpawnManager : MonoBehaviour
         {
             // SpawnEnemyAsyncを呼び出す
             await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
+            return;
         }
 
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
@@ -620,6 +622,7 @@ public class SpawnManager : MonoBehaviour
         {
             // SpawnEnemyAsyncを呼び出す
             await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
+            return;
         }
 
         foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
@@ -630,6 +633,9 @@ public class SpawnManager : MonoBehaviour
             terminal.TerminalSpawnList.Add(enemy);
         }
     }
+    #endregion
+
+    #region 通知関連
 
     /// <summary>
     /// 敵の生成通知
@@ -642,6 +648,8 @@ public class SpawnManager : MonoBehaviour
             SpawnEnemy(spawnEnemyData);
         }
     }
+
+    #endregion
 
     private void OnDrawGizmos()
     {
