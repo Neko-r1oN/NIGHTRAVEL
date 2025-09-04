@@ -413,9 +413,9 @@ namespace StreamingHubs
         public async Task BootGimmickAsync(int gimID)
         {
             // 対象ギミックが存在しているかつ起動可能である場合
-            if (this.roomContext.gimmickList[gimID] != null && this.roomContext.gimmickList[gimID].CanBoot)
+            if (this.roomContext.gimmickList[gimID] != null && !this.roomContext.gimmickList[gimID].IsActivated)
             {
-                this.roomContext.gimmickList[gimID].CanBoot = false;
+                this.roomContext.gimmickList[gimID].IsActivated = true;
 
                 // 参加者全員にギミック情報を通知
                 this.roomContext.Group.All.OnBootGimmick(gimID);
