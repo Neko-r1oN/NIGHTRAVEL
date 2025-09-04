@@ -53,6 +53,7 @@ public class Terminal : MonoBehaviour
 
     //レリック管理クラス
     RelicManager relicManager;
+    UIManager uiManager;
 
     private static Terminal instance;
 

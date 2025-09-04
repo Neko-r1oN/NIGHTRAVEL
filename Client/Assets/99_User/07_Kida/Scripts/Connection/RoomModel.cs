@@ -417,10 +417,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="isTimeUp"></param>
     /// <param name="isBossStage"></param>
     /// <returns></returns>
-    public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp,bool isBossStage)
-    {
-        await roomHub.WaitStageClearAsync(conID, isTimeUp,isBossStage);
-    }
+    //public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp,bool isBossStage)
+    //{
+    //    await roomHub.WaitStageClearAsync(conID, isTimeUp,isBossStage);
+    //}
 
     #endregion
 

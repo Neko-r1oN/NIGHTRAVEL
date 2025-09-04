@@ -165,7 +165,8 @@ public class CharacterManager : MonoBehaviour
     {
         foreach (var enemy in newEnemies)
         {
-            enemies.Add(enemy.UniqueId, enemy);
+            int uniqueId = RoomModel.Instance ? enemy.UniqueId : enemies.Count;
+            enemies.Add(uniqueId, enemy);
         }
     }
 

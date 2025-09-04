@@ -110,7 +110,7 @@ public class SpawnManager : MonoBehaviour
         // “G¶¬ãŒÀ‚Ì5%‚ğæ“¾
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(2000000f));
+        StartCoroutine(WaitAndStartCoroutine(5f));
     }
 
     private void OnDisable()
@@ -561,6 +561,10 @@ public class SpawnManager : MonoBehaviour
             Debug.LogWarning("null‚Ì—v‘f‚ªŒ©‚Â‚©‚Á‚½‚½‚ßA“G‚Ì¶¬‚ğ’†’f‚µ‚Ü‚µ‚½B");
             return null;
         }
+
+        // IDİ’è(ƒ[ƒJƒ‹—p)
+        spawnEnemyData.EnemyId = RoomModel.Instance ? spawnEnemyData.EnemyId : CharacterManager.Instance.Enemies.Count;
+
         // “G‚Ì¶¬
         var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
         var position = spawnEnemyData.Position;

@@ -588,11 +588,13 @@ abstract public class EnemyBase : CharacterBase
                 }
             }
 
+            Debug.Log(selfID);
+
             if (CharacterManager.Instance.Enemies[selfID].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
             {// 生成タイプがターミナルなら
                 // 死んだ敵をリストから削除
-                terminalManager.TerminalSpawnList.Remove(this.gameObject);
-                if(terminalManager.TerminalSpawnList.Count <= 0)
+                //terminalManager.TerminalSpawnList.Remove(this.gameObject);
+                if (terminalManager.TerminalSpawnList.Count <= 0)
                 {// リストのカウントが0なら
                     // レリックの生成
                     terminalManager.GiveReward();

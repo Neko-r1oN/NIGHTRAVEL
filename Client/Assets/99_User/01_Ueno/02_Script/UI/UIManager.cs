@@ -789,13 +789,6 @@ public class UIManager : MonoBehaviour
         TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " “G‰qƒVƒXƒeƒ€•œ‹Œ‚Ü‚Å";
     }
 
-    public void DisplayTimeInstructions()
-    {
-        terminalExplanation.SetActive(false);
-        //TimerDirector.Instance.TimerObj.SetActive(true);
-        TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " “G‰qƒVƒXƒeƒ€•œ‹Œ‚Ü‚Å";
-    }
-
     public void DisplayEndGameWindow()
     {
         endWindow.SetActive(true);
