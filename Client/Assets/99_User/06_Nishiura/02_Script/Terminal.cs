@@ -6,6 +6,7 @@
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -99,17 +100,13 @@ public class Terminal : MonoBehaviour
         {
             instance = this;
         }
-        //else
-        //{
-        //    // インスタンスが複数存在しないように、既に存在していたら自身を消去する
-        //    Destroy(gameObject);
-        //}
     }
 
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = UIManager.Instance;
+        spawnManager = SpawnManager.Instance;
         isTerminal = false;
     }
 
@@ -149,7 +146,7 @@ public class Terminal : MonoBehaviour
     private void BootTerminal()
     {
         System.Random rand = new System.Random();
-        int rndNum;
+        int rndNum; //敵生成数
 
         UIManager.Instance.DisplayTerminalExplanation();
 
@@ -175,12 +172,6 @@ public class Terminal : MonoBehaviour
                 TerminalGenerateEnemy(rndNum, children[0].position, children[1].position);   // 敵生成
 
                 isTerminal = true;
-
-                //カウントダウンする
-                InvokeRepeating("CountDown", 1, 1);
-
-                ////countdownTextを表示する
-                //countdownText.enabled = true;
 
                 break;
 
@@ -248,9 +239,6 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Enemy:
                 // 敵生成の場合
                 isUsed = true;
-
-                //カウントダウンを停止する
-                CancelInvoke("CountDown");
 
                 //端末のアイコンを1.5秒かけてフェードアウトする
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
@@ -365,6 +353,12 @@ public class Terminal : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 敵生成処理
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="minPos">生成最小位置</param>
+    /// <param name="maxPos">生成最大位置</param>
     private void TerminalGenerateEnemy(int num, Vector2 minPos, Vector2 maxPos)
     {
         int enemyCnt = 0;
@@ -399,8 +393,6 @@ public class Terminal : MonoBehaviour
             enemyCnt++;
         }   
     }
-
-
 
     /// <summary>
     /// 取引端末で減らすHPの量の計算
