@@ -449,9 +449,7 @@ namespace StreamingHubs
                     this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);
 
                     // 各進行判定変数の値をfalseにする
-                    this.roomContext.isAdvanceRequest = false;
                     this.roomContext.JoinedUserList[this.ConnectionId].IsAdvance = false;
-                    isAdvance = false;
                 }
                 else
                 {
