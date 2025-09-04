@@ -393,7 +393,6 @@ namespace StreamingHubs
                     enemyData.exp = enemy.exp;
 
                     this.roomContext.SetEnemyData(enemyData);
-                    Console.WriteLine("敵が生成されました。");
                 }
 
                 // 自分以外に、取得した敵情報と生成位置を送信

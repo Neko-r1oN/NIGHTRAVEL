@@ -388,18 +388,16 @@ public class CharacterManager : MonoBehaviour
     {
         GameObject? attacker = playerObjs.GetValueOrDefault(damageData.AttackerId);
         enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, 
-            playerObjs[damageData.AttackerId], true, damageData.DebuffList.ToArray());
+            playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
     }
 
     /// <summary>
-    /// 
+    /// 全ての敵のスクリプトをアクティブにする
     /// </summary>
     void ActivateAllEnemies()
     {
-        
         foreach(var enemy in enemies.Values)
         {
-            enemy.Enemy.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             enemy.Enemy.enabled = true;
         }
     }

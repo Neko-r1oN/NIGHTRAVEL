@@ -479,7 +479,7 @@ abstract public class EnemyBase : CharacterBase
     /// ダメージ適用リクエスト
     /// </summary>
     /// <param name="damage"></param>
-    async public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
+    async public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool isKnokBack = true, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
     {
         GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
         if (isInvincible || isDead || attacker && attacker != playerSelf) return;
@@ -521,7 +521,7 @@ abstract public class EnemyBase : CharacterBase
 
         // ダメージ適用
         int remainingHp = this.hp - Mathf.Abs(damage);
-        ApplyDamage(damage, remainingHp, attacker, drawDmgText, debuffList);
+        ApplyDamage(damage, remainingHp, attacker, isKnokBack, drawDmgText, debuffList);
     }
 
     /// <summary>
@@ -532,7 +532,7 @@ abstract public class EnemyBase : CharacterBase
     /// <param name="attacker"></param>
     /// <param name="drawDmgText"></param>
     /// <param name="debuffList"></param>
-    public void ApplyDamage(int damage, int remainingHP, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
+    public void ApplyDamage(int damage, int remainingHP, GameObject attacker = null, bool isKnokBack = true, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
     {
         if (isInvincible || isDead) return;
         var charaManager = CharacterManager.Instance;
@@ -547,7 +547,7 @@ abstract public class EnemyBase : CharacterBase
         if (debuffList.Length > 0) effectController.ApplyStatusEffect(debuffList);
 
         // アタッカーが居る方向にテクスチャを反転させ、ノックバックをさせる
-        if (attackerPos != null)
+        if (isKnokBack && attackerPos != null)
         {
             Vector3 pos = (Vector3)attackerPos;
             if (pos.x < transform.position.x && transform.localScale.x > 0

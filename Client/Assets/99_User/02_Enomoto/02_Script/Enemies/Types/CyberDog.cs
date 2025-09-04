@@ -2,6 +2,7 @@
 //  [敵] サイバードックのクラス
 //  Author:r-enomoto
 //**************************************************
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using System;
 using System.Collections;
@@ -32,6 +33,12 @@ public class CyberDog : EnemyBase
         AttackCooldown,
         MeleeAttack
     }
+
+    #region オプション
+    [Foldout("オプション")]
+    [SerializeField] 
+    bool isByWorm = false; // ワームによって生成された個体かどうか
+    #endregion
 
     #region チェック関連
     // 近距離攻撃の範囲
@@ -72,6 +79,17 @@ public class CyberDog : EnemyBase
     {
         base.Start();
         isAttacking = false;
+
+        if (isByWorm)
+        {
+            bool isOnlinePlay = RoomModel.Instance;
+            if (!isOnlinePlay || isOnlinePlay && RoomModel.Instance.IsMaster)
+            {
+                if ((int)UnityEngine.Random.Range(0, 2) == 0) Flip();    // 確率で向きが変わる
+                Players = GetAlivePlayers();
+                Target = GetNearPlayer(transform.position);
+            }
+        }
     }
 
     /// <summary>

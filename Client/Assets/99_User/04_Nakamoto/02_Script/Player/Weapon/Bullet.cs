@@ -53,12 +53,12 @@ public class Bullet : MonoBehaviour
             // ìÒâÒçUåÇÇÃíäëI
             if (player.LotteryRelic(RELIC_TYPE.Rugrouter))
             {
-                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, player.LotteryDebuff());
-                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, player.LotteryDebuff());
+                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
+                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, true, player.LotteryDebuff());
             }
             else
             {
-                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, player.LotteryDebuff());
+                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
             }
         }
         else if (collision.gameObject.tag == "Object")

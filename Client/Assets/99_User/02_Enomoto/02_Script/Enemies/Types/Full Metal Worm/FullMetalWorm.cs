@@ -490,10 +490,9 @@ public class FullMetalWorm : EnemyBase
     /// <param name="power"></param>
     /// <param name="attacker"></param>
     /// <param name="effectTypes"></param>
-    public override void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
+    public override void ApplyDamageRequest(int power, GameObject attacker = null, bool isKnokBack = true, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
     {
-        attacker = null;
-        base.ApplyDamageRequest(power, attacker, true, effectTypes);
+        base.ApplyDamageRequest(power, attacker, false, drawDmgText, effectTypes);
     }
 
     #endregion

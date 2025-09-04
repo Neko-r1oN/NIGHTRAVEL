@@ -241,7 +241,7 @@ public class FullMetalBody : EnemyBase
             worm.GeneratedEnemyCnt++;
         }
 
-        if (spawnDatas.Count > 0) GenerateEnemy(spawnDatas.ToArray());
+        if (spawnDatas.Count > 0) SpawnManager.Instance.SpawnEnemyRequest(spawnDatas.ToArray());
         onFinished?.Invoke();
     }
 
@@ -255,24 +255,6 @@ public class FullMetalBody : EnemyBase
         var spawnType = SPAWN_ENEMY_TYPE.ByWorm;
         var emitResult = SpawnManager.Instance.EmitEnemy(ENEMY_TYPE.CyberDog_ByWorm, ENEMY_TYPE.Drone_ByWorm);
         return SpawnManager.Instance.CreateSpawnEnemyData(new EnemySpawnEntry(emitResult, point, Vector3.one), spawnType);
-    }
-
-    /// <summary>
-    /// 敵を生成する処理
-    /// </summary>
-    void GenerateEnemy(SpawnEnemyData[] spawnEnemyDatas)
-    {
-        SpawnManager.Instance.SpawnEnemyRequest(spawnEnemyDatas);
-        var enemyObjs = CharacterManager.Instance.GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE.ByManager);
-
-        for (int i = 0; i < enemyObjs.Count; i++)
-        {
-            var enemy = enemyObjs[i].GetComponent<EnemyBase>();
-            UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);
-            if ((int)UnityEngine.Random.Range(0, 2) == 0) enemy.Flip();    // 確率で向きが変わる
-            enemy.Players = GetAlivePlayers();
-            enemy.Target = GetNearPlayer(enemy.transform.position);
-        }
     }
 
     #endregion
@@ -297,17 +279,12 @@ public class FullMetalBody : EnemyBase
     /// <param name="power"></param>
     /// <param name="attacker"></param>
     /// <param name="effectTypes"></param>
-    public override void ApplyDamageRequest(int power, GameObject attacker = null, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
+    public override void ApplyDamageRequest(int power, GameObject attacker = null, bool isKnokBack = true, bool drawDmgText = true, params DEBUFF_TYPE[] effectTypes)
     {
-        attacker = null;
-        base.ApplyDamageRequest(power, attacker, true, effectTypes);
+        base.ApplyDamageRequest(power, attacker, false, drawDmgText, effectTypes);
 
         // 本体のHPも削る
-        worm.ApplyDamageRequest(power, attacker, false);
-
-        // 被ダメージ量を表示する
-        var damage = CalculationLibrary.CalcDamage(power, Defense);
-        DrawHitDamageUI(damage);
+        worm.ApplyDamageRequest(power, attacker, false, false);
     }
 
     /// <summary>

@@ -6142,13 +6142,21 @@ MonoBehaviour:
   basePower: 35
   baseJumpPower: 7
   baseMoveSpeed: 8
+  baseHealRate: 0.001
+  maxHp: 0
+  maxDefense: 0
+  maxPower: 0
+  maxJumpPower: 0
+  maxMoveSpeed: 0
+  maxAttackSpeedFactor: 0
+  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
   jumpPower: 0
   moveSpeed: 0
-  moveSpeedFactor: 0
   attackSpeedFactor: 0
+  healRate: 0
   animator: {fileID: 1775990114104695732}
   players: []
   destroyWaitSec: 1
@@ -6176,8 +6184,10 @@ MonoBehaviour:
   canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 0.6
   canDrawRay: 1
+  baseExp: 100
   exp: 100
   spawnWeight: 1
+  isByWorm: 1
   meleeAttackCheck: {fileID: 4379734769045782052}
   meleeAttackRange: 0.6
   wallCheck: {fileID: 2145596495357929066}
