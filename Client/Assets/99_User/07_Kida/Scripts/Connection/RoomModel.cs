@@ -88,7 +88,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int , string> OnGotRelic {  get; set; }
 
     //ギミックの起動通知
-    public Action<GimmickData> OnBootedGimmick { get; set; }
+    public Action<int> OnBootedGimmick { get; set; }
 
     public Action<Vector2,Vector2> OnShootedBullet { get; set; }
 
@@ -301,16 +301,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// プレイヤーのレベルアップ同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <returns></returns>
-    public async Task LevelUpAsync()
-    {
-        await roomHub.LevelUpAsync();
-    }
-
-    /// <summary>
     /// プレイヤーダウン同期
     /// Aughter:木田晃輔
     /// </summary>
@@ -358,16 +348,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         await roomHub.EnemyHealthAsync(enemID,giverAtack, debuffList);
     }
 
-    /// <summary>
-    /// 敵死亡同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemID"></param>
-    /// <returns></returns>
-    public async Task KilledEnemyAsync(int enemID)
-    {
-        await roomHub?.KilledEnemyAsync(enemID);
-    }
     #endregion
     #region レリック同期関連
     /// <summary>
@@ -446,19 +426,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         await roomHub.WaitStageClearAsync(conID, isTimeUp,isBossStage);
     }
-
-    /// <summary>
-    /// ダメージ表記同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="dmg"></param>
-    /// <returns></returns>
-    public async Task DamageAsync(int dmg)
-    {
-        await roomHub.DamageAsync(dmg);
-    }
-
-
 
     #endregion
 
@@ -686,9 +653,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="gimmickData"></param>
-    public void OnBootGimmick(GimmickData gimmickData)
+    public void OnBootGimmick(int gimmickId)
     {
-        OnBootedGimmick(gimmickData);
+        OnBootedGimmick(gimmickId);
     }
 
     /// <summary>
