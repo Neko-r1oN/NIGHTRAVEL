@@ -366,32 +366,30 @@ namespace StreamingHubs
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
             lock (roomContextRepository) // 排他制御
-            foreach (var spawnEnemy in spawnEnemyData) 
             {
-                // DBからIDを指定して敵を取得
-                GameDbContext dbContext = new GameDbContext();
-                var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
-                Enemy enemyData = new Enemy();
+                foreach (var spawnEnemy in spawnEnemyData)
+                {
+                    // DBからIDを指定して敵を取得
+                    GameDbContext dbContext = new GameDbContext();
+                    var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
+                    Enemy enemyData = new Enemy();
 
-                // 生成数を加算
-                this.roomContext.spawnEnemyCount++;
-                
-                // 取得した情報をスポーンした敵の情報に代入
-                enemyData.id = this.roomContext.spawnEnemyCount;
-                enemyData.name = enemy.name;
-                enemyData.isBoss = enemy.isBoss;
-                enemyData.exp = enemy.exp;
+                    // 生成数を加算
+                    this.roomContext.spawnEnemyCount++;
 
-                // 設定した情報をルームデータに保存
-                this.roomContext.SetEnemyData(enemyData);
-            }
+                    // 取得した情報をスポーンした敵の情報に代入
+                    enemyData.id = this.roomContext.spawnEnemyCount;
+                    enemyData.name = enemy.name;
+                    enemyData.isBoss = enemy.isBoss;
+                    enemyData.exp = enemy.exp;
 
+                    // 設定した情報をルームデータに保存
                     this.roomContext.SetEnemyData(enemyData);
                 }
+            }
 
-                // 自分以外に、取得した敵情報と生成位置を送信
-                this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
-            }   
+            // 自分以外に、取得した敵情報と生成位置を送信
+            this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
         }
 
         /// <summary>
