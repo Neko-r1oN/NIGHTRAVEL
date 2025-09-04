@@ -154,23 +154,26 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task ReadyAsync()
         {
-            bool canStartGame = true; // ゲーム開始可能判定変数
+            lock (roomContextRepository) // 排他制御
+            {
+                bool canStartGame = true; // ゲーム開始可能判定変数
 
-            // 自身のデータを取得
-            var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
-            joinedUser.IsReady = true; // 準備完了にする
+                // 自身のデータを取得
+                var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
+                joinedUser.IsReady = true; // 準備完了にする
 
-            // ルーム参加者全員に、自分が準備完了した通知を送信
-            this.roomContext.Group.All.OnReady(this.ConnectionId);
+                // ルーム参加者全員に、自分が準備完了した通知を送信
+                this.roomContext.Group.All.OnReady(this.ConnectionId);
 
-            foreach (var user in this.roomContext.JoinedUserList)
-            { // 現在の参加者数分ループ
-                if (user.Value.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
+                foreach (var user in this.roomContext.JoinedUserList)
+                { // 現在の参加者数分ループ
+                    if (user.Value.IsReady != true) canStartGame = false; // もし一人でも準備完了していなかった場合、開始させない
+                }
+                // 難易度を初期値にする
+                this.roomContext.NowDifficulty = 0;
+                // ゲームが開始できる場合、開始通知をする
+                if (canStartGame) this.roomContext.Group.All.OnStartGame();
             }
-            // 難易度を初期値にする
-            this.roomContext.NowDifficulty = 0;
-            // ゲームが開始できる場合、開始通知をする
-            if (canStartGame) this.roomContext.Group.All.OnStartGame();
         }
 
         /// <summary>
@@ -180,11 +183,14 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task SameStartAsync()
         {
-            this.roomContext.LoadedPlayer += 1;
-
-            if(this.roomContext.LoadedPlayer == this.roomContext.JoinedUserList.Count)
+            lock (roomContextRepository) // 排他制御
             {
-                this.roomContext.Group.All.OnSameStart();
+                this.roomContext.LoadedPlayer += 1;
+
+                if (this.roomContext.LoadedPlayer == this.roomContext.JoinedUserList.Count)
+                {
+                    this.roomContext.Group.All.OnSameStart();
+                }
             }
         }
 
@@ -213,26 +219,29 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task UpdatePlayerAsync(PlayerData playerData)
         {
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var gottenData = this.roomContext.GetPlayerData(playerData.ConnectionId);
-
-            // 取得したデータを受け取ったデータに置き換える
-            gottenData = playerData;
-
-            // キャラクターデータリストに自身のデータがない場合
-            if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
+            lock (roomContextRepository) // 排他制御
             {
-                // 新たなキャラクターデータを追加
-                this.roomContext.AddCharacterData(this.ConnectionId);
-            }
-            else // 既に存在している場合
-            {
-                // キャラクターデータを更新
-                this.roomContext.UpdateCharacterData(this.ConnectionId, playerData);
-            }
+                // ルームデータから接続IDを指定して自身のデータを取得
+                var gottenData = this.roomContext.GetPlayerData(playerData.ConnectionId);
 
-            // ルームの自分以外に、ユーザ情報通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
+                // 取得したデータを受け取ったデータに置き換える
+                gottenData = playerData;
+
+                // キャラクターデータリストに自身のデータがない場合
+                if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
+                {
+                    // 新たなキャラクターデータを追加
+                    this.roomContext.AddCharacterData(this.ConnectionId);
+                }
+                else // 既に存在している場合
+                {
+                    // キャラクターデータを更新
+                    this.roomContext.UpdateCharacterData(this.ConnectionId, playerData);
+                }
+
+                // ルームの自分以外に、ユーザ情報通知を送信
+                this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
+            }
         }
 
         /// <summary>
@@ -243,54 +252,57 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task UpdateMasterClientAsync(MasterClientData masterClientData)
         {
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var gottenPlayerData = this.roomContext.GetPlayerData(this.ConnectionId);
-
-            // 取得したデータを受け取ったマスターデータに置き換え
-            gottenPlayerData = masterClientData.PlayerData;
-
-            // ルームデータから敵のリストを取得
-            var gottenEnemyDataList = this.roomContext.enemyDataList;
-
-            // 敵データの個数分ループして更新
-            for (int i = 1; i < masterClientData.EnemyDatas.Count; i++)
+            lock (roomContextRepository) // 排他制御
             {
-                // 指定データが存在している場合、代入する
-                if (gottenEnemyDataList[i] != null)
+                // ルームデータから接続IDを指定して自身のデータを取得
+                var gottenPlayerData = this.roomContext.GetPlayerData(this.ConnectionId);
+
+                // 取得したデータを受け取ったマスターデータに置き換え
+                gottenPlayerData = masterClientData.PlayerData;
+
+                // ルームデータから敵のリストを取得
+                var gottenEnemyDataList = this.roomContext.enemyDataList;
+
+                // 敵データの個数分ループして更新
+                for (int i = 1; i < masterClientData.EnemyDatas.Count; i++)
                 {
-                    gottenEnemyDataList[i] = masterClientData.EnemyDatas[i];
+                    // 指定データが存在している場合、代入する
+                    if (gottenEnemyDataList[i] != null)
+                    {
+                        gottenEnemyDataList[i] = masterClientData.EnemyDatas[i];
+                    }
                 }
-            }
 
-            foreach (var item in masterClientData.GimmickDatas)
-            {
-                // すでにルームコンテキストにギミックが含まれている場合
-                if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
+                foreach (var item in masterClientData.GimmickDatas)
                 {
-                    // そのギミックを更新する
-                    this.roomContext.gimmickList[item.GimmickID] = item;
+                    // すでにルームコンテキストにギミックが含まれている場合
+                    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
+                    {
+                        // そのギミックを更新する
+                        this.roomContext.gimmickList[item.GimmickID] = item;
+                    }
+                    else // 含まれていない場合
+                    {
+                        // そのギミックを追加する
+                        this.roomContext.gimmickList.Add(item.GimmickID, item);
+                    }
                 }
-                else // 含まれていない場合
+
+                // キャラクターデータリストに自身のデータがない場合
+                if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
                 {
-                    // そのギミックを追加する
-                    this.roomContext.gimmickList.Add(item.GimmickID, item);
+                    // 新たなキャラクターデータを追加
+                    this.roomContext.AddCharacterData(this.ConnectionId);
                 }
-            }
+                else // 既に存在している場合
+                {
+                    // キャラクターデータを更新
+                    this.roomContext.UpdateCharacterData(this.ConnectionId, masterClientData.PlayerData);
+                }
 
-            // キャラクターデータリストに自身のデータがない場合
-            if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
-            {
-                // 新たなキャラクターデータを追加
-                this.roomContext.AddCharacterData(this.ConnectionId);
+                // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
+                this.roomContext.Group.Except([this.ConnectionId]).OnUpdateMasterClient(masterClientData);
             }
-            else // 既に存在している場合
-            {
-                // キャラクターデータを更新
-                this.roomContext.UpdateCharacterData(this.ConnectionId, masterClientData.PlayerData);
-            }
-
-            // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateMasterClient(masterClientData);
         }
 
         /// <summary>
@@ -412,13 +424,16 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task BootGimmickAsync(int gimID)
         {
-            // 対象ギミックが存在しているかつ起動可能である場合
-            if (this.roomContext.gimmickList[gimID] != null && !this.roomContext.gimmickList[gimID].IsActivated)
+            lock (roomContextRepository)
             {
-                this.roomContext.gimmickList[gimID].IsActivated = true;
+                // 対象ギミックが存在しているかつ起動可能である場合
+                if (this.roomContext.gimmickList[gimID] != null && !this.roomContext.gimmickList[gimID].IsActivated)
+                {
+                    this.roomContext.gimmickList[gimID].IsActivated = true;
 
-                // 参加者全員にギミック情報を通知
-                this.roomContext.Group.All.OnBootGimmick(gimID);
+                    // 参加者全員にギミック情報を通知
+                    this.roomContext.Group.All.OnBootGimmick(gimID);
+                }
             }
         }
 
