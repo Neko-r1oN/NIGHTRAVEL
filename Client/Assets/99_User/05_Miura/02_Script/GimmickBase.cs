@@ -2,7 +2,12 @@ using UnityEngine;
 
 abstract public class GimmickBase : MonoBehaviour
 {
-    protected bool isBoot = false;    // true：ON, false：OFF
+    // 識別用ID
+    int uniqueId;
+    public int UniqueId {  get { return uniqueId; } set { uniqueId = value; } }
+
+    // ギミックの状態 (true：ON, false：OFF)
+    protected bool isBoot = false;
     public bool IsBoot {  get { return isBoot; } set { isBoot = value; } }
 
     /// <summary>
