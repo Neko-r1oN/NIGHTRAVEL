@@ -227,7 +227,7 @@ public class Sword : PlayerBase
                 }
 
                 // 二回攻撃の抽選
-                if (LotteryDA())
+                if (LotteryRelic(RELIC_TYPE.Rugrouter))
                 {
                     enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, LotteryDebuff());
                     enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, LotteryDebuff());
@@ -309,6 +309,13 @@ public class Sword : PlayerBase
         if (Mathf.Abs(horizontalMove) < 0.1f)
             animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
 
+        // レリック「マウス」発動時はクールダウン無し
+        if (LotteryRelic(RELIC_TYPE.Mouse))
+        {
+            canSkill = true;
+            yield break;
+        }
+
         UIManager.Instance.DisplayCoolDown(true, skillCoolDown);
         yield return new WaitForSeconds(skillCoolDown);
         canSkill = true;
@@ -338,7 +345,7 @@ public class Sword : PlayerBase
             if (position != null && id != (int)S_ANIM_ID.Skill) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
             // 回避判定
-            if (AttackDodged())
+            if (LotteryRelic(RELIC_TYPE.HolographicArmor))
             {
                 // 回避成功表示
             }

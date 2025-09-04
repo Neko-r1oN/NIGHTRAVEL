@@ -101,19 +101,19 @@ abstract public class PlayerBase : CharacterBase
             { DEBUFF_TYPE.Freeze, 0f },
             { DEBUFF_TYPE.Shock, 0f },
         };  // 状態異常付与率◎
-    protected float regainCodeRate = 0f;        // 与ダメ回復率◎
-    protected int scatterBugCnt = 0;            // ボム所持数◎
-    protected float holographicArmorRate = 0;   // 回避率◎
-    protected float mouseRate = 0;              // クールダウン短縮率×
-    protected int digitalMeatCnt = 0;           // 回復肉所持数◎
-    protected float firewallRate = 0;           // 被ダメージ軽減率◎
-    protected float lifeScavengerRate = 0;      // キル時HP回復率◎
-    protected float rugrouterRate = 0;          // ダブルアタック率◎
-    protected int buckupHDMICnt = 0;            // リバイブ回数◎
-    protected float identificationAIRate = 0;   // 状態異常ダメージ倍率◎
-    protected float danborDollRate = 0;         // 防御貫通率◎
-    protected int chargedCoreCnt = 0;           // 感電オーブ所持数×
-    protected float illegalScriptRate = 0;      // クリティカルオーバーキル発生率×
+    protected float regainCodeRate = 0f;        // ◎与ダメ回復率
+    protected int scatterBugCnt = 0;            // （保留）ボム所持数
+    protected float holographicArmorRate = 0;   // ◎回避率
+    protected float mouseRate = 0;              // ◎クールダウン短縮率
+    protected int digitalMeatCnt = 0;           // ◎回復肉所持数
+    protected float firewallRate = 0;           // ◎被ダメージ軽減率
+    protected float lifeScavengerRate = 0;      // ◎キル時HP回復率
+    protected float rugrouterRate = 0;          // ◎ダブルアタック率
+    protected int buckupHDMICnt = 0;            // ◎リバイブ回数
+    protected float identificationAIRate = 0;   // ◎状態異常ダメージ倍率
+    protected float danborDollRate = 0;         // ◎防御貫通率◎
+    protected int chargedCoreCnt = 0;           // （保留）感電オーブ所持数
+    protected float illegalScriptRate = 0;      // ◎クリティカルオーバーキル発生率
 
     #endregion
 
@@ -1090,21 +1090,43 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 回避抽選処理
+    /// レリック効果抽選処理
     /// </summary>
+    /// <param name="type"></param>
     /// <returns></returns>
-    public bool AttackDodged()
+    public bool LotteryRelic(RELIC_TYPE type)
     {
         float rand = UnityEngine.Random.Range(0f, 100f);
-        if (rand <= holographicArmorRate)
+        switch(type)
         {
-            // 回避成功
-            Debug.Log("回避成功");
+            case RELIC_TYPE.HolographicArmor:
+                if (rand <= holographicArmorRate) return true;
+                break;
+            case RELIC_TYPE.Mouse:
+                if (rand <= mouseRate) return true;
+                break;
+            case RELIC_TYPE.Rugrouter:
+                if (rand <= rugrouterRate) return true;
+                break;
+            case RELIC_TYPE.IllegalScript:
+                if (rand <= illegalScriptRate) return true;
+                break;
+        }
+        return false;
+    }
+
+    public bool LotterySkillCoolDown()
+    {
+        float rand = UnityEngine.Random.Range(0f, 100f);
+        if (rand <= mouseRate)
+        {
+            // スキルクールダウン短縮成功
+            Debug.Log("スキルクールダウン短縮成功");
             return true;
         }
         else
         {
-            // 回避失敗
+            // スキルクールダウン短縮失敗
             return false;
         }
     }
@@ -1115,26 +1137,6 @@ abstract public class PlayerBase : CharacterBase
     public void KilledHPRegain()
     {
         HP += (int)(MaxHP * lifeScavengerRate);
-    }
-
-    /// <summary>
-    /// ダブルアタック抽選処理
-    /// </summary>
-    /// <returns></returns>
-    public bool LotteryDA()
-    {
-        float rand = UnityEngine.Random.Range(0f, 100f);
-        if (rand <= rugrouterRate)
-        {
-            // ダブルアタック成功
-            Debug.Log("ダブルアタック成功");
-            return true;
-        }
-        else
-        {
-            // ダブルアタック失敗
-            return false;
-        }
     }
     #endregion
 }

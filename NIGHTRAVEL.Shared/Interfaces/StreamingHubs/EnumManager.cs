@@ -205,7 +205,9 @@ namespace Shared.Interfaces.StreamingHubs
             Rugrouter,
             BuckupHDMI,
             IdentificationAI,
+            DanborDoll,
             ChargedCore,
+            IllegalScript,
             CaracalPng
         }
 

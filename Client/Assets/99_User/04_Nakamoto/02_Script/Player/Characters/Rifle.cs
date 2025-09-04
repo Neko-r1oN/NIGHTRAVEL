@@ -217,7 +217,7 @@ public class Rifle : PlayerBase
             if (position != null && id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
             // ‰ñ”ğ”»’è
-            if (AttackDodged())
+            if (LotteryRelic(RELIC_TYPE.HolographicArmor))
             {
                 // ‰ñ”ğ¬Œ÷•\¦
             }

@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 using System.Collections.Generic;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class Bullet : MonoBehaviour
 {
@@ -50,7 +51,7 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.tag == "Enemy")
         {
             // “ñ‰ñUŒ‚‚Ì’Š‘I
-            if (player.LotteryDA())
+            if (player.LotteryRelic(RELIC_TYPE.Rugrouter))
             {
                 collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, player.LotteryDebuff());
                 collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, player.LotteryDebuff());

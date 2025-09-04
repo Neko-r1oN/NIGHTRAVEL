@@ -185,6 +185,10 @@ abstract public class EnemyBase : CharacterBase
     public int SelfID { get { return selfID; } set { selfID = value; } }
     #endregion
 
+    #region 定数
+    private const int MAX_DAMAGE = 99999; // 最大ダメージ量
+    #endregion
+
     protected virtual void OnEnable()
     {
         if (!isStartComp || hp <= 0 || isDead) return;
@@ -512,7 +516,10 @@ abstract public class EnemyBase : CharacterBase
         // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
         if(plBase.DmgHealRate >= 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
 
-        // ダメージ計算
+        // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
+        damage = (plBase.LotteryRelic(RELIC_TYPE.IllegalScript)) ? MAX_DAMAGE : damage;
+
+        // ダメージ適用
         int remainingHp = this.hp - Mathf.Abs(damage);
         ApplyDamage(damage, remainingHp, attacker, drawDmgText, debuffList);
     }
