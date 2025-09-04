@@ -193,16 +193,6 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task MovePlayerAsync(PlayerData playerData)
         {
-            //// ルームデータから接続IDを指定して自身のデータを取得
-            //var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
-
-            //playerData.Position = pos; // 位置を渡す
-            //playerData.Rotation = rot; // 回転を渡す
-            //playerData.State = anim;   // アニメーションIDを渡す
-
-            // ルーム参加者全員に、ユーザ情報通知を送信
-            //this.roomContext.Group.All.OnMovePlayer(playerData);
-
             //ルームの自分以外に、ユーザ情報通知を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
         }
@@ -322,7 +312,7 @@ namespace StreamingHubs
                 rndList.Add(new Random().Next(1, dbContext.Relics.ToArray().Length));
             }
             // レリック情報を検索
-            var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id));
+            var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id)).First();
 
             // 参加人数分ループ
             for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
@@ -450,7 +440,10 @@ namespace StreamingHubs
 
                     // 参加者全員にステージの進行を通知
                     this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);
-                    this.roomContext.isAdvanceRequest = false;  // 未申請にする
+
+                    // 各進行判定変数の値をfalseにする
+                    this.roomContext.isAdvanceRequest = false;
+                    this.roomContext.JoinedUserList[this.ConnectionId].IsAdvance = false;
                     isAdvance = false;
                 }
                 else
@@ -488,6 +481,7 @@ namespace StreamingHubs
 
                 joinedUser.IsAdvance = false; // 準備完了を解除する
                 canAdvenceStage = false;
+                roomContext.isAdvanceRequest = false;
             }
         }
 
@@ -777,6 +771,15 @@ namespace StreamingHubs
                         //DBからレリック情報取得
                         GameDbContext dbContext = new GameDbContext();
                         var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.Id).First();
+
+                        // ルームデータから接続IDを指定して自身のデータを取得
+                        var playerData = this.roomContext.characterDataList[this.ConnectionId];
+
+                        //if(relicData <= (int)EnumManager.STATUS_TYPE.HealRate)
+                        //{
+                        //    relicData.
+                        //}
+
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合

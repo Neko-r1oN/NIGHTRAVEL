@@ -101,11 +101,6 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid, CharacterData> characterDataList = new Dictionary<Guid, CharacterData>();
 
         /// <summary>
-        /// キャラクターステータスデータリスト
-        /// </summary>
-        public Dictionary<Guid, CharacterStatusData> characterStatusDataList { get; } = new Dictionary<Guid, CharacterStatusData>();
-
-        /// <summary>
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
