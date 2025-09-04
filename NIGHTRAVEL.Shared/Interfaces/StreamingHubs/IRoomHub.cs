@@ -237,15 +237,6 @@ namespace Shared.Interfaces.StreamingHubs
         #region 不要になりそうなAPI
         #region ゲーム内
 
-        /// <summary>
-        /// ステージクリア待機
-        /// </summary>
-        /// <param name="conID">接続ID</param>
-        /// <param name="isTimeUp">時間切れ判定</param>
-        /// <param name="isAdvance">ステージ進行判定</param>
-        /// <returns></returns>
-        Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance);
-
         #region プレイヤー関連
         /// <summary>
         /// プレイヤー体力増減
