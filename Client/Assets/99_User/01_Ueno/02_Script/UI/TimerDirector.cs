@@ -52,7 +52,7 @@ public class TimerDirector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Terminal.Instance.IsTerminal&&Terminal.Instance.code!=(Terminal.TerminalCode)2)
+        if (Terminal.Instance.IsTerminal && Terminal.Instance.code != (Terminal.TerminalCode)2)
         {
             timerObj.SetActive(false);
         }

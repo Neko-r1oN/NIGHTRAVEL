@@ -1,7 +1,8 @@
 //----------------------------------------------------
-// ƒŒƒŠƒbƒNŠÇ—ƒNƒ‰ƒX
+// ãƒ¬ãƒªãƒƒã‚¯ç®¡ç†ã‚¯ãƒ©ã‚¹
 // Author : Souma Ueno
 //----------------------------------------------------
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ using System.Numerics;
 using Unity.VisualScripting;
 using UnityEditor.U2D;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -17,11 +20,12 @@ using Vector3 = UnityEngine.Vector3;
 
 public class RelicManager : MonoBehaviour
 {
-    #region ƒŠƒXƒg
-    [Header("ƒŠƒXƒg")]
-    [SerializeField] List<Sprite> relicSprites = new List<Sprite>();     // ƒŒƒŠƒbƒN‚ÌƒŠƒXƒg
-    [SerializeField] List<RelicDeta> haveRelicList = new List<RelicDeta>();     // ŠƒŒƒŠƒbƒNƒŠƒXƒg
-    [SerializeField] List<GameObject> relicPrefabs = new List<GameObject>();  // ƒŒƒŠƒbƒNƒvƒŒƒtƒ@ƒu
+    #region ãƒªã‚¹ãƒˆ
+    [Header("ãƒªã‚¹ãƒˆ")]
+    [SerializeField] List<Sprite> relicSprites = new List<Sprite>();     // ãƒ¬ãƒªãƒƒã‚¯ã®ãƒªã‚¹ãƒˆ
+    [SerializeField] List<RelicData> haveRelicList = new List<RelicData>();     // æ‰€æŒãƒ¬ãƒªãƒƒã‚¯ãƒªã‚¹ãƒˆ
+    [SerializeField] List<GameObject> relicSpawnPos = new List<GameObject>();
+    [SerializeField] GameObject relicPrefab;
     #endregion
 
     float elapsedTime;
@@ -29,20 +33,18 @@ public class RelicManager : MonoBehaviour
 
     public Material defaultSpriteMaterial;
 
-    [SerializeField] GameObject relicPrefab;
-
     RELIC_RARITY randomRarity;
 
     /// <summary>
-    /// ƒŒƒŠƒbƒN‚ÌƒŒƒAƒŠƒeƒB
+    /// ãƒ¬ãƒªãƒƒã‚¯ã®ãƒ¬ã‚¢ãƒªãƒ†ã‚£
     /// </summary>
     public enum RELIC_RARITY
     {
-        CURSE,@// ô‚¢
-        NORMAL, // ƒm[ƒ}ƒ‹
-        RARE,   // ƒŒƒA
-        UNIQUE, // ƒ†ƒj[ƒN
-        SPECIAL // “Áê
+        CURSE,ã€€// å‘ªã„
+        NORMAL, // ãƒãƒ¼ãƒãƒ«
+        RARE,   // ãƒ¬ã‚¢
+        UNIQUE, // ãƒ¦ãƒ‹ãƒ¼ã‚¯
+        SPECIAL // ç‰¹æ®Š
     }
 
     private static RelicManager instance;
@@ -63,8 +65,8 @@ public class RelicManager : MonoBehaviour
         }
         else
         {
-            // ƒCƒ“ƒXƒ^ƒ“ƒX‚ª•¡”‘¶İ‚µ‚È‚¢‚æ‚¤‚ÉA
-            // Šù‚É‘¶İ‚µ‚Ä‚¢‚½‚ç©g‚ğÁ‹‚·‚é
+            // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒè¤‡æ•°å­˜åœ¨ã—ãªã„ã‚ˆã†ã«ã€
+            // æ—¢ã«å­˜åœ¨ã—ã¦ã„ãŸã‚‰è‡ªèº«ã‚’æ¶ˆå»ã™ã‚‹
             Destroy(gameObject);
         }
     }
@@ -72,26 +74,26 @@ public class RelicManager : MonoBehaviour
     private void Start()
     {
         if (RoomModel.Instance == null) return;
-        //ƒ‚ƒfƒ‹‚ÅOnSpawnedRelic‚ªŒÄ‚Ño‚³‚ê‚é‚ÆOnSpawnRelic‚ªŒÄ‚Ño‚³‚ê‚é
+        //ãƒ¢ãƒ‡ãƒ«ã§OnSpawnedRelicãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ã¨OnSpawnRelicãŒå‘¼ã³å‡ºã•ã‚Œã‚‹
         //RoomModel.Instance.OnSpawnedRelic += this.OnSpawnRelic;
     }
 
     /// <summary>
-    /// ƒŒƒAƒŠƒeƒB‚ÌŠm—¦‚Ìİ’è
+    /// ãƒ¬ã‚¢ãƒªãƒ†ã‚£ã®ç¢ºç‡ã®è¨­å®š
     /// </summary>
     private Dictionary<RELIC_RARITY, float> rarityWeight = new Dictionary<RELIC_RARITY, float>()
-    {   
-        {RELIC_RARITY.CURSE,3 },    // Šm—¦F3%
-        {RELIC_RARITY.NORMAL,70 },  // Šm—¦F70%
-        {RELIC_RARITY.RARE,20 },    // Šm—¦F20%
-        {RELIC_RARITY.SPECIAL,6 },  // Šm—¦F6%
-        {RELIC_RARITY.UNIQUE,1 }    // Šm—¦F1%
+    {
+        {RELIC_RARITY.CURSE,3 },    // ç¢ºç‡ï¼š3%
+        {RELIC_RARITY.NORMAL,70 },  // ç¢ºç‡ï¼š70%
+        {RELIC_RARITY.RARE,20 },    // ç¢ºç‡ï¼š20%
+        {RELIC_RARITY.SPECIAL,6 },  // ç¢ºç‡ï¼š6%
+        {RELIC_RARITY.UNIQUE,1 }    // ç¢ºç‡ï¼š1%
     };
 
     /// <summary>
-    /// ƒŒƒŠƒbƒN‚ğ‚¿•¨‚É’Ç‰Á‚·‚éˆ—
+    /// ãƒ¬ãƒªãƒƒã‚¯ã‚’æŒã¡ç‰©ã«è¿½åŠ ã™ã‚‹å‡¦ç†
     /// </summary>
-    public void AddRelic(RelicDeta relic)
+    public void AddRelic(RelicData relic)
     {
         if (haveRelicList.Find(X => X.ID == relic.ID) != null)
         {
@@ -108,95 +110,188 @@ public class RelicManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒŒƒŠƒbƒN‚ğ¶¬‚·‚éˆ—
+    /// ãƒ¬ãƒªãƒƒã‚¯ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
     /// </summary>
-    //public void GenerateRelic(Vector3 bossPos)
-    //{
-    //    randomRarity = GetRandomRarity();
+    public void GenerateRelic(GameObject obj)
+    {
+        Transform childObj = obj.transform.Find("RelicPos");
 
-    //    List<GameObject> filteredRelics = relicPrefab.
-    //        Where(prefab =>
-    //        {
-    //            Relic relic = prefab.GetComponent<Relic>();
-    //            return relic != null && relic.Rarity == (int)randomRarity;
-    //        }).ToList();
+        int childCnt = childObj.childCount;
 
-    //    if (filteredRelics.Count > 0)
-    //    {
-    //        int random = Random.Range(0, filteredRelics.Count);
-    //        GameObject selectedRelic = filteredRelics[random];
-    //        relic = Instantiate(selectedRelic, bossPos, Quaternion.identity);
-    //    }
+        List<Transform> childs = new List<Transform>();
 
-    //    if (relic != null)
-    //    {
-    //        Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbody‚ğæ“¾
-    //        float boundRnd = Random.Range(2f, 6f);
-    //        boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
-    //        Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // —Í‚ğİ’è
-    //        rb.AddForce(force, ForceMode2D.Impulse);             // —Í‚ğ‰Á‚¦‚é
-    //    }
-    //}
+        for (int i = 0; i < childCnt; i++)
+        {
+            childs.Add(childObj.transform.GetChild(i));
+        }
+
+        for (int n = 0; n < 4; n++)
+        {
+            relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
+
+            SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+            }
+
+            if (sr != null)
+            {
+                // ã“ã“ã§ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å‰²ã‚Šå½“ã¦
+                sr.material = defaultSpriteMaterial;
+            }
+        }
+
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    relic = Instantiate(relicPrefab, new Vector3(pos.x, pos.y, -0.1f), UnityEngine.Quaternion.identity);
+
+        //    SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //    SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+        //    if (spriteRenderer != null)
+        //    {
+        //        spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+        //    }
+
+        //    if (sr != null)
+        //    {
+        //        // ã“ã“ã§ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å‰²ã‚Šå½“ã¦
+        //        sr.material = defaultSpriteMaterial;
+        //    }
+        //}
+
+        //randomRarity = GetRandomRarity();
+
+        //List<GameObject> filteredRelics = relicPrefab.
+        //    Where(prefab =>
+        //    {
+        //        Relic relic = prefab.GetComponent<Relic>();
+        //        return relic != null && relic.Rarity == (int)randomRarity;
+        //    }).ToList();
+
+        //if (filteredRelics.Count > 0)
+        //{
+        //    int random = Random.Range(0, filteredRelics.Count);
+        //    GameObject selectedRelic = filteredRelics[random];
+        //    relic = Instantiate(selectedRelic, bossPos, Quaternion.identity);
+        //}
+
+        //if (relic != null)
+        //{
+        //    Rigidbody2D rb = relic.GetComponent<Rigidbody2D>();  // rigidbodyã‚’å–å¾—
+        //    float boundRnd = Random.Range(2f, 6f);
+        //    boundRnd = (int)Random.Range(0f, 2f) == 0 ? boundRnd : boundRnd * -1;
+        //    Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // åŠ›ã‚’è¨­å®š
+        //    rb.AddForce(force, ForceMode2D.Impulse);             // åŠ›ã‚’åŠ ãˆã‚‹
+        //}
+    }
 
 
     [ContextMenu("GenerateRelicTest")]
     public async void GenerateRelicTest()
     {
-        relic = Instantiate(relicPrefab, new Vector3(0, 0, -0.1f), UnityEngine.Quaternion.identity);
+        Transform childObj = Terminal.Instance.transform.Find("RelicPos");
+
+        int childCnt = childObj.childCount;
+
+        List<Transform> childs = new List<Transform>();
+
+        for (int i = 0; i < childCnt; i++)
+        {
+            childs.Add(childObj.transform.GetChild(i));
+        }
+
+        for (int n = 0; n < 4 ; n++)
+        {
+            relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
+
+            SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+            }
+
+            if (sr != null)
+            {
+                // ã“ã“ã§ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å‰²ã‚Šå½“ã¦
+                sr.material = defaultSpriteMaterial;
+            }
+        }
+
+
+        //relic.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+
+        //// ãƒ¬ã‚¢ãƒªãƒ†ã‚£ã®æŠ½å‡º
+        //randomRarity = GetRandomRarity();
+
+        //List<GameObject> filteredRelics = relicPrefab.
+        //    Where(prefab =>
+        //    {
+        //        Relic relic = prefab.GetComponent<Relic>();
+        //        return relic != null && relic.Rarity == (int)randomRarity;
+        //    }).ToList();
+
+        //if (filteredRelics.Count > 0)
+        //{
+        //    int random = Random.Range(0, filteredRelics.Count);
+        //    GameObject selectedRelic = filteredRelics[random];
+        //    relic = Instantiate(selectedRelic, new Vector3(0, 0, -0.1f), Quaternion.identity);
+        //}    GameObject selectedRelic = filteredRelics[random];
+
+
+        //#if UNITY_EDITOR
+        //            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
+        //#else
+        //            //ãƒ¬ãƒªãƒƒã‚¯ã®è¨­å®š
+        //            relic = selectedRelic;
+        //            //ãƒ¬ãƒªãƒƒã‚¯ã®ç”ŸæˆåŒæœŸã‚’å®Ÿè¡Œ
+        //            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
+        //#endif
+        //}
+    }
+
+    public void GenerationRelic(List<DropRelicData> relicDatas)
+    {
+        foreach(var data in relicDatas)
+        {
+            relic = Instantiate(relicPrefab, data.SpawnPos, Quaternion.identity); 
+        }
+    }
+
+    /// <summary>
+    /// ãƒ¬ãƒªãƒƒã‚¯ã®ç”Ÿæˆã®é€šçŸ¥
+    /// </summary>
+    /// <param name="relicId"></param>
+    /// <param name="pos"></param>
+    void OnSpawnRelic(int relicId,Vector2 pos)
+    {
+        relic = Instantiate(relicPrefab, pos, Quaternion.identity);
 
         SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
         SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         if (spriteRenderer != null)
         {
-            spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+            spriteRenderer.sprite = relicSprites[relicId];
         }
 
         if (sr != null)
         {
-            // ‚±‚±‚Åƒ}ƒeƒŠƒAƒ‹‚ğŠ„‚è“–‚Ä
+            // ã“ã“ã§ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å‰²ã‚Šå½“ã¦
             sr.material = defaultSpriteMaterial;
         }
 
-            //relic.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = relicSprites[Random.Range(0, relicSprites.Count)];
-
-            //        randomRarity = GetRandomRarity();
-
-            //        List<GameObject> filteredRelics = relicPrefabs.
-            //            Where(prefab =>
-            //            {
-            //                Relic relic = prefab.GetComponent<Relic>();
-            //                return relic != null && relic.Rarity == (int)randomRarity;
-            //            }).ToList();
-
-            //        if (filteredRelics.Count > 0)
-            //        {
-            //            int random = Random.Range(0, filteredRelics.Count);
-            //            GameObject selectedRelic = filteredRelics[random];
-            //#if UNITY_EDITOR
-            //            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
-            //#else
-            //            //ƒŒƒŠƒbƒN‚Ìİ’è
-            //            relic = selectedRelic;
-            //            //ƒŒƒŠƒbƒN‚Ì¶¬“¯Šú‚ğÀs
-            //            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
-            //#endif
-            //}
-        }
-
-    /// <summary>
-    /// ƒŒƒŠƒbƒN‚Ì¶¬‚Ì’Ê’m
-    /// </summary>
-    /// <param name="relicId"></param>
-    /// <param name="pos"></param>
-    void OnSpawnRelic(int relicId,Vector2 pos)
-    {
-       relic = Instantiate(relicPrefabs[relicId], pos,UnityEngine.Quaternion.identity);
+        //relic = Instantiate(relicPrefabs[relicId], pos,UnityEngine.Quaternion.identity);
     }
 
     [ContextMenu("ShuffleRelic")]
     /// <summary>
-    /// ‚¿•¨‚ğ“ü‚ê‘Ö‚¦‚éˆ—
+    /// æŒã¡ç‰©ã‚’å…¥ã‚Œæ›¿ãˆã‚‹å‡¦ç†
     /// </summary>
     public void ShuffleRelic()
     {
@@ -209,19 +304,19 @@ public class RelicManager : MonoBehaviour
         {
             int relicnum = Random.Range(0, relicSprites.Count);
 
-            relicPrefabs[relicnum].GetComponent<Relic>().AddRelic();
+            //relicPrefabs[relicnum].GetComponent<Relic>().AddRelic();
         }
     }
 
     /// <summary>
-    /// “¯‚¶ƒŒƒŠƒbƒN‚ğ‚Á‚Ä‚¢‚é”‚ğ”‚¦‚é
+    /// åŒã˜ãƒ¬ãƒªãƒƒã‚¯ã‚’æŒã£ã¦ã„ã‚‹æ•°ã‚’æ•°ãˆã‚‹
     /// </summary>
     /// <param name="id"></param>
     public void CountRelic(int id)
     {
         int relicCnt = 0;
 
-        foreach (RelicDeta rlc in haveRelicList)
+        foreach (RelicData rlc in haveRelicList)
         {
             if (id == rlc.ID)
             {
@@ -233,7 +328,7 @@ public class RelicManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒŒƒAƒŠƒeƒB’Šo
+    /// ãƒ¬ã‚¢ãƒªãƒ†ã‚£æŠ½å‡º
     /// </summary>
     /// <returns></returns>
     public RELIC_RARITY GetRandomRarity()

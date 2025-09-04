@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
 {
     #region 初期設定
     [Header("初期設定")]
-    int crashNum = 0; 　　　　　// 撃破数
+    int crashNum = 0; 　　　　　// 撃破
     int xp;                     // 経験値
     int requiredXp = 100;       // 必要経験値
     int level;                  // レベル
@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float yRadius;          // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
     [SerializeField] int knockTermsNum;      // エネミーの撃破数条件
+    [SerializeField] List<GameObject> portal;
 
     float elapsedTime;
 
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     #region 各プロパティ
     [Header("各プロパティ")]
+    public int CrashNum { get { return crashNum; } }
 
     public bool IsBossDead { get { return isBossDead; } }
 
@@ -90,6 +92,14 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ShowUIAndFadeOut();
 
         isGameStart = true;
+
+        foreach (GameObject obj in portal)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
+        }
     }
 
     /// <summary>
@@ -106,7 +116,7 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 1;
         }
-        else if(Input.GetKeyDown(KeyCode.S))
+        else if(Input.GetKeyDown(KeyCode.L))
         {// 20倍速(デバック用)
 #if UNITY_EDITOR
             Time.timeScale = 20;
@@ -124,12 +134,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DisplayPortal()
+    {
+        foreach (var item in portal)
+        {
+            item.gameObject.SetActive(true);
+        }
+    }
+
     /// <summary>
     /// シーン遷移
     /// </summary>
-    private void ChengScene()
+    public void ChengScene()
     {// シーン遷移
-        SceneManager.LoadScene("Result ueno");
+        SceneManager.LoadScene("stage");
+
+        isGameStart = false;
+    }
+
+    public void CangeResult()
+    {
+        SceneManager.LoadScene("ResultScene");
 
         isGameStart = false;
     }
@@ -157,9 +182,16 @@ public class GameManager : MonoBehaviour
     {
         //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
+        RelicManager.Instance.GenerateRelic(Terminal.Instance.gameObject);
+
         // 死んだ判定にする
         isBossDead = true;
 
-        Invoke(nameof(ChengScene), 15f);
+        foreach(GameObject obj in portal)
+        {
+            obj.SetActive(true);
+        }
+
+        //Invoke(nameof(ChengScene), 15f);
     }
 }
