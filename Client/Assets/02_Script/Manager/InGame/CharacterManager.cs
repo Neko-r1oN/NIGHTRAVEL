@@ -15,6 +15,7 @@ using System.Linq;
 using System.Data;
 using Unity.VisualScripting;
 using UnityEngine.TextCore.Text;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -206,14 +207,14 @@ public class CharacterManager : MonoBehaviour
     {
         var stateData = characterData.State;
 
-        List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All};
+        List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All };
         if (character.gameObject.tag == "Enemy")
         {
             // 敵の場合はHP以外を更新する
-            addStatusTypes = new List<STATUS_TYPE>() { 
-                STATUS_TYPE.Defense, 
-                STATUS_TYPE.JumpPower, 
-                STATUS_TYPE.MoveSpeed, 
+            addStatusTypes = new List<STATUS_TYPE>() {
+                STATUS_TYPE.Defense,
+                STATUS_TYPE.JumpPower,
+                STATUS_TYPE.MoveSpeed,
                 STATUS_TYPE.AttackSpeedFactor};
         }
         character.OverridCurrentStatus(stateData, STATUS_TYPE.All);
@@ -311,12 +312,26 @@ public class CharacterManager : MonoBehaviour
             Destroy(player);
 
             // 敵が持っているプレイヤーのリストを更新
-            foreach(var enemy in enemies.Values)
+            foreach (var enemy in enemies.Values)
             {
                 enemy.Enemy.Players = playerObjs.Values.ToList();
+                if (enemy.Enemy.Target == player) enemy.Enemy.GetNearPlayer(enemy.Enemy.transform.position);
             }
         }
     }
+
+    /// <summary>
+    /// マスタの権限が譲渡されたときに、全ての敵のスクリプトをアクティブにする
+    /// </summary>
+    void ActivateAllEnemies()
+    {
+        foreach (var enemy in enemies.Values)
+        {
+            enemy.Enemy.enabled = true;
+        }
+    }
+
+    #region リクエスト関連
 
     /// <summary>
     /// マスタークライアント用の情報更新
@@ -327,6 +342,7 @@ public class CharacterManager : MonoBehaviour
         {
             PlayerData = GetPlayerData(),
             EnemyDatas = GetEnemyDatas(),
+            GimmickDatas = GimmickManager.Instance.GetGimmickDatas()
         };
 
         // マスタクライアント情報更新リクエスト
@@ -343,6 +359,10 @@ public class CharacterManager : MonoBehaviour
         // プレイヤー情報更新リクエスト
         await RoomModel.Instance.UpdatePlayerAsync(playerData);
     }
+
+    #endregion
+
+    #region 通知処理関連
 
     /// <summary>
     /// プレイヤーの更新の通知
@@ -379,6 +399,9 @@ public class CharacterManager : MonoBehaviour
             UpdateCharacter(enemyData, enemy);
             enemy.UpdateEnemy(enemyData);
         }
+
+        // ギミックの情報更新
+        GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
     }
 
     /// <summary>
@@ -387,19 +410,11 @@ public class CharacterManager : MonoBehaviour
     void OnHitEnemy(EnemyDamegeData damageData)
     {
         GameObject? attacker = playerObjs.GetValueOrDefault(damageData.AttackerId);
-        enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, 
+        enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
             playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
     }
 
-    /// <summary>
-    /// 全ての敵のスクリプトをアクティブにする
-    /// </summary>
-    void ActivateAllEnemies()
-    {
-        foreach(var enemy in enemies.Values)
-        {
-            enemy.Enemy.enabled = true;
-        }
-    }
+    #endregion
+
     #endregion
 }
