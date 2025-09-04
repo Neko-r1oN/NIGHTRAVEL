@@ -27,5 +27,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// 全ての敵を同期させる情報
         /// </summary>
         public List<EnemyData> EnemyDatas { get; set; }
+
+        [Key(3)]
+        /// <summary>
+        /// 全ての存在し続けるギミックを同期させる情報
+        /// </summary>
+        public List<GimmickData> GimmickDatas { get; set; }
     }
 }
