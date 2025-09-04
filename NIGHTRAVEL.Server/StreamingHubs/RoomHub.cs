@@ -96,9 +96,6 @@ namespace StreamingHubs
             //　ルームに参加
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
-            // 参加したことを自分以外に通知
-            //this.roomContext.Group.All.Onjoin(roomContext.JoinedUserList[this.ConnectionId],
-            //    roomContext.JoinedUserList);
             this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
             // ルームデータから接続IDを指定して自身のデータを取得
@@ -204,16 +201,6 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task MovePlayerAsync(PlayerData playerData)
         {
-            //// ルームデータから接続IDを指定して自身のデータを取得
-            //var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
-
-            //playerData.Position = pos; // 位置を渡す
-            //playerData.Rotation = rot; // 回転を渡す
-            //playerData.State = anim;   // アニメーションIDを渡す
-
-            // ルーム参加者全員に、ユーザ情報通知を送信
-            //this.roomContext.Group.All.OnMovePlayer(playerData);
-
             //ルームの自分以外に、ユーザ情報通知を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
         }
@@ -333,7 +320,7 @@ namespace StreamingHubs
                 rndList.Add(new Random().Next(1, dbContext.Relics.ToArray().Length));
             }
             // レリック情報を検索
-            var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id));
+            var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id)).First();
 
             // 参加人数分ループ
             for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
@@ -379,18 +366,25 @@ namespace StreamingHubs
         public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyData)
         {
             lock (roomContextRepository) // 排他制御
+            foreach (var spawnEnemy in spawnEnemyData) 
             {
-                this.roomContext.SetSpawnedEnemyData(spawnEnemyData);
+                // DBからIDを指定して敵を取得
+                GameDbContext dbContext = new GameDbContext();
+                var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
+                Enemy enemyData = new Enemy();
 
-                foreach (var spawnEnemy in spawnEnemyData)
-                {
-                    GameDbContext dbContext = new GameDbContext();
-                    var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
-                    Enemy enemyData = new Enemy();
-                    enemyData.id = spawnEnemy.EnemyId;
-                    enemyData.name = enemy.name;
-                    enemyData.isBoss = enemy.isBoss;
-                    enemyData.exp = enemy.exp;
+                // 生成数を加算
+                this.roomContext.spawnEnemyCount++;
+                
+                // 取得した情報をスポーンした敵の情報に代入
+                enemyData.id = this.roomContext.spawnEnemyCount;
+                enemyData.name = enemy.name;
+                enemyData.isBoss = enemy.isBoss;
+                enemyData.exp = enemy.exp;
+
+                // 設定した情報をルームデータに保存
+                this.roomContext.SetEnemyData(enemyData);
+            }
 
                     this.roomContext.SetEnemyData(enemyData);
                 }
@@ -408,11 +402,8 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task BootGimmickAsync(int gimID)
         {
-            // ルームデータからギミックのIDを指定してギミックデータを取得
-            GimmickData gimmickData = this.roomContext.GetGimmickData(gimID);
-
-            // 参加者全員にギミック情報を通知？？？？
-            this.roomContext.Group.All.OnBootGimmick(gimmickData);
+            // 参加者全員にギミック情報を通知
+            this.roomContext.Group.All.OnBootGimmick(gimID);
         }
 
         /// <summary>
@@ -450,9 +441,6 @@ namespace StreamingHubs
                         this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
                     }else this.roomContext.NowStage++; // 現在のステージを加算
 
-                    // 生成された敵リストをクリア
-                    this.roomContext.spawnedEnemyDataList.Clear();
-
                     // 獲得したアイテムリストをクリア
                     this.roomContext.gottenItemList.Clear();
 
@@ -464,7 +452,10 @@ namespace StreamingHubs
 
                     // 参加者全員にステージの進行を通知
                     this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);
-                    this.roomContext.isAdvanceRequest = false;  // 未申請にする
+
+                    // 各進行判定変数の値をfalseにする
+                    this.roomContext.isAdvanceRequest = false;
+                    this.roomContext.JoinedUserList[this.ConnectionId].IsAdvance = false;
                     isAdvance = false;
                 }
                 else
@@ -502,6 +493,7 @@ namespace StreamingHubs
 
                 joinedUser.IsAdvance = false; // 準備完了を解除する
                 canAdvenceStage = false;
+                roomContext.isAdvanceRequest = false;
             }
         }
 
@@ -659,17 +651,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// レベルアップ同期処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <returns></returns>
-        public async Task LevelUpAsync()
-        {
-            // 参加者全員にレベルアップしたことを通知
-            //this.roomContext.Group.All.OnLevelUp();
-        }
-
-        /// <summary>
         /// 時間同期処理
         /// </summary>
         /// <param name="tiemrType">タイマーの辞典</param>
@@ -791,6 +772,15 @@ namespace StreamingHubs
                         //DBからレリック情報取得
                         GameDbContext dbContext = new GameDbContext();
                         var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.Id).First();
+
+                        // ルームデータから接続IDを指定して自身のデータを取得
+                        var playerData = this.roomContext.characterDataList[this.ConnectionId];
+
+                        //if(relicData <= (int)EnumManager.STATUS_TYPE.HealRate)
+                        //{
+                        //    relicData.
+                        //}
+
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合

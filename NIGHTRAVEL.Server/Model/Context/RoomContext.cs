@@ -70,6 +70,12 @@ namespace NIGHTRAVEL.Server.Model.Context
         public int totalGainDamage = 0;
 
         /// <summary>
+        /// 敵生成数
+        /// Author:Nishiura
+        /// </summary>
+        public int spawnEnemyCount = 0;
+
+        /// <summary>
         /// グループ
         /// Author:Kida
         /// </summary>
@@ -101,27 +107,10 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid, CharacterData> characterDataList = new Dictionary<Guid, CharacterData>();
 
         /// <summary>
-        /// キャラクターステータスデータリスト
-        /// </summary>
-        public Dictionary<Guid, CharacterStatusData> characterStatusDataList { get; } = new Dictionary<Guid, CharacterStatusData>();
-
-        /// <summary>
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
         public Dictionary<int, EnemyData> enemyDataList { get; } = new Dictionary<int, EnemyData>();
-
-        /// <summary>
-        /// ギミックデータリスト
-        /// Author:Nishiura
-        /// </summary>
-        public Dictionary<int, GimmickData> gimmickDataList { get; } = new Dictionary<int, GimmickData>();
-
-        /// <summary>
-        /// 生成された敵リスト
-        /// Author:Nishiura
-        /// </summary>
-        public Dictionary<int, SpawnEnemyData> spawnedEnemyDataList { get; } = new Dictionary<int, SpawnEnemyData>();
 
         /// <summary>
         /// ドロップレリックリスト
@@ -277,30 +266,6 @@ namespace NIGHTRAVEL.Server.Model.Context
             setData.Exp = enemData.exp;
 
             enemyDataList.Add(enemData.id, setData);
-        }
-
-        /// <summary>
-        /// 生成された敵の情報を入力する関数
-        /// Author:Nishiura
-        /// </summary>
-        public void  SetSpawnedEnemyData(List<SpawnEnemyData> enemyList)
-        {
-            // 渡された敵のリスト分ループしてデータを追加
-            for (int i = 0; i < enemyList.Count; i++)
-            {
-                spawnedEnemyDataList.Add(enemyList[i].EnemyId, enemyList[i]);
-            }
-        }
-
-        /// <summary>
-        /// ギミック情報を渡す関数
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="gimID"></param>
-        /// <returns></returns>
-        public GimmickData GetGimmickData(int gimID)
-        {
-            return gimmickDataList[gimID];
         }
 
         /// <summary>

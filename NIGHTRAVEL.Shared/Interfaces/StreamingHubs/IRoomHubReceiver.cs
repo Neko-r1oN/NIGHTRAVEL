@@ -163,8 +163,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// ギミック起動通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="gimmickData">ギミックデータ</param>
-        void OnBootGimmick(GimmickData gimmickData);
+        /// <param name="gimID">ギミックID</param>
+        void OnBootGimmick(int gimID);
 
         /// <summary>
         /// 難易度上昇通知
