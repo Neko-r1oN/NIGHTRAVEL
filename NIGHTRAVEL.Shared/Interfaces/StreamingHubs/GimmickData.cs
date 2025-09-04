@@ -27,23 +27,23 @@ namespace Shared.Interfaces.StreamingHubs
 
         [Key(3)]
         /// <summary>
+        /// 起動済みかどうか
+        /// Author:Nishiura
+        /// </summary>
+        public bool IsActivated { get; set; }
+
+        [Key(4)]
+        /// <summary>
         /// 位置
         /// Author:Nishiura
         /// </summary>
         public Vector2 Position { get; set; }
 
-        [Key(4)]
-        /// <summary>
-        /// 動作ID
-        /// Author:Nishiura
-        /// </summary>
-        public int TriggerID { get; set; }
-
         [Key(5)]
         /// <summary>
-        /// 起動可能判定
+        /// 回転
         /// Author:Nishiura
         /// </summary>
-        public bool CanBoot { get; set; }
+        public Quaternion Rotation { get; set; }
     }
 }
