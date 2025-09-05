@@ -93,13 +93,18 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 初期設定
     /// </summary>
-    void Start()
+    async void Start()
     {
         isBossDead = false;
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
 
         if (!RoomModel.Instance) Invoke("StartGame", 5f);
+        else
+        {
+            RoomModel.Instance.OnSameStartSyn += this.StartGame;
+            await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
+        }
 
         foreach (GameObject obj in portal)
         {
@@ -108,6 +113,11 @@ public class GameManager : MonoBehaviour
                 obj.SetActive(false);
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        RoomModel.Instance.OnSameStartSyn -= this.StartGame;
     }
 
     /// <summary>
@@ -207,7 +217,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         isGameStart = true;
-
+        Debug.Log("同時開始！！");
         foreach(var player in CharacterManager.Instance.PlayerObjs)
         {
             player.Value.gameObject.GetComponent<PlayerBase>().CanMove = true;

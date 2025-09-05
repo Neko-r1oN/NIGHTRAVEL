@@ -364,6 +364,7 @@ namespace StreamingHubs
 
                     // 設定した情報をルームデータに保存
                     this.roomContext.SetEnemyData(enemyData);
+                    Console.WriteLine(enemyData.id.ToString());
                 }
             }
 
@@ -474,7 +475,7 @@ namespace StreamingHubs
                 // 進行できる場合、進行通知をする
                 if (canAdvenceStage)
                 {
-                    this.roomContext.Group.All.OnStartGame();
+                    this.roomContext.Group.All.OnSameStart();
 
                     joinedUser.IsAdvance = false; // 準備完了を解除する
                     canAdvenceStage = false;
