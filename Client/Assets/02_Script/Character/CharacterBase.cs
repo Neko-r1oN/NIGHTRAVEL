@@ -403,6 +403,7 @@ abstract public class CharacterBase : MonoBehaviour
                     break;
             }
         }
+
         CharacterStatusData changeData = new CharacterStatusData(
             hp: maxHp,
             defence: maxDefense,
@@ -411,7 +412,8 @@ abstract public class CharacterBase : MonoBehaviour
             attackSpeedFactor: maxAttackSpeedFactor,
             jumpPower: maxJumpPower,
             healRate: maxHealRate
-            );
+           );
+
         ChangeAccordingStatusToMaximumValue(changeData);
         OverrideAnimaterParam();
     }

@@ -208,6 +208,7 @@ public class CharacterManager : MonoBehaviour
     /// <param name="character"></param>
     void UpdateCharacter(CharacterData characterData, CharacterBase character)
     {
+        var statusData = characterData.Status;
         var stateData = characterData.State;
 
         List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All };
@@ -216,12 +217,14 @@ public class CharacterManager : MonoBehaviour
             // ìGÇÃèÍçáÇÕHPà»äOÇçXêVÇ∑ÇÈ
             addStatusTypes = new List<STATUS_TYPE>() {
                 STATUS_TYPE.Defense,
+                STATUS_TYPE.Power,
                 STATUS_TYPE.JumpPower,
                 STATUS_TYPE.MoveSpeed,
-                STATUS_TYPE.AttackSpeedFactor};
+                STATUS_TYPE.AttackSpeedFactor
+            };
         }
-        //character.OverridMaxStatus(stateData, addStatusTypes.ToArray());
-        //character.OverridCurrentStatus(stateData, addStatusTypes.ToArray());
+        character.OverridMaxStatus(statusData, addStatusTypes.ToArray());
+        character.OverridCurrentStatus(stateData, addStatusTypes.ToArray());
         character.gameObject.SetActive(characterData.IsActiveSelf);
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
         character.gameObject.transform.localScale = characterData.Scale;

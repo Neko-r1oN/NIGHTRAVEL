@@ -117,6 +117,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
+        if (!RoomModel.Instance) return;
         RoomModel.Instance.OnSameStartSyn -= this.StartGame;
     }
 
