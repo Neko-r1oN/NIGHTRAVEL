@@ -484,8 +484,6 @@ abstract public class EnemyBase : CharacterBase
         GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
         if (isInvincible || isDead || attacker && attacker != playerSelf) return;
 
-        var plBase = attacker.GetComponent<PlayerBase>();
-
         #region リアルタイム同期用
         if (RoomModel.Instance)
         {
@@ -504,20 +502,34 @@ abstract public class EnemyBase : CharacterBase
         #endregion
 
         // 以降はローカル || ギミック用
-        int damage = CalculationLibrary.CalcDamage(power, Defense - (int)(Defense * plBase.PierceRate));   // 貫通率適用
 
-        //----------------
-        // レリック適用
+        PlayerBase plBase = null;
+        int damage = 0;
 
-        // 自身がデバフを受けている + レリック「識別AI」所有時、ダメージが増加
-        var debuffController = GetComponent<DebuffController>();
-        if(debuffController.GetAppliedStatusEffects().Count != 0) damage = (int)(damage * plBase.DebuffDmgRate);
+        if (attacker != null && attacker.tag == "Player")
+        {
+            plBase = attacker.GetComponent<PlayerBase>();
 
-        // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
-        if(plBase.DmgHealRate >= 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
+            damage = CalculationLibrary.CalcDamage(power, Defense - (int)(Defense * plBase.PierceRate));   // 貫通率適用
 
-        // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
-        damage = (plBase.LotteryRelic(RELIC_TYPE.IllegalScript)) ? MAX_DAMAGE : damage;
+            //----------------
+            // レリック適用
+
+            // 自身がデバフを受けている + レリック「識別AI」所有時、ダメージが増加
+            var debuffController = GetComponent<DebuffController>();
+            if (debuffController.GetAppliedStatusEffects().Count != 0) damage = (int)(damage * plBase.DebuffDmgRate);
+
+            // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
+            if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
+
+            // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
+            damage = (plBase.LotteryRelic(RELIC_TYPE.IllegalScript)) ? MAX_DAMAGE : damage;
+        }
+        else
+        {
+            // ギミックなどによるダメージ
+            damage = power;
+        }
 
         // ダメージ適用
         int remainingHp = this.hp - Mathf.Abs(damage);
