@@ -228,16 +228,13 @@ namespace StreamingHubs
                 // 取得したデータを受け取ったマスターデータに置き換え
                 gottenPlayerData = masterClientData.PlayerData;
 
-                // ルームデータから敵のリストを取得
+                // ルームデータから敵のリストを取得し、該当する要素を更新する
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
-
-                // 敵データの個数分ループして更新
-                for (int i = 1; i < masterClientData.EnemyDatas.Count; i++)
+                foreach(var enemyData in masterClientData.EnemyDatas)
                 {
-                    // 指定データが存在している場合、代入する
-                    if (gottenEnemyDataList[i] != null)
+                    if (gottenEnemyDataList.ContainsKey(enemyData.EnemyID))
                     {
-                        gottenEnemyDataList[i] = masterClientData.EnemyDatas[i];
+                        gottenEnemyDataList[enemyData.EnemyID] = enemyData;
                     }
                 }
 
@@ -269,7 +266,7 @@ namespace StreamingHubs
                 }
 
                 // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
-                this.roomContext.Group.Except([this.ConnectionId]).OnUpdateMasterClient(masterClientData);
+                this.roomContext.Group.All.OnUpdateMasterClient(masterClientData);
             }
         }
 
