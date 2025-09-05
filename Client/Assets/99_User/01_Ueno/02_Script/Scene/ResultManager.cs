@@ -16,7 +16,7 @@ public class RisultManager : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Return))
         {
-            await RoomModel.Instance.LeaveAsync();
+            await RoomModel.Instance.LeavedAsync();
             SceneManager.LoadScene("Title Ueno");
         }
     }

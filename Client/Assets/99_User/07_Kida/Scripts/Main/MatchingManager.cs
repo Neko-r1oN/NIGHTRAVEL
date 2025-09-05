@@ -69,7 +69,7 @@ public class MatchingManager : MonoBehaviour
         string roomName=inputFieldRoomId.text;
         
         //RoomModel.Instance‚Ì“üº“¯Šú‚ğŒÄ‚Ño‚·
-        await RoomModel.Instance.JoinAsync(roomName,userId );
+        await RoomModel.Instance.JoinedAsync(roomName,userId );
 
 
     }
@@ -81,7 +81,7 @@ public class MatchingManager : MonoBehaviour
     public async void LeaveRoom()
     {
         //RoomHub‚Ì‘Şº“¯Šú‚ğŒÄ‚Ño‚·
-        await RoomModel.Instance.LeaveAsync();
+        await RoomModel.Instance.LeavedAsync();
     }
 
     /// <summary>

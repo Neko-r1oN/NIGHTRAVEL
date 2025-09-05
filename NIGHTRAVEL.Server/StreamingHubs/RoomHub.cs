@@ -175,25 +175,6 @@ namespace StreamingHubs
                 if (canStartGame) this.roomContext.Group.All.OnStartGame();
             }
         }
-
-        /// <summary>
-        /// 同時開始処理
-        /// Author:木田晃輔
-        /// </summary>
-        /// <returns></returns>
-        public async Task SameStartAsync()
-        {
-            lock (roomContextRepository) // 排他制御
-            {
-                this.roomContext.LoadedPlayer += 1;
-
-                if (this.roomContext.LoadedPlayer == this.roomContext.JoinedUserList.Count)
-                {
-                    this.roomContext.Group.All.OnSameStart();
-                }
-            }
-        }
-
         #endregion
 
         #region ゲーム内での処理
@@ -260,20 +241,20 @@ namespace StreamingHubs
                     }
                 }
 
-                foreach (var item in masterClientData.GimmickDatas)
-                {
-                    // すでにルームコンテキストにギミックが含まれている場合
-                    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
-                    {
-                        // そのギミックを更新する
-                        this.roomContext.gimmickList[item.GimmickID] = item;
-                    }
-                    else // 含まれていない場合
-                    {
-                        // そのギミックを追加する
-                        this.roomContext.gimmickList.Add(item.GimmickID, item);
-                    }
-                }
+                //foreach (var item in masterClientData.GimmickDatas)
+                //{
+                //    // すでにルームコンテキストにギミックが含まれている場合
+                //    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
+                //    {
+                //        // そのギミックを更新する
+                //        this.roomContext.gimmickList[item.GimmickID] = item;
+                //    }
+                //    else // 含まれていない場合
+                //    {
+                //        // そのギミックを追加する
+                //        this.roomContext.gimmickList.Add(item.GimmickID, item);
+                //    }
+                //}
 
                 // キャラクターデータリストに自身のデータがない場合
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
@@ -475,42 +456,31 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task AdvancedStageAsync(bool isAdvance)
+        public async Task AdvancedStageAsync()
         {
-            bool canAdvenceStage = true; // ステージ進行済み判定変数
-
-            // 自身のデータを取得
-            var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
-            joinedUser.IsAdvance = true; // 準備完了にする
-
-            foreach (var user in this.roomContext.JoinedUserList)
-            { // 現在の参加者数分ループ
-                if (user.Value.IsAdvance != true) canAdvenceStage = false; // もし一人でも準備完了していなかった場合、進行させない
-            }
-
-            // 進行できる場合、進行通知をする
-            if (canAdvenceStage)
+            lock (roomContextRepository)
             {
-                //await StageClear(isAdvance);
-                this.roomContext.Group.All.OnStartGame();
+                bool canAdvenceStage = true; // ステージ進行済み判定変数
 
-                joinedUser.IsAdvance = false; // 準備完了を解除する
-                canAdvenceStage = false;
-                roomContext.isAdvanceRequest = false;
+                // 自身のデータを取得
+                var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
+                joinedUser.IsAdvance = true; // 準備完了にする
+
+                foreach (var user in this.roomContext.JoinedUserList)
+                { // 現在の参加者数分ループ
+                    if (user.Value.IsAdvance != true) canAdvenceStage = false; // もし一人でも準備完了していなかった場合、進行させない
+                }
+
+                // 進行できる場合、進行通知をする
+                if (canAdvenceStage)
+                {
+                    this.roomContext.Group.All.OnStartGame();
+
+                    joinedUser.IsAdvance = false; // 準備完了を解除する
+                    canAdvenceStage = false;
+                    roomContext.isAdvanceRequest = false;
+                }
             }
-        }
-
-        /// <summary>
-        /// プレイヤー体力増減同期処理
-        /// Autho:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-        /// <returns></returns>
-        public async Task PlayerHealthAsync(int playerID, float playerHP)
-        {
-            // 参加者全員に受け取ったIDのプレイヤーが受け取ったHPになったことを通知
-            //this.roomContext.Group.All.OnPlayerHealth(playerID, playerHP);
         }
 
         /// <summary>
@@ -607,10 +577,10 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="tiemrType">タイマーの辞典</param>
         /// <returns></returns>
-        public async Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType)
+        public async Task TimeAsync(EnumManager.TIME_TYPE tiemrType,float time)
         {
-            // 参加者全員にレベルアップしたことを通知
-            this.roomContext.Group.All.OnTimer(tiemrType);
+            // 参加者全員にタイマーを通知
+            this.roomContext.Group.All.OnTimer(tiemrType,time);
         }
 
         /// <summary>
@@ -710,21 +680,158 @@ namespace StreamingHubs
                     case EnumManager.ITEM_TYPE.Relic:       // レリックの場合
                         var relic = this.roomContext.dropRelicDataList[itemID];
 
-                        //　DBからレリック情報取得
+                        //DBからレリック情報取得
                         GameDbContext dbContext = new GameDbContext();
                         var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.Id).First();
 
                         // ルームデータから接続IDを指定して自身のデータを取得
                         var playerData = this.roomContext.characterDataList[this.ConnectionId];
 
-                        // 取得したレリックをリストに入れる
-                        this.roomContext.relicDataList.Add(relicData);
+                            PlayerRelicStatusData prsData = new PlayerRelicStatusData();
 
-                        // レリック強化を付与
-                        GetStatusWithRelics(playerData.Status);
+                        if (relicData.status_type <= (int)EnumManager.STATUS_TYPE.HealRate) // タイプがステータス上昇の場合
+                        {
+                            //  上昇方法が加算の場合
+                            if (relicData.calculation_method == (int)EnumManager.CalculationType.Additive)
+                            {
+                                // タイプ別ステータス上昇
+                                switch (relicData.status_type) 
+                                {
+                                    case (int)EnumManager.STATUS_TYPE.HP:                   // HPの場合
+                                        playerData.Status.hp += (int)relicData.const_effect;
+                                        break;
 
-                        // ステータス上昇の通知
-                        this.roomContext.Group.All.OnUpdatePlayer(playerData);
+                                    case (int)EnumManager.STATUS_TYPE.Defense:              // 防御力の場合
+                                        playerData.Status.defence += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.Power:                // 攻撃力の場合
+                                        playerData.Status.power += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.JumpPower:            // 跳躍力の場合
+                                        playerData.Status.jumpPower += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.MoveSpeed:            // 移動速度の場合
+                                        playerData.Status.moveSpeed += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
+                                        playerData.Status.attackSpeedFactor += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.HealRate:             // 自動回復速度の場合
+                                        playerData.Status.healRate += (int)relicData.const_effect;
+                                        break;
+                                }
+                            }
+                            else if (relicData.calculation_method == (int)EnumManager.CalculationType.Multiplicative)
+                            {   // 計算方法が乗算の場合
+                                // タイプ別ステータス上昇
+                                switch (relicData.status_type)
+                                {
+                                    case (int)EnumManager.STATUS_TYPE.HP:                   // HPの場合
+                                        playerData.Status.hp *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.Defense:              // 防御力の場合
+                                        playerData.Status.defence *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.Power:                // 攻撃力の場合
+                                        playerData.Status.power *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.JumpPower:            // 跳躍力の場合
+                                        playerData.Status.jumpPower *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.MoveSpeed:            // 移動速度の場合
+                                        playerData.Status.moveSpeed *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
+                                        playerData.Status.attackSpeedFactor *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.HealRate:             // 自動回復速度の場合
+                                        playerData.Status.healRate *= (int)relicData.const_effect;
+                                        break;
+                                }
+                            }
+                        }
+                        else // タイプがレリックステータスの場合
+                        {   //  上昇方法が加算の場合
+                            if (relicData.calculation_method == (int)EnumManager.CalculationType.Additive)
+                            {
+                                switch (relicData.status_type)
+                                {
+                                    case (int)EnumManager.STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
+                                        prsData.ScatterBugCnt += (int)relicData.const_effect;
+                                    break;
+
+                                    case (int)EnumManager.STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
+                                        prsData.ScatterBugCnt += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
+                                        prsData.ScatterBugCnt += (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
+                                        prsData.ScatterBugCnt += (int)relicData.const_effect;
+                                        break;
+                                }
+                            }
+                            else if (relicData.calculation_method == (int)EnumManager.CalculationType.Multiplicative)
+                            {   // 計算方法が乗算の場合
+                                switch (relicData.status_type)
+                                {
+                                    case (int)EnumManager.STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
+                                        prsData.AddExpRate *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.HolographicArmorRate: // 回避率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.MouseRate:            // クールダウン短縮率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.LifeScavengerRate:    // キル時HP回復率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.RugrouterRate:        // DA率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.DanborDollRate:       // 防御貫通率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+
+                                    case (int)EnumManager.STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合
+                                        prsData.ScatterBugCnt *= (int)relicData.const_effect;
+                                        break;
+                                }
+                            }
+                        }
+
+                        //this.roomContext.Group.All.OnUpdatePlayer(playerData);
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合
@@ -838,7 +945,6 @@ namespace StreamingHubs
                     if (playerData.Status.attackSpeedFactor <= 0) playerData.Status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
                     break;
             }
-            GetStatusWithRelics(playerData.Status);
 
             return playerData.Status;
         }
@@ -889,153 +995,9 @@ namespace StreamingHubs
         CharacterStatusData GetStatusWithRelics(CharacterStatusData userStatus)
         {
             CharacterStatusData resultData = new CharacterStatusData(userStatus);
-            PlayerRelicStatusData prsData = new PlayerRelicStatusData();
 
             // ここで所持レリックを基にresultDataを更新する
-            foreach (var relic in this.roomContext.relicDataList)
-            {
-                if (relic.status_type <= (int)EnumManager.STATUS_TYPE.HealRate) // タイプがステータス上昇の場合
-                {
-                    //  上昇方法が加算の場合
-                    if (relic.calculation_method == (int)EnumManager.CalculationType.Additive)
-                    {
-                        // タイプ別ステータス上昇
-                        switch (relic.status_type)
-                        {
-                            case (int)EnumManager.STATUS_TYPE.HP:                   // HPの場合
-                                resultData.hp += (int)relic.const_effect;
-                                break;
 
-                            case (int)EnumManager.STATUS_TYPE.Defense:              // 防御力の場合
-                                resultData.defence += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.Power:                // 攻撃力の場合
-                                resultData.power += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.JumpPower:            // 跳躍力の場合
-                                resultData.jumpPower += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.MoveSpeed:            // 移動速度の場合
-                                resultData.moveSpeed += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                                resultData.attackSpeedFactor += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.HealRate:             // 自動回復速度の場合
-                                resultData.healRate += (int)relic.const_effect;
-                                break;
-                        }
-                    }
-                    else if (relic.calculation_method == (int)EnumManager.CalculationType.Multiplicative)
-                    {   // 計算方法が乗算の場合
-                        // タイプ別ステータス上昇
-                        switch (relic.status_type)
-                        {
-                            case (int)EnumManager.STATUS_TYPE.HP:                   // HPの場合
-                                resultData.hp *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.Defense:              // 防御力の場合
-                                resultData.defence *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.Power:                // 攻撃力の場合
-                                resultData.power *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.JumpPower:            // 跳躍力の場合
-                                resultData.jumpPower *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.MoveSpeed:            // 移動速度の場合
-                                resultData.moveSpeed *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                                resultData.attackSpeedFactor *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.HealRate:             // 自動回復速度の場合
-                                resultData.healRate *= (int)relic.const_effect;
-                                break;
-                        }
-                    }
-                }
-                else // タイプがレリックステータスの場合
-                {   //  上昇方法が加算の場合
-                    if (relic.calculation_method == (int)EnumManager.CalculationType.Additive)
-                    {
-                        switch (relic.status_type)
-                        {
-                            case (int)EnumManager.STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
-                                break;
-                        }
-                    }
-                    else if (relic.calculation_method == (int)EnumManager.CalculationType.Multiplicative)
-                    {   // 計算方法が乗算の場合
-                        switch (relic.status_type)
-                        {
-                            case (int)EnumManager.STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
-                                prsData.AddExpRate *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.HolographicArmorRate: // 回避率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.MouseRate:            // クールダウン短縮率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.LifeScavengerRate:    // キル時HP回復率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.RugrouterRate:        // DA率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.DanborDollRate:       // 防御貫通率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-
-                            case (int)EnumManager.STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
-                                break;
-                        }
-                    }
-                }
-            }
             return resultData;
         }
 
@@ -1102,7 +1064,7 @@ namespace StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <returns></returns>
-        public async Task Result()
+        public async void Result()
         {
             ResultData resultData = new ResultData();
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);

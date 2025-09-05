@@ -1,3 +1,4 @@
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,6 +48,8 @@ public class TimerDirector : MonoBehaviour
         second = minute * 60;
         initMinute = minute * 60;
         //GameManager.Instance.InvokeRepeating("DecreaseGeneratInterval", 0.1f, 60f);
+
+        RoomModel.Instance.OnTimerSyn += this.UpdateTimerText;
     }
 
     // Update is called once per frame
@@ -100,11 +103,29 @@ public class TimerDirector : MonoBehaviour
     /// <summary>
     /// タイマー更新
     /// </summary>
-    public void UpdateTimerDisplay()
+    public async void UpdateTimerDisplay()
     {
         // フレームの経過時間分減算
         second -= Time.deltaTime;
-        var span = new TimeSpan(0, 0, (int)second);
+
+        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {//マルチプレイ中で自身がマスタクライアントの場合
+            //タイマーの同期リクエストを送る
+            await RoomModel.Instance.TimeAsync(EnumManager.TIME_TYPE.GameTimer, second);
+            return;
+        }
+
+        UpdateTimerText(EnumManager.TIME_TYPE.GameTimer,second);
+        
+    }
+
+    /// <summary>
+    /// タイマーテキスト更新
+    /// </summary>
+    public async void UpdateTimerText(EnumManager.TIME_TYPE timertype , float time)
+    {
+        second = time;
+        var span = new TimeSpan(0, 0, (int)time);
         minute = span.Minutes;
         timer.text = span.ToString(@"mm\:ss");
     }
