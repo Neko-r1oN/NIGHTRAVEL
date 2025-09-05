@@ -129,6 +129,9 @@ public class RelicManager : MonoBehaviour
         {
             relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
 
+            ItemManager.Instance.AddItemFromList(
+                relic.name + ItemManager.Instance.GetItemListCount(), relic.GetComponent<Item>());
+
             SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
             SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
 

@@ -588,7 +588,15 @@ abstract public class EnemyBase : CharacterBase
                 }
             }
 
-            Debug.Log(selfID);
+            if (isBoss)
+            {
+                Debug.Log("ID" + selfID);
+
+                foreach(var test in CharacterManager.Instance.Enemies)
+                {
+                    Debug.Log(test.Key);
+                }
+            }
 
             if (CharacterManager.Instance.Enemies[selfID].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
             {// 生成タイプがターミナルなら

@@ -79,6 +79,14 @@ public class GameManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
+
+        isGameStart = false;
+
+        foreach(var player in CharacterManager.Instance.PlayerObjs)
+        {
+            player.Value.gameObject.GetComponent<PlayerBase>().CanMove = false;
+            player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        }
     }
     #endregion
 
@@ -91,7 +99,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
 
-        isGameStart = true;
+        if (!RoomModel.Instance) Invoke("StartGame", 5f);
 
         foreach (GameObject obj in portal)
         {
@@ -154,7 +162,8 @@ public class GameManager : MonoBehaviour
 
     public void CangeResult()
     {
-        SceneManager.LoadScene("ResultScene");
+        SceneManager.UnloadSceneAsync("UIScene");
+        SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
 
         isGameStart = false;
     }
@@ -193,5 +202,16 @@ public class GameManager : MonoBehaviour
         }
 
         //Invoke(nameof(ChengScene), 15f);
+    }
+
+    public void StartGame()
+    {
+        isGameStart = true;
+
+        foreach(var player in CharacterManager.Instance.PlayerObjs)
+        {
+            player.Value.gameObject.GetComponent<PlayerBase>().CanMove = true;
+            player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        }
     }
 }
