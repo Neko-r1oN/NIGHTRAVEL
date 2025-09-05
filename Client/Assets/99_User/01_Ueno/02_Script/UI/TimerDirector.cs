@@ -49,7 +49,7 @@ public class TimerDirector : MonoBehaviour
         initMinute = minute * 60;
         //GameManager.Instance.InvokeRepeating("DecreaseGeneratInterval", 0.1f, 60f);
 
-        RoomModel.Instance.OnTimerSyn += this.UpdateTimerText;
+        //RoomModel.Instance.OnTimerSyn += this.UpdateTimerText;
     }
 
     // Update is called once per frame
