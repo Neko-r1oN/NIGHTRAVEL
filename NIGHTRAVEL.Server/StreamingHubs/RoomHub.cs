@@ -346,24 +346,17 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-                foreach (var spawnEnemy in spawnEnemyData)
+                for(int i = 0; i <  spawnEnemyData.Count; i++)
                 {
+                    // 個体識別用のIDを設定
+                    spawnEnemyData[i].EnemyId = this.roomContext.enemyDataList.Count;
+
                     // DBからIDを指定して敵を取得
                     GameDbContext dbContext = new GameDbContext();
-                    var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemy.TypeId).First();
-                    Enemy enemyData = new Enemy();
-
-                    // 生成数を加算
-                    this.roomContext.spawnEnemyCount++;
-
-                    // 取得した情報をスポーンした敵の情報に代入
-                    enemyData.id = this.roomContext.spawnEnemyCount;
-                    enemyData.name = enemy.name;
-                    enemyData.isBoss = enemy.isBoss;
-                    enemyData.exp = enemy.exp;
+                    var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemyData[i].TypeId).First();
 
                     // 設定した情報をルームデータに保存
-                    this.roomContext.SetEnemyData(enemyData);
+                    this.roomContext.SetEnemyData(spawnEnemyData[i].EnemyId, enemy);
                 }
             }
 
@@ -435,6 +428,9 @@ namespace StreamingHubs
 
                     // 成功した端末リストをクリア
                     this.roomContext.succededTerminalList.Clear();
+
+                    // 生成した敵のリストを初期化
+                    this.roomContext.enemyDataList.Clear();
 
                     // 参加者全員にステージの進行を通知
                     this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);

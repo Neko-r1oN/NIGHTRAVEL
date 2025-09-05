@@ -70,12 +70,6 @@ namespace NIGHTRAVEL.Server.Model.Context
         public int totalGainDamage = 0;
 
         /// <summary>
-        /// 敵生成数
-        /// Author:Nishiura
-        /// </summary>
-        public int spawnEnemyCount = 0;
-
-        /// <summary>
         /// グループ
         /// Author:Kida
         /// </summary>
@@ -243,13 +237,13 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemData"></param>
-        public void SetEnemyData(Enemy enemData)
+        public void SetEnemyData(int uniqueId, Enemy enemData)
         {
             EnemyData setData = new EnemyData();
 
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
-            setData.EnemyID = enemData.id;
+            setData.EnemyID = uniqueId;
             setData.isBoss = enemData.isBoss;
             setData.Exp = enemData.exp;
 
@@ -265,7 +259,7 @@ namespace NIGHTRAVEL.Server.Model.Context
             setData.Status.defence = (int)enemData.defence;
             setData.Status.moveSpeed = (int)enemData.move_speed;
 
-            enemyDataList.Add(enemData.id, setData);
+            enemyDataList.Add(uniqueId, setData);
         }
 
         /// <summary>
