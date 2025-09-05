@@ -1106,12 +1106,13 @@ namespace StreamingHubs
         /// レリックを適用させたステータスに加工して返す
         /// </summary>
         /// <param name="status">プレイヤーの最大ステータス</param>
-        CharacterStatusData GetStatusWithRelics(CharacterStatusData status)
+        CharacterStatusData GetStatusWithRelics(CharacterStatusData userStatus)
         {
+            CharacterStatusData resultData = new CharacterStatusData(userStatus);
 
+            // ここで所持レリックを基にresultDataを更新する
 
-
-            return status;
+            return resultData;
         }
 
         // <summary>

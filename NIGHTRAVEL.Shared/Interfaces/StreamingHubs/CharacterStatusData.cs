@@ -38,5 +38,15 @@ namespace Shared.Interfaces.StreamingHubs
             this.healRate = healRate;
         }
 
+        public CharacterStatusData(CharacterStatusData statusData)
+        {
+            this.hp = statusData.hp;
+            this.defence = statusData.defence;
+            this.power = statusData.power;
+            this.jumpPower = statusData.jumpPower;
+            this.moveSpeed = statusData.moveSpeed;
+            this.attackSpeedFactor = statusData.attackSpeedFactor;
+            this.healRate = statusData.healRate;
+        }
     }
 }
