@@ -52,44 +52,47 @@ public class TimerDirector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Terminal.Instance.IsTerminal && Terminal.Instance.code != (Terminal.TerminalCode)2)
+        if (GameManager.Instance.IsGameStart)
         {
-            timerObj.SetActive(false);
-        }
-        else
-        {
-            timerObj.SetActive(true);
-        }
-
-        if (minute <= 0 && second <= 0 && SpawnManager.Instance.IsSpawnBoss == false)
-        {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
-            timerObj.SetActive(false);
-            // ボス出現
-            //SpawnManager.Instance.IsSpawnBoss = true;
-            SpawnManager.Instance.SpawnBoss();
-        }
-        else if (SpawnManager.Instance.IsSpawnBoss == true)
-        {// ボスが出現したら
-            // タイマー削除
-            timerObj.SetActive(false);
-        }
-        else if (SpawnManager.Instance.IsSpawnBoss == false)
-        {// ボスが出現していなかったら
-            elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
-
-            if(!Terminal.Instance.IsTerminal)
+            if (Terminal.Instance.IsTerminal && Terminal.Instance.code != (Terminal.TerminalCode)2)
             {
-                // タイマー(UI)の更新
-                UpdateTimerDisplay();
+                timerObj.SetActive(false);
+            }
+            else
+            {
+                timerObj.SetActive(true);
             }
 
-            if (elapsedTime > 150)
-            {
-                // ゲームレベルアップリクエスト送信
+            if (minute <= 0 && second <= 0 && SpawnManager.Instance.IsSpawnBoss == false)
+            {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
+                timerObj.SetActive(false);
+                // ボス出現
+                //SpawnManager.Instance.IsSpawnBoss = true;
+                SpawnManager.Instance.SpawnBoss();
+            }
+            else if (SpawnManager.Instance.IsSpawnBoss == true)
+            {// ボスが出現したら
+             // タイマー削除
+                timerObj.SetActive(false);
+            }
+            else if (SpawnManager.Instance.IsSpawnBoss == false)
+            {// ボスが出現していなかったら
+                elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
 
-                // ゲームレベルアップ
-                LevelManager.Instance.UpGameLevel();
-                ResetTimer();
+                if (!Terminal.Instance.IsTerminal)
+                {
+                    // タイマー(UI)の更新
+                    UpdateTimerDisplay();
+                }
+
+                if (elapsedTime > 150)
+                {
+                    // ゲームレベルアップリクエスト送信
+
+                    // ゲームレベルアップ
+                    LevelManager.Instance.UpGameLevel();
+                    ResetTimer();
+                }
             }
         }
     }

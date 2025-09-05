@@ -124,28 +124,32 @@ public class SpawnManager : MonoBehaviour
     {
         while (true)
         {
-            if (crashNum >= knockTermsNum && IsSpawnBoss)
+            if (GameManager.Instance.IsGameStart)
             {
-                SpawnBoss();
-            }
 
-            if (characterManager.Enemies.Count < maxSpawnCnt && !GameManager.Instance.IsBossDead)
-            {// ƒXƒ|[ƒ“‰ñ”‚ªŒÀŠE‚É’B‚µ‚Ä‚¢‚é‚©
-                if (!isSpawnBoss)
+                if (crashNum >= knockTermsNum && IsSpawnBoss)
                 {
-                    foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
+                    SpawnBoss();
+                }
+
+                if (characterManager.Enemies.Count < maxSpawnCnt && !GameManager.Instance.IsBossDead)
+                {// ƒXƒ|[ƒ“‰ñ”‚ªŒÀŠE‚É’B‚µ‚Ä‚¢‚é‚©
+                    if (!isSpawnBoss)
                     {
-                        if (characterManager.Enemies.Count > maxSpawnCnt) break;
-                        if (!player) continue;
-                        if (characterManager.Enemies.Count < maxSpawnCnt / 2)
-                        {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
-                            GenerateEnemy(Random.Range(7, 11),player.transform.position);
+                        foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
+                        {
+                            if (characterManager.Enemies.Count > maxSpawnCnt) break;
+                            if (!player) continue;
+                            if (characterManager.Enemies.Count < maxSpawnCnt / 2)
+                            {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
+                                GenerateEnemy(Random.Range(7, 11), player.transform.position);
+                            }
+                            else
+                            {// ‚¢‚éê‡
+                                GenerateEnemy(1, player.transform.position);
+                            }
+
                         }
-                        else
-                        {// ‚¢‚éê‡
-                            GenerateEnemy(1, player.transform.position);
-                        }
-                        
                     }
                 }
             }
@@ -707,7 +711,7 @@ public class SpawnManager : MonoBehaviour
         {
             EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
 
-            List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
+            SpawnEnemyData spawnEnemyDatas = new SpawnEnemyData();
 
             int childrenCnt = bossTerminal.transform.childCount;
 
@@ -728,14 +732,14 @@ public class SpawnManager : MonoBehaviour
                 
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // ˆê’U‚±‚Ì‚Ü‚Ü
-                spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
+                spawnEnemyDatas = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
             }
 
             isSpawnBoss = true;
 
             UIManager.Instance.DisplayBossUI();
 
-            SpawnEnemyRequest(spawnEnemyDatas.ToArray());
+            SpawnEnemyRequest(spawnEnemyDatas);
         }
     }
 

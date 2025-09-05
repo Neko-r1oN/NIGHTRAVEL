@@ -16,6 +16,8 @@ using System.Data;
 using Unity.VisualScripting;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.Experimental.GraphView.GraphView;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using System.Xml;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -165,8 +167,7 @@ public class CharacterManager : MonoBehaviour
     {
         foreach (var enemy in newEnemies)
         {
-            int uniqueId = RoomModel.Instance ? enemy.UniqueId : enemies.Count;
-            enemies.Add(uniqueId, enemy);
+            enemies.Add(enemy.UniqueId, enemy);
         }
     }
 
@@ -185,17 +186,12 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     public List<GameObject> GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE spawnType)
     {
-        List<int> removeKeys = new List<int>();             // éÄñSçœÇ›ÇÃìGÇÃkey
         List<GameObject> result = new List<GameObject>();   // ï‘Ç∑ìGÇÃÉäÉXÉg
         foreach (var data in enemies)
         {
-            if (data.Value.Enemy.HP <= 0 || data.Value.Object == null) removeKeys.Add(data.Key);
-            else if (data.Value.SpawnType == spawnType) result.Add(data.Value.Object);
+            if (data.Value.SpawnType == spawnType && data.Value.Enemy.HP > 0) result.Add(data.Value.Object);
         }
-        foreach (var key in removeKeys)
-        {
-            enemies.Remove(key);
-        }
+
         return result;
     }
 

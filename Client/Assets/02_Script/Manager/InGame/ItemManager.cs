@@ -33,6 +33,11 @@ public class ItemManager : MonoBehaviour
         }
     }
 
+    public int GetItemListCount()
+    {
+        return managedItems.Count;
+    }
+
     /// <summary>
     /// アイテム獲得リクエスト
     /// </summary>
