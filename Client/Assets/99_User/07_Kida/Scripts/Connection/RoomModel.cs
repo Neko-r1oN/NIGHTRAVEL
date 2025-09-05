@@ -311,7 +311,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList)
     {
-        OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
+       // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
     }
 
     /// <summary>

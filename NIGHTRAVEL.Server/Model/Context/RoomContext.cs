@@ -37,7 +37,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// 経験値管理クラス
         /// Author:Nishiura
         /// </summary>
-        public ExpManager ExpManager { get; set; }
+        public ExpManager ExpManager { get; set; } = new ExpManager();
 
         /// <summary>
         /// 現在のステージ

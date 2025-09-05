@@ -18,6 +18,7 @@ using UnityEngine.TextCore.Text;
 using static UnityEditor.Experimental.GraphView.GraphView;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System.Xml;
+using System.Threading.Tasks;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -219,8 +220,8 @@ public class CharacterManager : MonoBehaviour
                 STATUS_TYPE.MoveSpeed,
                 STATUS_TYPE.AttackSpeedFactor};
         }
-        character.OverridCurrentStatus(stateData, STATUS_TYPE.All);
-        character.OverridCurrentStatus(stateData);
+        //character.OverridMaxStatus(stateData, addStatusTypes.ToArray());
+        //character.OverridCurrentStatus(stateData, addStatusTypes.ToArray());
         character.gameObject.SetActive(characterData.IsActiveSelf);
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
         character.gameObject.transform.localScale = characterData.Scale;

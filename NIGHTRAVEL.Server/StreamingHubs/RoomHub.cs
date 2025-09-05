@@ -357,12 +357,11 @@ namespace StreamingHubs
 
                     // 設定した情報をルームデータに保存
                     this.roomContext.SetEnemyData(spawnEnemyData[i].EnemyId, enemy);
-                    Console.WriteLine(enemyData.id.ToString());
                 }
             }
 
             // 自分以外に、取得した敵情報と生成位置を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnSpawnEnemy(spawnEnemyData);
+            this.roomContext.Group.All.OnSpawnEnemy(spawnEnemyData);
         }
 
         /// <summary>
