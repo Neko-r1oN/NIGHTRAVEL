@@ -3162,7 +3162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: baseHp
-      value: 4000
+      value: 500000
       objectReference: {fileID: 0}
     - target: {fileID: 524075092959210961, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: basePower
@@ -23742,6 +23742,7 @@ MonoBehaviour:
   yRadius: 6
   distMinSpawnPos: 3
   knockTermsNum: 50
+  portal: []
 --- !u!114 &2048291587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70878,9 +70879,9 @@ MonoBehaviour:
   - {fileID: -8485438555329834472, guid: fa59307c939c1c7469aee1750e0c16b5, type: 3}
   - {fileID: -1183681620893836794, guid: 5cd7f99ff987be746afa7e9a9595b0b3, type: 3}
   - {fileID: 6559029749142894935, guid: 9bbaf474954ef3d49aacb9f28bc2de7c, type: 3}
-  relicPrefabs: []
-  defaultSpriteMaterial: {fileID: 0}
+  relicSpawnPos: []
   relicPrefab: {fileID: 0}
+  defaultSpriteMaterial: {fileID: 0}
 --- !u!1001 &2147338828
 PrefabInstance:
   m_ObjectHideFlags: 0

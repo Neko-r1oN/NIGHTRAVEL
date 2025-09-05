@@ -287,7 +287,7 @@ abstract public class CharacterBase : MonoBehaviour
         hp = Mathf.Clamp(hp, 0, maxHp);
         defense = Mathf.Clamp(defense, 0, defense);
         power = Mathf.Clamp(power, 0, maxPower);
-        moveSpeed = Mathf.Clamp(moveSpeed, 0f, maxPower);
+        moveSpeed = Mathf.Clamp(moveSpeed, 0f, maxMoveSpeed);
         jumpPower = Mathf.Clamp(jumpPower, 0f, maxJumpPower);
         attackSpeedFactor = Mathf.Clamp(attackSpeedFactor, 0f, maxAttackSpeedFactor);
         healRate = Mathf.Clamp(healRate, 0f, maxHealRate);
