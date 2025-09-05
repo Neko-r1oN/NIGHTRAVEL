@@ -57,12 +57,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// プレイヤー動作通知
         /// Author:Nishiura
         /// </summary>
-        /// <param name="user">対象者</param>
-        /// <param name="pos">位置</param>
-        /// <param name="rot">回転</param>
-        /// <param name="animID">アニメーションID</param>
         //void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
-        void OnUpdatePlayer(PlayerData playerData);
+        void OnUpdatePlayer(CharacterData playerData);
 
         /// <summary>
         /// マスタークライアントの更新通知
@@ -118,14 +114,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="enemDmgData">敵被弾データ</param>
         void OnEnemyHealth(EnemyDamegeData enemDmgData);
-
-        /// <summary>
-        /// 敵死亡通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        void OnKilledEnemy(int enemID);
-
         #endregion
         #region レリック関連
 
@@ -141,15 +129,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="relicDatas">レリックリスト</param>
         void OnDropRelic(Dictionary<string, DropRelicData>relicDatas);
-
-        /// <summary>
-        /// レリック取得通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="relicID">レリックID</param>
-        /// <param name="rekicName">レリック名</param>
-        /// </summary>
-        void OnGetRelic(int relicID, string rekicName);
         #endregion
         #region ゲーム内UI、仕様
 
@@ -196,13 +175,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         void OnChangeMasterClient();
 
-        /// <summary>
-        /// ステージ進行通知
-        /// Author;Nishiura
-        /// </summary>
-        /// <param name="conID">接続ID</param>
-        void OnAdvancedStage();
-
         void OnGameEnd(ResultData result);
 
         /// <summary>
@@ -222,14 +194,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="playerID">プレイヤー識別ID</param>
         /// <param name="playerHP">プレイヤー体力</param>
-        void OnPlayerHealth(int playerID, float playerHP);
-
-        /// <summary>
-        /// 経験値通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="exp">経験値</param>
-        void OnEXP(int exp);
 
         /// <summary>
         /// レベルアップ通知
@@ -241,13 +205,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="statusOptionList">強化選択肢リスト</param>
         void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList);
 
-        #endregion
-        #region ゲーム内UI、仕様
-        /// <summary>
-        /// ダメージ表記通知
-        /// </summary>
-        /// <param name="dmg">ダメージ</param>
-        void OnDamage(int dmg);
         #endregion
         #endregion
 

@@ -197,19 +197,6 @@ namespace StreamingHubs
         #endregion
 
         #region ゲーム内での処理
-        /// <summary>
-        /// プレイヤー位置、回転、アニメーション同期処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <param name="rot"></param>
-        /// <param name="anim"></param>
-        /// <returns></returns>
-        public async Task MovePlayerAsync(PlayerData playerData)
-        {
-            //ルームの自分以外に、ユーザ情報通知を送信
-            this.roomContext.Group.Except([this.ConnectionId]).OnUpdatePlayer(playerData);
-        }
 
         /// <summary>
         /// プレイヤーの更新
@@ -368,19 +355,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// レリック取得同期処理
-        /// Author:Nishiura
-        /// </summary>
-		/// <param name="relicID">レリックID</param>
-        /// <param name="relicName">レリック名</param>
-        /// <returns></returns>
-        public async Task GetRelicAsync(int relicID, string relicName)
-        {
-            // ルーム参加者全員に、取得したレリック名を送信
-            this.roomContext.Group.All.OnGetRelic(relicID, relicName);
-        }
-
-        /// <summary>
         /// 敵生成同期処理
         /// Author:Nishiura
         /// </summary>
@@ -527,33 +501,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// ステージクリア待機同期処理
-        /// </summary>
-        /// <param name="conID">接続ID</param>
-        /// <param name="isTimeUp">時間切れ判定</param>
-        /// <param name="isAdvance">ステージ進行判定</param>
-        /// <returns></returns>
-        public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp, bool isAdvance)
-        {
-            // 時間切れの場合、即座に進行処理をする
-            if (isTimeUp) await StageClear(isAdvance);
-
-            bool canAdvenceStage = true; // ステージ進行判定変数
-
-            // 自身のデータを取得
-            var joinedUser = roomContext.JoinedUserList[(Guid)conID];
-            joinedUser.IsTouchBossTerm = true; // 接触したことにする
-
-            foreach (var user in this.roomContext.JoinedUserList)
-            { // 現在の参加者数分ループ
-                if (user.Value.IsTouchBossTerm != true) canAdvenceStage = false; // もし一人でも接触していなかった場合、進行させない
-            }
-
-            // 進行できる場合、進行通知をする
-            if (canAdvenceStage) await StageClear(isAdvance);
-        }
-
-        /// <summary>
         /// プレイヤー体力増減同期処理
         /// Autho:Nishiura
         /// </summary>
@@ -656,30 +603,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// 敵死亡同期処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="enemID">敵識別ID</param>
-        /// <returns></returns>
-        public async Task KilledEnemyAsync(int enemID)
-        {
-            // 参加者全員に受け取ったIDの敵が死亡したことを通知
-            this.roomContext.Group.All.OnKilledEnemy(enemID);
-        }
-
-        /// <summary>
-        /// 経験値同期処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="exp">経験値</param>
-        /// <returns></returns>
-        public async Task EXPAsync(int exp)
-        {
-            // 参加者全員に受け取ったEXPの値を通知
-            this.roomContext.Group.All.OnEXP(exp);
-        }
-
-        /// <summary>
         /// 時間同期処理
         /// </summary>
         /// <param name="tiemrType">タイマーの辞典</param>
@@ -721,17 +644,6 @@ namespace StreamingHubs
                 // 全滅した場合、ゲーム終了通知を全員に出す
                 if (isAllDead) Result();
             }
-        }
-
-        /// <summary>
-        /// ダメージ表記同期処理
-        /// </summary>
-        /// <param name="dmg"></param>
-        /// <returns></returns>
-        public async Task DamageAsync(int dmg)
-        {
-            // 参加者全員に与えたダメージを通知
-            this.roomContext.Group.All.OnDamage(dmg);
         }
 
         /// <summary>
@@ -906,6 +818,10 @@ namespace StreamingHubs
                             {   // 計算方法が乗算の場合
                                 switch (relicData.status_type)
                                 {
+                                    case (int)EnumManager.STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
+                                        prsData.AddExpRate *= (int)relicData.const_effect;
+                                        break;
+
                                     case (int)EnumManager.STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
                                         prsData.ScatterBugCnt *= (int)relicData.const_effect;
                                         break;
@@ -945,7 +861,7 @@ namespace StreamingHubs
                             }
                         }
 
-                        //this.roomContext.Group.All.OnUpdatePlayer(playerData);
+                        this.roomContext.Group.All.OnUpdatePlayer(playerData);
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合

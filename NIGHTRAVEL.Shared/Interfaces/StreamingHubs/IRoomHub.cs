@@ -157,14 +157,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task DropRelicAsync(Stack<Vector2> pos);
 
-        /// <summary>
-        /// レリック取得
-        /// Author:Nishiura
-        /// </summary>
-		/// <param name="relicID">レリックID</param>
-        /// <param name="relicName">レリック名</param>
-        /// <returns></returns>
-        Task GetRelicAsync(int relicID, string relicName);
         #endregion
         #region ゲーム内UI、仕様関連
 
@@ -246,14 +238,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="playerHP">プレイヤー体力</param>
         /// <returns></returns>
         Task PlayerHealthAsync(int playerID, float playerHP);
-
-        /// <summary>
-        /// 経験値同期
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="exp">経験値</param>
-        /// <returns></returns>
-        Task EXPAsync(int exp);
 
         #endregion
 
