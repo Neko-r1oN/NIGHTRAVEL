@@ -1,5 +1,5 @@
 //--------------------------------------------------------------
-// プレイヤー抽象親クラス [ PlayerBase.cs ]
+// プレイヤー親クラス [ PlayerBase.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
 using DG.Tweening;
@@ -143,14 +143,18 @@ abstract public class PlayerBase : CharacterBase
     /// 操作キャラのタイプ
     /// </summary>
     public Player_Type PlayerType { get { return playerType; } }
+    #endregion
 
-    //-------------------------------------------------------------------
-    // レリック関連ステータス
+    #region レリック外部参照用プロパティ
+    /// <summary>
+    /// 与ダメ回復率
+    /// </summary>
+    public float DmgHealRate { get { return regainCodeRate; } }
 
     /// <summary>
-    /// 防御貫通率
+    /// 回復肉所持数
     /// </summary>
-    public float PierceRate { get { return danborDollRate; } }
+    public int DigitalMeatCnt { get { return digitalMeatCnt; } }
 
     /// <summary>
     /// 状態異常ダメージ倍率
@@ -158,10 +162,9 @@ abstract public class PlayerBase : CharacterBase
     public float DebuffDmgRate { get { return identificationAIRate; } }
 
     /// <summary>
-    /// 与ダメ回復率
+    /// 防御貫通率
     /// </summary>
-    public float DmgHealRate { get { return regainCodeRate; } }
-
+    public float PierceRate { get { return danborDollRate; } }
     #endregion
 
     #region レイヤー・位置関連
@@ -252,7 +255,8 @@ abstract public class PlayerBase : CharacterBase
     protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
     protected const float REGENE_STOP_TIME = 3.5f;      // 自動回復停止時間
     protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
-    protected const float HEAL_GENERATE_TIME = 25f;     // 回復肉生成間隔
+    protected const float HEAL_GENERATE_TIME = 20f;     // 回復肉生成間隔
+    protected const float MEATHEAL_RATE = 0.03f;        // 回復肉回復量
 
     protected const float GROUNDED_RADIUS = .2f;// 接地確認用の円の半径
     protected const float ATTACK_RADIUS = 1.2f; // 攻撃判定の円の半径
@@ -762,6 +766,27 @@ abstract public class PlayerBase : CharacterBase
     protected void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Gimmick/Scaffold") m_IsScaffold = true;
+
+        if (collision.gameObject.tag == "Relic")
+        {
+            int healVol = (int)(MaxHP * MEATHEAL_RATE) * DigitalMeatCnt;
+
+            if(HP < MaxHP)
+            {
+                HP += healVol;
+
+                if (HP > MaxHP)
+                    HP = MaxHP;
+
+                UIManager.Instance.PopHealUI(healVol, transform.position);
+                Destroy(collision.gameObject);
+            }
+            else
+            {
+                UIManager.Instance.PopHealUI(0, transform.position);
+                Destroy(collision.gameObject);
+            }
+        }
     }
 
     /// <summary>

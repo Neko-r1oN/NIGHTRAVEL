@@ -32,37 +32,39 @@ public class UIManager : MonoBehaviour
     [SerializeField] Slider expBar;                  // 経験値バー
                                                      
     [Foldout("テキスト")]                            
-    [SerializeField] Text playerSliderText;          // プレイヤーの最大HPテキスト
+    [SerializeField] Text playerSliderText;         // プレイヤーの最大HPテキスト
     [Foldout("テキスト")]                            
-    [SerializeField] Text bossSliderText;            // ボスの最大HPテキスト
+    [SerializeField] Text bossSliderText;           // ボスの最大HPテキスト
     [Foldout("テキスト")]                            
-    [SerializeField] Text levelText;                 // レベルテキスト
+    [SerializeField] Text levelText;                // レベルテキスト
     [Foldout("テキスト")]                            
-    [SerializeField] Text pointText;                 // ポイントテキスト
+    [SerializeField] Text pointText;                // ポイントテキスト
     [Foldout("テキスト")]                            
-    [SerializeField] List<Text> relicCntText;        // レリックを持ってる数を表示するテキスト
+    [SerializeField] List<Text> relicCntText;       // レリックを持ってる数を表示するテキスト
     //[Foldout("テキスト")]
-    //[SerializeField] List<Text>  statusText;         // ステータスアップ説明テキスト
+    //[SerializeField] List<Text>  statusText;      // ステータスアップ説明テキスト
     [Foldout("テキスト")]
-    [SerializeField] Text levelUpStock;              // レベルアップストックテキスト
+    [SerializeField] Text levelUpStock;             // レベルアップストックテキスト
     [Foldout("テキスト")]
-    [SerializeField] Text levelUpText;               // 強化可能テキスト
+    [SerializeField] Text levelUpText;              // 強化可能テキスト
     [Foldout("テキスト")]
-    [SerializeField] Text clashNumText;              // 撃破数テキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] Text tmText;                    // クリア条件テキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] GameObject playerDmgText;       // プレイヤーダメージ表記
-    [Foldout("テキスト")]                            
-    [SerializeField] GameObject otherDmgText;        // その他ダメージ表記
-    [Foldout("テキスト")]                            
-    [SerializeField] Text relicName;                 // その他ダメージ表記
-    [Foldout("テキスト")]                            
-    [SerializeField] Text diffText;                  // 難易度テキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] Text terminalExplanationText;   // ターミナル説明テキスト
+    [SerializeField] Text clashNumText;             // 撃破数テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text tmText;                   // クリア条件テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] GameObject playerDmgText;      // プレイヤーダメージ表記
+    [Foldout("テキスト")]                           
+    [SerializeField] GameObject otherDmgText;       // その他ダメージ表記
+    [Foldout("テキスト")]                           
+    [SerializeField] Text relicName;                // レリック名テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text diffText;                 // 難易度テキスト
+    [Foldout("テキスト")]                           
+    [SerializeField] Text terminalExplanationText;  // ターミナル説明テキスト
     [Foldout("テキスト")]
-    [SerializeField] Text spectatingNameText;        // 観戦中プレイヤー名テキスト
+    [SerializeField] Text spectatingNameText;       // 観戦中プレイヤー名テキスト
+    [Foldout("テキスト")]
+    [SerializeField] GameObject healText;           // その他ダメージ表記
 
     [Foldout("フェードアウト")]                      
     [SerializeField] Canvas parentCanvas;            // テキストが表示されるキャンバスを割り当ててください
@@ -663,6 +665,24 @@ public class UIManager : MonoBehaviour
         else ui = Instantiate(otherDmgText);
 
         ui.GetComponent<Text>().text = dmgVol.ToString();
+
+        ui.transform.SetParent(canvas.transform);
+
+        var circlePos = UnityEngine.Random.insideUnitCircle * 1.2f;
+        var textPos = popPosition + new Vector3(0, 0.5f, 0) * UnityEngine.Random.Range(0.5f, 1.5f) + new Vector3(circlePos.x, 0, circlePos.y);
+        ui.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, textPos);
+
+        ui.SetActive(true);
+    }
+
+    /// <summary>
+    /// 回復表記処理
+    /// </summary>
+    public void PopHealUI(int healVol, Vector3 popPosition)
+    {
+        GameObject ui = Instantiate(healText);
+
+        ui.GetComponent<Text>().text = healVol.ToString();
 
         ui.transform.SetParent(canvas.transform);
 
