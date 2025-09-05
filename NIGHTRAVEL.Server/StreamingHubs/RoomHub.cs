@@ -1102,6 +1102,18 @@ namespace StreamingHubs
             this.roomContext.JoinedUserList[conID].IsMaster = false;
         }
 
+        /// <summary>
+        /// レリックを適用させたステータスに加工して返す
+        /// </summary>
+        /// <param name="status">プレイヤーの最大ステータス</param>
+        CharacterStatusData GetStatusWithRelics(CharacterStatusData status)
+        {
+
+
+
+            return status;
+        }
+
         // <summary>
         /// レベルアップ処理
         /// Author:Nishiura
