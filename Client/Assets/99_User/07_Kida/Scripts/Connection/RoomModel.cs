@@ -51,6 +51,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ゲーム開始通知
     public Action OnStartedGame { get; set; }
 
+    //同時開始通知
+    public Action OnSameStartSyn { get; set; }
+
     //プレイヤー位置回転通知
     public Action<PlayerData> OnUpdatePlayerSyn { get; set; }
 
@@ -108,9 +111,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //敵死亡通知
     public Action<int> OnKilledEnemySyn {  get; set; }
 
-    //経験値通知
-    public Action<int> OnEXPSyn {  get; set; }
-
     //レベルアップ通知
     public Action<int, int, Dictionary<Guid, CharacterStatusData>, List<EnumManager.STAT_UPGRADE_OPTION>> OnLevelUpSyn { get; set; }
 
@@ -121,7 +121,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnDamaged {  get; set; }
 
     //タイマー通知
-    public Action<Dictionary<EnumManager.TIME_TYPE, int>> OnTimerSyn { get; set; }
+    public Action<EnumManager.TIME_TYPE, float> OnTimerSyn { get; set; }
 
     //ステージ進行通知
     public Action OnAdvancedStageSyn { get; set; }
@@ -209,231 +209,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         DisconnectAsync();
     }
-
-    #region 同期の処理
-    /// <summary>
-    /// 同時開始
-    /// </summary>
-    /// <returns></returns>
-    public async UniTask StartAsync()
-    {
-        await roomHub.SameStartAsync();
-    }
-    #region 入室・退室・準備完了同期
-    /// <summary>
-    /// 入室同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <returns></returns>
-    public async UniTask JoinAsync(string roomName, int userId)
-    {
-        joinedUserList = await roomHub.JoinedAsync(roomName, userId);
-        foreach (var user in joinedUserList)
-        {
-            if (user.Value.UserData.Id == userId)
-            {
-                this.ConnectionId = user.Value.ConnectionId;
-                this.IsMaster = user.Value.IsMaster;
-                Debug.Log("モデル：" + RoomModel.Instance.ConnectionId);
-            }
-        }
-    }
-
-    /// <summary>
-    /// マスタークライアントの更新同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="masterClient"></param>
-    /// <returns></returns>
-    public async UniTask UpdateMasterClientAsync(MasterClientData masterClient)
-    {
-        await roomHub.UpdateMasterClientAsync(masterClient);
-    }
-
-    /// <summary>
-    /// 退室の同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <returns></returns>
-    public async UniTask LeaveAsync()
-    {
-        await roomHub.LeavedAsync();
-        this.IsMaster = false;
-        //自分をリストから消す
-        joinedUserList.Clear();
-    }
-
-    /// <summary>
-    /// 準備完了同期
-    /// </summary>
-    /// <returns></returns>
-    public async Task ReadyAsync()
-    {
-        await roomHub.ReadyAsync();
-    }
-    #endregion
-    #region プレイヤー同期関連
-    /// <summary>
-    /// プレイヤーの更新同期
-    /// </summary>
-    /// <param name="playerData"></param>
-    /// <returns></returns>
-    public async Task UpdatePlayerAsync(PlayerData playerData)
-    {
-        await roomHub.UpdatePlayerAsync(playerData);
-    }
-
-    /// <summary>
-    /// プレイヤーの体力増減同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="playerID"></param>
-    /// <param name="playerHP"></param>
-    /// <returns></returns>
-    public async Task PlayerHealthAsync(int playerID, float playerHP)
-    {
-        await roomHub.PlayerHealthAsync(playerID, playerHP);
-    }
-
-    /// <summary>
-    /// プレイヤーダウン同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="playerID"></param>
-    /// <returns></returns>
-    public async Task PlayerDeadAsync()
-    {
-        await roomHub.PlayerDeadAsync();
-    }
-
-    /// <summary>
-    /// 経験値同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="exp"></param>
-    /// <returns></returns>
-    public async Task EXPAsync(int exp)
-    {
-        await roomHub.EXPAsync(exp);
-    }
-
-    #endregion
-    #region 敵同期関連
-    /// <summary>
-    /// 敵の生成同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    public async Task SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyDatas)
-    {
-        await roomHub.SpawnEnemyAsync(spawnEnemyDatas);
-    }
-
-    /// <summary>
-    /// 敵体力増減同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemID"></param>
-    /// <param name="enemHP"></param>
-    /// <returns></returns>
-    public async Task EnemyHealthAsync(int enemID,float giverAtack, List<DEBUFF_TYPE> debuffList)
-    {
-        await roomHub.EnemyHealthAsync(enemID,giverAtack, debuffList);
-    }
-
-    #endregion
-    #region レリック同期関連
-    /// <summary>
-    /// レリック生成同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    public async Task DropRelicAsync(Stack<Vector2> pos)
-    {
-        await roomHub.DropRelicAsync(pos);
-    }
-
-    /// <summary>
-    /// レリック取得同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="relicID"></param>
-    /// <param name="relicName"></param>
-    /// <returns></returns>
-    public async Task GetRelicAsync(int relicID, string relicName)
-    {
-        await roomHub.GetRelicAsync(relicID, relicName);
-    }
-    #endregion
-    #region ゲーム内UI・仕様の同期関連
-    /// <summary>
-    /// ギミックの起動同期
-    ///  Aughter:木田晃輔
-    /// </summary>
-    /// <param name="gimID"></param>
-    /// <returns></returns>
-    public async Task BootGimmickAsync(int gimID)
-    {
-        await roomHub.BootGimmickAsync(gimID);
-    }
-
-    /// <summary>
-    /// 難易度上昇の同期
-    /// </summary>
-    /// <returns></returns>
-    public async Task AscendDifficultyAsync()
-    {
-        await roomHub.AscendDifficultyAsync();
-    }
-
-    /// <summary>
-    /// 次ステージ進行の同期
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="stageID"></param>
-    //public async Task AdvanceNextStageAsync(int stageID, bool isBossStage)
-    //{
-    //    await roomHub.AdvanceNextStageAsync(stageID, isBossStage);
-    //}
-
-    /// <summary>
-    /// ステージ進行完了の同期
-    /// </summary>
-    /// <param name="stageID"></param>
-    /// <param name="isBossStage"></param>
-    /// <returns></returns>
-    public async Task AdvancedStageAsync(bool isAdvance)
-    {
-        await roomHub.AdvancedStageAsync(isAdvance);
-    }
-
-    /// <summary>
-    /// ステージクリア待機の同期
-    /// </summary>
-    /// <param name="conID"></param>
-    /// <param name="isTimeUp"></param>
-    /// <param name="isBossStage"></param>
-    /// <returns></returns>
-    //public async Task WaitStageClearAsync(Guid? conID, bool isTimeUp,bool isBossStage)
-    //{
-    //    await roomHub.WaitStageClearAsync(conID, isTimeUp,isBossStage);
-    //}
-
-    #endregion
-
-    /// <summary>
-    /// タイマーの同期
-    /// </summary>
-    /// <param name="tiemrType"></param>
-    /// <returns></returns>
-    public async Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType)
-    {
-        await roomHub.TimeAsync(tiemrType);
-    }
-    #endregion
 
     #region 通知の処理
     #region 入室・退室・準備完了通知
@@ -528,17 +303,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnPlayerDead(Guid playerID)
     {
         OnPlayerDeadSyn(playerID);
-    }
-
-
-    /// <summary>
-    /// プレイヤーの経験値通知
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="exp">経験値</param>
-    public void OnEXP(int exp)
-    {
-        OnEXPSyn(exp);
     }
 
     /// <summary>
@@ -726,9 +490,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// タイマー
     /// </summary>
     /// <param name="timerType"></param>
-    public void OnTimer(Dictionary<EnumManager.TIME_TYPE, int> timerType)
+    public void OnTimer(EnumManager.TIME_TYPE timerType, float time)
     {
-        OnTimerSyn(timerType);
+        OnTimerSyn(timerType,time);
     }
     #endregion
 
@@ -738,7 +502,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     public void OnSameStart()
     {
-
+        OnSameStartSyn();
     }
 
     /// <summary>
@@ -749,5 +513,253 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnGameEndSyn(result);
     }
+    #endregion
+
+    #region リクエスト関連
+    #region 入室からゲーム開始まで
+    /// <summary>
+    /// 入室同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask JoinedAsync(string roomName, int userId)
+    {
+        joinedUserList = await roomHub.JoinedAsync(roomName, userId);
+        foreach (var user in joinedUserList)
+        {
+            if (user.Value.UserData.Id == userId)
+            {
+                this.ConnectionId = user.Value.ConnectionId;
+                this.IsMaster = user.Value.IsMaster;
+                Debug.Log("モデル：" + RoomModel.Instance.ConnectionId);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 退室の同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask LeavedAsync()
+    {
+        await roomHub.LeavedAsync();
+        this.IsMaster = false;
+        //自分をリストから消す
+        joinedUserList.Clear();
+    }
+
+    /// <summary>
+    /// 準備完了同期
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask ReadyAsync()
+    {
+        await roomHub.ReadyAsync();
+    }
+    #endregion
+    #region ゲーム内
+    #region プレイヤー関連
+    /// <summary>
+    /// プレイヤーの更新同期
+    /// </summary>
+    /// <param name="playerData"></param>
+    /// <returns></returns>
+    public async UniTask UpdatePlayerAsync(PlayerData playerData)
+    {
+        await roomHub.UpdatePlayerAsync(playerData);
+    }
+
+    /// <summary>
+    /// マスタークライアントの更新同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="masterClient"></param>
+    /// <returns></returns>
+    public async UniTask UpdateMasterClientAsync(MasterClientData masterClient)
+    {
+        await roomHub.UpdateMasterClientAsync(masterClient);
+    }
+
+    /// <summary>
+    /// プレイヤーダウン同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="playerID"></param>
+    /// <returns></returns>
+    public async UniTask PlayerDeadAsync()
+    {
+        await roomHub.PlayerDeadAsync();
+    }
+
+    /// <summary>
+    /// 端末起動
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="termID">端末種別ID</param>
+    /// <returns></returns>
+    public async UniTask BootTerminalAsync(int termID)
+    {
+        await roomHub.BootTerminalAsync(termID); 
+    }
+
+    /// <summary>
+    /// 端末成功処理
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="termID">端末種別ID</param>
+    /// <param name="result">端末結果</param>
+    /// <returns></returns>
+     public async UniTask TerminalsResultAsync(int termID, bool result)
+    {
+        await roomHub.TerminalsResultAsync(termID, result);
+    }
+
+    /// <summary>
+    /// アイテム獲得
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="itemType">アイテムの種類</param>
+    /// <param name="itemID">識別ID(文字列)</param>
+    /// <returns></returns>
+     public async UniTask GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID)
+    {
+        await roomHub.GetItemAsync(itemType, itemID);
+    }
+
+    /// <summary>
+    /// 弾発射
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="spawnPos">生成位置</param>
+    /// <param name="shootVec">発射ベクトル</param>
+    /// <returns></returns>
+     public async UniTask ShootBulletAsync(Vector2 spawnPos, Vector2 shootVec)
+    {
+        await roomHub.ShootBulletAsync(spawnPos, shootVec);
+    }
+    #endregion
+    #region 敵関連
+    /// <summary>
+    /// 敵の生成同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemID"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public async UniTask SpawnEnemyAsync(List<SpawnEnemyData> spawnEnemyDatas)
+    {
+        await roomHub.SpawnEnemyAsync(spawnEnemyDatas);
+    }
+
+    /// <summary>
+    /// 敵体力増減同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="enemID"></param>
+    /// <param name="enemHP"></param>
+    /// <returns></returns>
+    public async UniTask EnemyHealthAsync(int enemID, float giverAtack, List<DEBUFF_TYPE> debuffList)
+    {
+        await roomHub.EnemyHealthAsync(enemID, giverAtack, debuffList);
+    }
+
+    /// <summary>
+    /// 敵の被ダメージ同期処理   プレイヤーによるダメージ以外
+    /// </summary>
+    /// <param name="enemID">敵識別ID</param>
+    /// <param name="dmgAmount">適用させるダメージ量</param>
+    /// <returns></returns>
+    public async UniTask ApplyDamageToEnemyAsync(int enemID, int dmgAmount)
+    {
+        await roomHub.ApplyDamageToEnemyAsync(enemID, dmgAmount);
+    }
+
+    /// <summary>
+    /// ステータス強化選択
+    /// </summary>
+    /// <param name="conID">接続ID</param>
+    /// <param name="upgradeOpt">強化項目</param>
+    /// <returns></returns>
+     public async UniTask ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+    {
+        await roomHub.ChooseUpgrade(upgradeOpt);
+    }
+    #endregion
+    #region レリック関連
+
+    /// <summary>
+    /// レリックの情報を取得
+    /// Author:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+     public async UniTask GetRelicIntelligenceAsync()
+    {
+        await roomHub?.GetRelicIntelligenceAsync();
+    }
+
+    /// <summary>
+    /// レリック生成同期
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public async UniTask DropRelicAsync(Stack<Vector2> pos)
+    {
+        await roomHub.DropRelicAsync(pos);
+    }
+    #endregion
+    #region ゲーム内UI、仕様関連
+    /// <summary>
+    /// ギミックの起動同期
+    ///  Aughter:木田晃輔
+    /// </summary>
+    /// <param name="gimID"></param>
+    /// <returns></returns>
+    public async UniTask BootGimmickAsync(int gimID)
+    {
+        await roomHub.BootGimmickAsync(gimID);
+    }
+
+    /// <summary>
+    /// 難易度上昇の同期
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask AscendDifficultyAsync()
+    {
+        await roomHub.AscendDifficultyAsync();
+    }
+
+    /// <summary>
+    /// ステージクリア
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="isAdvance">ステージ進行判定</param>
+    /// <returns></returns>
+    public async UniTask StageClear(bool isAdvance)
+    {
+        await roomHub.StageClear(isAdvance);
+    }
+
+    /// <summary>
+    /// ステージ進行完了の同期
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask AdvancedStageAsync()
+    {
+        await roomHub.AdvancedStageAsync();
+    }
+
+    /// <summary>
+    /// タイマーの同期
+    /// </summary>
+    /// <param name="tiemrType"></param>
+    /// <returns></returns>
+    public async UniTask TimeAsync(EnumManager.TIME_TYPE tiemrType,float time)
+    {
+        await roomHub.TimeAsync(tiemrType,time);
+    }
+    #endregion
+    #endregion
     #endregion
 }

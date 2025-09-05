@@ -161,13 +161,6 @@ namespace Shared.Interfaces.StreamingHubs
         #region ゲーム内UI、仕様関連
 
         /// <summary>
-        /// 同時開始処理
-        /// Author:木田晃輔
-        /// </summary>
-        /// <returns></returns>
-        Task SameStartAsync();
-
-        /// <summary>
         /// ギミック起動
         /// Author:Nishiura
         /// </summary>
@@ -179,7 +172,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// 難易度上昇
         /// Author:Nishiura
         /// </summary>
-        /// <param name="difID">難易度ID</param>
         /// <returns></returns>
         Task AscendDifficultyAsync();
 
@@ -187,7 +179,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// ステージクリア
         /// Author:Nishiura
         /// </summary>
-        /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
         Task StageClear(bool isAdvance);
@@ -196,52 +187,16 @@ namespace Shared.Interfaces.StreamingHubs
         /// ステージ進行完了
         /// Author:Nishiura
         /// </summary>
-        /// <param name="conID">接続ID</param>
-        /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        Task AdvancedStageAsync(bool isAdvance);
+        Task AdvancedStageAsync();
 
         #endregion
         #endregion
-
-        /// <summary>
-        /// マスタークライアントが退室したときの処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="conID">接続ID</param>
-        /// <returns></returns>
-        //Task MasterLostAsync(Guid conID);
-
         /// <summary>
         /// 時間同期処理
         /// </summary>
         /// <param name="time">タイマーの辞典</param>
         /// <returns></returns>
-        Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType);
-
-        /// <summary>
-        /// リザルト
-        /// Author:Nishiura
-        /// </summary>
-        /// <returns></returns>
-        Task Result();
-
-        #region 不要になりそうなAPI
-        #region ゲーム内
-
-        #region プレイヤー関連
-        /// <summary>
-        /// プレイヤー体力増減
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-        /// <returns></returns>
-        Task PlayerHealthAsync(int playerID, float playerHP);
-
-        #endregion
-
-        #endregion
-        #endregion
+        Task TimeAsync(EnumManager.TIME_TYPE tiemrType,float time);
     }
 }

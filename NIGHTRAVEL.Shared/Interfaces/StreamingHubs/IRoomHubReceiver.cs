@@ -57,8 +57,8 @@ namespace Shared.Interfaces.StreamingHubs
         /// プレイヤー動作通知
         /// Author:Nishiura
         /// </summary>
-        //void OnMovePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
-        void OnUpdatePlayer(CharacterData playerData);
+        //void OnUpdatePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
+        void OnUpdatePlayer(PlayerData playerData);
 
         /// <summary>
         /// マスタークライアントの更新通知
@@ -166,7 +166,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="timerType">タイマー辞典</param>
-        void OnTimer(Dictionary<EnumManager.TIME_TYPE, int> timerType);
+        void OnTimer(EnumManager.TIME_TYPE timerType,float time);
         #endregion
         #endregion
 

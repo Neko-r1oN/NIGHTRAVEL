@@ -175,25 +175,6 @@ namespace StreamingHubs
                 if (canStartGame) this.roomContext.Group.All.OnStartGame();
             }
         }
-
-        /// <summary>
-        /// 同時開始処理
-        /// Author:木田晃輔
-        /// </summary>
-        /// <returns></returns>
-        public async Task SameStartAsync()
-        {
-            lock (roomContextRepository) // 排他制御
-            {
-                this.roomContext.LoadedPlayer += 1;
-
-                if (this.roomContext.LoadedPlayer == this.roomContext.JoinedUserList.Count)
-                {
-                    this.roomContext.Group.All.OnSameStart();
-                }
-            }
-        }
-
         #endregion
 
         #region ゲーム内での処理
@@ -260,20 +241,20 @@ namespace StreamingHubs
                     }
                 }
 
-                foreach (var item in masterClientData.GimmickDatas)
-                {
-                    // すでにルームコンテキストにギミックが含まれている場合
-                    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
-                    {
-                        // そのギミックを更新する
-                        this.roomContext.gimmickList[item.GimmickID] = item;
-                    }
-                    else // 含まれていない場合
-                    {
-                        // そのギミックを追加する
-                        this.roomContext.gimmickList.Add(item.GimmickID, item);
-                    }
-                }
+                //foreach (var item in masterClientData.GimmickDatas)
+                //{
+                //    // すでにルームコンテキストにギミックが含まれている場合
+                //    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
+                //    {
+                //        // そのギミックを更新する
+                //        this.roomContext.gimmickList[item.GimmickID] = item;
+                //    }
+                //    else // 含まれていない場合
+                //    {
+                //        // そのギミックを追加する
+                //        this.roomContext.gimmickList.Add(item.GimmickID, item);
+                //    }
+                //}
 
                 // キャラクターデータリストに自身のデータがない場合
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
@@ -475,42 +456,31 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">ステージ進行判定</param>
         /// <returns></returns>
-        public async Task AdvancedStageAsync(bool isAdvance)
+        public async Task AdvancedStageAsync()
         {
-            bool canAdvenceStage = true; // ステージ進行済み判定変数
-
-            // 自身のデータを取得
-            var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
-            joinedUser.IsAdvance = true; // 準備完了にする
-
-            foreach (var user in this.roomContext.JoinedUserList)
-            { // 現在の参加者数分ループ
-                if (user.Value.IsAdvance != true) canAdvenceStage = false; // もし一人でも準備完了していなかった場合、進行させない
-            }
-
-            // 進行できる場合、進行通知をする
-            if (canAdvenceStage)
+            lock (roomContextRepository)
             {
-                //await StageClear(isAdvance);
-                this.roomContext.Group.All.OnStartGame();
+                bool canAdvenceStage = true; // ステージ進行済み判定変数
 
-                joinedUser.IsAdvance = false; // 準備完了を解除する
-                canAdvenceStage = false;
-                roomContext.isAdvanceRequest = false;
+                // 自身のデータを取得
+                var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
+                joinedUser.IsAdvance = true; // 準備完了にする
+
+                foreach (var user in this.roomContext.JoinedUserList)
+                { // 現在の参加者数分ループ
+                    if (user.Value.IsAdvance != true) canAdvenceStage = false; // もし一人でも準備完了していなかった場合、進行させない
+                }
+
+                // 進行できる場合、進行通知をする
+                if (canAdvenceStage)
+                {
+                    this.roomContext.Group.All.OnStartGame();
+
+                    joinedUser.IsAdvance = false; // 準備完了を解除する
+                    canAdvenceStage = false;
+                    roomContext.isAdvanceRequest = false;
+                }
             }
-        }
-
-        /// <summary>
-        /// プレイヤー体力増減同期処理
-        /// Autho:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-        /// <returns></returns>
-        public async Task PlayerHealthAsync(int playerID, float playerHP)
-        {
-            // 参加者全員に受け取ったIDのプレイヤーが受け取ったHPになったことを通知
-            this.roomContext.Group.All.OnPlayerHealth(playerID, playerHP);
         }
 
         /// <summary>
@@ -607,10 +577,10 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="tiemrType">タイマーの辞典</param>
         /// <returns></returns>
-        public async Task TimeAsync(Dictionary<EnumManager.TIME_TYPE, int> tiemrType)
+        public async Task TimeAsync(EnumManager.TIME_TYPE tiemrType,float time)
         {
-            // 参加者全員にレベルアップしたことを通知
-            this.roomContext.Group.All.OnTimer(tiemrType);
+            // 参加者全員にタイマーを通知
+            this.roomContext.Group.All.OnTimer(tiemrType,time);
         }
 
         /// <summary>
@@ -861,7 +831,7 @@ namespace StreamingHubs
                             }
                         }
 
-                        this.roomContext.Group.All.OnUpdatePlayer(playerData);
+                        //this.roomContext.Group.All.OnUpdatePlayer(playerData);
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合
@@ -1094,7 +1064,7 @@ namespace StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <returns></returns>
-        public async Task Result()
+        public async void Result()
         {
             ResultData resultData = new ResultData();
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);

@@ -36,7 +36,6 @@ namespace Shared.Interfaces.StreamingHubs
         public enum TIME_TYPE
         {
             GameTimer,          // ゲーム全体のタイマー
-            StageClearTimer,    // ステージクリア後待機タイマー
             TerminalTimer       // 端末のレース用タイマー
         }
 
