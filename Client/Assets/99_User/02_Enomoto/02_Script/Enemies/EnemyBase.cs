@@ -13,6 +13,12 @@ using UnityEditor.Experimental.GraphView;
 
 abstract public class EnemyBase : CharacterBase
 {
+    #region 種類ID
+    [Foldout("種類ID")]
+    [SerializeField]
+    protected ENEMY_TYPE enemyTypeId;    // 自身のエネミー種類ID　(DBのレコードと紐づける)
+    #endregion
+
     #region プレイヤー・ターゲット
     [Header("プレイヤー・ターゲット")]
     protected GameObject target;
@@ -161,6 +167,8 @@ abstract public class EnemyBase : CharacterBase
 
     #region 外部参照用プロパティ
 
+    public ENEMY_TYPE EnemyTypeId { get { return enemyTypeId; } set { enemyTypeId = value; } }
+
     public int SpawnWeight { get { return spawnWeight; } }
 
     public int BaseExp { get { return baseExp; } }
@@ -178,15 +186,6 @@ abstract public class EnemyBase : CharacterBase
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
 
     public Terminal TerminalManager { get { return terminalManager; } set { terminalManager = value; } }
-    #endregion
-
-    #region 生成されたときのID
-    int selfID;
-
-    /// <summary>
-    /// 自身のユニークなID
-    /// </summary>
-    public int SelfID { get { return selfID; } set { selfID = value; } }
     #endregion
 
     #region 定数
@@ -493,7 +492,7 @@ abstract public class EnemyBase : CharacterBase
             if (attacker && attacker == playerSelf)
             {
                 // プレイヤーによるダメージ適用
-                await RoomModel.Instance.EnemyHealthAsync(selfID, power, new List<DEBUFF_TYPE>(debuffList));
+                await RoomModel.Instance.EnemyHealthAsync(uniqueId, power, new List<DEBUFF_TYPE>(debuffList));
             }
             else if (RoomModel.Instance.IsMaster)
             {
@@ -603,17 +602,7 @@ abstract public class EnemyBase : CharacterBase
                 }
             }
 
-            if (isBoss)
-            {
-                Debug.Log("ID" + selfID);
-
-                foreach(var test in CharacterManager.Instance.Enemies)
-                {
-                    Debug.Log(test.Key);
-                }
-            }
-
-            if (CharacterManager.Instance.Enemies[selfID].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
+            if (CharacterManager.Instance.Enemies[uniqueId].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
             {// 生成タイプがターミナルなら
                 // 死んだ敵をリストから削除
                 //terminalManager.TerminalSpawnList.Remove(this.gameObject);
@@ -630,7 +619,7 @@ abstract public class EnemyBase : CharacterBase
                 if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
             }
 
-            CharacterManager.Instance.RemoveEnemyFromList(selfID);
+            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
 
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             yield return new WaitForSeconds(destroyWaitSec);
@@ -814,7 +803,7 @@ abstract public class EnemyBase : CharacterBase
         enemyData.DebuffList = debuffController.GetAppliedStatusEffects();
 
         // 以下は専用プロパティ
-        enemyData.EnemyID = this.SelfID;
+        enemyData.UniqueId = this.UniqueId;
         enemyData.EnemyName = this.gameObject.name;
         enemyData.isBoss = this.IsBoss;
         Exp = this.Exp;
@@ -837,7 +826,7 @@ abstract public class EnemyBase : CharacterBase
     /// <param name="enemyData"></param>
     public virtual void UpdateEnemy(EnemyData enemyData)
     {
-        selfID = enemyData.EnemyID;
+        uniqueId = enemyData.UniqueId;
         gameObject.name = enemyData.EnemyName;
         isBoss = enemyData.isBoss;
         exp = enemyData.Exp;

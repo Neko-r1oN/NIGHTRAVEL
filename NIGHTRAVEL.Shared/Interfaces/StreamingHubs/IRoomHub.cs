@@ -122,7 +122,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="giverATK">PLの攻撃力</param>
         /// <param name="debuffType">デバフの種類</param>
         /// <returns></returns>
-        Task EnemyHealthAsync(int enemID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
+        Task EnemyHealthAsync(Guid enemID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType);
 
         /// <summary>
         /// 敵の被ダメージ同期処理   プレイヤーによるダメージ以外
@@ -130,7 +130,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">適用させるダメージ量</param>
         /// <returns></returns>
-        Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount);
+        Task ApplyDamageToEnemyAsync(Guid enemID, int dmgAmount);
 
         /// <summary>
         /// ステータス強化選択

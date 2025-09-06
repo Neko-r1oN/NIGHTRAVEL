@@ -1359,7 +1359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e93e6d0b20dc0449f30dc740bc710c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 0
   baseHp: 50
   baseDefense: 10
   basePower: 10
@@ -1381,6 +1380,7 @@ MonoBehaviour:
   attackSpeedFactor: 0
   healRate: 0
   animator: {fileID: 1005403807447708141}
+  enemyTypeId: 3
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 0}

@@ -99,7 +99,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// エネミーデータリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<int, EnemyData> enemyDataList { get; } = new Dictionary<int, EnemyData>();
+        public Dictionary<Guid, EnemyData> enemyDataList { get; } = new Dictionary<Guid, EnemyData>();
 
         /// <summary>
         /// ドロップレリックリスト
@@ -227,9 +227,9 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID"></param>
-        public EnemyData GetEnemyData(int enemID)
+        public EnemyData GetEnemyData(Guid uniqueId)
         {
-            return enemyDataList[enemID];
+            return enemyDataList[uniqueId];
         }
 
         /// <summary>
@@ -237,13 +237,13 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemData"></param>
-        public void SetEnemyData(int uniqueId, Enemy enemData)
+        public void SetEnemyData(Guid uniqueId, Enemy enemData)
         {
             EnemyData setData = new EnemyData();
 
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
-            setData.EnemyID = uniqueId;
+            setData.UniqueId = uniqueId;
             setData.isBoss = enemData.isBoss;
             setData.Exp = enemData.exp;
 

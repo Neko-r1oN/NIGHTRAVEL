@@ -172,8 +172,8 @@ public class SpawnManager : MonoBehaviour
         idEnemyPrefabPairs = new Dictionary<EnumManager.ENEMY_TYPE, GameObject>();
         foreach (var prefab in enemyPrefabs)
         {
-            Debug.Log((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId + "：" + prefab.name);
-            idEnemyPrefabPairs.Add((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId, prefab);
+            Debug.Log(prefab.GetComponent<EnemyBase>().EnemyTypeId + "：" + prefab.name);
+            idEnemyPrefabPairs.Add(prefab.GetComponent<EnemyBase>().EnemyTypeId, prefab);
         }
     }
 
@@ -443,7 +443,7 @@ public class SpawnManager : MonoBehaviour
         }
 
         // キャラクターIDを基準に昇順にソート
-        enemies.Sort((a, b) => a.CharacterId.CompareTo(b.CharacterId));
+        enemies.Sort((a, b) => a.EnemyTypeId.CompareTo(b.EnemyTypeId));
 
         EnumManager.ENEMY_TYPE? entryType = null;
         int emitRnd = Random.Range(1, tatalWeight + 1);
@@ -453,7 +453,7 @@ public class SpawnManager : MonoBehaviour
             currentWeight += enemy.SpawnWeight;
             if (emitRnd <= currentWeight)
             {
-                entryType = (EnumManager.ENEMY_TYPE)enemy.CharacterId;
+                entryType = enemy.EnemyTypeId;
                 break;
             }
         }
@@ -516,7 +516,7 @@ public class SpawnManager : MonoBehaviour
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = characterManager.Enemies.Count,
+            UniqueId = Guid.NewGuid(),
             Position = entryData.Position,
             Scale = enemyScale,
             SpawnType = spawnType,
@@ -545,7 +545,7 @@ public class SpawnManager : MonoBehaviour
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = characterManager.Enemies.Count,
+            UniqueId = Guid.NewGuid(),
             Position = entryData.Position,
             Scale = enemyScale,
             SpawnType = spawnType,
@@ -567,7 +567,7 @@ public class SpawnManager : MonoBehaviour
         }
 
         // ID設定(ローカル用)
-        spawnEnemyData.EnemyId = RoomModel.Instance ? spawnEnemyData.EnemyId : CharacterManager.Instance.Enemies.Count;
+        //spawnEnemyData.UniqueId = RoomModel.Instance ? spawnEnemyData.UniqueId : CharacterManager.Instance.Enemies.Count;
 
         // 敵の生成
         var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
@@ -581,8 +581,8 @@ public class SpawnManager : MonoBehaviour
         //}
         enemyObj.transform.localScale = scale;
         enemyObj.GetComponent<EnemyBase>().PromoteToElite(eliteType);
-        enemyObj.GetComponent<EnemyBase>().SelfID = spawnEnemyData.EnemyId;
-        CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+        enemyObj.GetComponent<EnemyBase>().UniqueId = spawnEnemyData.UniqueId;
+        CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(spawnEnemyData.UniqueId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
 
         return enemyObj;
     }

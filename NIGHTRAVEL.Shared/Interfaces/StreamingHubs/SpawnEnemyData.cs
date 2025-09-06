@@ -4,6 +4,7 @@
 //=============================
 using MessagePack;
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 識別用ID
         /// </summary>
-        public int EnemyId { get; set; }
+        public Guid UniqueId { get; set; }
 
         [Key(2)]
         /// <summary>

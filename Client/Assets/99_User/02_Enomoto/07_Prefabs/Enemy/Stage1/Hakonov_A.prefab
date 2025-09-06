@@ -189,7 +189,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8229866066740876325}
@@ -253,7 +253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e93e6d0b20dc0449f30dc740bc710c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 0
   baseHp: 50
   baseDefense: 10
   basePower: 10
@@ -275,6 +274,7 @@ MonoBehaviour:
   attackSpeedFactor: 0
   healRate: 0
   animator: {fileID: 2755878778069883623}
+  enemyTypeId: 1
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 6007570756620243790}

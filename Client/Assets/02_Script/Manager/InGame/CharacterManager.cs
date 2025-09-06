@@ -40,12 +40,12 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region 敵関連
-    Dictionary<int, SpawnedEnemy> enemies = new Dictionary<int, SpawnedEnemy>();
+    Dictionary<Guid, SpawnedEnemy> enemies = new Dictionary<Guid, SpawnedEnemy>();
 
     /// <summary>
     /// 現在のステージで生成した敵のリスト
     /// </summary>
-    public Dictionary<int, SpawnedEnemy> Enemies { get { return enemies; } }
+    public Dictionary<Guid, SpawnedEnemy> Enemies { get { return enemies; } }
     #endregion
 
     const float updateSec = 0.1f;
@@ -180,7 +180,7 @@ public class CharacterManager : MonoBehaviour
     /// <summary>
     /// リストから敵を削除
     /// </summary>
-    public void RemoveEnemyFromList(int uniqueId)
+    public void RemoveEnemyFromList(Guid uniqueId)
     {
         enemies.Remove(uniqueId);
     }
@@ -398,10 +398,10 @@ public class CharacterManager : MonoBehaviour
         // 敵の情報更新
         foreach (var enemyData in masterClientData.EnemyDatas)
         {
-            if (!enemies.ContainsKey(enemyData.EnemyID)
-                || enemies.ContainsKey(enemyData.EnemyID) && enemies[enemyData.EnemyID].Enemy.HP <= 0) continue;
+            if (!enemies.ContainsKey(enemyData.UniqueId)
+                || enemies.ContainsKey(enemyData.UniqueId) && enemies[enemyData.UniqueId].Enemy.HP <= 0) continue;
 
-            var enemy = enemies[enemyData.EnemyID].Enemy;
+            var enemy = enemies[enemyData.UniqueId].Enemy;
             UpdateCharacter(enemyData, enemy);
             enemy.UpdateEnemy(enemyData);
         }
