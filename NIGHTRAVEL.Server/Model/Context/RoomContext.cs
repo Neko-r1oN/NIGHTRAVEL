@@ -247,17 +247,14 @@ namespace NIGHTRAVEL.Server.Model.Context
             setData.isBoss = enemData.isBoss;
             setData.Exp = enemData.exp;
 
-            // 現在ステータス
-            setData.State.hp = (int)enemData.hp;
-            setData.State.power = (int)enemData.attack;
-            setData.State.defence = (int)enemData.defence;
-            setData.State.moveSpeed = (int)enemData.move_speed;
-
-            // 最大ステータス
+            // 最大ステータスを現在のステータスに設定
             setData.Status.hp = (int)enemData.hp;
-            setData.Status.power = (int)enemData.attack;
+            setData.Status.power = (int)enemData.power;
             setData.Status.defence = (int)enemData.defence;
+            setData.Status.jumpPower = (int)enemData.jump_power;
             setData.Status.moveSpeed = (int)enemData.move_speed;
+            setData.Status.attackSpeedFactor = (int)enemData.attack_speed_factor;
+            setData.State = setData.Status;
 
             enemyDataList.Add(uniqueId, setData);
         }

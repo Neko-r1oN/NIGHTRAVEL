@@ -119,8 +119,11 @@ public class CharacterManager : MonoBehaviour
     {
         while (true)
         {
-            if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
-            else UpdatePlayerDataRequest();
+            if (GameManager.Instance.IsGameStart)
+            {
+                if (RoomModel.Instance.IsMaster) UpdateMasterDataRequest();
+                else UpdatePlayerDataRequest();
+            }
             yield return new WaitForSeconds(updateSec);
         }
     }

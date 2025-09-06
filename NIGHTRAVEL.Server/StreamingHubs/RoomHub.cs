@@ -266,7 +266,7 @@ namespace StreamingHubs
                 }
 
                 // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
-                this.roomContext.Group.All.OnUpdateMasterClient(masterClientData);
+                this.roomContext.Group.Except([this.ConnectionId]).OnUpdateMasterClient(masterClientData);
             }
         }
 
