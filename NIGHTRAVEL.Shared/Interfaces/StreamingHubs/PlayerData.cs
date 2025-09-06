@@ -14,12 +14,6 @@ namespace Shared.Interfaces.StreamingHubs
     [MessagePackObject]
     public class PlayerData : CharacterData
     {
-        ///// <summary>
-        ///// ユーザーのデータ
-        ///// Author:Nishiura
-        ///// </summary>
-        //public JoinedUser JoinedUser { get; set; }
-
         [Key(8)]
         /// <summary>
         /// 接続ID(識別用)

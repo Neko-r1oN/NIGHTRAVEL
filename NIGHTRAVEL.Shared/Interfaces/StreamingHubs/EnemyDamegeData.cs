@@ -18,7 +18,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// ダメージを付与する敵のID
         /// </summary>
-        public int HitEnemyId { get; set; }
+        public string HitEnemyId { get; set; }
 
         [Key(1)]
         /// <summary>

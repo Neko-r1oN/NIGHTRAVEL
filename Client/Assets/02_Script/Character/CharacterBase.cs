@@ -20,13 +20,6 @@ abstract public class CharacterBase : MonoBehaviour
     //--------------------------------------------------------------
     // フィールド
 
-    #region データ関連
-    [Foldout("データ関連")]
-    [SerializeField]
-    protected int characterId;    // 識別用ID
-    public int CharacterId { get { return characterId; } }
-    #endregion
-
     #region 初期ステータス関連
     [Foldout("ステータス")]
     [SerializeField]

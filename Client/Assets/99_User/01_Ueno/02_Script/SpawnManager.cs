@@ -172,8 +172,8 @@ public class SpawnManager : MonoBehaviour
         idEnemyPrefabPairs = new Dictionary<EnumManager.ENEMY_TYPE, GameObject>();
         foreach (var prefab in enemyPrefabs)
         {
-            Debug.Log((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId + "：" + prefab.name);
-            idEnemyPrefabPairs.Add((EnumManager.ENEMY_TYPE)prefab.GetComponent<CharacterBase>().CharacterId, prefab);
+            Debug.Log(prefab.GetComponent<EnemyBase>().EnemyTypeId + "：" + prefab.name);
+            idEnemyPrefabPairs.Add(prefab.GetComponent<EnemyBase>().EnemyTypeId, prefab);
         }
     }
 
@@ -295,6 +295,7 @@ public class SpawnManager : MonoBehaviour
 
             if (spawnLeftPosCandidate != null && spawnRightPosCandidate != null)
             {
+                UnityEngine.Random.InitState(System.DateTime.Now.Millisecond + i);  // 乱数のシード値を更新
                 int rand = Random.Range(0, 2);
 
                 if(rand == 0)
@@ -443,7 +444,7 @@ public class SpawnManager : MonoBehaviour
         }
 
         // キャラクターIDを基準に昇順にソート
-        enemies.Sort((a, b) => a.CharacterId.CompareTo(b.CharacterId));
+        enemies.Sort((a, b) => a.EnemyTypeId.CompareTo(b.EnemyTypeId));
 
         EnumManager.ENEMY_TYPE? entryType = null;
         int emitRnd = Random.Range(1, tatalWeight + 1);
@@ -453,7 +454,7 @@ public class SpawnManager : MonoBehaviour
             currentWeight += enemy.SpawnWeight;
             if (emitRnd <= currentWeight)
             {
-                entryType = (EnumManager.ENEMY_TYPE)enemy.CharacterId;
+                entryType = enemy.EnemyTypeId;
                 break;
             }
         }
@@ -513,10 +514,12 @@ public class SpawnManager : MonoBehaviour
         scaleX = scaleX >= 0 ? 1 : -1;
         var enemyScale = new Vector3(scaleX, 1, 1);
 
+        // 返すデータ作成
+        string uniqueId = entryData.PresetId == "" ? Guid.NewGuid().ToString() : entryData.PresetId;    // 事前に識別用IDが設定されていない場合は生成する
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = characterManager.Enemies.Count,
+            UniqueId = uniqueId,
             Position = entryData.Position,
             Scale = enemyScale,
             SpawnType = spawnType,
@@ -542,10 +545,12 @@ public class SpawnManager : MonoBehaviour
         scaleX = scaleX >= 0 ? 1 : -1;
         var enemyScale = new Vector3(scaleX, 1, 1);
 
+        // 返すデータ作成
+        string uniqueId = entryData.PresetId == "" ? Guid.NewGuid().ToString() : entryData.PresetId;    // 事前に識別用IDが設定されていない場合は生成する
         return new SpawnEnemyData()
         {
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
-            EnemyId = characterManager.Enemies.Count,
+            UniqueId = uniqueId,
             Position = entryData.Position,
             Scale = enemyScale,
             SpawnType = spawnType,
@@ -565,9 +570,7 @@ public class SpawnManager : MonoBehaviour
             Debug.LogWarning("nullの要素が見つかったため、敵の生成を中断しました。");
             return null;
         }
-
-        // ID設定(ローカル用)
-        spawnEnemyData.EnemyId = RoomModel.Instance ? spawnEnemyData.EnemyId : CharacterManager.Instance.Enemies.Count;
+        else if (spawnEnemyData.TypeId == ENEMY_TYPE.MetalBody) return null;
 
         // 敵の生成
         var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
@@ -580,9 +583,22 @@ public class SpawnManager : MonoBehaviour
         //    enemyObj.GetComponent<CharacterBase>().ApplyStatusModifierByRate(10 * ((int)LevelManager.Instance.GameLevel));
         //}
         enemyObj.transform.localScale = scale;
-        enemyObj.GetComponent<EnemyBase>().PromoteToElite(eliteType);
-        enemyObj.GetComponent<EnemyBase>().SelfID = spawnEnemyData.EnemyId;
-        CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(spawnEnemyData.EnemyId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+        EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
+        enemy.PromoteToElite(eliteType);
+        enemy.UniqueId = spawnEnemyData.UniqueId;
+        CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(spawnEnemyData.UniqueId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+
+        #region ワームの各パーツ用の処理
+        if (enemy.EnemyTypeId == ENEMY_TYPE.FullMetalWorm)
+        {
+            // ワームを生成する際、ワームの各パーツも生成した敵のリストに含める
+            List<FullMetalBody> bodys = new List<FullMetalBody>(enemyObj.GetComponentsInChildren<FullMetalBody>(true));
+            foreach(var body in bodys)
+            {
+                CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(body.UniqueId, body.gameObject, body, spawnEnemyData.SpawnType));
+            }
+        }
+        #endregion
 
         return enemyObj;
     }
@@ -709,37 +725,54 @@ public class SpawnManager : MonoBehaviour
     {
         if (!isSpawnBoss)
         {
-            EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
-
-            SpawnEnemyData spawnEnemyDatas = new SpawnEnemyData();
-
             int childrenCnt = bossTerminal.transform.childCount;
-
             List<Transform> children = new List<Transform>();
-
             for (int i = 0; i < childrenCnt; i++)
             {
                 children.Add(bossTerminal.transform.GetChild(i));
             }
-            ENEMY_TYPE enemyType = ENEMY_TYPE.Worm;
 
+            EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
             Vector3? spawnPos =
                 GenerateEnemySpawnPosition(children[0].position, children[1].position, bossEnemy);
 
+            List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
+
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
+
                 boss = idEnemyPrefabPairs[bossId];
-                
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // 一旦このまま
-                spawnEnemyDatas = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+
+                List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
+                {
+                    new EnemySpawnEntry(bossId, (Vector3)spawnPos, scale)
+                };
+
+                #region サーバーにワームの各パーツの情報を登録するための処理
+
+                // ワームを生成する場合、ワームの各パーツも生成情報に含める (※SpawnEnemy()で実際に生成はしない)
+                List<FullMetalBody> bodys = new List<FullMetalBody>(
+                    bossEnemy.transform.gameObject.GetComponentsInChildren<FullMetalBody>(true));
+                if (bodys.Count > 0)
+                {
+                    foreach (var body in bodys)
+                    {
+                        // 事前に設定されてある識別用ID(body.UniqueId)もデータに追加する
+                        entrys.Add(new EnemySpawnEntry(ENEMY_TYPE.MetalBody, Vector3.zero, Vector3.zero, body.UniqueId));
+                    }
+                }
+                #endregion
+
+                spawnEnemyDatas = CreateSpawnEnemyDatas(entrys, spawnType, false);
             }
 
             isSpawnBoss = true;
 
             UIManager.Instance.DisplayBossUI();
 
-            SpawnEnemyRequest(spawnEnemyDatas);
+            SpawnEnemyRequest(spawnEnemyDatas.ToArray());
         }
     }
 

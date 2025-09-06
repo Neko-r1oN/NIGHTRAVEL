@@ -232,9 +232,9 @@ namespace StreamingHubs
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
                 foreach(var enemyData in masterClientData.EnemyDatas)
                 {
-                    if (gottenEnemyDataList.ContainsKey(enemyData.EnemyID))
+                    if (gottenEnemyDataList.ContainsKey(enemyData.UniqueId))
                     {
-                        gottenEnemyDataList[enemyData.EnemyID] = enemyData;
+                        gottenEnemyDataList[enemyData.UniqueId] = enemyData;
                     }
                 }
 
@@ -346,14 +346,14 @@ namespace StreamingHubs
                 for(int i = 0; i <  spawnEnemyData.Count; i++)
                 {
                     // 個体識別用のIDを設定
-                    spawnEnemyData[i].EnemyId = this.roomContext.enemyDataList.Count;
+                    spawnEnemyData[i].UniqueId = Guid.NewGuid().ToString();
 
                     // DBからIDを指定して敵を取得
                     GameDbContext dbContext = new GameDbContext();
                     var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemyData[i].TypeId).First();
 
                     // 設定した情報をルームデータに保存
-                    this.roomContext.SetEnemyData(spawnEnemyData[i].EnemyId, enemy);
+                    this.roomContext.SetEnemyData(spawnEnemyData[i].UniqueId, enemy);
                 }
             }
 
@@ -485,7 +485,7 @@ namespace StreamingHubs
         /// <param name="giverATK">PLの攻撃力</param>
         /// <param name="debuffType">デバフの種類</param>
         /// <returns></returns>
-        public async Task EnemyHealthAsync(int enemID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType)
+        public async Task EnemyHealthAsync(string enemID, float giverATK, List<EnumManager.DEBUFF_TYPE> debuffType)
         {
             lock (roomContextRepository) // 排他制御
             {
@@ -536,7 +536,7 @@ namespace StreamingHubs
         /// <param name="enemID">敵識別ID</param>
         /// <param name="dmgAmount">ダメージ量</param>
         /// <returns></returns>
-        public async Task ApplyDamageToEnemyAsync(int enemID, int dmgAmount)
+        public async Task ApplyDamageToEnemyAsync(string enemID, int dmgAmount)
         {
             lock (roomContextRepository) // 排他制御
             {
