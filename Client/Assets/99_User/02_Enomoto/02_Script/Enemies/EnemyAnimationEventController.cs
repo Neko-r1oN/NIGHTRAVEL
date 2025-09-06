@@ -22,6 +22,22 @@ public class EnemyAnimationEventController : MonoBehaviour
     }
 
     /// <summary>
+    /// 移動するアニメイトイベント
+    /// </summary>
+    public void OnMoveAnimEvent()
+    {
+        m_EnemyBase.OnMoveAnimEvent();
+    }
+
+    /// <summary>
+    /// 移動終了アニメーションイベント通知
+    /// </summary>
+    public void OnEndMoveAnimationEvent()
+    {
+        m_EnemyBase.OnEndMoveAnimEvent();
+    }
+
+    /// <summary>
     /// スポーンアニメのイベント
     /// </summary>
     public void OnSpawnEvent()

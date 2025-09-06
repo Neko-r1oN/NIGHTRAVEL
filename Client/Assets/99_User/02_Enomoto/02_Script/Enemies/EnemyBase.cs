@@ -691,6 +691,16 @@ abstract public class EnemyBase : CharacterBase
     public virtual void OnEndAttackAnimEvent() { }
 
     /// <summary>
+    /// 移動するアニメーションイベント通知
+    /// </summary>
+    public virtual void OnMoveAnimEvent() { }
+
+    /// <summary>
+    /// 移動終了アニメーションイベント通知
+    /// </summary>
+    public virtual void OnEndMoveAnimEvent() { }
+
+    /// <summary>
     /// スポーンアニメメーション開始時
     /// </summary>
     public virtual void OnSpawnAnimEvent()

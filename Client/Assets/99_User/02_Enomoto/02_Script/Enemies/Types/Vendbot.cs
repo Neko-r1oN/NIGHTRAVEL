@@ -1,5 +1,5 @@
 //**************************************************
-//  [敵] ハコノフのクラス
+//  [敵] ヴェンドボットのクラス
 //  Author:r-enomoto
 //**************************************************
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
@@ -10,8 +10,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
-
-public class Hakonov : EnemyBase
+public class Vendbot : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -71,11 +70,13 @@ public class Hakonov : EnemyBase
     #endregion
 
     #region 状態管理
+    bool canMove;
     List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
     #endregion
 
     protected override void Start()
     {
+        bool canMove = false;
         isAttacking = false;
         base.Start();
     }
@@ -137,7 +138,7 @@ public class Hakonov : EnemyBase
     public override void OnAttackAnimEvent()
     {
         // 前に飛び出す
-        Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
+        Vector2 jumpVec = new Vector2(moveSpeed * 2f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
         hitPlayers.Clear();
 
@@ -210,11 +211,29 @@ public class Hakonov : EnemyBase
     #region 移動処理関連
 
     /// <summary>
+    /// 移動するアニメーションイベント通知
+    /// </summary>
+    public override void OnMoveAnimEvent()
+    {
+        canMove = true;
+    }
+
+    /// <summary>
+    /// 移動終了アニメーションイベント通知
+    /// </summary>
+    public override void OnEndMoveAnimEvent()
+    {
+        canMove = false;
+    }
+
+    /// <summary>
     /// 追跡する処理
     /// </summary>
     protected override void Tracking()
     {
         SetAnimId((int)ANIM_ID.Run);
+        if (!canMove) return;
+
         Vector2 speedVec = Vector2.zero;
         if (IsFall() || IsWall())
         {
@@ -234,6 +253,7 @@ public class Hakonov : EnemyBase
     void AirMovement()
     {
         SetAnimId((int)ANIM_ID.Run);
+        if (!canMove) return;
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
@@ -252,6 +272,7 @@ public class Hakonov : EnemyBase
     protected override void OnHit()
     {
         base.OnHit();
+        canMove = false;
         SetAnimId((int)ANIM_ID.Hit);
     }
 
@@ -261,6 +282,7 @@ public class Hakonov : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        canMove = false;
         SetAnimId((int)ANIM_ID.Dead);
     }
 
@@ -302,7 +324,7 @@ public class Hakonov : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Hit", 0, 0);
+                animator.Play("Damage_jihanki", 0, 0);
                 break;
             default:
                 break;
@@ -318,7 +340,7 @@ public class Hakonov : EnemyBase
     public override void ResetAllStates()
     {
         base.ResetAllStates();
-
+        canMove = false;
         if (target == null)
         {
             target = sightChecker.GetTargetInSight();
