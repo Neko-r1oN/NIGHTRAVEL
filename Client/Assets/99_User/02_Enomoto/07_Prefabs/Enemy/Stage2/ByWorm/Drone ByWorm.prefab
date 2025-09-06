@@ -29674,7 +29674,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86c6d2a67d0134d48b4ac4f34960d703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 4
   baseHp: 20
   baseDefense: 20
   basePower: 20
@@ -29696,7 +29695,7 @@ MonoBehaviour:
   attackSpeedFactor: 0
   healRate: 0
   animator: {fileID: 0}
-  players: []
+  enemyTypeId: 13
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 3326093757011905295}
@@ -29705,6 +29704,7 @@ MonoBehaviour:
   attackCoolTime: 1
   attackDist: 6
   hitTime: 0.5
+  obstructionMaxTime: 3
   isBoss: 0
   isElite: 0
   canPatrol: 1
