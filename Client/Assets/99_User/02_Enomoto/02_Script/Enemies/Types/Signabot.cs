@@ -1,5 +1,5 @@
 //**************************************************
-//  [敵] サイバードックのクラス
+//  [敵] シグナボットのクラス
 //  Author:r-enomoto
 //**************************************************
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
@@ -7,10 +7,11 @@ using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
-public class CyberDog : EnemyBase
+public class Signabot : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -18,9 +19,7 @@ public class CyberDog : EnemyBase
     public enum ANIM_ID
     {
         Spawn = 0,
-        Idle,
         Attack,
-        Run,
         Hit,
         Dead,
     }
@@ -34,119 +33,69 @@ public class CyberDog : EnemyBase
         MeleeAttack
     }
 
-    #region オプション
-    [Foldout("オプション")]
-    [SerializeField] 
-    bool isByWorm = false; // ワームによって生成された個体かどうか
-    #endregion
-
     #region チェック関連
     // 近距離攻撃の範囲
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform meleeAttackCheck;
     [Foldout("チェック関連")]
     [SerializeField] float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform wallCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform groundCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
     // 落下チェック
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform fallCheck;
     [Foldout("チェック関連")]
     [SerializeField]
     Vector2 fallCheckRange;
     #endregion
 
-    #region プレイヤー関連
-    readonly float disToTargetMin = 0.25f;  // プレイヤーと離す距離
-    List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
-    #endregion
-
     protected override void Start()
     {
         isAttacking = false;
-
-        if (isByWorm)
-        {
-            bool isOnlinePlay = RoomModel.Instance;
-            if (!isOnlinePlay || isOnlinePlay && RoomModel.Instance.IsMaster)
-            {
-                if ((int)UnityEngine.Random.Range(0, 2) == 0) Flip();    // 確率で向きが変わる
-                Players = GetAlivePlayers();
-                Target = GetNearPlayer(transform.position);
-            }
-        }
-
         base.Start();
     }
+
+    protected override void FixedUpdate()
+    {
+        if (isSpawn || isStun || isInvincible || hp <= 0 || !sightChecker) return;
+        SetAnimId((int)ANIM_ID.Attack);
+        DecideBehavior();
+    }
+
 
     /// <summary>
     /// 行動パターン実行処理
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 行動パターン
-        if (canChaseTarget && !IsGround())
+        if (!isAttacking) return;
+
+        if (m_rb2d.linearVelocityY < 0 && !IsGround())
         {
             AirMovement();
         }
-        else if (canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
+        else if (canPatrol)
         {
-            Attack();
+            Patorol();
         }
-        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
-            || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
-        {
-            if (canChaseTarget && IsWall() && !canJump)
-            {
-                Idle();
-            }
-            else if (canChaseTarget && target)
-            {
-                Tracking();
-            }
-            else if (canPatrol)
-            {
-                Patorol();
-            }
-        }
-        else Idle();
-    }
-
-    /// <summary>
-    /// アイドル処理
-    /// </summary>
-    protected override void Idle()
-    {
-        SetAnimId((int)ANIM_ID.Idle);
-        m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
     #region 攻撃処理関連
-
-    /// <summary>
-    /// 攻撃処理
-    /// </summary>
-    public void Attack()
-    {
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack);
-    }
 
     /// <summary>
     /// [Animationイベントからの呼び出し] 近接攻撃処理
@@ -154,18 +103,24 @@ public class CyberDog : EnemyBase
 
     public override void OnAttackAnimEvent()
     {
-        // 前に飛び出す
-        Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
-        m_rb2d.linearVelocity = jumpVec;
-        hitPlayers.Clear();
+        isAttacking = true;
 
-        // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
-        string attackKey = COROUTINE.MeleeAttack.ToString();
-        if (!ContaintsManagedCoroutine(attackKey))
+        // 実行していなければ、近接攻撃のコルーチンを開始
+        string cooldownKey = COROUTINE.MeleeAttack.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
         {
             Coroutine coroutine = StartCoroutine(MeleeAttack());
-            managedCoroutines.Add(attackKey, coroutine);
+            managedCoroutines.Add(cooldownKey, coroutine);
         }
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
+    /// </summary>
+    public override void OnEndAttackAnimEvent()
+    {
+        isAttacking = false;
+        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
@@ -176,14 +131,6 @@ public class CyberDog : EnemyBase
             }));
             managedCoroutines.Add(cooldownKey, coroutine);
         }
-    }
-
-    /// <summary>
-    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
-    /// </summary>
-    public override void OnEndAttackAnimEvent()
-    {
-        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
     }
 
     /// <summary>
@@ -200,10 +147,9 @@ public class CyberDog : EnemyBase
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)
             {
-                if (collidersEnemies[i].gameObject.tag == "Player" && hitPlayers.Contains(collidersEnemies[i].gameObject))
+                if (collidersEnemies[i].gameObject.tag == "Player")
                 {
-                    hitPlayers.Add(collidersEnemies[i].gameObject);
-                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position,KB_POW.Medium, applyEffect);
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
                 }
             }
             yield return null;
@@ -216,7 +162,6 @@ public class CyberDog : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
-        isAttacking = true;
         yield return new WaitForSeconds(time);
         isAttacking = false;
         Idle();
@@ -228,30 +173,10 @@ public class CyberDog : EnemyBase
     #region 移動処理関連
 
     /// <summary>
-    /// 追跡する処理
-    /// </summary>
-    protected override void Tracking()
-    {
-        SetAnimId((int)ANIM_ID.Run);
-        Vector2 speedVec = Vector2.zero;
-        if (IsFall() || IsWall())
-        {
-            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
-        }
-        else
-        {
-            float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
-        }
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
     /// 巡回する処理
     /// </summary>
     protected override void Patorol()
     {
-        SetAnimId((int)ANIM_ID.Run);
         if (IsFall() || IsWall()) Flip();
         Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
@@ -262,13 +187,9 @@ public class CyberDog : EnemyBase
     /// </summary>
     void AirMovement()
     {
-        SetAnimId((int)ANIM_ID.Run);
-
-        // ジャンプ(落下)中にプレイヤーに向かって移動する
-        float distToPlayer = target.transform.position.x - this.transform.position.x;
-        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
-        Vector3 velocity = Vector3.zero;
-        m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
+        // 現在向いている方向に移動する
+        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
+        m_rb2d.linearVelocity = speedVec;
     }
 
     #endregion
@@ -331,7 +252,7 @@ public class CyberDog : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Hit Animation");
+                animator.Play("Hit_Signabot", 0, 0);
                 break;
             default:
                 break;
@@ -347,7 +268,7 @@ public class CyberDog : EnemyBase
     public override void ResetAllStates()
     {
         base.ResetAllStates();
-        //DecideBehavior();
+
         if (target == null)
         {
             target = sightChecker.GetTargetInSight();
@@ -433,4 +354,5 @@ public class CyberDog : EnemyBase
     }
 
     #endregion
+
 }
