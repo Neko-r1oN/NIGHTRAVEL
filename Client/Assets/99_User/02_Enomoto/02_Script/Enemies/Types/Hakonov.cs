@@ -1,5 +1,5 @@
 //**************************************************
-//  [敵] サイバードックのクラス
+//  [敵] ハコノフのクラス
 //  Author:r-enomoto
 //**************************************************
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
@@ -7,10 +7,11 @@ using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
-public class CyberDog : EnemyBase
+public class Hakonov : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -34,37 +35,31 @@ public class CyberDog : EnemyBase
         MeleeAttack
     }
 
-    #region オプション
-    [Foldout("オプション")]
-    [SerializeField] 
-    bool isByWorm = false; // ワームによって生成された個体かどうか
-    #endregion
-
     #region チェック関連
     // 近距離攻撃の範囲
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform meleeAttackCheck;
     [Foldout("チェック関連")]
     [SerializeField] float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform wallCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform groundCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
     // 落下チェック
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform fallCheck;
     [Foldout("チェック関連")]
     [SerializeField]
@@ -75,21 +70,13 @@ public class CyberDog : EnemyBase
     readonly float disToTargetMin = 0.25f;
     #endregion
 
+    #region 状態管理
+    List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
+    #endregion
+
     protected override void Start()
     {
         isAttacking = false;
-
-        if (isByWorm)
-        {
-            bool isOnlinePlay = RoomModel.Instance;
-            if (!isOnlinePlay || isOnlinePlay && RoomModel.Instance.IsMaster)
-            {
-                if ((int)UnityEngine.Random.Range(0, 2) == 0) Flip();    // 確率で向きが変わる
-                Players = GetAlivePlayers();
-                Target = GetNearPlayer(transform.position);
-            }
-        }
-
         base.Start();
     }
 
@@ -117,10 +104,6 @@ public class CyberDog : EnemyBase
             else if (canChaseTarget && target)
             {
                 Tracking();
-            }
-            else if (canPatrol)
-            {
-                Patorol();
             }
         }
         else Idle();
@@ -156,14 +139,23 @@ public class CyberDog : EnemyBase
         // 前に飛び出す
         Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
+        hitPlayers.Clear();
 
-        // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
-        string attackKey = COROUTINE.MeleeAttack.ToString();
-        if (!ContaintsManagedCoroutine(attackKey))
+        // 実行していなければ、近接攻撃のコルーチンを開始
+        string cooldownKey = COROUTINE.MeleeAttack.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
         {
             Coroutine coroutine = StartCoroutine(MeleeAttack());
-            managedCoroutines.Add(attackKey, coroutine);
+            managedCoroutines.Add(cooldownKey, coroutine);
         }
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
+    /// </summary>
+    public override void OnEndAttackAnimEvent()
+    {
+        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
@@ -176,13 +168,19 @@ public class CyberDog : EnemyBase
         }
     }
 
-    /// <summary>
-    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
-    /// </summary>
-    public override void OnEndAttackAnimEvent()
-    {
-        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
-    }
+    ///// <summary>
+    ///// 攻撃判定用
+    ///// </summary>
+    ///// <param name="collision"></param>
+    //private void OnTriggerStay2D(Collider2D collision)
+    //{
+    //    if (isMeleeAttacking && collision.gameObject.tag == "Player" && !hitPlayers.Contains(collision.gameObject))
+    //    {
+    //        hitPlayers.Add(collision.gameObject);
+    //        DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();    // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+    //        collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
+    //    }
+    //}
 
     /// <summary>
     /// 近接攻撃の判定を繰り返す
@@ -198,9 +196,10 @@ public class CyberDog : EnemyBase
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)
             {
-                if (collidersEnemies[i].gameObject.tag == "Player")
+                if (collidersEnemies[i].gameObject.tag == "Player" && !hitPlayers.Contains(collidersEnemies[i].gameObject))
                 {
-                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position,KB_POW.Medium, applyEffect);
+                    hitPlayers.Add(collidersEnemies[i].gameObject);
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
                 }
             }
             yield return null;
@@ -240,17 +239,6 @@ public class CyberDog : EnemyBase
             float distToPlayer = target.transform.position.x - this.transform.position.x;
             speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         }
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
-    /// 巡回する処理
-    /// </summary>
-    protected override void Patorol()
-    {
-        SetAnimId((int)ANIM_ID.Run);
-        if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -328,7 +316,7 @@ public class CyberDog : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Hit Animation");
+                animator.Play("Hit", 0, 0);
                 break;
             default:
                 break;
@@ -344,7 +332,7 @@ public class CyberDog : EnemyBase
     public override void ResetAllStates()
     {
         base.ResetAllStates();
-        //DecideBehavior();
+
         if (target == null)
         {
             target = sightChecker.GetTargetInSight();

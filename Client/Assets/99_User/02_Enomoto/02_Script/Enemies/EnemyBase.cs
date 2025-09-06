@@ -18,7 +18,7 @@ abstract public class EnemyBase : CharacterBase
     protected GameObject target;
     public GameObject Target { get { return target; } set { target = value; } }
 
-    public List<GameObject> players = new List<GameObject>();
+    protected List<GameObject> players = new List<GameObject>();
     public List<GameObject> Players { get { return players; } set { players = value; } }
     #endregion
 
@@ -68,6 +68,10 @@ abstract public class EnemyBase : CharacterBase
     [SerializeField]
     protected float hitTime = 0.5f;
 
+    [Foldout("ステータス")]
+    [SerializeField]
+    [Tooltip("ターゲットを見失うまでに必要な秒数")]
+    protected float obstructionMaxTime = 3f;
     #endregion
 
     #region オプション
@@ -225,7 +229,7 @@ abstract public class EnemyBase : CharacterBase
             if (!ContaintsManagedCoroutine(key))
             {
                 Coroutine coroutine = StartCoroutine(CheckTargetObstructionCoroutine(() => {
-                    RemoveCoroutineByKey(key);
+                    RemoveAndStopCoroutineByKey(key);
                 }));
                 managedCoroutines.Add(key, coroutine);
             }
@@ -293,7 +297,6 @@ abstract public class EnemyBase : CharacterBase
     /// <returns></returns>
     IEnumerator CheckTargetObstructionCoroutine(Action onFinished)
     {
-        float obstructionMaxTime = 3f;
         float currentTime = 0;
         float waitSec = 0.01f;
 
@@ -323,7 +326,7 @@ abstract public class EnemyBase : CharacterBase
         float waitTime = 2f;
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveCoroutineByKey(key); }));
+            Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, waitCoroutine);
         }
 
@@ -736,7 +739,7 @@ abstract public class EnemyBase : CharacterBase
     /// 指定したkeyのコルーチンの要素を削除
     /// </summary>
     /// <param name="key"></param>
-    protected void RemoveCoroutineByKey(string key)
+    protected void RemoveAndStopCoroutineByKey(string key)
     {
         if (ContaintsManagedCoroutine(key))
         {

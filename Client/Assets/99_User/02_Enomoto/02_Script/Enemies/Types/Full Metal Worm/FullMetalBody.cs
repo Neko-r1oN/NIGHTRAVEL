@@ -118,7 +118,7 @@ public class FullMetalBody : EnemyBase
         string key = COROUTINE.RangeAttack.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(RangeAttack(() => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(RangeAttack(() => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -211,7 +211,7 @@ public class FullMetalBody : EnemyBase
             {
                 Coroutine coroutine = StartCoroutine(GenerateEnemeiesCoroutine(maxEnemies, () => {
                     SetAnimId((int)ANIM_ID.Close);  // ハッチが閉じるアニメーション
-                    RemoveCoroutineByKey(key); 
+                    RemoveAndStopCoroutineByKey(key); 
                 }));
                 managedCoroutines.Add(key, coroutine);
             }

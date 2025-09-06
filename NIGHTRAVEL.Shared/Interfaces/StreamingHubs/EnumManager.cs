@@ -224,11 +224,30 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         public enum ENEMY_TYPE
         {
-            CyberDog = 1,
+            // ステージ１
+            Hakonov_TypeA = 1,
+            Hakonov_TypeB,
+            Hakonov_TypeC,
+            Signabot,
+            Delibot,
+            Vendbot,
+            Boxgeist,
+
+            // ステージ２
             Drone,
+            Guardbot,
+            CyberDog,
+            MissileMachine,
             CyberDog_ByWorm,
             Drone_ByWorm,
             Worm,
+
+            // ステージ３
+            Carcass,
+            Node_Core,
+            Slade,
+            Blaze,
+            Valcus
         }
 
         /// <summary>

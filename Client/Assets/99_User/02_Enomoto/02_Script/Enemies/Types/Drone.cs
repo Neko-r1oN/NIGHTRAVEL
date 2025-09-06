@@ -169,7 +169,7 @@ public class Drone : EnemyBase
         string key = COROUTINE.NextDecision.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -288,7 +288,7 @@ public class Drone : EnemyBase
         if (!ContaintsManagedCoroutine(key))
         {
             Coroutine coroutine = StartCoroutine(RangeAttack(() => { 
-                RemoveCoroutineByKey(key); 
+                RemoveAndStopCoroutineByKey(key); 
             }));
             managedCoroutines.Add(key, coroutine);
         }
@@ -321,7 +321,7 @@ public class Drone : EnemyBase
         string key = COROUTINE.AttackCooldown.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
         onFinished?.Invoke();
@@ -368,7 +368,7 @@ public class Drone : EnemyBase
         string key = COROUTINE.PatorolCoroutine.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(PatorolCoroutine(() => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(PatorolCoroutine(() => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }

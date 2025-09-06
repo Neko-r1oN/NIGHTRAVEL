@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
 
-        if (!RoomModel.Instance) Invoke("StartGame", 5f);
+        if (!RoomModel.Instance) Invoke("StartGame", 0f);
         else
         {
             RoomModel.Instance.OnSameStartSyn += this.StartGame;

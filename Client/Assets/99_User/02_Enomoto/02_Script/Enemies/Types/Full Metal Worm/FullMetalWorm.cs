@@ -163,7 +163,7 @@ public class FullMetalWorm : EnemyBase
         if (doOnceDecision)
         {
             doOnceDecision = false;
-            RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+            RemoveAndStopCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
 
             if (nextDecide == DECIDE_TYPE.Attack)
             {
@@ -198,7 +198,7 @@ public class FullMetalWorm : EnemyBase
         string key = COROUTINE.NextDecision.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -212,7 +212,7 @@ public class FullMetalWorm : EnemyBase
         string key = COROUTINE.MeleeAttackCoroutine.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(MeleeAttackCoroutine(() => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(MeleeAttackCoroutine(() => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -226,7 +226,7 @@ public class FullMetalWorm : EnemyBase
         string key = COROUTINE.AttackCooldown.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(AttackCooldownCoroutine(attackCoolTime, () => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(AttackCooldownCoroutine(attackCoolTime, () => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -240,7 +240,7 @@ public class FullMetalWorm : EnemyBase
         string key = COROUTINE.MoveCoroutine.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(MoveCoroutine(() => { RemoveCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(MoveCoroutine(() => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -453,8 +453,8 @@ public class FullMetalWorm : EnemyBase
                 || transform.position.y < minPos.y || transform.position.y > maxPos.y)
             {
                 Move();
-                RemoveCoroutineByKey(COROUTINE.NextDecision.ToString());
-                RemoveCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+                RemoveAndStopCoroutineByKey(COROUTINE.NextDecision.ToString());
+                RemoveAndStopCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
             }
         }
     }
