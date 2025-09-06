@@ -18,7 +18,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// 識別ID
         /// Author:Nishiura
         /// </summary>
-        public Guid UniqueId { get; set; }
+        public string UniqueId { get; set; }
 
         [Key(9)]
         /// <summary>

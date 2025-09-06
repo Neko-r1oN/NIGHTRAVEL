@@ -240,7 +240,8 @@ namespace Shared.Interfaces.StreamingHubs
             MissileMachine,
             CyberDog_ByWorm,
             Drone_ByWorm,
-            Worm,
+            FullMetalWorm,
+            MetalBody,
 
             // ステージ３
             Carcass,

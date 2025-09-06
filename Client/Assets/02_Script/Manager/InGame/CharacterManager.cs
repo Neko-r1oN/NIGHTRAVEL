@@ -40,12 +40,12 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region 敵関連
-    Dictionary<Guid, SpawnedEnemy> enemies = new Dictionary<Guid, SpawnedEnemy>();
+    Dictionary<string, SpawnedEnemy> enemies = new Dictionary<string, SpawnedEnemy>();
 
     /// <summary>
     /// 現在のステージで生成した敵のリスト
     /// </summary>
-    public Dictionary<Guid, SpawnedEnemy> Enemies { get { return enemies; } }
+    public Dictionary<string, SpawnedEnemy> Enemies { get { return enemies; } }
     #endregion
 
     const float updateSec = 0.1f;
@@ -168,21 +168,16 @@ public class CharacterManager : MonoBehaviour
     {
         foreach (var enemy in newEnemies)
         {
-            if(enemies.ContainsKey(enemy.UniqueId))
-            {
-                Debug.LogError("重複したID："+enemy.UniqueId);
-            }
-            
-            enemies.Add(enemy.UniqueId, enemy);
+            if(!enemies.ContainsKey(enemy.UniqueId)) enemies.Add(enemy.UniqueId, enemy);
         }
     }
 
     /// <summary>
     /// リストから敵を削除
     /// </summary>
-    public void RemoveEnemyFromList(Guid uniqueId)
+    public void RemoveEnemyFromList(string uniqueId)
     {
-        enemies.Remove(uniqueId);
+        if (enemies.ContainsKey(uniqueId)) enemies.Remove(uniqueId);
     }
 
     /// <summary>

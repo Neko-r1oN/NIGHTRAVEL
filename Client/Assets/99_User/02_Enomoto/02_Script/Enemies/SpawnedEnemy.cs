@@ -8,12 +8,12 @@ using UnityEngine;
 
 public class SpawnedEnemy
 {
-    public Guid UniqueId { get; private set; }    // ŒÂ‘ÌŽ¯•Ê—pID
+    public string UniqueId { get; private set; }    // ŒÂ‘ÌŽ¯•Ê—pID
     public GameObject Object { get; private set; }
     public EnemyBase Enemy { get; private set; }
     public EnumManager.SPAWN_ENEMY_TYPE SpawnType { get; private set; }
 
-    public SpawnedEnemy(Guid uniqueId, GameObject gameObject, EnemyBase enemy, EnumManager.SPAWN_ENEMY_TYPE spawnType)
+    public SpawnedEnemy(string uniqueId, GameObject gameObject, EnemyBase enemy, EnumManager.SPAWN_ENEMY_TYPE spawnType)
     {
         this.UniqueId = uniqueId;
         this.Object = gameObject;

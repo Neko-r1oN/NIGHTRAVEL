@@ -23,7 +23,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 識別用ID
         /// </summary>
-        public Guid UniqueId { get; set; }
+        public string UniqueId { get; set; }
 
         [Key(2)]
         /// <summary>

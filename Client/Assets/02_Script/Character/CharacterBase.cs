@@ -20,11 +20,6 @@ abstract public class CharacterBase : MonoBehaviour
     //--------------------------------------------------------------
     // フィールド
 
-    #region データ関連
-    protected Guid uniqueId;    // 生成されたときの識別用ID
-    public Guid UniqueId { get { return uniqueId; } set { uniqueId = value; } }
-    #endregion
-
     #region 初期ステータス関連
     [Foldout("ステータス")]
     [SerializeField]

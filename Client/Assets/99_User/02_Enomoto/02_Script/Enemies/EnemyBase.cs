@@ -13,10 +13,18 @@ using UnityEditor.Experimental.GraphView;
 
 abstract public class EnemyBase : CharacterBase
 {
-    #region 種類ID
-    [Foldout("種類ID")]
+    #region データ関連
+
+    [Foldout("データ関連")]
     [SerializeField]
+    [Tooltip("エネミー種類ID")]
     protected ENEMY_TYPE enemyTypeId;    // 自身のエネミー種類ID　(DBのレコードと紐づける)
+    
+    [Foldout("データ関連")]
+    [SerializeField]
+    [Tooltip("生成されたときの識別用ID")]
+    protected string uniqueId = "";    // 生成されたときの識別用ID  ※他の敵と重複しないよう注意
+
     #endregion
 
     #region プレイヤー・ターゲット
@@ -168,6 +176,8 @@ abstract public class EnemyBase : CharacterBase
     #region 外部参照用プロパティ
 
     public ENEMY_TYPE EnemyTypeId { get { return enemyTypeId; } set { enemyTypeId = value; } }
+
+    public string UniqueId { get { return uniqueId; } set { uniqueId = value; } }
 
     public int SpawnWeight { get { return spawnWeight; } }
 

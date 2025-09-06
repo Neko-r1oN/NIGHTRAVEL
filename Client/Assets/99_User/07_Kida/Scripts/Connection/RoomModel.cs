@@ -659,7 +659,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID"></param>
     /// <param name="enemHP"></param>
     /// <returns></returns>
-    public async UniTask EnemyHealthAsync(Guid enemID, float giverAtack, List<DEBUFF_TYPE> debuffList)
+    public async UniTask EnemyHealthAsync(string enemID, float giverAtack, List<DEBUFF_TYPE> debuffList)
     {
         await roomHub.EnemyHealthAsync(enemID, giverAtack, debuffList);
     }
@@ -670,7 +670,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="enemID">敵識別ID</param>
     /// <param name="dmgAmount">適用させるダメージ量</param>
     /// <returns></returns>
-    public async UniTask ApplyDamageToEnemyAsync(Guid enemID, int dmgAmount)
+    public async UniTask ApplyDamageToEnemyAsync(string enemID, int dmgAmount)
     {
         await roomHub.ApplyDamageToEnemyAsync(enemID, dmgAmount);
     }
