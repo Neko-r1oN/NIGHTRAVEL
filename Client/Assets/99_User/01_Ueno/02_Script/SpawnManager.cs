@@ -566,9 +566,6 @@ public class SpawnManager : MonoBehaviour
             return null;
         }
 
-        // IDİ’è(ƒ[ƒJƒ‹—p)
-        //spawnEnemyData.UniqueId = RoomModel.Instance ? spawnEnemyData.UniqueId : CharacterManager.Instance.Enemies.Count;
-
         // “G‚Ì¶¬
         var prefab = idEnemyPrefabPairs[spawnEnemyData.TypeId];
         var position = spawnEnemyData.Position;
