@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7995837447968109379}
   - component: {fileID: 8207734994208010254}
   - component: {fileID: 3589583939993759861}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BoxBullet_TypeA
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -149,6 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8b78931bc897b47b7456f20c52e211, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  typeId: 0
+  isDestructible: 0
 --- !u!1 &9024861808723322544
 GameObject:
   m_ObjectHideFlags: 0

@@ -76,8 +76,8 @@ public class Hakonov : EnemyBase
 
     protected override void Start()
     {
-        isAttacking = false;
         base.Start();
+        isAttacking = false;
     }
 
     /// <summary>

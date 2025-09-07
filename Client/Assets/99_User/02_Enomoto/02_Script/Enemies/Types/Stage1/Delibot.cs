@@ -51,12 +51,6 @@ public class Delibot : EnemyBase
     EnemyProjectileChecker projectileChecker;
     #endregion
 
-    #region オリジナルステータス
-    [Foldout("ステータス")]
-    [SerializeField]
-    float patorolRange = 10f;
-    #endregion
-
     #region 攻撃関連
     [Foldout("攻撃関連")]
     [SerializeField]
@@ -294,12 +288,11 @@ public class Delibot : EnemyBase
             if (RoomModel.Instance && RoomModel.Instance.IsMaster)
             {
                 // 弾の生成リクエスト
-                await RoomModel.Instance.ShootBulletAsync(PROJECTILE_TYPE.BoxBullet, debuffs, power, aimTransform.position, shootVec);
+                await RoomModel.Instance.ShootBulletAsync(PROJECTILE_TYPE.BoxBullet, debuffs, power, aimTransform.position, shootVec, Quaternion.identity);
             }
             else
             {
                 var bulletObj = Instantiate(boxBulletPrefab, aimTransform.position, Quaternion.identity);
-                List<DEBUFF_TYPE> dEBUFFs = new List<DEBUFF_TYPE>();
                 bulletObj.GetComponent<ProjectileBase>().Init(debuffs, power);
                 bulletObj.GetComponent<ProjectileBase>().Shoot(shootVec);
             }

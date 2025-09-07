@@ -1,5 +1,5 @@
 //**************************************************
-//  [敵] シグナボットのクラス
+//  [敵] ミサイルマシンのクラス
 //  Author:r-enomoto
 //**************************************************
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
@@ -11,7 +11,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
-public class Signabot : EnemyBase
+public class MissileMachine : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -19,7 +19,9 @@ public class Signabot : EnemyBase
     public enum ANIM_ID
     {
         Spawn = 0,
+        Idle,
         Attack,
+        Run,
         Hit,
         Dead,
     }
@@ -33,14 +35,25 @@ public class Signabot : EnemyBase
         MeleeAttack
     }
 
-    #region チェック関連
-    // 近距離攻撃の範囲
-    [Foldout("チェック関連")]
-    [SerializeField]
-    Transform meleeAttackCheck;
-    [Foldout("チェック関連")]
-    [SerializeField] float meleeAttackRange = 0.9f;
+    #region コンポーネント
+    EnemyProjectileChecker projectileChecker;
+    #endregion
 
+    #region 攻撃関連
+    [Foldout("攻撃関連")]
+    [SerializeField]
+    Transform aimTransform; // 弾発射部分
+
+    [Foldout("攻撃関連")]
+    [SerializeField]
+    GameObject missileBulletPrefab;
+
+    [Foldout("攻撃関連")]
+    [SerializeField]
+    float shootSpeed;
+    #endregion
+
+    #region チェック関連
     // 壁・地面チェック
     [Foldout("チェック関連")]
     [SerializeField]
@@ -64,64 +77,107 @@ public class Signabot : EnemyBase
     Vector2 fallCheckRange;
     #endregion
 
+    #region ターゲットと離す距離
+    readonly float disToTargetMin = 0.25f;
+    #endregion
+
     protected override void Start()
     {
         base.Start();
         isAttacking = false;
+        projectileChecker = aimTransform.GetComponent<EnemyProjectileChecker>();
     }
-
-    protected override void FixedUpdate()
-    {
-        if (isSpawn || isStun || isInvincible || hp <= 0 || !sightChecker) return;
-        SetAnimId((int)ANIM_ID.Attack);
-        DecideBehavior();
-    }
-
 
     /// <summary>
     /// 行動パターン実行処理
     /// </summary>
     protected override void DecideBehavior()
     {
-        if (!isAttacking) return;
-
-        if (m_rb2d.linearVelocityY < 0 && !IsGround())
+        // 行動パターン
+        if (canChaseTarget && !IsGround())
         {
             AirMovement();
         }
-        else if (canPatrol)
+        else if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
         {
-            Patorol();
+            Attack();
         }
+        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
+            || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        {
+            if (canChaseTarget && IsWall() && !canJump)
+            {
+                Idle();
+            }
+            else if (canChaseTarget && target)
+            {
+                Tracking();
+            }
+        }
+        else Idle();
+    }
+
+    /// <summary>
+    /// アイドル処理
+    /// </summary>
+    protected override void Idle()
+    {
+        SetAnimId((int)ANIM_ID.Idle);
+        m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
     #region 攻撃処理関連
 
     /// <summary>
-    /// [Animationイベントからの呼び出し] 近接攻撃処理
+    /// 攻撃処理
+    /// </summary>
+    public void Attack()
+    {
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack);
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 後方に飛ぶだけ
     /// </summary>
 
     public override void OnAttackAnimEvent()
     {
-        isAttacking = true;
+        // 後方に飛ぶ
+        Vector2 jumpVec = new Vector2(moveSpeed * 3f * -TransformUtils.GetFacingDirection(transform), jumpPower);
+        m_rb2d.linearVelocity = jumpVec;
+    }
 
-        // 実行していなければ、近接攻撃のコルーチンを開始
-        string cooldownKey = COROUTINE.MeleeAttack.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
+    /// <summary>
+    /// [Animationイベントからの呼び出し] ミサイル発射
+    /// </summary>
+    public override async void OnAttackAnim2Event()
+    {
+        // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+        DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
+        List<DEBUFF_TYPE> debuffs = new List<DEBUFF_TYPE>();
+        if (applyEffect != null) debuffs.Add((DEBUFF_TYPE)applyEffect);
+        Vector2 shootVec = aimTransform.up * shootSpeed;
+
+        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            Coroutine coroutine = StartCoroutine(MeleeAttack());
-            managedCoroutines.Add(cooldownKey, coroutine);
+            // 弾の生成リクエスト
+            await RoomModel.Instance.ShootBulletAsync(PROJECTILE_TYPE.BoxBullet, debuffs, power, aimTransform.position, shootVec, aimTransform.rotation);
+        }
+        else
+        {
+            var missile = Instantiate(missileBulletPrefab, aimTransform.position, aimTransform.rotation);
+            missile.GetComponent<ProjectileBase>().Init(debuffs, power);
+            missile.GetComponent<ProjectileBase>().Shoot(shootVec);
         }
     }
 
     /// <summary>
-    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
+    /// [Animationイベントからの呼び出し] 攻撃終了
     /// </summary>
     public override void OnEndAttackAnimEvent()
     {
-        isAttacking = false;
-        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
-
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
         if (!ContaintsManagedCoroutine(cooldownKey))
@@ -134,37 +190,14 @@ public class Signabot : EnemyBase
     }
 
     /// <summary>
-    /// 近接攻撃の判定を繰り返す
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator MeleeAttack()
-    {
-        while (true)
-        {
-            // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-            DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
-
-            Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
-            for (int i = 0; i < collidersEnemies.Length; i++)
-            {
-                if (collidersEnemies[i].gameObject.tag == "Player")
-                {
-                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
-                }
-            }
-            yield return null;
-        }
-    }
-
-    /// <summary>
     /// 攻撃時のクールダウン処理
     /// </summary>
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        Idle();
         yield return new WaitForSeconds(time);
         isAttacking = false;
-        Idle();
         onFinished?.Invoke();
     }
 
@@ -173,12 +206,29 @@ public class Signabot : EnemyBase
     #region 移動処理関連
 
     /// <summary>
-    /// 巡回する処理
+    /// 後ろに下がる処理
     /// </summary>
-    protected override void Patorol()
+    void MoveBackward()
     {
-        if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
+        SetAnimId((int)ANIM_ID.Run);
+    }
+
+    /// <summary>
+    /// 追跡する処理
+    /// </summary>
+    protected override void Tracking()
+    {
+        SetAnimId((int)ANIM_ID.Run);
+        Vector2 speedVec = Vector2.zero;
+        if (IsFall() || IsWall())
+        {
+            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
+        }
+        else
+        {
+            float distToPlayer = target.transform.position.x - this.transform.position.x;
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
+        }
         m_rb2d.linearVelocity = speedVec;
     }
 
@@ -187,9 +237,13 @@ public class Signabot : EnemyBase
     /// </summary>
     void AirMovement()
     {
-        // 現在向いている方向に移動する
-        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
-        m_rb2d.linearVelocity = speedVec;
+        SetAnimId((int)ANIM_ID.Run);
+
+        // ジャンプ(落下)中にプレイヤーに向かって移動する
+        float distToPlayer = target.transform.position.x - this.transform.position.x;
+        Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
+        Vector3 velocity = Vector3.zero;
+        m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
     }
 
     #endregion
@@ -252,7 +306,7 @@ public class Signabot : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Hit_Signabot", 0, 0);
+                animator.Play("Hit", 0, 0);
                 break;
             default:
                 break;
@@ -321,13 +375,6 @@ public class Signabot : EnemyBase
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, attackDist);
 
-        // 攻撃範囲
-        if (meleeAttackCheck)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(meleeAttackCheck.transform.position, meleeAttackRange);
-        }
-
         // 壁の判定
         if (wallCheck)
         {
@@ -354,5 +401,4 @@ public class Signabot : EnemyBase
     }
 
     #endregion
-
 }

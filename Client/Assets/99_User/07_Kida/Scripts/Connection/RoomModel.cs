@@ -16,7 +16,6 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -93,7 +92,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ギミックの起動通知
     public Action<int> OnBootedGimmick { get; set; }
 
-    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2,Vector2> OnShootedBullet { get; set; }
+    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2,Vector2, Quaternion> OnShootedBullet { get; set; }
 
     //難易度上昇通知
     public Action<int> OnAscendDifficultySyn {  get; set; }
@@ -318,9 +317,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 発射物の生成通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnShootBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec)
+    public void OnShootBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
     {
-        OnShootedBullet(type, debuffs, power, spawnPos, shootVec);
+        OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
     #endregion
     #region 敵通知関連
@@ -634,9 +633,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="spawnPos">生成位置</param>
     /// <param name="shootVec">発射ベクトル</param>
     /// <returns></returns>
-    public async UniTask ShootBulletAsync(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec)
+    public async UniTask ShootBulletAsync(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
     {
-        await roomHub.ShootBulletAsync(type, debuffs, power, spawnPos, shootVec);
+        await roomHub.ShootBulletAsync(type, debuffs, power, spawnPos, shootVec, rotation);
     }
 
     #endregion

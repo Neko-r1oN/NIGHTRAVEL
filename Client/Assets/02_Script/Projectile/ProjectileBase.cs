@@ -11,6 +11,9 @@ public class ProjectileBase : MonoBehaviour
     public PROJECTILE_TYPE TypeId { get { return typeId; } }
     #endregion
 
+    [SerializeField] 
+    protected bool isDestructible;
+
     protected List<DEBUFF_TYPE> debuffs = new List<DEBUFF_TYPE>();
     protected int power;
 
@@ -23,5 +26,15 @@ public class ProjectileBase : MonoBehaviour
     public void Shoot(Vector3 shootDirection)
     {
         GetComponent<Rigidbody2D>().AddForce(shootDirection, ForceMode2D.Impulse);
+    }
+
+    public void ApplyDamage()
+    {
+        if(isDestructible) Destroy();
+    }
+
+    protected virtual void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

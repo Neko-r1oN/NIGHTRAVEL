@@ -76,9 +76,8 @@ public class Vendbot : EnemyBase
 
     protected override void Start()
     {
-        bool canMove = false;
-        isAttacking = false;
         base.Start();
+        isAttacking = false;
     }
 
     /// <summary>

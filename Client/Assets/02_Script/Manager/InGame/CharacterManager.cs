@@ -442,9 +442,9 @@ public class CharacterManager : MonoBehaviour
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>
     /// <param name="shootVec"></param>
-    void OnShootedBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec)
+    void OnShootedBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
     {
-        var projectile =  Instantiate(projectilePrefabsByType[type], spawnPos, Quaternion.identity);
+        var projectile =  Instantiate(projectilePrefabsByType[type], spawnPos, rotation);
         projectile.GetComponent<ProjectileBase>().Init(debuffs, power);
         projectile.GetComponent<ProjectileBase>().Shoot(shootVec);
     }

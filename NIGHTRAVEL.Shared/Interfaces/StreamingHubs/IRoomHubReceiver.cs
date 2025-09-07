@@ -95,7 +95,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="type">発射物の種類</param>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
-        void OnShootBullet(EnumManager.PROJECTILE_TYPE type, List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec);
+        void OnShootBullet(EnumManager.PROJECTILE_TYPE type,List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation);
         #endregion
         #region 敵関連
 

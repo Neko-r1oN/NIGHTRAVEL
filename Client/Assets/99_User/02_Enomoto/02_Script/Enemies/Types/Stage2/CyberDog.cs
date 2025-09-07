@@ -78,7 +78,7 @@ public class CyberDog : EnemyBase
 
     protected override void Start()
     {
-        characterManager = CharacterManager.Instance;
+        base.Start();
         isAttacking = false;
 
         if (isByWorm)
@@ -90,8 +90,6 @@ public class CyberDog : EnemyBase
                 Target = GetNearPlayer(transform.position);
             }
         }
-
-        base.Start();
     }
 
     /// <summary>

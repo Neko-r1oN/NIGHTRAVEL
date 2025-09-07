@@ -81,6 +81,7 @@ namespace Shared.Interfaces.StreamingHubs
         public enum PROJECTILE_TYPE
         {
             BoxBullet,
+            MissileBullet,
         }
 
         /// <summary>
