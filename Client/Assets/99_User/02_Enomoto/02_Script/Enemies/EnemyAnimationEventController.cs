@@ -4,7 +4,9 @@ public class EnemyAnimationEventController : MonoBehaviour
 {
     [SerializeField] 
     EnemyBase m_EnemyBase;
-    
+
+    #region 攻撃パターン１
+
     /// <summary>
     /// 攻撃のイベント
     /// </summary>
@@ -20,6 +22,28 @@ public class EnemyAnimationEventController : MonoBehaviour
     {
         m_EnemyBase.OnEndAttackAnimEvent();
     }
+
+    #endregion
+
+    #region 攻撃パターン２
+
+    /// <summary>
+    /// 攻撃のイベント
+    /// </summary>
+    public void OnAttack2Event()
+    {
+        m_EnemyBase.OnAttackAnim2Event();
+    }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント
+    /// </summary>
+    public void OnEndAttack2Event()
+    {
+        m_EnemyBase.OnEndAttackAnim2Event();
+    }
+
+    #endregion
 
     /// <summary>
     /// 移動するアニメイトイベント

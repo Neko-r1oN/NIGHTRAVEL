@@ -139,7 +139,7 @@ public class FullMetalWorm : EnemyBase
     {
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0) return;
 
-        if (!target && Players.Count > 0)
+        if (!target && characterManager.PlayerObjs.Count > 0)
         {
             // ターゲットを探す
             SetRandomTargetPlayer();

@@ -59,7 +59,7 @@ public class EnemySightChecker : MonoBehaviour
     {
         GameObject target = null;
         float minTargetDist = float.MaxValue;
-        foreach (GameObject player in GetComponent<EnemyBase>().Players)
+        foreach (GameObject player in CharacterManager.Instance.PlayerObjs.Values)
         {
             if (!player || player && player.GetComponent<CharacterBase>().HP <= 0) continue;
 
@@ -87,11 +87,11 @@ public class EnemySightChecker : MonoBehaviour
     /// <param name="players"></param>
     /// <param name="target"></param>
     /// <param name="canChaseTarget"></param>
-    public void DrawSightLine(bool canChaseTarget ,GameObject target, List<GameObject> players)
+    public void DrawSightLine(bool canChaseTarget ,GameObject target)
     {
-        if (players.Count > 0)
+        if (CharacterManager.Instance.PlayerObjs.Count > 0)
         {
-            foreach (GameObject player in players)
+            foreach (GameObject player in CharacterManager.Instance.PlayerObjs.Values)
             {
                 if (!player || player && player.GetComponent<CharacterBase>().HP <= 0) continue;
                 Vector2 dirToTarget = player.transform.position - transform.position;

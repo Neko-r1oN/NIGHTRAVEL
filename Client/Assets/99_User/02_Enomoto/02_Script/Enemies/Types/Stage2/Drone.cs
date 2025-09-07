@@ -104,7 +104,6 @@ public class Drone : EnemyBase
             if (!isOnlinePlay || isOnlinePlay && RoomModel.Instance.IsMaster)
             {
                 if ((int)UnityEngine.Random.Range(0, 2) == 0) Flip();    // Šm—¦‚ÅŒü‚«‚ª•Ï‚í‚é
-                Players = GetAlivePlayers();
                 Target = GetNearPlayer(transform.position);
             }
         }

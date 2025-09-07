@@ -1,16 +1,19 @@
 //**************************************************
-//  [敵] サイバードックのクラス
+//  [敵] カルカスのクラス
 //  Author:r-enomoto
 //**************************************************
+using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
-public class CyberDog : EnemyBase
+public class Carcass : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -19,10 +22,25 @@ public class CyberDog : EnemyBase
     {
         Spawn = 0,
         Idle,
-        Attack,
+        RotationAttack,
+        RotationAttack_Rotate,
+        RotationAttack_Finish,
+        MeleeAttack,
         Run,
         Hit,
         Dead,
+    }
+
+    /// <summary>
+    /// 行動パターン
+    /// </summary>
+    public enum DECIDE_TYPE
+    {
+        Waiting = 1,
+        RotationAttack,
+        MeleeAttack,
+        Tracking,
+        AirMovement
     }
 
     /// <summary>
@@ -30,41 +48,36 @@ public class CyberDog : EnemyBase
     /// </summary>
     public enum COROUTINE
     {
+        RotationAttack,
+        MeleeAttack,
         AttackCooldown,
-        MeleeAttack
     }
-
-    #region オプション
-    [Foldout("オプション")]
-    [SerializeField] 
-    bool isByWorm = false; // ワームによって生成された個体かどうか
-    #endregion
 
     #region チェック関連
     // 近距離攻撃の範囲
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform meleeAttackCheck;
     [Foldout("チェック関連")]
     [SerializeField] float meleeAttackRange = 0.9f;
 
     // 壁・地面チェック
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform wallCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 wallCheckRadius = new Vector2(0, 1.5f);
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform groundCheck;
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
     // 落下チェック
     [Foldout("チェック関連")]
-    [SerializeField] 
+    [SerializeField]
     Transform fallCheck;
     [Foldout("チェック関連")]
     [SerializeField]
@@ -72,25 +85,22 @@ public class CyberDog : EnemyBase
     #endregion
 
     #region プレイヤー関連
-    readonly float disToTargetMin = 0.25f;  // プレイヤーと離す距離
     List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
+    readonly float disToTargetMin = 0.25f;
+    #endregion
+
+    #region オリジナル
+    [Foldout("オリジナル")]
+    [Tooltip("回転攻撃の際にpowerにかける倍率")]
+    float rotationPowerRate = 1.5f;
+
+    bool isRotationAttacking;
     #endregion
 
     protected override void Start()
     {
+        isRotationAttacking = false;
         isAttacking = false;
-
-        if (isByWorm)
-        {
-            bool isOnlinePlay = RoomModel.Instance;
-            if (!isOnlinePlay || isOnlinePlay && RoomModel.Instance.IsMaster)
-            {
-                if ((int)UnityEngine.Random.Range(0, 2) == 0) Flip();    // 確率で向きが変わる
-                Players = GetAlivePlayers();
-                Target = GetNearPlayer(transform.position);
-            }
-        }
-
         base.Start();
     }
 
@@ -99,17 +109,23 @@ public class CyberDog : EnemyBase
     /// </summary>
     protected override void DecideBehavior()
     {
-        // 行動パターン
         if (canChaseTarget && !IsGround())
         {
             AirMovement();
         }
-        else if (canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
+        else if (canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist
+            || canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist * 3)
         {
-            Attack();
+            if (disToTarget <= attackDist)
+            {
+                Attack(DECIDE_TYPE.MeleeAttack);
+            }
+            else if (disToTarget <= attackDist * 3)
+            {
+                Attack(DECIDE_TYPE.RotationAttack);
+            }
         }
-        else if (moveSpeed > 0 && canPatrol && Mathf.Abs(disToTargetX) > disToTargetMin
-            || moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        else if (moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
         {
             if (canChaseTarget && IsWall() && !canJump)
             {
@@ -118,10 +134,6 @@ public class CyberDog : EnemyBase
             else if (canChaseTarget && target)
             {
                 Tracking();
-            }
-            else if (canPatrol)
-            {
-                Patorol();
             }
         }
         else Idle();
@@ -139,33 +151,97 @@ public class CyberDog : EnemyBase
     #region 攻撃処理関連
 
     /// <summary>
+    /// 回転攻撃時の攻撃判定用
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (isRotationAttacking && collision.gameObject.tag == "Player" && !hitPlayers.Contains(collision.gameObject))
+        {
+            // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+            DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
+
+            hitPlayers.Add(collision.gameObject);
+            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage((int)(power * rotationPowerRate), transform.position, KB_POW.Medium, applyEffect);
+
+        }
+    }
+
+    /// <summary>
     /// 攻撃処理
     /// </summary>
-    public void Attack()
+    public void Attack(DECIDE_TYPE attackType)
     {
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack);
+
+        switch (attackType)
+        {
+            case DECIDE_TYPE.RotationAttack:
+                SetAnimId((int)ANIM_ID.RotationAttack);
+                break;
+            case DECIDE_TYPE.MeleeAttack:
+                SetAnimId((int)ANIM_ID.MeleeAttack);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 回転攻撃処理
+    /// </summary>
+
+    public override void OnAttackAnimEvent()
+    {
+        if (isStun)
+        {
+            isAttacking = false;
+            return;
+        }
+
+        hitPlayers.Clear();
+
+        SetAnimId((int)ANIM_ID.RotationAttack_Rotate);
+        m_rb2d.linearVelocity = Vector3.zero;
+        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+
+        // 実行していなければ、回転攻撃のコルーチンを開始
+        string cooldownKey = COROUTINE.RotationAttack.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
+        {
+            Coroutine coroutine = StartCoroutine(RotationAttackCoroutine(() =>
+            {
+                RemoveAndStopCoroutineByKey(cooldownKey);
+            }));
+            managedCoroutines.Add(cooldownKey, coroutine);
+        }
     }
 
     /// <summary>
     /// [Animationイベントからの呼び出し] 近接攻撃処理
     /// </summary>
 
-    public override void OnAttackAnimEvent()
+    public override void OnAttackAnim2Event()
     {
         // 前に飛び出す
-        Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
+        Vector2 jumpVec = new Vector2(moveSpeed * 1.5f * TransformUtils.GetFacingDirection(transform), jumpPower / 3);
         m_rb2d.linearVelocity = jumpVec;
         hitPlayers.Clear();
 
-        // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
-        string attackKey = COROUTINE.MeleeAttack.ToString();
-        if (!ContaintsManagedCoroutine(attackKey))
+        // 実行していなければ、近接攻撃のコルーチンを開始
+        string cooldownKey = COROUTINE.MeleeAttack.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
         {
             Coroutine coroutine = StartCoroutine(MeleeAttack());
-            managedCoroutines.Add(attackKey, coroutine);
+            managedCoroutines.Add(cooldownKey, coroutine);
         }
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 近接攻撃の判定処理を終了
+    /// </summary>
+    public override void OnEndAttackAnim2Event()
+    {
+        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
@@ -179,11 +255,76 @@ public class CyberDog : EnemyBase
     }
 
     /// <summary>
-    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
+    /// 回転攻撃のコルーチン
     /// </summary>
-    public override void OnEndAttackAnimEvent()
+    /// <returns></returns>
+    IEnumerator RotationAttackCoroutine(Action onFinished)
     {
-        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
+        bool isAttacked = false;
+        float startAttackSec = 2f;
+        float currentSec = 0;
+
+        while (true)
+        {
+            if (isStun)
+            {
+                m_rb2d.bodyType = RigidbodyType2D.Dynamic;
+                isAttacking = false;
+                yield break;
+            }
+
+            if(target == null)
+            {
+                var nearPlayer = GetNearPlayer(transform.position);
+                if (nearPlayer != null) target = nearPlayer;
+            }
+            if (target)
+            {
+                // ターゲットのいる方向を向く
+                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+            }
+
+            currentSec += Time.deltaTime;
+
+            if (currentSec >= startAttackSec && !isAttacked)
+            {
+                isRotationAttacking = true;
+                isAttacked = true;
+                Vector3 targetPos = target ? target.transform.position : this.transform.position + Vector3.down;
+
+                // 目的地に向かって突進
+                m_rb2d.bodyType = RigidbodyType2D.Dynamic;
+                m_rb2d.linearVelocity = Vector3.zero;
+                m_rb2d.AddForce((targetPos - transform.position).normalized * jumpPower * 1.5f, ForceMode2D.Impulse);
+            }
+            else if (m_rb2d.linearVelocity.y <= 0 && !isAttacked)
+            {
+                // 空中で静止
+                m_rb2d.bodyType = RigidbodyType2D.Static;
+            }
+
+            if (IsGround() && isAttacked)
+            {
+                isRotationAttacking = false;
+                SetAnimId((int)ANIM_ID.RotationAttack_Finish);
+                break;
+            }
+
+            yield return null;
+        }
+
+        // 実行していなければ、クールダウンのコルーチンを開始
+        string cooldownKey = COROUTINE.AttackCooldown.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
+        {
+            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime * 1.5f, () => {
+                RemoveAndStopCoroutineByKey(cooldownKey);
+            }));
+            managedCoroutines.Add(cooldownKey, coroutine);
+        }
+
+        onFinished?.Invoke();
     }
 
     /// <summary>
@@ -200,10 +341,10 @@ public class CyberDog : EnemyBase
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)
             {
-                if (collidersEnemies[i].gameObject.tag == "Player" && hitPlayers.Contains(collidersEnemies[i].gameObject))
+                if (collidersEnemies[i].gameObject.tag == "Player" && !hitPlayers.Contains(collidersEnemies[i].gameObject))
                 {
                     hitPlayers.Add(collidersEnemies[i].gameObject);
-                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position,KB_POW.Medium, applyEffect);
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
                 }
             }
             yield return null;
@@ -216,10 +357,9 @@ public class CyberDog : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
-        isAttacking = true;
+        Idle();
         yield return new WaitForSeconds(time);
         isAttacking = false;
-        Idle();
         onFinished?.Invoke();
     }
 
@@ -247,17 +387,6 @@ public class CyberDog : EnemyBase
     }
 
     /// <summary>
-    /// 巡回する処理
-    /// </summary>
-    protected override void Patorol()
-    {
-        SetAnimId((int)ANIM_ID.Run);
-        if (IsFall() || IsWall()) Flip();
-        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
-        m_rb2d.linearVelocity = speedVec;
-    }
-
-    /// <summary>
     /// 空中状態での移動処理
     /// </summary>
     void AirMovement()
@@ -281,7 +410,9 @@ public class CyberDog : EnemyBase
     protected override void OnHit()
     {
         base.OnHit();
+        isRotationAttacking = false;
         SetAnimId((int)ANIM_ID.Hit);
+        m_rb2d.bodyType = RigidbodyType2D.Dynamic;
     }
 
     /// <summary>
@@ -331,7 +462,7 @@ public class CyberDog : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Hit Animation");
+                animator.Play("Carcass_Damage_Animation", 0, 0);
                 break;
             default:
                 break;
@@ -347,7 +478,8 @@ public class CyberDog : EnemyBase
     public override void ResetAllStates()
     {
         base.ResetAllStates();
-        //DecideBehavior();
+        isRotationAttacking = false;
+        m_rb2d.bodyType = RigidbodyType2D.Dynamic;
         if (target == null)
         {
             target = sightChecker.GetTargetInSight();

@@ -158,11 +158,11 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// Ëü‚Ì‰Â“®ˆæ”ÍˆÍ“à‚ÅÅ‚à‹ß‚¢ƒvƒŒƒCƒ„[‚Ìæ“¾
     /// </summary>
     /// <returns></returns>
-    public GameObject GetNearPlayerInSight(List<GameObject> players, bool canFollowTargetSimulation = true)
+    public GameObject GetNearPlayerInSight(bool canFollowTargetSimulation = true)
     {
         float distToPlayer = float.MaxValue;
         GameObject nearPlayer = null;
-        foreach (var player in players)
+        foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
         {
             if (!player || player && player.GetComponent<CharacterBase>().HP <= 0) continue;
             var projectileRays = GetProjectileRaycastHit(player.transform, canFollowTargetSimulation, null);

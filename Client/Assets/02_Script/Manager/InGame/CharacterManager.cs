@@ -318,7 +318,6 @@ public class CharacterManager : MonoBehaviour
             // 敵が持っているプレイヤーのリストを更新
             foreach (var enemy in enemies.Values)
             {
-                enemy.Enemy.Players = playerObjs.Values.ToList();
                 if (enemy.Enemy.Target == player) enemy.Enemy.GetNearPlayer(enemy.Enemy.transform.position);
             }
         }

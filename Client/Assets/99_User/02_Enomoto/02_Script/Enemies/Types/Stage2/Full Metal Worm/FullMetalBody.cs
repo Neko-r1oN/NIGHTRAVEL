@@ -143,11 +143,11 @@ public class FullMetalBody : EnemyBase
 
                 // 初回時にのみ処理
                 if (!targetList.ContainsKey(aimTransform)) 
-                    targetList.Add(aimTransform, projectileChecker.GetNearPlayerInSight(Players, true));
+                    targetList.Add(aimTransform, projectileChecker.GetNearPlayerInSight(true));
 
                 // ターゲットを見失ったら、ターゲットを再設定
                 if (targetList[aimTransform] == null || !projectileChecker.IsTargetInSight(targetList[aimTransform]))
-                    targetList[aimTransform] = projectileChecker.GetNearPlayerInSight(Players, true);
+                    targetList[aimTransform] = projectileChecker.GetNearPlayerInSight(true);
 
                 if (targetList[aimTransform] != null)
                 {

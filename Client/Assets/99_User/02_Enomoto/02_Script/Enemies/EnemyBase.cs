@@ -32,8 +32,7 @@ abstract public class EnemyBase : CharacterBase
     protected GameObject target;
     public GameObject Target { get { return target; } set { target = value; } }
 
-    protected List<GameObject> players = new List<GameObject>();
-    public List<GameObject> Players { get { return players; } set { players = value; } }
+    protected CharacterManager characterManager;
     #endregion
 
     #region コンポーネント
@@ -208,9 +207,14 @@ abstract public class EnemyBase : CharacterBase
         ResetAllStates();
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        characterManager = CharacterManager.Instance;
+    }
+
     protected override void Start()
     {
-        players = new List<GameObject>(CharacterManager.Instance.PlayerObjs.Values);
         terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();
@@ -225,7 +229,7 @@ abstract public class EnemyBase : CharacterBase
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
         // ターゲットが存在しない || 現在のターゲットが死亡している場合
-        if (Players.Count > 0 && !target || target && target.GetComponent<CharacterBase>().HP <= 0)
+        if (characterManager.PlayerObjs.Count > 0 && !target || target && target.GetComponent<CharacterBase>().HP <= 0)
         {
             // 新しくターゲットを探す
             target = sightChecker.GetTargetInSight();
@@ -349,7 +353,7 @@ abstract public class EnemyBase : CharacterBase
     protected List<GameObject> GetAlivePlayers()
     {
         List<GameObject> alivePlayers = new List<GameObject>();
-        foreach (GameObject player in Players)
+        foreach (GameObject player in characterManager.PlayerObjs.Values)
         {
             if (player && player.GetComponent<CharacterBase>().HP > 0)
             {
@@ -456,8 +460,8 @@ abstract public class EnemyBase : CharacterBase
     {
         float durationX = 130f;
         float durationY = 90f;
-        transform.gameObject.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-        transform.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-transform.localScale.x * durationX, durationY));
+        m_rb2d.linearVelocity = Vector2.zero;
+        m_rb2d.AddForce(new Vector2(-transform.localScale.x * durationX, durationY));
     }
 
     /// <summary>
@@ -577,9 +581,9 @@ abstract public class EnemyBase : CharacterBase
             if (pos.x < transform.position.x && transform.localScale.x > 0
             || pos.x > transform.position.x && transform.localScale.x < 0) Flip();
 
-            DoKnokBack();
-
             if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
+
+            DoKnokBack();
         }
 
         if (hp <= 0)
@@ -680,6 +684,8 @@ abstract public class EnemyBase : CharacterBase
 
     #region テクスチャ・アニメーション関連
 
+    #region 攻撃パターン１
+
     /// <summary>
     /// 攻撃アニメーションのイベント通知処理
     /// </summary>
@@ -689,6 +695,22 @@ abstract public class EnemyBase : CharacterBase
     /// 攻撃のアニメーション終了時のイベント通知処理
     /// </summary>
     public virtual void OnEndAttackAnimEvent() { }
+
+    #endregion
+
+    #region 攻撃パターン２
+
+    /// <summary>
+    /// 攻撃アニメーションのイベント通知処理
+    /// </summary>
+    public virtual void OnAttackAnim2Event() { }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント通知処理
+    /// </summary>
+    public virtual void OnEndAttackAnim2Event() { }
+
+    #endregion
 
     /// <summary>
     /// 移動するアニメーションイベント通知
@@ -871,7 +893,7 @@ abstract public class EnemyBase : CharacterBase
         // 視線描画
         if (sightChecker != null)
         {
-            sightChecker.DrawSightLine(canChaseTarget, target, players);
+            sightChecker.DrawSightLine(canChaseTarget, target);
         }
 
         DrawDetectionGizmos();
