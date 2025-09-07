@@ -72,10 +72,8 @@ public class EnemyProjectileChecker : MonoBehaviour
     /// 発射物のRaycastHit2Dを生成する
     /// </summary>
     /// <param name="target"></param>
-    /// <param name="gunBulletWidth"></param>
     /// <param name="canFollowTargetSimulation">rayの向きを、targetに向けてシュミレーションした角度にするかどうか</param>
     /// <param name="angle"></param>
-    /// <param name="canUpdateRotation"></param>
     /// <returns></returns>
     (RaycastHit2D canterHit2D, RaycastHit2D leftHit2D, RaycastHit2D rightHit2D) GetProjectileRaycastHit(Transform target, bool canFollowTargetSimulation, float? angle)
     {

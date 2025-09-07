@@ -93,7 +93,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ギミックの起動通知
     public Action<int> OnBootedGimmick { get; set; }
 
-    public Action<Vector2,Vector2> OnShootedBullet { get; set; }
+    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2,Vector2> OnShootedBullet { get; set; }
 
     //難易度上昇通知
     public Action<int> OnAscendDifficultySyn {  get; set; }
@@ -315,12 +315,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// 弾発射通知
+    /// 発射物の生成通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnShootBullet(Vector2 spawnPos, Vector2 shootVec)
+    public void OnShootBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec)
     {
-        OnShootedBullet(spawnPos, shootVec);
+        OnShootedBullet(type, debuffs, power, spawnPos, shootVec);
     }
     #endregion
     #region 敵通知関連
@@ -628,16 +628,17 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// 弾発射
-    /// Author:Nishiura
+    /// 発射物の生成
     /// </summary>
+    /// <param name="type">発射物の種類</param>
     /// <param name="spawnPos">生成位置</param>
     /// <param name="shootVec">発射ベクトル</param>
     /// <returns></returns>
-     public async UniTask ShootBulletAsync(Vector2 spawnPos, Vector2 shootVec)
+    public async UniTask ShootBulletAsync(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec)
     {
-        await roomHub.ShootBulletAsync(spawnPos, shootVec);
+        await roomHub.ShootBulletAsync(type, debuffs, power, spawnPos, shootVec);
     }
+
     #endregion
     #region 敵関連
     /// <summary>

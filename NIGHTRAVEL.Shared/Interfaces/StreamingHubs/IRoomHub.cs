@@ -96,13 +96,13 @@ namespace Shared.Interfaces.StreamingHubs
         Task GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID);
 
         /// <summary>
-        /// 弾発射
-        /// Author:Nishiura
+        /// 発射物生成
         /// </summary>
+        /// <param name="type">発射物の種類</param>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
         /// <returns></returns>
-        Task ShootBulletAsync(Vector2 spawnPos, Vector2 shootVec);
+        Task ShootBulletAsync(EnumManager.PROJECTILE_TYPE type, List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec);
         #endregion
         #region 敵関連
         /// <summary>

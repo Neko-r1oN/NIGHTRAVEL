@@ -210,11 +210,11 @@ abstract public class EnemyBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        characterManager = CharacterManager.Instance;
     }
 
     protected override void Start()
     {
+        characterManager = CharacterManager.Instance;
         terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();

@@ -76,6 +76,14 @@ namespace Shared.Interfaces.StreamingHubs
         }
 
         /// <summary>
+        /// 発射物の種類
+        /// </summary>
+        public enum PROJECTILE_TYPE
+        {
+            BoxBullet,
+        }
+
+        /// <summary>
         /// 計算方法の種類
         /// </summary>
         public enum CalculationType

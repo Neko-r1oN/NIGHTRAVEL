@@ -78,6 +78,7 @@ public class CyberDog : EnemyBase
 
     protected override void Start()
     {
+        characterManager = CharacterManager.Instance;
         isAttacking = false;
 
         if (isByWorm)

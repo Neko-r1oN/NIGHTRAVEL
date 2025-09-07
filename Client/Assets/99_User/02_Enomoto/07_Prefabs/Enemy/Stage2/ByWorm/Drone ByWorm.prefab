@@ -14908,7 +14908,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5379369276845809617}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: ProjectilePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29597,8 +29597,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6814946312274966711}
-  - {fileID: 8842024844232242462}
   - {fileID: 514070666935541147}
+  - {fileID: 8842024844232242462}
   - {fileID: 5379369276845809617}
   - {fileID: 115410158369842904}
   - {fileID: 473859009532179766}
@@ -29696,6 +29696,7 @@ MonoBehaviour:
   healRate: 0
   animator: {fileID: 0}
   enemyTypeId: 13
+  uniqueId: 
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 3326093757011905295}
@@ -30158,7 +30159,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6814946312274966711}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: AttackCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73876,9 +73877,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 514070666935541147}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: WallCheck
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

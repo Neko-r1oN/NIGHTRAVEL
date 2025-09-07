@@ -70,7 +70,8 @@ public class EnemyChaseAI : MonoBehaviour
             float rndY = Random.Range(-rndMoveRange, rndMoveRange);
 
             Vector2 targetPos = new Vector2(rndX, rndY) + (Vector2)transform.position;
-            if (!Physics2D.OverlapCircle(targetPos, checkRange, tarrainLayer))
+            if (!Physics2D.OverlapCircle(targetPos, checkRange, tarrainLayer)
+                && !Physics2D.OverlapCircle(targetPos, checkRange, LayerMask.GetMask("Player")))
             {
                 DoMove(targetPos);
                 break;

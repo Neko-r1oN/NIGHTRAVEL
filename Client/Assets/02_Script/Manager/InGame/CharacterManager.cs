@@ -48,6 +48,13 @@ public class CharacterManager : MonoBehaviour
     public Dictionary<string, SpawnedEnemy> Enemies { get { return enemies; } }
     #endregion
 
+    #region 発射物関連
+    [SerializeField]
+    List<GameObject> projectilePrefabs = new List<GameObject>();
+
+    Dictionary<PROJECTILE_TYPE, GameObject> projectilePrefabsByType = new Dictionary<PROJECTILE_TYPE, GameObject>();
+    #endregion
+
     const float updateSec = 0.1f;
 
     static CharacterManager instance;
@@ -89,6 +96,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLeavedUser += this.OnLeave;
         RoomModel.Instance.OnEnemyHealthSyn += this.OnHitEnemy;
         RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
+        RoomModel.Instance.OnShootedBullet += this.OnShootedBullet;
     }
 
     private void Start()
@@ -108,6 +116,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLeavedUser -= this.OnLeave;
         RoomModel.Instance.OnEnemyHealthSyn -= this.OnHitEnemy;
         RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
+        RoomModel.Instance.OnShootedBullet -= this.OnShootedBullet;
     }
 
 
@@ -197,6 +206,17 @@ public class CharacterManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// 発射物のプレファブをタイプ事にまとめる
+    /// </summary>
+    public void SetProjectilePrefabsByType()
+    {
+        foreach(var prefab in projectilePrefabs)
+        {
+            projectilePrefabsByType.Add(prefab.GetComponent<ProjectileBase>().TypeId, prefab);
+        }
     }
 
     /// <summary>
@@ -362,7 +382,6 @@ public class CharacterManager : MonoBehaviour
         // プレイヤー情報更新リクエスト
         await RoomModel.Instance.UpdatePlayerAsync(playerData);
     }
-
     #endregion
 
     #region 通知処理関連
@@ -417,6 +436,18 @@ public class CharacterManager : MonoBehaviour
             playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
     }
 
+    /// <summary>
+    /// 発射物の生成通知
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="spawnPos"></param>
+    /// <param name="shootVec"></param>
+    void OnShootedBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec)
+    {
+        var projectile =  Instantiate(projectilePrefabsByType[type], spawnPos, Quaternion.identity);
+        projectile.GetComponent<ProjectileBase>().Init(debuffs, power);
+        projectile.GetComponent<ProjectileBase>().Shoot(shootVec);
+    }
     #endregion
 
     #endregion
