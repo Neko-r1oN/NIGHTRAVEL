@@ -11,11 +11,6 @@ public class Item : MonoBehaviour
     string uniqueId;
     public string UniqueId { get { return uniqueId; } set { uniqueId = value; } }
 
-    private void Start()
-    {
-        
-    }
-
     /// <summary>
     /// ƒAƒCƒeƒ€Šl“¾‚Ìˆ—
     /// </summary>

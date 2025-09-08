@@ -8,7 +8,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DataBox : MonoBehaviour
+public class DataBox : Item
 {
     private bool isOpened = false;
     private bool isTouch = false;

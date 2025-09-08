@@ -88,4 +88,12 @@ public class GimmickManager : MonoBehaviour
             managedGimmicks[uniqueId].TurnOnPower(0);
         }
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            OnBootGimmick(1);
+        }
+    }
 }

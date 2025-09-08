@@ -23,7 +23,8 @@ public class ItemManager : MonoBehaviour
             instance = this;
             for (int i = 0; i < items.Count; i++)
             {
-                managedItems.Add(items[i].name + i, items[i]);
+                items[i].UniqueId = i + "-" + items[i].name;
+                managedItems.Add(items[i].UniqueId, items[i]);
             }
         }
         else
@@ -31,6 +32,19 @@ public class ItemManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnGetItemSyn += OnGetItem;
+
+    }
+
+    private void OnDisable()
+    {
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnGetItemSyn -= OnGetItem;
     }
 
     public int GetItemListCount()
@@ -43,14 +57,14 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     /// <param name="item">アイテム情報</param>
     /// <param name="player">獲得しようとしているプレイヤー</param>
-    public void GetItemRequest(Item item, GameObject player)
+    public async void GetItemRequest(Item item, GameObject player)
     {
         if (RoomModel.Instance)
         {
             // マルチプレイ中 && 自身が獲得した場合
             if(player == CharacterManager.Instance.PlayerObjSelf)
             {
-                //RoomModel.Instance.GetItemAsync(item.ItemType, item.UniqueId);
+                await RoomModel.Instance.GetItemAsync(item.ItemType, item.UniqueId);
             }
         }
         else
