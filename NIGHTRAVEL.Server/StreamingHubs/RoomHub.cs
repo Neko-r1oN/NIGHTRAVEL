@@ -708,7 +708,7 @@ namespace StreamingHubs
                 this.roomContext.gottenItemList.Add(itemID);
 
                 // アイテムの獲得を全員に通知
-                this.roomContext.Group.All.OnGetItem(itemID);
+                this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID);
             }
         }
 

@@ -208,7 +208,7 @@ public class GameManager : MonoBehaviour
     {
         //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
-        RelicManager.Instance.GenerateRelic(Terminal.Instance.gameObject);
+        //RelicManager.Instance.GenerateRelic(Terminal.Instance.gameObject);
 
         // Ž€‚ñ‚¾”»’è‚É‚·‚é
         isBossDead = true;

@@ -135,7 +135,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int,bool> OnTerminalsResultSyn { get; set; }
 
     //アイテム獲得通知
-    public Action<string> OnGetItemSyn {  get; set; }
+    public Action<Guid, string> OnGetItemSyn {  get; set; }
     #endregion
 
     #region RoomModelインスタンス生成
@@ -441,9 +441,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// アイテム獲得通知
     /// Author:木田晃輔
     /// </summary>
-    public void OnGetItem(string itemID)
+    public void OnGetItem(Guid conId, string itemID)
     {
-        OnGetItemSyn(itemID);
+        OnGetItemSyn(conId, itemID);
     }
 
     /// <summary>

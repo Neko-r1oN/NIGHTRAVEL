@@ -33,7 +33,7 @@ public class DataBox : Item
         }
     }
 
-    public override void OnGetItem()
+    public override void OnGetItem(bool isSelfAcquired)
     {
         Instantiate(openObj, new Vector2(this.transform.position.x, this.transform.position.y), this.transform.rotation);
         Destroy(gameObject);

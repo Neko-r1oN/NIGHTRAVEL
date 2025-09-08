@@ -1,4 +1,5 @@
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -70,18 +71,20 @@ public class ItemManager : MonoBehaviour
         else
         {
             // オフライン用
-            managedItems[item.UniqueId].OnGetItem();
+            managedItems[item.UniqueId].OnGetItem(true);
         }
     }
 
     /// <summary>
     /// アイテム獲得通知
     /// </summary>
-    public void OnGetItem(string itemID)
+    public void OnGetItem(Guid conId, string itemID)
     {
         if (managedItems.ContainsKey(itemID))
         {
-            managedItems[itemID].OnGetItem();
+            bool isSelfAcquired = true;
+            if(RoomModel.Instance) isSelfAcquired = RoomModel.Instance.ConnectionId == conId;
+            managedItems[itemID].OnGetItem(isSelfAcquired);
             managedItems.Remove(itemID);
         }
     }

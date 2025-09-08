@@ -180,7 +180,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// アイテム獲得通知
         /// </summary>
         /// <param name="itemID">アイテム識別ID(文字列)</param>
-        void OnGetItem(string itemID);
+        void OnGetItem(Guid conId, string itemID);
 
         #region 不要になりそうなAPI
 

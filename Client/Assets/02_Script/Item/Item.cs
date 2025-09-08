@@ -14,7 +14,8 @@ public class Item : MonoBehaviour
     /// <summary>
     /// アイテム獲得時の処理
     /// </summary>
-    public virtual void OnGetItem()
+    /// <param name="isSelfAcquired">自身が回収したのかどうか</param>
+    public virtual void OnGetItem(bool isSelfAcquired)
     {
         // 獲得時のパーティクル生成
         // Instantiate();
