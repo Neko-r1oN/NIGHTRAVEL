@@ -314,6 +314,8 @@ namespace StreamingHubs
             // レリック情報を検索
             var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id)).First();
 
+            var result = new Dictionary<string, DropRelicData>();
+
             // 参加人数分ループ
             for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
             {
@@ -324,12 +326,14 @@ namespace StreamingHubs
                 dropRelicData.RelicType = (EnumManager.RELIC_TYPE)rndList[i];
                 dropRelicData.SpawnPos = pos.Pop();
 
+                result.Add(dropRelicData.Id, dropRelicData);
+
                 // ドロップしたレリックリストに追加
                 this.roomContext.dropRelicDataList.Add(dropRelicData.Id, dropRelicData);
             }
 
             // ルーム参加者全員に、レリックのIDと生成位置を送信
-            this.roomContext.Group.All.OnDropRelic(this.roomContext.dropRelicDataList);
+            this.roomContext.Group.All.OnDropRelic(result);
         }
 
         /// <summary>
