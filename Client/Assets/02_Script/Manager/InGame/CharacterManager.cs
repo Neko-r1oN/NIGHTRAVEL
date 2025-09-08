@@ -383,8 +383,12 @@ public class CharacterManager : MonoBehaviour
         {
             PlayerData = GetPlayerData(),
             EnemyDatas = GetEnemyDatas(),
-            GimmickDatas = GimmickManager.Instance.GetGimmickDatas()
+            GimmickDatas = GimmickManager.Instance.GetGimmickDatas(),
+            GameTimer = TimerDirector.Instance.Second
         };
+
+        // ゲームタイマー更新
+        TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
 
         // マスタクライアント情報更新リクエスト
         await RoomModel.Instance.UpdateMasterClientAsync(masterClientData);
@@ -444,7 +448,7 @@ public class CharacterManager : MonoBehaviour
         GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
 
         // ゲームタイマー更新
-        TimerDirector.Instance.OnUpdateTimer(10000f);
+        TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
     }
 
     /// <summary>

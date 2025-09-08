@@ -118,17 +118,6 @@ public class TimerDirector : MonoBehaviour
     }
 
     /// <summary>
-    /// 破棄予定
-    /// </summary>
-    public async void UpdateTimerText(EnumManager.TIME_TYPE timertype , float time)
-    {
-        second = time;
-        var span = new TimeSpan(0, 0, (int)time);
-        minute = span.Minutes;
-        timer.text = span.ToString(@"mm\:ss");
-    }
-
-    /// <summary>
     /// タイマーテキスト更新
     /// </summary>
     /// <param name="time"></param>
