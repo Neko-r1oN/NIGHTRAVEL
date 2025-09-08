@@ -168,13 +168,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="isAdvance">次ステージ進行判定</param>
         /// <param name="stageType">次ステージ</param>
         void OnAdanceNextStage(bool isAdvance, EnumManager.STAGE_TYPE stageType);
-
-        /// <summary>
-        /// タイマー通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="timerType">タイマー辞典</param>
-        void OnTimer(EnumManager.TIME_TYPE timerType,float time);
         #endregion
         #endregion
 

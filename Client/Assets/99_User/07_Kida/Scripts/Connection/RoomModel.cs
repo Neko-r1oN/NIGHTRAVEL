@@ -122,9 +122,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ダメージ表記通知
     public Action<int> OnDamaged {  get; set; }
 
-    //タイマー通知
-    public Action<EnumManager.TIME_TYPE, float> OnTimerSyn { get; set; }
-
     //ステージ進行通知
     public Action OnAdvancedStageSyn { get; set; }
 
@@ -495,15 +492,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnDamaged(dmg);
     }
-
-    /// <summary>
-    /// タイマー
-    /// </summary>
-    /// <param name="timerType"></param>
-    public void OnTimer(EnumManager.TIME_TYPE timerType, float time)
-    {
-        OnTimerSyn(timerType,time);
-    }
     #endregion
 
     /// <summary>
@@ -759,16 +747,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask AdvancedStageAsync()
     {
         await roomHub.AdvancedStageAsync();
-    }
-
-    /// <summary>
-    /// タイマーの同期
-    /// </summary>
-    /// <param name="tiemrType"></param>
-    /// <returns></returns>
-    public async UniTask TimeAsync(EnumManager.TIME_TYPE tiemrType,float time)
-    {
-        await roomHub.TimeAsync(tiemrType,time);
     }
     #endregion
     #endregion
