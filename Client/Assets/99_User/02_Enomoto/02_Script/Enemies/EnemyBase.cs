@@ -623,7 +623,7 @@ abstract public class EnemyBase : CharacterBase
                 if (terminalManager.TerminalSpawnList.Count <= 0)
                 {// リストのカウントが0なら
                     // レリックの生成
-                    terminalManager.GiveReward();
+                    terminalManager.GiveReward(); // レリックの生成
                     //RelicManager.Instance.GenerateRelic(terminalManager.gameObject.transform.position);
                 }
             }

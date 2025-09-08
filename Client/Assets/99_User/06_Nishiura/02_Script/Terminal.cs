@@ -8,6 +8,7 @@ using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -115,10 +116,6 @@ public class Terminal : MonoBehaviour
         uiManager = UIManager.Instance;
         spawnManager = SpawnManager.Instance;
         isTerminal = false;
-
-        
-
-
     }
 
     private void Update()
@@ -262,6 +259,20 @@ public class Terminal : MonoBehaviour
         }
     }
 
+    [ContextMenu("GiveRewardRequest")]
+    private void GiveRewardRequest()
+    {
+        Stack<Vector2> posStack = new Stack<Vector2>();
+
+        foreach (var point in relicSpawnPoints)
+        {
+            posStack.Push(point.position);
+        }
+
+        //レリックを排出する
+        RelicManager.Instance.DropRelicRequest(posStack);
+    }
+
     /// <summary>
     /// 報酬排出処理
     /// </summary>
@@ -284,10 +295,7 @@ public class Terminal : MonoBehaviour
 
                 UIManager.Instance.DisplayTimeInstructions();
 
-
-
-                //レリックを排出する
-                //RelicManager.Instance.DropRelicRequest();
+                GiveRewardRequest();
 
                 break;
             case (int)TerminalCode.Type_Speed:

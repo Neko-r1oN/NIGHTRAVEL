@@ -4613,14 +4613,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7beeedca64c765a42b24103e2f47a1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terminalType: 8
+  terminalType: 1
   maxSpawnEnemy: 2
   limitTime: 0
   terminalIcon: {fileID: 0}
   pointList:
   - {fileID: 2879614684667305126, guid: cbc14981e965cc545b1aa191375c320d, type: 3}
   - {fileID: 2879614684667305126, guid: cbc14981e965cc545b1aa191375c320d, type: 3}
-  relicSpawnPoints: []
+  relicSpawnPoints:
+  - {fileID: 838264437}
+  - {fileID: 505433763}
+  - {fileID: 1875869356}
+  - {fileID: 218417137}
   code: 8
 --- !u!61 &784319162
 BoxCollider2D:
