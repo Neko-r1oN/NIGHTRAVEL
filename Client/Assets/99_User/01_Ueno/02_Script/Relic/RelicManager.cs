@@ -26,6 +26,7 @@ public class RelicManager : MonoBehaviour
     [SerializeField] List<RelicData> haveRelicList = new List<RelicData>();     // 所持レリックリスト
     [SerializeField] List<GameObject> relicSpawnPos = new List<GameObject>();
     [SerializeField] GameObject relicPrefab;
+    [SerializeField] List<Material> rarityMaterial = new List<Material>();
     #endregion
 
     float elapsedTime;
@@ -97,11 +98,12 @@ public class RelicManager : MonoBehaviour
     {
         if (haveRelicList.Find(X => X.ID == relic.ID) != null)
         {
+            
             CountRelic(relic.ID);
         }
         else
         {
-            UIManager.Instance.DisplayRelic(relicSprites[relic.ID]);
+            UIManager.Instance.DisplayRelic(relicSprites[int.Parse(relic.ID)]);
         }
 
         haveRelicList.Add(relic);
@@ -114,10 +116,24 @@ public class RelicManager : MonoBehaviour
     /// </summary>
     public void GenerateRelic(Dictionary<string, DropRelicData> relicDatas)
     {
-        //foreach (var data in relicDatas)
-        //{
-        //    relic = Instantiate(relicPrefab, data.SpawnPos, Quaternion.identity);
-        //}
+        foreach (var data in relicDatas)
+        {
+            relic = Instantiate(relicPrefab, data.Value.SpawnPos, Quaternion.identity);
+
+            SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = relicSprites[int.Parse(data.Value.Id) - 1];
+            }
+
+            if (sr != null)
+            {
+                // ここでマテリアルを割り当て
+                //sr.material = rarityMaterial[data.Value.];
+            }
+        }
 
         //Transform childObj = obj.transform.Find("RelicPos");
 
@@ -136,25 +152,6 @@ public class RelicManager : MonoBehaviour
 
         //    ItemManager.Instance.AddItemFromList(
         //        relic.name + ItemManager.Instance.GetItemListCount(), relic.GetComponent<Item>());
-
-        //    SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        //    SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-
-        //    if (spriteRenderer != null)
-        //    {
-        //        spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
-        //    }
-
-        //    if (sr != null)
-        //    {
-        //        // ここでマテリアルを割り当て
-        //        sr.material = defaultSpriteMaterial;
-        //    }
-        //}
-
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    relic = Instantiate(relicPrefab, new Vector3(pos.x, pos.y, -0.1f), UnityEngine.Quaternion.identity);
 
         //    SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
         //    SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -196,7 +193,6 @@ public class RelicManager : MonoBehaviour
         //    rb.AddForce(force, ForceMode2D.Impulse);             // 力を加える
         //}
     }
-
 
     [ContextMenu("GenerateRelicTest")]
     public async void GenerateRelicTest()
@@ -263,13 +259,7 @@ public class RelicManager : MonoBehaviour
         //}
     }
 
-    public void GenerationRelic(List<DropRelicData> relicDatas)
-    {
-        foreach(var data in relicDatas)
-        {
-            relic = Instantiate(relicPrefab, data.SpawnPos, Quaternion.identity); 
-        }
-    }
+    
 
     /// <summary>
     /// レリックの生成の通知
@@ -320,7 +310,7 @@ public class RelicManager : MonoBehaviour
     /// 同じレリックを持っている数を数える
     /// </summary>
     /// <param name="id"></param>
-    public void CountRelic(int id)
+    public void CountRelic(string id)
     {
         int relicCnt = 0;
 
@@ -332,7 +322,7 @@ public class RelicManager : MonoBehaviour
             }
         }
 
-        UIManager.Instance.totalRelics(relicSprites[id], relicCnt);
+        UIManager.Instance.totalRelics(relicSprites[int.Parse(id)], relicCnt);
     }
 
     /// <summary>
