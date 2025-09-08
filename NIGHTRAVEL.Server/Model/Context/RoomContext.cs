@@ -93,7 +93,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// キャラクターデータリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<Guid, CharacterData> characterDataList = new Dictionary<Guid, CharacterData>();
+        public Dictionary<Guid, PlayerData> characterDataList = new Dictionary<Guid, PlayerData>();
 
         /// <summary>
         /// エネミーデータリスト
@@ -184,7 +184,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// <param name="conID"></param>
         public void AddCharacterData(Guid conID)
         {
-            CharacterData characterSetData = new CharacterData();
+            PlayerData characterSetData = new PlayerData();
 
             // 各ステータスを初期化
             characterSetData.State = playerDataList[conID].State;
@@ -198,7 +198,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// </summary>
         /// <param name="conID"></param>
         /// <param name="charaData"></param>
-        public void UpdateCharacterData(Guid conID, CharacterData charaData)
+        public void UpdateCharacterData(Guid conID, PlayerData charaData)
         {
             characterDataList[conID] = charaData;
         }

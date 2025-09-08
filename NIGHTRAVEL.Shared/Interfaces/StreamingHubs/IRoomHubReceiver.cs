@@ -58,7 +58,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         //void OnUpdatePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
-        void OnUpdatePlayer(CharacterData playerData);
+        void OnUpdatePlayer(PlayerData playerData);
 
         /// <summary>
         /// マスタークライアントの更新通知
