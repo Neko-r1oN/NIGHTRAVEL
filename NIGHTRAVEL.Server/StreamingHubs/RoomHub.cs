@@ -238,20 +238,20 @@ namespace StreamingHubs
                     }
                 }
 
-                //foreach (var item in masterClientData.GimmickDatas)
-                //{
-                //    // すでにルームコンテキストにギミックが含まれている場合
-                //    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
-                //    {
-                //        // そのギミックを更新する
-                //        this.roomContext.gimmickList[item.GimmickID] = item;
-                //    }
-                //    else // 含まれていない場合
-                //    {
-                //        // そのギミックを追加する
-                //        this.roomContext.gimmickList.Add(item.GimmickID, item);
-                //    }
-                //}
+                foreach (var item in masterClientData.GimmickDatas)
+                {
+                    // すでにルームコンテキストにギミックが含まれている場合
+                    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
+                    {
+                        // そのギミックを更新する
+                        this.roomContext.gimmickList[item.GimmickID] = item;
+                    }
+                    else // 含まれていない場合
+                    {
+                        // そのギミックを追加する
+                        this.roomContext.gimmickList.Add(item.GimmickID, item);
+                    }
+                }
 
                 // キャラクターデータリストに自身のデータがない場合
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))

@@ -365,7 +365,7 @@ public class CharacterManager : MonoBehaviour
         {
             PlayerData = GetPlayerData(),
             EnemyDatas = GetEnemyDatas(),
-            //GimmickDatas = GimmickManager.Instance.GetGimmickDatas()
+            GimmickDatas = GimmickManager.Instance.GetGimmickDatas()
         };
 
         // マスタクライアント情報更新リクエスト
@@ -423,7 +423,7 @@ public class CharacterManager : MonoBehaviour
         }
 
         // ギミックの情報更新
-        //GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
+        GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
     }
 
     /// <summary>
