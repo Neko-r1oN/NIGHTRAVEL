@@ -62,6 +62,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //マスタークライアントの更新通知
     public Action<MasterClientData> OnUpdateMasterClientSyn { get; set; }
 
+    // プレイヤーのステータス更新通知
+    public Action<CharacterStatusData, PlayerRelicStatusData> OnUpdateStatusSyn { get; set; }
+
     //脱出通知
     public Action<JoinedUser> OnEscapeCharacter { get; set; }
 
@@ -281,6 +284,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnUpdateMasterClient(MasterClientData masterClientData)
     {
         OnUpdateMasterClientSyn(masterClientData);
+    }
+
+    /// <summary>
+    /// プレイヤーのステータス更新通知
+    /// </summary>
+    public void OnUpdateStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData)
+    {
+        OnUpdateStatusSyn(characterStatus, prsData);
     }
 
     /// <summary>
