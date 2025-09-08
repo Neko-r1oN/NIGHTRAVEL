@@ -19,11 +19,11 @@ namespace Shared.Interfaces.StreamingHubs
         [Key(2)]
         public int power;           // 攻撃力
         [Key(3)]
-        public float jumpPower;     // 跳躍力
-        [Key(4)]
         public float moveSpeed;     // 移動速度
-        [Key(5)]
+        [Key(4)]
         public float attackSpeedFactor;   // 攻撃速度(Animatorの係数)
+        [Key(5)]
+        public float jumpPower;     // 跳躍力 
         [Key(6)]
         public float healRate;  // 自動回復の倍率
 

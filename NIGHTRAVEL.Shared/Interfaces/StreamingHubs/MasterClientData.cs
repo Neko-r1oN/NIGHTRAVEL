@@ -16,19 +16,19 @@ namespace Shared.Interfaces.StreamingHubs
     /// </summary>
     public class MasterClientData
     {
-        [Key(1)]
+        [Key(0)]
         /// <summary>
         /// 自身の操作キャラを同期させる情報
         /// </summary>
         public PlayerData PlayerData { get; set; }
 
-        [Key(2)]
+        [Key(1)]
         /// <summary>
         /// 全ての敵を同期させる情報
         /// </summary>
         public List<EnemyData> EnemyDatas { get; set; }
 
-        [Key(3)]
+        [Key(2)]
         /// <summary>
         /// 全ての存在し続けるギミックを同期させる情報
         /// </summary>
