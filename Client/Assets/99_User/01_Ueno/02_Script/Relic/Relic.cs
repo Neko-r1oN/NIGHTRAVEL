@@ -30,8 +30,12 @@ public class Relic : Item
         relicData = new RelicData(id, rarity);
 
         RelicManager.Instance.AddRelic(relicData);
+    }
 
-        OnGetItem();
+    public override void OnGetItem(bool isSelfAcquired)
+    {
+        if (isSelfAcquired) AddRelic();
+        base.OnGetItem(isSelfAcquired);
     }
 
     /// <summary>
@@ -41,11 +45,9 @@ public class Relic : Item
     {
         // ƒŒƒŠƒbƒNŽæ“¾’Ê’m
 
-        if (collision.gameObject.tag == "Player")
+        if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
-            AddRelic();
-            //Object.SetActive(false);
-            Destroy(this.gameObject);
+            ItemManager.Instance.GetItemRequest(GetComponent<Item>(), collision.gameObject);
         }
     }
 }
