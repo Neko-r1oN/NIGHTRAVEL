@@ -690,7 +690,7 @@ namespace StreamingHubs
                         this.roomContext.relicDataList.Add(relicData);
 
                         // レリック強化を付与
-                        GetStatusWithRelics(playerData.Status);
+                        //GetStatusWithRelics(playerData.Status);
                         
                         this.roomContext.Group.All.OnUpdatePlayer(playerData);
                         break;
@@ -806,7 +806,9 @@ namespace StreamingHubs
                     if (playerData.Status.attackSpeedFactor <= 0) playerData.Status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
                     break;
             }
-            GetStatusWithRelics(playerData.Status);
+
+            var statusSet = GetStatusWithRelics(playerData.Status, playerData.RelicStatus);
+
 
             return playerData.Status;
         }
@@ -854,10 +856,10 @@ namespace StreamingHubs
         /// レリックを適用させたステータスに加工して返す
         /// </summary>
         /// <param name="status">プレイヤーの最大ステータス</param>
-        CharacterStatusData GetStatusWithRelics(CharacterStatusData userStatus)
+        (CharacterStatusData, PlayerRelicStatusData) GetStatusWithRelics(CharacterStatusData userStatus, PlayerRelicStatusData playerRelicStatus)
         {
             CharacterStatusData resultData = new CharacterStatusData(userStatus);
-            PlayerRelicStatusData prsData = new PlayerRelicStatusData();
+            PlayerRelicStatusData prsData = new PlayerRelicStatusData(playerRelicStatus);
 
             // ここで所持レリックを基にresultDataを更新する
             foreach (var relic in this.roomContext.relicDataList)
@@ -1004,7 +1006,7 @@ namespace StreamingHubs
                     }
                 }
             }
-            return resultData;
+            return (resultData, prsData);
         }
 
         // <summary>

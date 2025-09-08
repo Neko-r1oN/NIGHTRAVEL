@@ -1,7 +1,5 @@
 ﻿using MessagePack;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
@@ -9,6 +7,27 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
     [MessagePackObject]
     public class PlayerRelicStatusData
     {
+        public PlayerRelicStatusData() { }
+
+        public PlayerRelicStatusData(PlayerRelicStatusData statusData)
+        {
+            this.GiveDebuffRates = statusData.GiveDebuffRates;
+            this.AddExpRate = statusData.AddExpRate;
+            this.RegainCodeRate = statusData.RegainCodeRate;
+            this.ScatterBugCnt = statusData.ScatterBugCnt;
+            this.HolographicArmorRate = statusData.HolographicArmorRate;
+            this.MouseRate = statusData.MouseRate;
+            this.DigitalMeatCnt = statusData.DigitalMeatCnt;
+            this.FirewallRate = statusData.FirewallRate;
+            this.LifeScavengerRate = statusData.LifeScavengerRate;
+            this.RugrouterRate = statusData.RugrouterRate;
+            this.BuckupHDMICnt = statusData.BuckupHDMICnt;
+            this.IdentificationAIRate = statusData.IdentificationAIRate;
+            this.DanborDollRate = statusData.DanborDollRate;
+            this.ChargedCoreCnt = statusData.ChargedCoreCnt;
+            this.IllegalScriptRate = statusData.IllegalScriptRate;
+        }
+
         [Key(0)]
         public Dictionary<DEBUFF_TYPE, float> GiveDebuffRates = new Dictionary<DEBUFF_TYPE, float>()
         {
