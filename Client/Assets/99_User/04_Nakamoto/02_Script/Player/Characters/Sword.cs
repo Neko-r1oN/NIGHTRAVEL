@@ -88,6 +88,9 @@ public class Sword : PlayerBase
     {
         base.Update();
 
+        // ƒLƒƒƒ‰‚ÌˆÚ“®
+        if (!canMove) return;
+
         if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
         {   // ’ÊíUŒ‚
             int id = animator.GetInteger("animation_id");
