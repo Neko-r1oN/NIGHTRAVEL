@@ -21,6 +21,8 @@ public class TimerDirector : MonoBehaviour
 
     public Text Timer { get { return timer; } set { timer = value; } }
 
+    public float Second { get { return second; } set { second = value; } }
+
     #endregion
 
     private static TimerDirector instance;
@@ -112,24 +114,31 @@ public class TimerDirector : MonoBehaviour
     /// </summary>
     public async void UpdateTimerDisplay()
     {
+        // 以降オフライン用
+        if (RoomModel.Instance) return;
+
         // フレームの経過時間分減算
         second -= Time.deltaTime;
-
-        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
-        {//マルチプレイ中で自身がマスタクライアントの場合
-            //タイマーの同期リクエストを送る
-            await RoomModel.Instance.TimeAsync(EnumManager.TIME_TYPE.GameTimer, second);
-            return;
-        }
-
-        UpdateTimerText(EnumManager.TIME_TYPE.GameTimer,second);
+        OnUpdateTimer(second);
         
+    }
+
+    /// <summary>
+    /// 破棄予定
+    /// </summary>
+    public async void UpdateTimerText(EnumManager.TIME_TYPE timertype , float time)
+    {
+        second = time;
+        var span = new TimeSpan(0, 0, (int)time);
+        minute = span.Minutes;
+        timer.text = span.ToString(@"mm\:ss");
     }
 
     /// <summary>
     /// タイマーテキスト更新
     /// </summary>
-    public async void UpdateTimerText(EnumManager.TIME_TYPE timertype , float time)
+    /// <param name="time"></param>
+    public void OnUpdateTimer(float time)
     {
         second = time;
         var span = new TimeSpan(0, 0, (int)time);

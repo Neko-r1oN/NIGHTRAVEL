@@ -377,6 +377,8 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     async void UpdateMasterDataRequest()
     {
+        TimerDirector.Instance.Second -= updateSec;
+
         var masterClientData = new MasterClientData()
         {
             PlayerData = GetPlayerData(),
@@ -440,6 +442,9 @@ public class CharacterManager : MonoBehaviour
 
         // ギミックの情報更新
         GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
+
+        // ゲームタイマー更新
+        TimerDirector.Instance.OnUpdateTimer(10000f);
     }
 
     /// <summary>
