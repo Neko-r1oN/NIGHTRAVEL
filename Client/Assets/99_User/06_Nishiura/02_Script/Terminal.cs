@@ -41,10 +41,14 @@ public class Terminal : MonoBehaviour
 
     // スピード用ゴールポイントオブジェクトのリスト
     [SerializeField] List<GameObject> pointList;
+    [SerializeField] List<Transform> relicSpawnPoints = new List<Transform>();
+
 
     List<GameObject> terminalSpawnList = new List<GameObject>();
     public List<GameObject> TerminalSpawnList { get {  return terminalSpawnList; } set { terminalSpawnList = value; } }
     //List<GameObject> terminalEnemyList = new List<GameObject>();
+
+    
 
     GameManager gameManager;
     SpawnManager spawnManager;
@@ -111,6 +115,10 @@ public class Terminal : MonoBehaviour
         uiManager = UIManager.Instance;
         spawnManager = SpawnManager.Instance;
         isTerminal = false;
+
+        
+
+
     }
 
     private void Update()
@@ -268,8 +276,6 @@ public class Terminal : MonoBehaviour
                 // ターミナルの効果を終了する
                 isTerminal = false;
 
-                
-
                 //端末のアイコンを1.5秒かけてフェードアウトする
                 //terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
@@ -278,8 +284,10 @@ public class Terminal : MonoBehaviour
 
                 UIManager.Instance.DisplayTimeInstructions();
 
+
+
                 //レリックを排出する
-                RelicManager.Instance.GenerateRelicTest();
+                //RelicManager.Instance.DropRelicRequest();
 
                 break;
             case (int)TerminalCode.Type_Speed:
@@ -291,19 +299,13 @@ public class Terminal : MonoBehaviour
                 //端末のアイコンを1.5秒かけてフェードアウトする
                 terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
-                //レリックを排出する
-                RelicManager.Instance.GenerateRelicTest();
-
                 break;
             case (int)TerminalCode.Type_Deal:
                 // 取引の場合
                 isUsed = true;  // 使用済みにする
 
                 //端末のアイコンを1.5秒かけてフェードアウトする
-                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
-
-                //レリックを排出する
-                RelicManager.Instance.GenerateRelicTest();
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f); ;
 
                 break;
             case (int)TerminalCode.Type_Jumble:
@@ -319,9 +321,6 @@ public class Terminal : MonoBehaviour
                 isTerminal = false;
 
                 UIManager.Instance.DisplayTimeInstructions();
-
-                //レリックを排出する
-                RelicManager.Instance.GenerateRelicTest();
 
                 break;
             case (int)TerminalCode.Type_Recycle:

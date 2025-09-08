@@ -125,48 +125,15 @@ public class RelicManager : MonoBehaviour
 
             if (spriteRenderer != null)
             {
-                spriteRenderer.sprite = relicSprites[int.Parse(data.Value.Id) - 1];
+                spriteRenderer.sprite = relicSprites[(int)data.Value.RelicType - 1];
             }
 
             if (sr != null)
             {
                 // ここでマテリアルを割り当て
-                //sr.material = rarityMaterial[data.Value.];
+                sr.material = rarityMaterial[(int)data.Value.RarityType - 1];
             }
         }
-
-        //Transform childObj = obj.transform.Find("RelicPos");
-
-        //int childCnt = childObj.childCount;
-
-        //List<Transform> childs = new List<Transform>();
-
-        //for (int i = 0; i < childCnt; i++)
-        //{
-        //    childs.Add(childObj.transform.GetChild(i));
-        //}
-
-        //for (int n = 0; n < 4; n++)
-        //{
-        //    relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
-
-        //    ItemManager.Instance.AddItemFromList(
-        //        relic.name + ItemManager.Instance.GetItemListCount(), relic.GetComponent<Item>());
-
-        //    SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        //    SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-
-        //    if (spriteRenderer != null)
-        //    {
-        //        spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
-        //    }
-
-        //    if (sr != null)
-        //    {
-        //        // ここでマテリアルを割り当て
-        //        sr.material = defaultSpriteMaterial;
-        //    }
-        //}
 
         //randomRarity = GetRandomRarity();
 
@@ -192,99 +159,6 @@ public class RelicManager : MonoBehaviour
         //    Vector3 force = new Vector3(boundRnd, 12.0f, 0f);    // 力を設定
         //    rb.AddForce(force, ForceMode2D.Impulse);             // 力を加える
         //}
-    }
-
-    [ContextMenu("GenerateRelicTest")]
-    public async void GenerateRelicTest()
-    {
-        Transform childObj = Terminal.Instance.transform.Find("RelicPos");
-
-        int childCnt = childObj.childCount;
-
-        List<Transform> childs = new List<Transform>();
-
-        for (int i = 0; i < childCnt; i++)
-        {
-            childs.Add(childObj.transform.GetChild(i));
-        }
-
-        for (int n = 0; n < 4 ; n++)
-        {
-            relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
-
-            SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-            SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
-            }
-
-            if (sr != null)
-            {
-                // ここでマテリアルを割り当て
-                sr.material = defaultSpriteMaterial;
-            }
-        }
-
-
-        //relic.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = relicSprites[Random.Range(0, relicSprites.Count)];
-
-        //// レアリティの抽出
-        //randomRarity = GetRandomRarity();
-
-        //List<GameObject> filteredRelics = relicPrefab.
-        //    Where(prefab =>
-        //    {
-        //        Relic relic = prefab.GetComponent<Relic>();
-        //        return relic != null && relic.Rarity == (int)randomRarity;
-        //    }).ToList();
-
-        //if (filteredRelics.Count > 0)
-        //{
-        //    int random = Random.Range(0, filteredRelics.Count);
-        //    GameObject selectedRelic = filteredRelics[random];
-        //    relic = Instantiate(selectedRelic, new Vector3(0, 0, -0.1f), Quaternion.identity);
-        //}    GameObject selectedRelic = filteredRelics[random];
-
-
-        //#if UNITY_EDITOR
-        //            relic = Instantiate(selectedRelic, new Vector3(0, 0, 0), Quaternion.identity);
-        //#else
-        //            //レリックの設定
-        //            relic = selectedRelic;
-        //            //レリックの生成同期を実行
-        //            await RoomModel.Instance.SpawnRelicAsync(relic.transform.position);
-        //#endif
-        //}
-    }
-
-    
-
-    /// <summary>
-    /// レリックの生成の通知
-    /// </summary>
-    /// <param name="relicId"></param>
-    /// <param name="pos"></param>
-    void OnSpawnRelic(int relicId,Vector2 pos)
-    {
-        relic = Instantiate(relicPrefab, pos, Quaternion.identity);
-
-        SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.sprite = relicSprites[relicId];
-        }
-
-        if (sr != null)
-        {
-            // ここでマテリアルを割り当て
-            sr.material = defaultSpriteMaterial;
-        }
-
-        //relic = Instantiate(relicPrefabs[relicId], pos,UnityEngine.Quaternion.identity);
     }
 
     [ContextMenu("ShuffleRelic")]
@@ -354,8 +228,27 @@ public class RelicManager : MonoBehaviour
     }
 
     // レリックドロップリクエスト
-    public void DropRelicRequest()
+    public async void DropRelicRequest(Stack<Vector2> pos)
     {
+        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
+            await RoomModel.Instance.DropRelicAsync(pos);
+        }
+        else
+        {
+            DropRelicData dropRelic = new DropRelicData()
+            {
+                uniqueId = Guid.NewGuid().ToString(),
+                Name = "適当",
+                ExplanationText = "説明",
+                RelicType = EnumManager.RELIC_TYPE.AttackTip,
+                RarityType = EnumManager.RARITY_TYPE.Common,
+                SpawnPos = pos.Pop()
+            };
+            Dictionary<string,DropRelicData> dropRelics = new Dictionary<string, DropRelicData> ();
+            dropRelics.Add(dropRelic.uniqueId, dropRelic);
 
+            GenerateRelic(dropRelics);
+        }
     }
 }
