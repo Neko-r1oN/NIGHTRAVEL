@@ -151,6 +151,12 @@ public class GameManager : MonoBehaviour
     UIManager.Instance.DisplayEndGameWindow();
 #endif
         }
+
+        // オフライン用
+        if (!RoomModel.Instance && !CharacterManager.Instance.PlayerObjSelf && isGameStart)
+        {
+            CangeResult();
+        }
     }
 
     public void DisplayPortal()

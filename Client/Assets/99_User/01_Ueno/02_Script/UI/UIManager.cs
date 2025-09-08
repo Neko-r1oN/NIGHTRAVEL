@@ -287,9 +287,15 @@ public class UIManager : MonoBehaviour
         // 操作UI変更処理
         InputChangeUI();
 
+        
+        
         if (player == null)
         {
-            player = Camera.main.GetComponent<CameraFollow>().Target.gameObject.GetComponent<PlayerBase>();
+            // 該当タグが1つしか無い場合はそれを返す
+            var targets = GameObject.FindGameObjectsWithTag("Player");
+
+            //Debug.Log(Camera.main.GetComponent<CameraFollow>().Target.gameObject.GetComponent<PlayerBase>());
+            player = targets[0].gameObject.GetComponent<PlayerBase>();
         }
 
         // プレイヤーHPUI

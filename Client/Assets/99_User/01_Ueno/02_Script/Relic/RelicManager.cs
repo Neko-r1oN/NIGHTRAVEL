@@ -112,40 +112,45 @@ public class RelicManager : MonoBehaviour
     /// <summary>
     /// レリックを生成する処理
     /// </summary>
-    public void GenerateRelic(GameObject obj)
+    public void GenerateRelic(Dictionary<string, DropRelicData> relicDatas)
     {
-        Transform childObj = obj.transform.Find("RelicPos");
+        //foreach (var data in relicDatas)
+        //{
+        //    relic = Instantiate(relicPrefab, data.SpawnPos, Quaternion.identity);
+        //}
 
-        int childCnt = childObj.childCount;
+        //Transform childObj = obj.transform.Find("RelicPos");
 
-        List<Transform> childs = new List<Transform>();
+        //int childCnt = childObj.childCount;
 
-        for (int i = 0; i < childCnt; i++)
-        {
-            childs.Add(childObj.transform.GetChild(i));
-        }
+        //List<Transform> childs = new List<Transform>();
 
-        for (int n = 0; n < 4; n++)
-        {
-            relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
+        //for (int i = 0; i < childCnt; i++)
+        //{
+        //    childs.Add(childObj.transform.GetChild(i));
+        //}
 
-            ItemManager.Instance.AddItemFromList(
-                relic.name + ItemManager.Instance.GetItemListCount(), relic.GetComponent<Item>());
+        //for (int n = 0; n < 4; n++)
+        //{
+        //    relic = Instantiate(relicPrefab, childs[n].transform.position, UnityEngine.Quaternion.identity);
 
-            SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
-            SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //    ItemManager.Instance.AddItemFromList(
+        //        relic.name + ItemManager.Instance.GetItemListCount(), relic.GetComponent<Item>());
 
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
-            }
+        //    SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //    SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
 
-            if (sr != null)
-            {
-                // ここでマテリアルを割り当て
-                sr.material = defaultSpriteMaterial;
-            }
-        }
+        //    if (spriteRenderer != null)
+        //    {
+        //        spriteRenderer.sprite = relicSprites[Random.Range(0, relicSprites.Count)];
+        //    }
+
+        //    if (sr != null)
+        //    {
+        //        // ここでマテリアルを割り当て
+        //        sr.material = defaultSpriteMaterial;
+        //    }
+        //}
 
         //for (int i = 0; i < 4; i++)
         //{
@@ -356,5 +361,11 @@ public class RelicManager : MonoBehaviour
         }
 
         return RELIC_RARITY.NORMAL;
+    }
+
+    // レリックドロップリクエスト
+    public void DropRelicRequest()
+    {
+
     }
 }

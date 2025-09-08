@@ -28,6 +28,8 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
 
+    [SerializeField] List<GameObject> players = new List<GameObject>();
+
     /// <summary>
     /// 自分の操作キャラ
     /// </summary>
@@ -78,6 +80,8 @@ public class CharacterManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        
+
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             if (!playerObjSelf)
@@ -85,8 +89,20 @@ public class CharacterManager : MonoBehaviour
                 Debug.LogError("playerObjSelfが設定されていない");
             }
             playerObjs.Add(Guid.Empty, playerObjSelf);
+
+            if (!RoomModel.Instance)
+            {
+                foreach (GameObject player in players)
+                {
+                    playerObjs.Add(Guid.NewGuid(), player);
+                }
+            }
+
             return;
         }
+
+        
+
         DestroyExistingPlayer();
         GenerateCharacters();
 
