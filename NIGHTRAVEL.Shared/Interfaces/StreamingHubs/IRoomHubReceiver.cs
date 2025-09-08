@@ -126,12 +126,6 @@ namespace Shared.Interfaces.StreamingHubs
         #region レリック関連
 
         /// <summary>
-        /// レリックの情報の取得通知
-        /// Author:木田晃輔
-        /// </summary>
-        void OnGetIntelligence();
-
-        /// <summary>
         /// レリック生成通知
         /// Author:Nishiura
         /// </summary>

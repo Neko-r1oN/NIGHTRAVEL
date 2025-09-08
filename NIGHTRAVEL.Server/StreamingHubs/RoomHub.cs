@@ -272,31 +272,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// レリックの情報を取得
-        /// Author:木田晃輔
-        /// </summary>
-        /// <returns></returns>
-        public async Task GetRelicIntelligenceAsync()
-        {
-            GameDbContext dbContext = new GameDbContext();
-            List<Relic> relicList = new List<Relic>();
-
-            var intelligences = dbContext.Relics;
-
-            foreach ( var intel in intelligences )
-            {
-                if (roomContext.relicDataList==null)
-                {
-                    relicList.Add(intel);
-                }
-            }
-
-            // ルーム参加者全員に、レリックのIDと生成位置を送信
-            this.roomContext.Group.All.OnGetIntelligence();
-
-        }
-
-        /// <summary>
         /// レリックID設定、位置同期処理
         /// Author:Nishiura
         /// </summary>
