@@ -33,5 +33,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// 全ての存在し続けるギミックを同期させる情報
         /// </summary>
         public List<GimmickData> GimmickDatas { get; set; }
+
+        /// <summary>
+        /// ボスが出現するまでのゲームタイマー
+        /// </summary>
+        [Key(3)]
+        public float GameTimer { get; set; }
     }
 }
