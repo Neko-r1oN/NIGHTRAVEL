@@ -96,6 +96,15 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
         void OnShootBullet(EnumManager.PROJECTILE_TYPE type,List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation);
+
+        /// <summary>
+        /// ステータス更新通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="characterStatus"></param>
+        /// <param name="prsData"></param>
+        void OnUpdateStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData);
+
         #endregion
         #region 敵関連
 

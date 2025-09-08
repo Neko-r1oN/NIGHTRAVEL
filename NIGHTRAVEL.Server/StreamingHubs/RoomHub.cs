@@ -13,6 +13,7 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
 #endregion
 
@@ -807,8 +808,7 @@ namespace StreamingHubs
                     break;
             }
 
-            var statusSet = GetStatusWithRelics(playerData.Status, playerData.RelicStatus);
-
+            GetStatusWithRelics(playerData.Status, playerData.RelicStatus);
 
             return playerData.Status;
         }
@@ -856,7 +856,7 @@ namespace StreamingHubs
         /// レリックを適用させたステータスに加工して返す
         /// </summary>
         /// <param name="status">プレイヤーの最大ステータス</param>
-        (CharacterStatusData, PlayerRelicStatusData) GetStatusWithRelics(CharacterStatusData userStatus, PlayerRelicStatusData playerRelicStatus)
+        void GetStatusWithRelics(CharacterStatusData userStatus, PlayerRelicStatusData playerRelicStatus)
         {
             CharacterStatusData resultData = new CharacterStatusData(userStatus);
             PlayerRelicStatusData prsData = new PlayerRelicStatusData(playerRelicStatus);
@@ -943,19 +943,19 @@ namespace StreamingHubs
                         switch (relic.status_type)
                         {
                             case (int)EnumManager.STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
+                                prsData.ScatterBugCnt += relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
+                                prsData.ScatterBugCnt += relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
+                                prsData.ScatterBugCnt += relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
-                                prsData.ScatterBugCnt += (int)relic.const_effect;
+                                prsData.ScatterBugCnt += relic.const_effect;
                                 break;
                         }
                     }
@@ -963,50 +963,64 @@ namespace StreamingHubs
                     {   // 計算方法が乗算の場合
                         switch (relic.status_type)
                         {
+                            case (int)EnumManager.DEBUFF_TYPE.Burn:
+                                prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] *= relic.const_effect;    // 炎上確率の場合
+                                break;
+
+                            case (int)EnumManager.DEBUFF_TYPE.Freeze:
+                                prsData.GiveDebuffRates[DEBUFF_TYPE.Freeze] *= relic.const_effect;  // 凍結確率の場合
+                                break;
+
+                            case (int)EnumManager.DEBUFF_TYPE.Shock:
+                                prsData.GiveDebuffRates[DEBUFF_TYPE.Shock] *= relic.const_effect;   // 感電確率の場合
+                                break;
+
                             case (int)EnumManager.STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
-                                prsData.AddExpRate *= (int)relic.const_effect;
+                                prsData.AddExpRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.RegainCodeRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.HolographicArmorRate: // 回避率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.HolographicArmorRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.MouseRate:            // クールダウン短縮率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.MouseRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.FirewallRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.LifeScavengerRate:    // キル時HP回復率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.LifeScavengerRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.RugrouterRate:        // DA率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.RugrouterRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.IdentificationAIRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.DanborDollRate:       // 防御貫通率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.DanborDollRate *= relic.const_effect;
                                 break;
 
                             case (int)EnumManager.STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合
-                                prsData.ScatterBugCnt *= (int)relic.const_effect;
+                                prsData.IllegalScriptRate *= relic.const_effect;
                                 break;
                         }
                     }
                 }
             }
-            return (resultData, prsData);
+
+            // 更新後のステータスを全員に通知
+            this.roomContext.Group.All.OnUpdateStatus(resultData, prsData);
         }
 
         // <summary>
