@@ -14,11 +14,10 @@ return new class extends Migration {
         Schema::create('relics', function (Blueprint $table) {
             $table->id();                                        //idカラム
             $table->string('name', 20);             //nameカラム
-            $table->float('const_effect');                     //const_effectカラム
+            $table->integer('const_effect');                     //const_effectカラム
             $table->float('rate_effect');                     //rate_effectカラム
-            $table->integer('calculation_method');           //calculation_methodカラム
             $table->float('max');                           //maxカラム
-            $table->integer('status_type');                  //status_typeカラム
+            $table->string('status_type');                  //status_typeカラム
             $table->string('explanation');               //explanationカラム
             $table->integer('rarity');               //rarityカラム
             $table->timestamps();                               //created_atとupdated_at
