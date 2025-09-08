@@ -323,14 +323,17 @@ namespace StreamingHubs
                 DropRelicData dropRelicData = new DropRelicData();
 
                 // データを更新
-                dropRelicData.Id = Guid.NewGuid().ToString();
-                dropRelicData.RelicType = (EnumManager.RELIC_TYPE)rndList[i];
+                dropRelicData.uniqueId = Guid.NewGuid().ToString();
+                dropRelicData.Name = relic.name;
+                dropRelicData.ExplanationText = relic.explanation;
+                dropRelicData.RelicType = (EnumManager.RELIC_TYPE) rndList[i];
+                dropRelicData.RarityType = (EnumManager.RARITY_TYPE) relic.rarity;
                 dropRelicData.SpawnPos = pos.Pop();
 
-                result.Add(dropRelicData.Id, dropRelicData);
+                result.Add(dropRelicData.uniqueId, dropRelicData);
 
                 // ドロップしたレリックリストに追加
-                this.roomContext.dropRelicDataList.Add(dropRelicData.Id, dropRelicData);
+                this.roomContext.dropRelicDataList.Add(dropRelicData.uniqueId, dropRelicData);
             }
 
             // ルーム参加者全員に、レリックのIDと生成位置を送信
@@ -680,7 +683,7 @@ namespace StreamingHubs
 
                         //DBからレリック情報取得
                         GameDbContext dbContext = new GameDbContext();
-                        var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.Id).First();
+                        var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.uniqueId).First();
 
                         // ルームデータから接続IDを指定して自身のデータを取得
                         var playerData = this.roomContext.characterDataList[this.ConnectionId];

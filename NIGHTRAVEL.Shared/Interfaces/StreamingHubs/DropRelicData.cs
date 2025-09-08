@@ -18,7 +18,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// ID
         /// Author:Nishiura
         /// </summary>
-        public string Id { get; set; }
+        public string uniqueId { get; set; }
 
         [Key(1)]
         /// <summary>
@@ -29,24 +29,23 @@ namespace Shared.Interfaces.StreamingHubs
 
         [Key(2)]
         /// <summary>
-        /// 効果値
-        /// Author:Nishiura
-        /// </summary>  
-        public int Effect { get; set; }
-
-        [Key(3)]
-        /// <summary>
         /// 説明文
         /// Author:Nishiura
         /// </summary>  
         public string ExplanationText { get; set; }
 
-        [Key(4)]
+        [Key(3)]
         /// <summary>
         /// レリックの種類
         /// Author:Nishiura
         /// </summary>  
         public EnumManager.RELIC_TYPE RelicType { get; set; }
+
+        [Key(4)]
+        /// <summary>
+        /// レアリティ
+        /// </summary>
+        public EnumManager.RARITY_TYPE RarityType { get; set; }
 
         [Key(5)]
         /// <summary>
