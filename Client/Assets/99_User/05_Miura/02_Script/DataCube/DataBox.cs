@@ -29,9 +29,14 @@ public class DataBox : Item
         if (isTouch == true && Input.GetKey(KeyCode.E) && isOpened == false)
         {
             isOpened = true;
-            Instantiate(openObj, new Vector2(this.transform.position.x, this.transform.position.y), this.transform.rotation);
             ItemManager.Instance.GetItemRequest(GetComponent<Item>(), CharacterManager.Instance.PlayerObjSelf);
         }
+    }
+
+    public override void OnGetItem()
+    {
+        Instantiate(openObj, new Vector2(this.transform.position.x, this.transform.position.y), this.transform.rotation);
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -14,7 +14,7 @@ public class Item : MonoBehaviour
     /// <summary>
     /// アイテム獲得時の処理
     /// </summary>
-    public void OnGetItem()
+    public virtual void OnGetItem()
     {
         // 獲得時のパーティクル生成
         // Instantiate();
