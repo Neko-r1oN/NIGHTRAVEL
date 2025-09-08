@@ -192,11 +192,5 @@ namespace Shared.Interfaces.StreamingHubs
 
         #endregion
         #endregion
-        /// <summary>
-        /// 時間同期処理
-        /// </summary>
-        /// <param name="time">タイマーの辞典</param>
-        /// <returns></returns>
-        Task TimeAsync(EnumManager.TIME_TYPE tiemrType,float time);
     }
 }

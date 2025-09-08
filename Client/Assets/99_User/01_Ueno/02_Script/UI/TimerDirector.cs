@@ -51,15 +51,9 @@ public class TimerDirector : MonoBehaviour
         initMinute = minute * 60;
         //GameManager.Instance.InvokeRepeating("DecreaseGeneratInterval", 0.1f, 60f);
 
-        if (!RoomModel.Instance) return;
-        RoomModel.Instance.OnTimerSyn += this.UpdateTimerText;
     }
 
-    private void OnDisable()
-    {
-        if (!RoomModel.Instance) return;
-        RoomModel.Instance.OnTimerSyn -= this.UpdateTimerText;
-    }
+
 
     // Update is called once per frame
     void Update()
