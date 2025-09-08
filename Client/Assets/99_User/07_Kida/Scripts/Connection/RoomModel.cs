@@ -321,6 +321,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
+
+    public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
+    {
+    }
     #endregion
     #region “G’Ê’mŠÖ˜A
     /// <summary>
