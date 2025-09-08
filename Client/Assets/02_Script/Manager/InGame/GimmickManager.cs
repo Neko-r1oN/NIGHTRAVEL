@@ -37,6 +37,18 @@ public class GimmickManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnBootedGimmick += this.OnBootGimmick;
+    }
+
+    private void OnDisable()
+    {
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnBootedGimmick -= this.OnBootGimmick;
+    }
+
     /// <summary>
     /// GimmickDataÇ…â¡çHÇµÇƒï‘Ç∑
     /// </summary>
@@ -86,14 +98,6 @@ public class GimmickManager : MonoBehaviour
         if (managedGimmicks.ContainsKey(uniqueId))
         {
             managedGimmicks[uniqueId].TurnOnPower(0);
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            OnBootGimmick(1);
         }
     }
 }
