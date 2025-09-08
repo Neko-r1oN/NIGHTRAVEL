@@ -14,11 +14,15 @@ return new class extends Migration {
         Schema::create('enemies', function (Blueprint $table) {
             $table->id();                                        //idカラム
             $table->string('name', 20);             //nameカラム
-            $table->float('hp');                        //hpカラム
-            $table->float('attack');                     //attackカラム
-            $table->float('defence');                     //defenceカラム
+            $table->boolean('isboss');                  //isbossカラム
+            $table->integer('hp');                      //hp
+            $table->float('defence');                   //defence
+            $table->integer('power');                     //attackカラム
+            $table->float('jump_power');                  //jump_power
             $table->float('move_speed');                     //move_speedカラム
+            $table->float('attack_speed_factor');                //attack_speed_factorカラム
             $table->string('stage_id');                     //stage_idカラム
+            $table->integer('exp');                         //expカラム
             $table->timestamps();                               //created_atとupdated_at
 
             $table->index('name');                     //nameにインデックス設定
