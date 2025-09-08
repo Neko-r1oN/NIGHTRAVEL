@@ -1,13 +1,18 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class Relic : Item 
 {
-    [SerializeField] int id;
-    [SerializeField] int rarity;
+    [SerializeField] string id;
+    [SerializeField] RARITY_TYPE rarity;
+
+    
 
     RelicData relicData;
 
-    public int Rarity { get { return rarity; } }
+    public RARITY_TYPE Rarity { get { return rarity; } }
 
     private void Start()
     {
@@ -25,6 +30,8 @@ public class Relic : Item
         relicData = new RelicData(id, rarity);
 
         RelicManager.Instance.AddRelic(relicData);
+
+        OnGetItem();
     }
 
     /// <summary>
