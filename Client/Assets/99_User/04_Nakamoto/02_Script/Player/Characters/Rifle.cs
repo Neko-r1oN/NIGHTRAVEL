@@ -86,6 +86,9 @@ public class Rifle : PlayerBase
     /// </summary>
     protected override void Update()
     {
+        // ƒLƒƒƒ‰‚ÌˆÚ“®
+        if (!canMove) return;
+
         int id = animator.GetInteger("animation_id");
 
         if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
