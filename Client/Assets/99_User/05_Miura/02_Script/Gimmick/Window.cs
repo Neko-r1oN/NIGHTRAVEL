@@ -21,7 +21,7 @@ public class Window : GimmickBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        TurnOnPower(1);
+        TurnOnPower();
         InvokeRepeating("SendWind", 0.1f, 5);
     }
 
@@ -48,25 +48,21 @@ public class Window : GimmickBase
         }
     }
 
-    public override void TurnOnPower(int triggerID)
+    public override void TurnOnPower()
     {
-        switch (triggerID)
-        {
-            case 0:
-                windObj.SetActive(true);
-                break;
+        //    switch ()
+        //    {
+        //        case 0:
+        //            windObj.SetActive(true);
+        //            break;
 
-            case 1:
-                windObj.SetActive(false);
-                break;
+        //        case 1:
+        //            windObj.SetActive(false);
+        //            break;
 
-            default:
-                break;
-        }
+        //        default:
+        //            break;
+        //    }
     }
 
-    public override void TruggerRequest()
-    {
-
-    }
 }

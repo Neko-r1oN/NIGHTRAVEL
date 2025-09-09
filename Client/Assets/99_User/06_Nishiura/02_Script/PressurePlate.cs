@@ -37,7 +37,7 @@ public class PressurePlate : MonoBehaviour
             switch (gimmick.tag)
             {
                 case "Gimmick/SteelDoor":
-                    gimmick.GetComponent<SteelDoor>().TurnOnPower(1);
+                    gimmick.GetComponent<SteelDoor>().TurnOnPower();
                     break;
 
                 case "Gimmick/BeltConveyor":
@@ -49,15 +49,15 @@ public class PressurePlate : MonoBehaviour
                     break;
 
                 case "Gimmick/PressMachine":
-                    gimmick.GetComponent<PressMachine>().TurnOnPower(1);
+                    gimmick.GetComponent<PressMachine>().TurnOnPower();
                     break;
 
                 case "Gimmick/SawBlade":
-                    gimmick.GetComponent<SawBlade>().TurnOnPower(1);
+                    gimmick.GetComponent<SawBlade>().TurnOnPower();
                     break;
 
                 case "Gimmick/Elevator":
-                    gimmick.GetComponent<Elevator>().TurnOnPower(1);
+                    gimmick.GetComponent<Elevator>().TurnOnPower();
                     break;
 
                 default:

@@ -72,13 +72,8 @@ public class SealedDoor : ObjectBase
         Destroy(fragment.gameObject);
     }
 
-    public override void TurnOnPower(int triggerID)
+    public override void TurnOnPower()
     {
         ApplyDamage();
-    }
-
-    public override void TruggerRequest()
-    {
-
     }
 }

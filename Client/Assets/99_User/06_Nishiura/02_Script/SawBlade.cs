@@ -69,7 +69,7 @@ public class SawBlade : GimmickBase
     /// <summary>
     /// ìdåπÉIÉìä÷êî
     /// </summary>
-    public override void TurnOnPower(int t)
+    public override void TurnOnPower()
     {
         isPowerd = true;
         MoveBlade();
@@ -77,10 +77,5 @@ public class SawBlade : GimmickBase
         transform.DOLocalRotate(new Vector3(0, 0, 360f), 0.25f, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear)
             .SetLoops(-1, LoopType.Restart);
-    }
-
-    public override void TruggerRequest()
-    {
-        throw new System.NotImplementedException();
     }
 }
