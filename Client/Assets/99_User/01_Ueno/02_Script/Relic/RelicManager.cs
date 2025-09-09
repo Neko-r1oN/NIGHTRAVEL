@@ -16,7 +16,7 @@ using static UnityEditor.PlayerSettings;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 
 public class RelicManager : MonoBehaviour
@@ -34,20 +34,6 @@ public class RelicManager : MonoBehaviour
     GameObject relic;
 
     public Material defaultSpriteMaterial;
-
-    RELIC_RARITY randomRarity;
-
-    /// <summary>
-    /// レリックのレアリティ
-    /// </summary>
-    public enum RELIC_RARITY
-    {
-        CURSE,　// 呪い
-        NORMAL, // ノーマル
-        RARE,   // レア
-        UNIQUE, // ユニーク
-        SPECIAL // 特殊
-    }
 
     private static RelicManager instance;
 
@@ -86,18 +72,6 @@ public class RelicManager : MonoBehaviour
     }
 
     /// <summary>
-    /// レアリティの確率の設定
-    /// </summary>
-    private Dictionary<RELIC_RARITY, float> rarityWeight = new Dictionary<RELIC_RARITY, float>()
-    {
-        {RELIC_RARITY.CURSE,3 },    // 確率：3%
-        {RELIC_RARITY.NORMAL,70 },  // 確率：70%
-        {RELIC_RARITY.RARE,20 },    // 確率：20%
-        {RELIC_RARITY.SPECIAL,6 },  // 確率：6%
-        {RELIC_RARITY.UNIQUE,1 }    // 確率：1%
-    };
-
-    /// <summary>
     /// レリックを持ち物に追加する処理
     /// </summary>
     public void AddRelic(RelicData relic)
@@ -114,7 +88,6 @@ public class RelicManager : MonoBehaviour
 
         haveRelicList.Add(relic);
         //Debug.Log(haveRelicList[haveRelicList.Count - 1]);
-        Debug.Log(randomRarity);
     }
 
     /// <summary>
@@ -124,6 +97,8 @@ public class RelicManager : MonoBehaviour
     {
         foreach (var data in relicDatas)
         {
+            //RARITY_TYPE randomRarity = DrawRarity(false);
+
             relic = Instantiate(relicPrefab, data.Value.SpawnPos, Quaternion.identity);
             relic.GetComponent<Item>().UniqueId = data.Key;
 
@@ -212,33 +187,33 @@ public class RelicManager : MonoBehaviour
         UIManager.Instance.totalRelics(relicSprites[int.Parse(id)], relicCnt);
     }
 
-    /// <summary>
-    /// レアリティ抽出
-    /// </summary>
-    /// <returns></returns>
-    public RELIC_RARITY GetRandomRarity()
-    {
-        float totalWeight = 0;
-        float currentWeight = 0;
+    ///// <summary>
+    ///// レアリティ抽出
+    ///// </summary>
+    ///// <returns></returns>
+    //public RELIC_RARITY GetRandomRarity()
+    //{
+    //    float totalWeight = 0;
+    //    float currentWeight = 0;
 
-        foreach(var pair in rarityWeight)
-        {
-            totalWeight += pair.Value;
-        }
+    //    foreach(var pair in rarityWeight)
+    //    {
+    //        totalWeight += pair.Value;
+    //    }
 
-        float randomNum = Random.Range(0, totalWeight);
+    //    float randomNum = Random.Range(0, totalWeight);
 
-        foreach(var pair in rarityWeight)
-        {
-            currentWeight += pair.Value;
-            if(randomNum < currentWeight)
-            {
-                return pair.Key;
-            }
-        }
+    //    foreach(var pair in rarityWeight)
+    //    {
+    //        currentWeight += pair.Value;
+    //        if(randomNum < currentWeight)
+    //        {
+    //            return pair.Key;
+    //        }
+    //    }
 
-        return RELIC_RARITY.NORMAL;
-    }
+    //    return RELIC_RARITY.NORMAL;
+    //}
 
     /// <summary>
     /// レリックドロップリクエスト
@@ -276,5 +251,43 @@ public class RelicManager : MonoBehaviour
     public void OnDropRelic(Dictionary<string, DropRelicData> relicDatas)
     {
         GenerateRelic(relicDatas);
+    }
+
+    /// <summary>
+    /// レアリティ抽選処理
+    /// </summary>
+    /// <param name="isBoss"></param>
+    /// <returns></returns>
+    RARITY_TYPE DrawRarity(bool includeBossRarity)
+    {
+        // レアリティの種類
+        Dictionary<RARITY_TYPE, int> raritys = new Dictionary<RARITY_TYPE, int>()
+            {
+                { RARITY_TYPE.Legend, 2 },
+                { RARITY_TYPE.Unique, 6 },
+                { RARITY_TYPE.Rare, 12},
+                { RARITY_TYPE.Uncommon, 35},
+                { RARITY_TYPE.Common, 45 },
+                { RARITY_TYPE.Boss, 45 }
+            };
+
+        if (includeBossRarity) raritys.Remove(RARITY_TYPE.Common);
+        else raritys.Remove(RARITY_TYPE.Boss);
+
+        RARITY_TYPE result = RARITY_TYPE.Common;
+        int totalWeight = raritys.Values.Sum();
+        int currentWeight = 0;
+        int rndPoint = Random.Range(1, totalWeight);
+
+        foreach (var rarity in raritys)
+        {
+            currentWeight += rarity.Value;
+            if (rndPoint <= currentWeight)
+            {
+                result = rarity.Key;
+                break;
+            }
+        }
+        return result;
     }
 }
