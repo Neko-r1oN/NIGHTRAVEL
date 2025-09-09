@@ -1,20 +1,28 @@
+//======================
+// ギミック全体の親クラス
+// Auther:y-miura
+// Date:2025/07/01
+//======================
+
 using UnityEngine;
 
 abstract public class GimmickBase : MonoBehaviour
 {
+
     // 識別用ID
     int uniqueId;
     public int UniqueId {  get { return uniqueId; } set { uniqueId = value; } }
 
     // ギミックの状態 (true：ON, false：OFF)
     protected bool isBoot = false;
-    public bool IsBoot {  get { return isBoot; } set { isBoot = value; } }
+    public bool IsBoot { get { return isBoot; } set { isBoot = value; } }
 
     /// <summary>
     /// ギミックの起動
     /// </summary>
     /// <param name="triggerID"></param>
-    public virtual void TurnOnPower(int triggerID)
+
+    public virtual void TurnOnPower()
     {
         isBoot = true;
     }
@@ -27,8 +35,8 @@ abstract public class GimmickBase : MonoBehaviour
     {
         // オフライン用
         if (!RoomModel.Instance)
-        {
-            TurnOnPower(0);
+        { 
+            TurnOnPower();
         }
         // マルチプレイ中 && 起動した人が自分自身の場合
         else if (RoomModel.Instance && player == CharacterManager.Instance.PlayerObjSelf)
@@ -46,11 +54,9 @@ abstract public class GimmickBase : MonoBehaviour
         // オフライン時 || マルチプレイ中かつ自身がマスタクライアントの場合
         if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            TurnOnPower(0);
+
+            TurnOnPower();
         }
     }
-
-    // 後で削除
-    abstract public void TruggerRequest();
 
 }

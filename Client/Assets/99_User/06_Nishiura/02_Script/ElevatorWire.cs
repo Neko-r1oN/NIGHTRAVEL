@@ -25,11 +25,7 @@ public class ElevatorWire : ObjectBase
     {
         throw new System.NotImplementedException();
     }
-    public override void TruggerRequest()
-    {
-        throw new System.NotImplementedException();
-    }
-    public override void TurnOnPower(int triggerID)
+    public override void TurnOnPower()
     {
         throw new System.NotImplementedException();
     }

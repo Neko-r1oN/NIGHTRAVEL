@@ -83,15 +83,9 @@ public class Burner : GimmickBase
         }
     }
 
-    public override void TurnOnPower(int triggerID)
+    public override void TurnOnPower()
     {
         //3•bŠÔŠu‚Å“_‰Î‚ÆÁ‰Î‚ğŒJ‚è•Ô‚·
         InvokeRepeating("Ignition", 0.1f, 3);
     }
-
-    public override void TruggerRequest()
-    {
-        throw new System.NotImplementedException();
-    }
-
 }

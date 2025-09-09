@@ -83,14 +83,9 @@ public class Elevator : GimmickBase
     /// <summary>
     /// ìdåπÉIÉìä÷êî
     /// </summary>
-    public override void TurnOnPower(int triggerID)
+    override public void TurnOnPower()
     {
         isPowerd = true;
-    }
-
-    public override void TruggerRequest()
-    {
-        throw new System.NotImplementedException();
     }
 
     /// <summary>
