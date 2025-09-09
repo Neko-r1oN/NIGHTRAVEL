@@ -152,7 +152,7 @@ namespace StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <returns></returns>
-        public async Task ReadyAsync()
+        public async Task ReadyAsync(int characterId)
         {
             lock (roomContextRepository) // 排他制御
             {
@@ -161,6 +161,7 @@ namespace StreamingHubs
                 // 自身のデータを取得
                 var joinedUser = roomContext.JoinedUserList[this.ConnectionId];
                 joinedUser.IsReady = true; // 準備完了にする
+                joinedUser.CharacterID = characterId; //キャラクターIDを保存
 
                 // ルーム参加者全員に、自分が準備完了した通知を送信
                 this.roomContext.Group.All.OnReady(this.ConnectionId);
@@ -754,7 +755,7 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
-        public async Task<CharacterStatusData> ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+        public async Task ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
         {
             // ルームデータから接続IDを指定して最大ステータスのインスタンス取得
             var status = this.roomContext.playerStatusDataList[this.ConnectionId].Item1;
@@ -844,8 +845,6 @@ namespace StreamingHubs
             }
 
             GetStatusWithRelics();
-
-            return status.Status;
         }
 
         /// <summary>
