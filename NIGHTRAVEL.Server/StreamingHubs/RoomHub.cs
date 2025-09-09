@@ -895,9 +895,7 @@ namespace StreamingHubs
                             prsData.ChargedCoreCnt += relic.const_effect;
                             prsData.ChargedCoreCnt += (int)(prsData.ChargedCoreCnt * relic.rate_effect);
                             break;
-                    }
-                    switch (relic.status_type)
-                    {
+
                         case (int)DEBUFF_TYPE.Burn:                 // 炎上確率の場合
                             prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.const_effect; 
                             prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] += (int)(prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] * relic.rate_effect);

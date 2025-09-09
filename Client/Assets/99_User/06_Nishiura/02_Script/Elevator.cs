@@ -25,6 +25,11 @@ public class Elevator : GimmickBase
     // ワイヤー
     [SerializeField] GameObject wire;
 
+    // 上昇ボタン
+    [SerializeField] GameObject riseButton;
+    // 下降ボタン
+    [SerializeField] GameObject descButton;
+
     Tweener tweener;
     private void Update()
     {
@@ -76,7 +81,6 @@ public class Elevator : GimmickBase
             isRised = false;    // 下降済みとする
         }
 
-        Debug.Log("Elevator Ready");
         isMoving = false;   // 動作完了にする
     }
 
