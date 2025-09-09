@@ -34,9 +34,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //接続ID
     public Guid ConnectionId { get; private set; }
 
+    // 現在の参加者情報
+    public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
+
     #region 通知定義一覧
 
-    public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
+    #region システム
 
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
@@ -45,7 +48,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<JoinedUser> OnLeavedUser { get; set; }
 
     //準備完了通知
-    public Action<Guid> OnReadySyn {  get; set; }
+    public Action<Guid> OnReadySyn { get; set; }
 
     //ゲーム開始通知
     public Action OnStartedGame { get; set; }
@@ -53,74 +56,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //同時開始通知
     public Action OnSameStartSyn { get; set; }
 
-    //プレイヤー位置回転通知
-    public Action<PlayerData> OnUpdatePlayerSyn { get; set; }
-
-    //マスタークライアントの変更通知
-    public Action OnChangedMasterClient {  get; set; }
-
-    //マスタークライアントの更新通知
-    public Action<MasterClientData> OnUpdateMasterClientSyn { get; set; }
-
-    // プレイヤーのステータス更新通知
-    public Action<CharacterStatusData, PlayerRelicStatusData> OnUpdateStatusSyn { get; set; }
-
-    //脱出通知
-    public Action<JoinedUser> OnEscapeCharacter { get; set; }
-
-    //敵の出現通知
-    public Action<List<SpawnEnemyData>> OnSpawndEnemy { get; set; }
-
-    //敵の更新通知
-    public Action<List<EnemyData>> OnUpdatedEnemy { get; set; }
-
-    //敵の撃破通知
-    public Action<string> OnExcusionedEnemy { get; set; }
-
-    //マスタークライアント譲渡
-    public Action<JoinedUser> OnMasteredClient { get; set; }
-
-    //オブジェクトの移動回転通知
-    public Action<string, UnityEngine.Vector3, UnityEngine.Quaternion> OnMovedObject { get; set; }
-
-    //レリックの情報取得通知
-    public Action OnGetIntelligenced {  get; set; }
-
-    //レリックの生成通知
-    public Action<Dictionary<string, DropRelicData>> OnDropedRelic {  get; set; }
-
-    //レリックの取得通知
-    public Action<int , string> OnGotRelic {  get; set; }
-
-    //ギミックの起動通知
-    public Action<int> OnBootedGimmick { get; set; }
-
-    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2,Vector2, Quaternion> OnShootedBullet { get; set; }
-
     //難易度上昇通知
-    public Action<int> OnAscendDifficultySyn {  get; set; }
+    public Action<int> OnAscendDifficultySyn { get; set; }
 
     //次ステージ進行通知
-    public Action<bool,STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
-
-
-    //プレイヤー体力増減通知
-    public Action<int,float> OnPlayerHealthSyn {  get; set; }
-
-    //敵体力増減通知
-    public Action<EnemyDamegeData> OnEnemyHealthSyn { get; set; }
-
-    //敵死亡通知
-    public Action<int> OnKilledEnemySyn {  get; set; }
+    public Action<bool, STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
 
     //レベルアップ通知
     public Action<int, int, Dictionary<Guid, CharacterStatusData>, List<EnumManager.STAT_UPGRADE_OPTION>> OnLevelUpSyn { get; set; }
-
-    //プレイヤーダウン通知
-    public Action<Guid> OnPlayerDeadSyn {  get; set; }
-
-    //ダメージ表記通知
-    public Action<int> OnDamaged {  get; set; }
 
     //ステージ進行通知
     public Action OnAdvancedStageSyn { get; set; }
@@ -128,14 +71,76 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ゲーム終了通知
     public Action<ResultData> OnGameEndSyn { get; set; }
 
-    //端末起動通知
-    public Action<int> OnBootedTerminal {  get; set; }
+    #endregion
 
-    //端末結果通知
-    public Action<int,bool> OnTerminalsResultSyn { get; set; }
+    #region プレイヤー・マスタクライアント
+
+    //マスタークライアント譲渡
+    public Action<JoinedUser> OnMasteredClient { get; set; }
+
+    //マスタークライアントの変更通知
+    public Action OnChangedMasterClient { get; set; }
+
+    //マスタークライアントの更新通知
+    public Action<MasterClientData> OnUpdateMasterClientSyn { get; set; }
+
+    //プレイヤー位置回転通知
+    public Action<PlayerData> OnUpdatePlayerSyn { get; set; }
+
+    // プレイヤーのステータス更新通知
+    public Action<CharacterStatusData, PlayerRelicStatusData> OnUpdateStatusSyn { get; set; }
+
+    //プレイヤーダウン通知
+    public Action<Guid> OnPlayerDeadSyn { get; set; }
+
+    #endregion
+
+    #region 敵
+
+    //敵の出現通知
+    public Action<List<SpawnEnemyData>> OnSpawndEnemy { get; set; }
+
+    //敵体力増減通知
+    public Action<EnemyDamegeData> OnEnemyHealthSyn { get; set; }
+
+
+    #endregion
+
+    #region アイテム
+
+    //レリックの生成通知
+    public Action<Dictionary<string, DropRelicData>> OnDropedRelic { get; set; }
 
     //アイテム獲得通知
-    public Action<Guid, string> OnGetItemSyn {  get; set; }
+    public Action<Guid, string> OnGetItemSyn { get; set; }
+
+    #endregion
+
+    #region ギミック
+
+    //ギミックの起動通知
+    public Action<int> OnBootedGimmick { get; set; }
+
+
+    #endregion
+
+    #region 端末
+
+    //端末起動通知
+    public Action<int> OnBootedTerminal { get; set; }
+
+    //端末結果通知
+    public Action<int, bool> OnTerminalsResultSyn { get; set; }
+
+    #endregion
+
+    #region 発射物
+
+    // 発射物の生成通知
+    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2, Vector2, Quaternion> OnShootedBullet { get; set; }
+
+    #endregion
+
     #endregion
 
     #region RoomModelインスタンス生成
@@ -292,17 +297,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// プレイヤーの体力増減通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="playerID"></param>
-    /// <param name="playerHP"></param>
-    public void OnPlayerHealth(int playerID, float playerHP)
-    {
-        OnPlayerHealthSyn(playerID, playerHP);
-    }
-
-    /// <summary>
     /// プレイヤーダウン通知
     /// Aughter:木田晃輔
     /// </summary>
@@ -331,15 +325,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     #endregion
     #region 敵通知関連
-    /// <summary>
-    /// 敵の移動通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="enemyData"></param>
-    public void OnUpdateEnemy(List<EnemyData> enemyDatas)
-    {
-        OnUpdatedEnemy(enemyDatas);
-    }
 
     /// <summary>
     /// 敵の生成通知
@@ -361,15 +346,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnEnemyHealthSyn(enemyDamegeData);
     }
 
-    /// <summary>
-    /// 敵死亡通知
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="enemID">敵識別ID</param>
-    public void OnKilledEnemy(int enemID)
-    {
-        OnKilledEnemySyn(enemID);
-    }
     #endregion
     #region レリック通知関連
 
@@ -393,16 +369,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnDropedRelic(relicDatas);
     }
 
-    /// <summary>
-    /// レリック取得
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="relicID"></param>
-    /// <param name="rekicName"></param>
-    public void OnGetRelic(int relicID, string rekicName)
-    {
-        OnGotRelic(relicID, rekicName);
-    }
     #endregion
     #region ゲーム内UI・仕様の同期関連
     /// <summary>
@@ -483,15 +449,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnAdvancedStageSyn();
     }
 
-    /// <summary>
-    /// ダメージ表記通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="dmg"></param>
-    public void OnDamage(int dmg)
-    {
-        OnDamaged(dmg);
-    }
     #endregion
 
     /// <summary>
@@ -686,16 +643,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     #endregion
     #region レリック関連
-
-    /// <summary>
-    /// レリックの情報を取得
-    /// Author:木田晃輔
-    /// </summary>
-    /// <returns></returns>
-     public async UniTask GetRelicIntelligenceAsync()
-    {
-        await roomHub?.GetRelicIntelligenceAsync();
-    }
 
     /// <summary>
     /// レリック生成同期
