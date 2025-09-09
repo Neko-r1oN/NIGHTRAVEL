@@ -34,12 +34,9 @@ namespace Shared.Interfaces.StreamingHubs
         public bool IsDead { get; set; } = false;
 
         [Key(11)]
-        public EnumManager.Player_Type Class { get; set; }
-
-        [Key(12)]
         /// <summary>
-        /// レリック関連のステータスデータ
+        /// キャラクターのクラス
         /// </summary>
-        public PlayerRelicStatusData RelicStatus { get; set; } = new PlayerRelicStatusData();
+        public EnumManager.Player_Type Class { get; set; }
     }
 }
