@@ -534,8 +534,8 @@ namespace StreamingHubs
                 // 敵のHPが0以下になった場合
                 if (enemDmgData.RemainingHp <= 0)
                 {
-                    //enemDmgData.Exp = enemData.Exp; // 獲得経験値を代入
-                    this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
+                    float addExpRate = this.roomContext.playerStatusDataList[this.ConnectionId].Item2.AddExpRate;   // 獲得可能経験値倍率
+                    this.roomContext.ExpManager.nowExp += enemData.Exp + (int)(enemData.Exp * addExpRate); // 被弾クラスにExpを代入
                     // 合計キル数を加算
                     this.roomContext.totalKillCount++;
 
@@ -576,10 +576,15 @@ namespace StreamingHubs
                 enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
 
-                // 敵のHPが0以下になった場合
-                if (enemData.State.hp <= 0)
+                if (enemDmgData.RemainingHp <= 0)
                 {
-                    LevelUp(roomContext.ExpManager); // レベルアップ処理
+                    this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
+
+                    // 所持経験値が必要経験値に満ちた場合
+                    if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
+                    {
+                        LevelUp(roomContext.ExpManager); // レベルアップ処理
+                    }
                 }
 
                 // 参加者全員に受け取ったIDの敵が受け取ったHPになったことを通知
@@ -597,6 +602,15 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
+                // 蘇生アイテムを持っているかチェック
+                var relicStatusData = this.roomContext.playerStatusDataList[this.ConnectionId].Item2;
+                if (relicStatusData.BuckupHDMICnt > 0)
+                {
+                    relicStatusData.BuckupHDMICnt--;
+                    this.roomContext.characterDataList[this.ConnectionId].State = this.roomContext.characterDataList[this.ConnectionId].Status;
+                    return;
+                }
+
                 // 全滅判定変数
                 bool isAllDead = true;
                 // ルームデータから接続IDを指定して自身のデータを取得
