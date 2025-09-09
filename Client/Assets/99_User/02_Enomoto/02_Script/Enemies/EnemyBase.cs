@@ -619,7 +619,7 @@ abstract public class EnemyBase : CharacterBase
             if (CharacterManager.Instance.Enemies[uniqueId].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
             {// 生成タイプがターミナルなら
                 // 死んだ敵をリストから削除
-                //terminalManager.TerminalSpawnList.Remove(this.gameObject);
+                terminalManager.TerminalSpawnList.Remove(this.gameObject);
                 if (terminalManager.TerminalSpawnList.Count <= 0)
                 {// リストのカウントが0なら
                     // レリックの生成
