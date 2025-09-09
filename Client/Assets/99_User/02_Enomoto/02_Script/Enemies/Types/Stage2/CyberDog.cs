@@ -198,7 +198,7 @@ public class CyberDog : EnemyBase
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)
             {
-                if (collidersEnemies[i].gameObject.tag == "Player" && hitPlayers.Contains(collidersEnemies[i].gameObject))
+                if (collidersEnemies[i].gameObject.tag == "Player" && !hitPlayers.Contains(collidersEnemies[i].gameObject))
                 {
                     hitPlayers.Add(collidersEnemies[i].gameObject);
                     collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position,KB_POW.Medium, applyEffect);

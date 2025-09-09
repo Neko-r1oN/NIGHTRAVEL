@@ -608,10 +608,9 @@ abstract public class EnemyBase : CharacterBase
             OnDead();
             if (player)
             {
-                // “|‚µ‚½‚Ì‚ª©•ª©g‚Ìê‡‚ÍŒoŒ±’l‚ğ—^‚¦‚é
-                if (!RoomModel.Instance || RoomModel.Instance && CharacterManager.Instance.PlayerObjSelf == player)
+                player.KilledHPRegain();
+                if (!RoomModel.Instance)
                 {
-                    player.KilledHPRegain();
                     player.GetExp(exp);
                 }
             }
