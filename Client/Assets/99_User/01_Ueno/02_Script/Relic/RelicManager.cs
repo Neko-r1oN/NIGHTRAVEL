@@ -63,12 +63,21 @@ public class RelicManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
+        Invoke("Test",10.0f);
     }
 
     private void OnDisable()
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic -= this.OnDropRelic;
+    }
+
+    public void Test()
+    {
+        Stack<Vector2> pos = new Stack<Vector2>();
+        pos.Push(Vector2.zero);
+        pos.Push(Vector2.one);
+        DropRelicRequest(pos,false);
     }
 
     /// <summary>
@@ -226,7 +235,7 @@ public class RelicManager : MonoBehaviour
         {
             await RoomModel.Instance.DropRelicAsync(pos, includeBossRarity);
         }
-        else
+        else if(!RoomModel.Instance)
         {
             DropRelicData dropRelic = new DropRelicData()
             {

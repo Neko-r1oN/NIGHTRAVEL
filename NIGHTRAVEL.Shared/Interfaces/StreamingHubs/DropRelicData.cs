@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Shared.Interfaces.StreamingHubs
 {
-    //[MessagePackObject]
+    [MessagePackObject]
     public class DropRelicData
     {
         [Key(0)]

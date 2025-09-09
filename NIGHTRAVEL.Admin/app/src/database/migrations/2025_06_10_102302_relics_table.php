@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->integer('const_effect');                     //const_effectカラム
             $table->float('rate_effect');                     //rate_effectカラム
             $table->float('max');                           //maxカラム
-            $table->string('status_type');                  //status_typeカラム
+            $table->integer('status_type');                  //status_typeカラム
             $table->string('explanation');               //explanationカラム
             $table->integer('rarity');               //rarityカラム
             $table->timestamps();                               //created_atとupdated_at
