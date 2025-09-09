@@ -60,15 +60,6 @@ public class TimerDirector : MonoBehaviour
     {
         if (GameManager.Instance.IsGameStart)
         {
-            if (Terminal.Instance.IsTerminal && Terminal.Instance.code != (Terminal.TerminalCode)2)
-            {
-                timerObj.SetActive(false);
-            }
-            else
-            {
-                timerObj.SetActive(true);
-            }
-
             if (minute <= 0 && second <= 0 && SpawnManager.Instance.IsSpawnBoss == false)
             {// ゲームタイマーが0以下になったら&ボスが出現してなかったら
                 timerObj.SetActive(false);
@@ -85,11 +76,8 @@ public class TimerDirector : MonoBehaviour
             {// ボスが出現していなかったら
                 elapsedTime += Time.deltaTime; // 毎フレーム時間を加算
 
-                if (!Terminal.Instance.IsTerminal)
-                {
-                    // タイマー(UI)の更新
-                    UpdateTimerDisplay();
-                }
+                // タイマー(UI)の更新
+                UpdateTimerDisplay();
 
                 if (elapsedTime > 150)
                 {
