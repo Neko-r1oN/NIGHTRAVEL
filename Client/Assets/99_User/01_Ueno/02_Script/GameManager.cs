@@ -210,7 +210,7 @@ public class GameManager : MonoBehaviour
     {
         //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
-        RelicManager.Instance.GenerateRelic(bossTerminal);
+        //RelicManager.Instance.GenerateRelic(bossTerminal);
 
         //RelicManager.Instance.GenerateRelicTest();
 

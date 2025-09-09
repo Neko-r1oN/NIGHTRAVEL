@@ -176,7 +176,7 @@ public class Terminal : MonoBehaviour
         System.Random rand = new System.Random();
         int rndNum; //敵生成数
 
-        UIManager.Instance.DisplayTerminalExplanation();
+        //UIManager.Instance.DisplayTerminalExplanation();
 
         // 端末タイプで処理を分ける
         switch (terminalType)

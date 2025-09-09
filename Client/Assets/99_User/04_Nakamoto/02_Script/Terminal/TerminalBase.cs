@@ -159,7 +159,7 @@ public class TerminalBase : MonoBehaviour
     public virtual void GiveReward()
     {
         // レリックを排出する
-        RelicManager.Instance.GenerateRelic(gameObject);
+        //RelicManager.Instance.GenerateRelic(gameObject);
 
         // ターミナル非表示
         terminalIcon.DOFade(0, 1.5f);
