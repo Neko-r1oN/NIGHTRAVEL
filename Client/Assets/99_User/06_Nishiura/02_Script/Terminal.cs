@@ -200,7 +200,7 @@ public class Terminal : MonoBehaviour
                 List<Transform> children = new List<Transform>();
 
                 //端末のアイコンを1.5秒かけてフェードアウトする
-                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+                //terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 for (int i = 0; i < childrenCnt; i++)
                 {
@@ -333,7 +333,7 @@ public class Terminal : MonoBehaviour
 
                 //cowntDownTextを削除
                 //Destroy(countDownText);
-                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+                //terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 UIManager.Instance.DisplayTimeInstructions();
 
