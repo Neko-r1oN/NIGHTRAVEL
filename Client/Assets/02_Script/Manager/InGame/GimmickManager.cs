@@ -97,7 +97,7 @@ public class GimmickManager : MonoBehaviour
     {
         if (managedGimmicks.ContainsKey(uniqueId))
         {
-            managedGimmicks[uniqueId].TurnOnPower(0);
+            managedGimmicks[uniqueId].TurnOnPower();
         }
     }
 }
