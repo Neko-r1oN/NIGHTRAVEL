@@ -27,7 +27,7 @@ public class ElevatorButton : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && isEnterd)
+        if (Input.GetKeyDown(KeyCode.E) && isEnterd && !elevatorScript.isMoving)
         {
             elevatorScript.MoveButton(buttonType);
             MoveButton();

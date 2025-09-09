@@ -19,7 +19,7 @@ public class Elevator : GimmickBase
     // 昇降速度値
     public int moveSpeed;
     // 動作中判定変数
-    private bool isMoving;
+    public bool isMoving;
     // 破壊判定変数
     public bool isBroken = false;
     // ワイヤー
@@ -103,13 +103,15 @@ public class Elevator : GimmickBase
     public void MoveButton(bool type)
     {
         if (isBroken == true || isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
+
+        isMoving = true;    // 動作中にする
+
         if (type == false)
         {
             Invoke("MovingCheck", 4f);  //動作チェック
 
             if (isRised)
             {   //上昇済みの場合
-                isMoving = true;    // 動作中にする
                 tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
                 if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
             }
@@ -119,7 +121,6 @@ public class Elevator : GimmickBase
             Invoke("MovingCheck", 4f);  //動作チェック
             if (!isRised)
             {   //上昇済みでない場合
-                isMoving = true;    // 動作中にする
                 tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
                 if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
             }
