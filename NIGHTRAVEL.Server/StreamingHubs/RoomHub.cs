@@ -91,9 +91,6 @@ namespace StreamingHubs
             // ルームコンテキストに参加ユーザーを保存
             this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
 
-            // ルームデータに追加
-            this.roomContext.AddPlayerData(this.ConnectionId);
-
             //　ルームに参加
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
@@ -142,8 +139,9 @@ namespace StreamingHubs
 
                 //コンテキストからユーザーを削除
                 roomContext.RemoveUser(this.ConnectionId);
+
                 // ルームデータから自身のデータを削除
-                roomContext.RemovePlayerData(this.ConnectionId);
+                roomContext.RemoveCharacterData(this.ConnectionId);
 
             }
         }
@@ -200,7 +198,7 @@ namespace StreamingHubs
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
                 {
                     // 新たなキャラクターデータを追加
-                    this.roomContext.AddCharacterData(this.ConnectionId);
+                    this.roomContext.AddCharacterData(this.ConnectionId, playerData);
                 }
                 else // 既に存在している場合
                 {
@@ -258,7 +256,7 @@ namespace StreamingHubs
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
                 {
                     // 新たなキャラクターデータを追加
-                    this.roomContext.AddCharacterData(this.ConnectionId);
+                    this.roomContext.AddCharacterData(this.ConnectionId, masterClientData.PlayerData);
                 }
                 else // 既に存在している場合
                 {
@@ -567,7 +565,7 @@ namespace StreamingHubs
                 // 死亡者以外の参加者全員に対象者が死亡したことを通知
                 this.roomContext.Group.Except([this.ConnectionId]).OnPlayerDead(this.ConnectionId);
 
-                foreach (var player in this.roomContext.playerDataList)
+                foreach (var player in this.roomContext.characterDataList)
                 {
                     if (player.Value.IsDead == false) // もし誰かが生きていた場合
                     {

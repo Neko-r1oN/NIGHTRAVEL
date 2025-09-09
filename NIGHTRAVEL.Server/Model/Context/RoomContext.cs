@@ -5,6 +5,7 @@
 using Cysharp.Runtime.Multicast;
 using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Numerics;
@@ -84,16 +85,15 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid, JoinedUser> JoinedUserList { get; } = new Dictionary<Guid, JoinedUser>();
 
         /// <summary>
-        /// ルームデータリスト
-        /// Author:Nishiura
-        /// </summary>
-        public Dictionary<Guid, PlayerData> playerDataList { get; } = new Dictionary<Guid, PlayerData>();
-
-        /// <summary>
         /// キャラクターデータリスト
         /// Author:Nishiura
         /// </summary>
         public Dictionary<Guid, PlayerData> characterDataList = new Dictionary<Guid, PlayerData>();
+
+        /// <summary>
+        /// プレイヤー毎の最大ステータスリスト
+        /// </summary>
+        public Dictionary<Guid, (CharacterStatusData, PlayerRelicStatusData)> playerStatusDataList = new Dictionary<Guid, (CharacterStatusData, PlayerRelicStatusData)>();
 
         /// <summary>
         /// エネミーデータリスト
@@ -153,44 +153,24 @@ namespace NIGHTRAVEL.Server.Model.Context
         }
 
         #region 独自関数
-        /// <summary>
-        /// データ追加処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="conID">自身の接続ID</param>
-        public void AddPlayerData(Guid conID)
-        {
-            PlayerData playerSetData = new PlayerData();
-
-            // データリストに自身のデータを追加
-            playerDataList.Add(conID, playerSetData);
-        }
-
-        /// <summary>
-        /// データ削除処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="conID">自身の接続ID</param>
-        public void RemovePlayerData(Guid conID)
-        {
-            // データリストから自身のデータを消去
-            playerDataList.Remove(conID);
-        }
 
         /// <summary>
         /// キャラクターデータ追加処理
         /// Author:Nishiura
         /// </summary>
         /// <param name="conID"></param>
-        public void AddCharacterData(Guid conID)
+        public void AddCharacterData(Guid conID, PlayerData playerData)
         {
-            PlayerData characterSetData = new PlayerData();
+            characterDataList.Add(conID, playerData);
+            playerStatusDataList.Add(conID, (playerData.Status, new PlayerRelicStatusData()));
+        }
 
-            // 各ステータスを初期化
-            characterSetData.State = playerDataList[conID].State;
-            characterSetData.Status = playerDataList[conID].Status;
-
-            characterDataList.Add(conID, characterSetData);
+        /// <summary>
+        /// キャラクターデータ削除
+        /// </summary>
+        public void RemoveCharacterData(Guid conID)
+        {
+            characterDataList.Remove(conID);
         }
 
         /// <summary>
@@ -219,7 +199,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// <param name="conID"></param>
         public PlayerData GetPlayerData(Guid conID)
         {
-            return playerDataList[conID];
+            return characterDataList[conID];
         }
 
         /// <summary>
