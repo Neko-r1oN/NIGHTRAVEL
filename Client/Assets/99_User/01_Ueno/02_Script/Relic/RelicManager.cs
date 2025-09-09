@@ -119,7 +119,6 @@ public class RelicManager : MonoBehaviour
         foreach (var data in relicDatas)
         {
             relic = Instantiate(relicPrefab, data.Value.SpawnPos, Quaternion.identity);
-            relic.GetComponent<Item>().UniqueId = data.Key;
 
             SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
             SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -134,11 +133,8 @@ public class RelicManager : MonoBehaviour
                 // ここでマテリアルを割り当て
                 sr.material = rarityMaterial[(int)data.Value.RarityType - 1];
             }
-
-            ItemManager.Instance.AddItemFromList(data.Value.uniqueId,relic.GetComponent<Item>());
         }
 
-        // 下記コードレアリティ抽出予定処理　一応残してる
         //randomRarity = GetRandomRarity();
 
         //List<GameObject> filteredRelics = relicPrefab.
@@ -180,9 +176,6 @@ public class RelicManager : MonoBehaviour
         {
             int relicnum = Random.Range(0, relicSprites.Count);
 
-            // シャッフルしたあとに持ち物に追加するために呼び出し 一応残してる
-            relic.GetComponent<Relic>().AddRelic();
-            
             //relicPrefabs[relicnum].GetComponent<Relic>().AddRelic();
         }
     }
@@ -234,15 +227,12 @@ public class RelicManager : MonoBehaviour
         return RELIC_RARITY.NORMAL;
     }
 
-    /// <summary>
-    /// レリックドロップリクエスト
-    /// </summary>
-    /// <param name="pos"></param>
-    public async void DropRelicRequest(Stack<Vector2> pos)
+    // レリックドロップリクエスト
+    public async void DropRelicRequest(Stack<Vector2> pos , bool includeBossRarity)
     {
         if (RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            await RoomModel.Instance.DropRelicAsync(pos);
+            await RoomModel.Instance.DropRelicAsync(pos, includeBossRarity);
         }
         else
         {
@@ -251,7 +241,7 @@ public class RelicManager : MonoBehaviour
                 uniqueId = Guid.NewGuid().ToString(),
                 Name = "適当",
                 ExplanationText = "説明",
-                RelicType = (EnumManager.RELIC_TYPE)Random.Range(1,23),
+                RelicType = EnumManager.RELIC_TYPE.AttackTip,
                 RarityType = EnumManager.RARITY_TYPE.Common,
                 SpawnPos = pos.Pop()
             };
@@ -260,14 +250,5 @@ public class RelicManager : MonoBehaviour
 
             GenerateRelic(dropRelics);
         }
-    }
-
-    /// <summary>
-    /// レリックのドロップ通知
-    /// </summary>
-    /// <param name="relicDatas"></param>
-    public void OnDropRelic(Dictionary<string, DropRelicData> relicDatas)
-    {
-        GenerateRelic(relicDatas);
     }
 }

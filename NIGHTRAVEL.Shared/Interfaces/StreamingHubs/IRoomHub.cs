@@ -144,11 +144,11 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// レリック生成
-        /// Author:Nishiura
         /// </summary>
-        /// <param name="pos">位置</param>
+        /// <param name="pos">生成座標</param>
+        /// <param name="includeBossRarity">ボス用のレリックも含めるかどうか</param>
         /// <returns></returns>
-        Task DropRelicAsync(Stack<Vector2> pos);
+        Task DropRelicAsync(Stack<Vector2> pos, bool includeBossRarity);
 
         #endregion
         #region ゲーム内UI、仕様関連

@@ -59,7 +59,7 @@ namespace StreamingHubs
                 { //無かったら生成
                     this.roomContext = roomContextRepository.CreateContext(roomName);
                 }
-                else if(this.roomContext.JoinedUserList.Count == 0)
+                else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
                     roomContextRepository.RemoveContext(roomName);                      //ルーム情報を削除
                     this.roomContext = roomContextRepository.CreateContext(roomName);   //ルームを生成
@@ -122,9 +122,9 @@ namespace StreamingHubs
                 if (joinedUser.IsMaster == true)
                 {
                     MasterLostAsync(this.ConnectionId);
-                    foreach(var user in this.roomContext.JoinedUserList)
+                    foreach (var user in this.roomContext.JoinedUserList)
                     {
-                        if(user.Value.IsMaster == true)
+                        if (user.Value.IsMaster == true)
                         {
                             this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
                         }
@@ -229,7 +229,7 @@ namespace StreamingHubs
 
                 // ルームデータから敵のリストを取得し、該当する要素を更新する
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
-                foreach(var enemyData in masterClientData.EnemyDatas)
+                foreach (var enemyData in masterClientData.EnemyDatas)
                 {
                     if (gottenEnemyDataList.ContainsKey(enemyData.UniqueId))
                     {
@@ -270,37 +270,78 @@ namespace StreamingHubs
         }
 
         /// <summary>
+        /// レアリティ抽選処理
+        /// </summary>
+        /// <param name="isBoss"></param>
+        /// <returns></returns>
+        RARITY_TYPE DrawRarity(bool includeBossRarity)
+        {
+            // レアリティの種類
+            Dictionary<RARITY_TYPE, int> raritys = new Dictionary<RARITY_TYPE, int>()
+            {
+                { RARITY_TYPE.Legend, 2 },
+                { RARITY_TYPE.Unique, 6 },
+                { RARITY_TYPE.Rare, 12},
+                { RARITY_TYPE.Uncommon, 35},
+                { RARITY_TYPE.Common, 45 },
+                { RARITY_TYPE.Boss, 45 }
+            };
+
+            if (includeBossRarity) raritys.Remove(RARITY_TYPE.Common);
+            else raritys.Remove(RARITY_TYPE.Boss);
+
+            RARITY_TYPE result = RARITY_TYPE.Common;
+            int totalWeight = raritys.Values.Sum();
+            int currentWeight = 0;
+            int rndPoint = new Random().Next(1, totalWeight);
+
+            foreach(var rarity in raritys)
+            {
+                currentWeight += rarity.Value;
+                if(rndPoint <= currentWeight)
+                {
+                    result = rarity.Key;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// レリック抽選処理
+        /// </summary>
+        /// <param name="rarity"></param>
+        /// <returns></returns>
+        Relic DrawRelic(RARITY_TYPE rarity)
+        {
+            GameDbContext dbContext = new GameDbContext();
+            List<Relic> ralics = dbContext.Relics.Where(relic => relic.rarity == (int)rarity).ToList();
+            return ralics[new Random().Next(0, ralics.Count)];
+        }
+
+        /// <summary>
         /// レリックID設定、位置同期処理
         /// Author:Nishiura
         /// </summary>
         /// <param name="pos">位置</param>
         /// <returns></returns>
-        public async Task DropRelicAsync(Stack<Vector2> pos)
+        public async Task DropRelicAsync(Stack<Vector2> pos, bool includeBossRarity)
         {
-            GameDbContext dbContext = new GameDbContext();
-
-            List<int> rndList = new List<int>();
-            for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
-            { 
-                // 取得するレリックのIDを乱数で指定
-                rndList.Add(new Random().Next(1, dbContext.Relics.ToArray().Length));
-            }
-            // レリック情報を検索
-            var relic = dbContext.Relics.Where(relic => rndList.Contains(relic.id)).First();
-
             var result = new Dictionary<string, DropRelicData>();
 
             // 参加人数分ループ
             for (int i = 0; i < this.roomContext.JoinedUserList.Count; i++)
             {
-                DropRelicData dropRelicData = new DropRelicData();
+                var rarity = DrawRarity(includeBossRarity);
+                var relic = DrawRelic(rarity);
 
                 // データを更新
+                DropRelicData dropRelicData = new DropRelicData();
                 dropRelicData.uniqueId = Guid.NewGuid().ToString();
                 dropRelicData.Name = relic.name;
                 dropRelicData.ExplanationText = relic.explanation;
-                dropRelicData.RelicType = (EnumManager.RELIC_TYPE) rndList[i];
-                dropRelicData.RarityType = (EnumManager.RARITY_TYPE) relic.rarity;
+                dropRelicData.RelicType = (EnumManager.RELIC_TYPE)relic.id;
+                dropRelicData.RarityType = rarity;
                 dropRelicData.SpawnPos = pos.Pop();
 
                 result.Add(dropRelicData.uniqueId, dropRelicData);
@@ -647,18 +688,11 @@ namespace StreamingHubs
                         GameDbContext dbContext = new GameDbContext();
                         var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.uniqueId).First();
 
-                        // ルームデータから接続IDを指定して自身のデータを取得
-                        var playerData = this.roomContext.characterDataList[this.ConnectionId];
-
-                        PlayerRelicStatusData prsData = new PlayerRelicStatusData();
-
                         // 取得したレリックをリストに入れる
                         this.roomContext.relicDataList.Add(relicData);
 
                         // レリック強化を付与
-                        //GetStatusWithRelics(playerData.Status);
-                        
-                        this.roomContext.Group.All.OnUpdatePlayer(playerData);
+                        GetStatusWithRelics();
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合
@@ -686,8 +720,8 @@ namespace StreamingHubs
         /// <returns></returns>
         public async Task<CharacterStatusData> ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
         {
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var playerData = this.roomContext.characterDataList[this.ConnectionId];
+            // ルームデータから接続IDを指定して最大ステータスのインスタンス取得
+            var status = this.roomContext.playerStatusDataList[this.ConnectionId].Item1;
 
             //DBからステータス強化選択肢情報取得
             GameDbContext dbContext = new GameDbContext();
@@ -697,85 +731,85 @@ namespace StreamingHubs
             {
                 case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
                     // 第1効果
-                    playerData.Status.hp += (int)upgrade.const_effect1;
-                    playerData.Status.hp *= (int)upgrade.rate_effect1;
+                    status.hp += (int)upgrade.const_effect1;
+                    status.hp *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.hp += (int)upgrade.const_effect2;
-                    playerData.Status.hp *= (int)upgrade.rate_effect2;
+                    status.hp += (int)upgrade.const_effect2;
+                    status.hp *= (int)upgrade.rate_effect2;
 
-                    if(playerData.Status.hp <= 0)playerData.Status.hp = 1; // HPが0を下回った場合、1にする
+                    if(status.hp <= 0)status.hp = 1; // HPが0を下回った場合、1にする
                     break;
 
                 case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
                     // 第1効果
-                    playerData.Status.power += (int)upgrade.const_effect1;
-                    playerData.Status.power *= (int)upgrade.rate_effect1;
+                    status.power += (int)upgrade.const_effect1;
+                    status.power *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.power += (int)upgrade.const_effect2;
-                    playerData.Status.power *= (int)upgrade.rate_effect2;
+                    status.power += (int)upgrade.const_effect2;
+                    status.power *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.power <= 0) playerData.Status.power = 1; // 攻撃力が0を下回った場合、1にする
+                    if (status.power <= 0) status.power = 1; // 攻撃力が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
                     // 第1効果
-                    playerData.Status.defence += (int)upgrade.const_effect1;
-                    playerData.Status.defence *= (int)upgrade.rate_effect1;
+                    status.defence += (int)upgrade.const_effect1;
+                    status.defence *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.defence += (int)upgrade.const_effect2;
-                    playerData.Status.defence *= (int)upgrade.rate_effect2;
+                    status.defence += (int)upgrade.const_effect2;
+                    status.defence *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.defence <= 0) playerData.Status.defence = 1; // 防御力が0を下回った場合、1にする
+                    if (status.defence <= 0) status.defence = 1; // 防御力が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
                     // 第1効果
-                    playerData.Status.jumpPower += (int)upgrade.const_effect1;
-                    playerData.Status.jumpPower *= (int)upgrade.rate_effect1;
+                    status.jumpPower += (int)upgrade.const_effect1;
+                    status.jumpPower *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.jumpPower += (int)upgrade.const_effect2;
-                    playerData.Status.jumpPower *= (int)upgrade.rate_effect2;
+                    status.jumpPower += (int)upgrade.const_effect2;
+                    status.jumpPower *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.jumpPower <= 0) playerData.Status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
+                    if (status.jumpPower <= 0) status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
                     // 第1効果
-                    playerData.Status.moveSpeed += (int)upgrade.const_effect1;
-                    playerData.Status.moveSpeed *= (int)upgrade.rate_effect1;
+                    status.moveSpeed += (int)upgrade.const_effect1;
+                    status.moveSpeed *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.moveSpeed += (int)upgrade.const_effect2;
-                    playerData.Status.moveSpeed *= (int)upgrade.rate_effect2;
+                    status.moveSpeed += (int)upgrade.const_effect2;
+                    status.moveSpeed *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.moveSpeed <= 0) playerData.Status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
+                    if (status.moveSpeed <= 0) status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
                     // 第1効果
-                    playerData.Status.healRate += (int)upgrade.const_effect1;
-                    playerData.Status.healRate *= (int)upgrade.rate_effect1;
+                    status.healRate += (int)upgrade.const_effect1;
+                    status.healRate *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.healRate += (int)upgrade.const_effect2;
-                    playerData.Status.healRate *= (int)upgrade.rate_effect2;
+                    status.healRate += (int)upgrade.const_effect2;
+                    status.healRate *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.healRate <= 0) playerData.Status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
+                    if (status.healRate <= 0) status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
                     break;
                 
                 case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
                     // 第1効果
-                    playerData.Status.attackSpeedFactor += (int)upgrade.const_effect1;
-                    playerData.Status.attackSpeedFactor *= (int)upgrade.rate_effect1;
+                    status.attackSpeedFactor += (int)upgrade.const_effect1;
+                    status.attackSpeedFactor *= (int)upgrade.rate_effect1;
                     // 第2効果
-                    playerData.Status.attackSpeedFactor += (int)upgrade.const_effect2;
-                    playerData.Status.attackSpeedFactor *= (int)upgrade.rate_effect2;
+                    status.attackSpeedFactor += (int)upgrade.const_effect2;
+                    status.attackSpeedFactor *= (int)upgrade.rate_effect2;
 
-                    if (playerData.Status.attackSpeedFactor <= 0) playerData.Status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
+                    if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
                     break;
             }
 
-            GetStatusWithRelics(playerData.Status, playerData.RelicStatus);
+            GetStatusWithRelics();
 
-            return playerData.Status;
+            return status.Status;
         }
 
         /// <summary>
@@ -818,13 +852,13 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// レリックを適用させたステータスに加工して返す
+        /// レリックを適用させたステータスに加工して通知する
         /// </summary>
-        /// <param name="status">プレイヤーの最大ステータス</param>
-        void GetStatusWithRelics(CharacterStatusData userStatus, PlayerRelicStatusData playerRelicStatus)
+        void GetStatusWithRelics()
         {
-            CharacterStatusData resultData = new CharacterStatusData(userStatus);
-            PlayerRelicStatusData prsData = new PlayerRelicStatusData(playerRelicStatus);
+            var statusData = this.roomContext.playerStatusDataList[this.ConnectionId];
+            CharacterStatusData status = new CharacterStatusData(statusData.Item1);     // 実際に更新はしない
+            PlayerRelicStatusData relicStatus = statusData.Item2;   // インスタンス取得
 
             // ここで所持レリックを基にresultDataを更新する
             foreach (var relic in this.roomContext.relicDataList)
@@ -835,38 +869,38 @@ namespace StreamingHubs
                     switch (relic.status_type)
                     {
                         case (int)STATUS_TYPE.HP:                   // HPの場合
-                            resultData.hp += relic.const_effect;
-                            resultData.hp += (int)(resultData.hp * relic.rate_effect);
+                            status.hp += relic.const_effect;
+                            status.hp += (int)(status.hp * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.Defense:              // 防御力の場合
-                            resultData.defence += relic.const_effect;
-                            resultData.defence += (int)(resultData.defence * relic.rate_effect);
+                            status.defence += relic.const_effect;
+                            status.defence += (int)(status.defence * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.Power:                // 攻撃力の場合
-                            resultData.power += relic.const_effect;
-                            resultData.power += (int)(resultData.power * relic.rate_effect);
+                            status.power += relic.const_effect;
+                            status.power += (int)(status.power * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.JumpPower:            // 跳躍力の場合
-                            resultData.jumpPower += relic.const_effect;
-                            resultData.jumpPower += (int)(resultData.jumpPower * relic.rate_effect);
+                            status.jumpPower += relic.const_effect;
+                            status.jumpPower += (int)(status.jumpPower * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.MoveSpeed:            // 移動速度の場合
-                            resultData.moveSpeed += relic.const_effect;
-                            resultData.moveSpeed += (int)(resultData.moveSpeed * relic.rate_effect);
+                            status.moveSpeed += relic.const_effect;
+                            status.moveSpeed += (int)(status.moveSpeed * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                            resultData.attackSpeedFactor += relic.const_effect;
-                            resultData.attackSpeedFactor += (int)(resultData.attackSpeedFactor * relic.rate_effect);
+                            status.attackSpeedFactor += relic.const_effect;
+                            status.attackSpeedFactor += (int)(status.attackSpeedFactor * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.HealRate:             // 自動回復速度の場合
-                            resultData.healRate += relic.const_effect;
-                            resultData.healRate += (int)(resultData.healRate * relic.rate_effect);
+                            status.healRate += relic.const_effect;
+                            status.healRate += (int)(status.healRate * relic.rate_effect);
                             break;
                     }
                 }
@@ -875,97 +909,99 @@ namespace StreamingHubs
                     switch (relic.status_type)
                     {
                         case (int)STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
-                            prsData.ScatterBugCnt += relic.const_effect;
-                            prsData.ScatterBugCnt += (int)(prsData.ScatterBugCnt * relic.rate_effect);
+                            relicStatus.ScatterBugCnt += relic.const_effect;
+                            relicStatus.ScatterBugCnt += (int)(relicStatus.ScatterBugCnt * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
-                            prsData.DigitalMeatCnt += relic.const_effect;
-                            prsData.DigitalMeatCnt += (int)(prsData.DigitalMeatCnt * relic.rate_effect);
+                            relicStatus.DigitalMeatCnt += relic.const_effect;
+                            relicStatus.DigitalMeatCnt += (int)(relicStatus.DigitalMeatCnt * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
-                            prsData.BuckupHDMICnt += relic.const_effect;
-                            prsData.BuckupHDMICnt += (int)(prsData.BuckupHDMICnt * relic.rate_effect);
+                            relicStatus.BuckupHDMICnt += relic.const_effect;
+                            relicStatus.BuckupHDMICnt += (int)(relicStatus.BuckupHDMICnt * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
-                            prsData.ChargedCoreCnt += relic.const_effect;
-                            prsData.ChargedCoreCnt += (int)(prsData.ChargedCoreCnt * relic.rate_effect);
+                            relicStatus.ChargedCoreCnt += relic.const_effect;
+                            relicStatus.ChargedCoreCnt += (int)(relicStatus.ChargedCoreCnt * relic.rate_effect);
                             break;
-                    }
-                    switch (relic.status_type)
-                    {
+
                         case (int)DEBUFF_TYPE.Burn:                 // 炎上確率の場合
-                            prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.const_effect; 
-                            prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] += (int)(prsData.GiveDebuffRates[DEBUFF_TYPE.Burn] * relic.rate_effect);
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.const_effect;
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += (int)(relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] * relic.rate_effect);
                             break;
 
                         case (int)DEBUFF_TYPE.Freeze:               // 凍結確率の場合
-                            prsData.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.const_effect;
-                            prsData.GiveDebuffRates[DEBUFF_TYPE.Freeze] += (int)(prsData.GiveDebuffRates[DEBUFF_TYPE.Freeze] * relic.rate_effect);
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.const_effect;
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += (int)(relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] * relic.rate_effect);
                             break;
 
                         case (int)DEBUFF_TYPE.Shock:                // 感電確率の場合
-                            prsData.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.const_effect; 
-                            prsData.GiveDebuffRates[DEBUFF_TYPE.Shock] += (int)(prsData.GiveDebuffRates[DEBUFF_TYPE.Shock] * relic.rate_effect);
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.const_effect;
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += (int)(relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
-                            prsData.AddExpRate += relic.const_effect;
-                            prsData.AddExpRate += (int)(prsData.AddExpRate * relic.rate_effect);
+                            relicStatus.AddExpRate += relic.const_effect;
+                            relicStatus.AddExpRate += (int)(relicStatus.AddExpRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
-                            prsData.RegainCodeRate += relic.const_effect;
-                            prsData.RegainCodeRate += (int)(prsData.RegainCodeRate * relic.rate_effect);
+                            relicStatus.RegainCodeRate += relic.const_effect;
+                            relicStatus.RegainCodeRate += (int)(relicStatus.RegainCodeRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.HolographicArmorRate: // 回避率の場合
-                            prsData.HolographicArmorRate += relic.const_effect;
-                            prsData.HolographicArmorRate += (int)(prsData.HolographicArmorRate * relic.rate_effect);
+                            relicStatus.HolographicArmorRate += relic.const_effect;
+                            relicStatus.HolographicArmorRate += (int)(relicStatus.HolographicArmorRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.MouseRate:            // クールダウン短縮率の場合
-                            prsData.MouseRate += relic.const_effect;
-                            prsData.MouseRate += (int)(prsData.MouseRate * relic.rate_effect);
+                            relicStatus.MouseRate += relic.const_effect;
+                            relicStatus.MouseRate += (int)(relicStatus.MouseRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
-                            prsData.FirewallRate += relic.const_effect;
-                            prsData.FirewallRate += (int)(prsData.FirewallRate * relic.rate_effect);
+                            relicStatus.FirewallRate += relic.const_effect;
+                            relicStatus.FirewallRate += (int)(relicStatus.FirewallRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.LifeScavengerRate:    // キル時HP回復率の場合
-                            prsData.LifeScavengerRate += relic.const_effect;
-                            prsData.LifeScavengerRate += (int)(prsData.LifeScavengerRate * relic.rate_effect);
+                            relicStatus.LifeScavengerRate += relic.const_effect;
+                            relicStatus.LifeScavengerRate += (int)(relicStatus.LifeScavengerRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.RugrouterRate:        // DA率の場合
-                            prsData.RugrouterRate += relic.const_effect;
-                            prsData.RugrouterRate += (int)(prsData.RugrouterRate * relic.rate_effect);
+                            relicStatus.RugrouterRate += relic.const_effect;
+                            relicStatus.RugrouterRate += (int)(relicStatus.RugrouterRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
-                            prsData.IdentificationAIRate += relic.const_effect;
-                            prsData.IdentificationAIRate += (int)(prsData.IdentificationAIRate * relic.rate_effect);
+                            relicStatus.IdentificationAIRate += relic.const_effect;
+                            relicStatus.IdentificationAIRate += (int)(relicStatus.IdentificationAIRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.DanborDollRate:       // 防御貫通率の場合
-                            prsData.DanborDollRate += relic.const_effect;
-                            prsData.DanborDollRate += (int)(prsData.DanborDollRate * relic.rate_effect);
+                            relicStatus.DanborDollRate += relic.const_effect;
+                            relicStatus.DanborDollRate += (int)(relicStatus.DanborDollRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合
-                            prsData.IllegalScriptRate += relic.const_effect;
-                            prsData.IllegalScriptRate += (int)(prsData.IllegalScriptRate * relic.rate_effect);
+                            relicStatus.IllegalScriptRate += relic.const_effect;
+                            relicStatus.IllegalScriptRate += (int)(relicStatus.IllegalScriptRate * relic.rate_effect);
                             break;
+
                     }
                 }
             }
 
+            // 最新の状態に更新する
+            statusData.Item2 = relicStatus;
+
             // 基のステータスにレリックを適用したステータスをリクエスト者に通知
-            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateStatus(resultData, prsData);
+            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateStatus(status, relicStatus);
         }
 
         // <summary>

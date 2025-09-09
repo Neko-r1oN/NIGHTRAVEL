@@ -324,9 +324,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
 
-    public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
-    {
-    }
     #endregion
     #region 敵通知関連
 
@@ -644,10 +641,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="pos"></param>
+    /// <param name="includeBossRarity">ボス用のレリックも抽選対象にするかどうか</param>
     /// <returns></returns>
-    public async UniTask DropRelicAsync(Stack<Vector2> pos)
+    public async UniTask DropRelicAsync(Stack<Vector2> pos, bool includeBossRarity)
     {
-        await roomHub.DropRelicAsync(pos);
+        await roomHub.DropRelicAsync(pos, includeBossRarity);
     }
     #endregion
     #region ゲーム内UI、仕様関連
