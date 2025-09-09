@@ -324,11 +324,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
 
-    public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
+   /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
     {
     }
     #endregion
-    #region 敵通知関連
+    #region 敵通知関連*/
 
     /// <summary>
     /// 敵の生成通知
