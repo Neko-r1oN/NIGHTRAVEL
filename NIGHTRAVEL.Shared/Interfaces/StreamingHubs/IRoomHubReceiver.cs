@@ -57,7 +57,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// プレイヤー動作通知
         /// Author:Nishiura
         /// </summary>
-        //void OnUpdatePlayer(JoinedUser user, Vector2 pos, Quaternion rot, CharacterState anim);
         void OnUpdatePlayer(PlayerData playerData);
 
         /// <summary>

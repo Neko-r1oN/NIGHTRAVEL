@@ -986,8 +986,8 @@ namespace StreamingHubs
             //    }
             //}
 
-            // 更新後のステータスを全員に通知
-            this.roomContext.Group.All.OnUpdateStatus(resultData, prsData);
+            // 基のステータスにレリックを適用したステータスをリクエスト者に通知
+            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateStatus(resultData, prsData);
         }
 
         // <summary>

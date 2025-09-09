@@ -19,8 +19,8 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
     {
         public int id { get; set; }                     //レリックのID
         public string name { get; set; }                //レリックの名前
-        public int const_effect { get; set; }        //レリックの効果量
-        public float rate_effect { get; set; }         //レリックの効果量
+        public int const_effect { get; set; }        //レリックの効果量(実数値)
+        public float rate_effect { get; set; }         //レリックの効果量(倍率)
         public int max {  get; set; }                   //上昇ステータス最大値
         public int status_type {  get; set; }           //上昇ステータスの種類
         public string explanation { get; set; }         //レリックの説明文

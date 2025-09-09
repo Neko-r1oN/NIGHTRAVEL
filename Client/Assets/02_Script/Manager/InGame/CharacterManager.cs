@@ -19,6 +19,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System.Xml;
 using System.Threading.Tasks;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -113,6 +114,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnEnemyHealthSyn += this.OnHitEnemy;
         RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
         RoomModel.Instance.OnShootedBullet += this.OnShootedBullet;
+        RoomModel.Instance.OnUpdateStatusSyn += OnUpdatePlayerStatus;
     }
 
     private void Start()
@@ -133,6 +135,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnEnemyHealthSyn -= this.OnHitEnemy;
         RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
         RoomModel.Instance.OnShootedBullet -= this.OnShootedBullet;
+        RoomModel.Instance.OnUpdateStatusSyn -= OnUpdatePlayerStatus;
     }
 
 
@@ -407,6 +410,15 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region 通知処理関連
+
+    /// <summary>
+    /// プレイヤーのステータス更新通知
+    /// </summary>
+    void OnUpdatePlayerStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData)
+    {
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatus);
+        playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(prsData);
+    }
 
     /// <summary>
     /// プレイヤーの更新の通知
