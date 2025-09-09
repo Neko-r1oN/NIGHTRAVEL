@@ -23,6 +23,7 @@ public class Terminal : MonoBehaviour
     // 端末の種別
     public int terminalType;
 
+    //生成する敵の最大数
     [SerializeField] int maxSpawnEnemy;
 
     public int TerminalType { get { return terminalType; } }
@@ -72,7 +73,6 @@ public class Terminal : MonoBehaviour
         Type_Speed,
         Type_Deal,
         Type_Jumble,
-        Type_Return,
         Type_Elite,
         Type_Boss
     }
@@ -193,7 +193,7 @@ public class Terminal : MonoBehaviour
                 List<Transform> children = new List<Transform>();
 
                 //端末のアイコンを1.5秒かけてフェードアウトする
-                //terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
 
                 for (int i = 0; i < childrenCnt; i++)
                 {
