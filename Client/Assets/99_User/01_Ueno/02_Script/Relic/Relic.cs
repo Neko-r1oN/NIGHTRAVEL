@@ -8,8 +8,6 @@ public class Relic : Item
     [SerializeField] string id;
     [SerializeField] RARITY_TYPE rarity;
 
-    
-
     RelicData relicData;
 
     public RARITY_TYPE Rarity { get { return rarity; } }
@@ -43,10 +41,9 @@ public class Relic : Item
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // レリック取得通知
-
         if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
+            // レリック取得通知
             ItemManager.Instance.GetItemRequest(GetComponent<Item>(), collision.gameObject);
         }
     }
