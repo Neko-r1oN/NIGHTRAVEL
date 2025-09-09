@@ -93,7 +93,7 @@ public class MatchingManager : MonoBehaviour
     {
         //キャラクターを送る
         int character = Int32.Parse(inputFieldCharacterId.text);
-        await RoomModel.Instance.ReadyAsync();
+        await RoomModel.Instance.ReadyAsync(character);
     }
     #endregion
 
