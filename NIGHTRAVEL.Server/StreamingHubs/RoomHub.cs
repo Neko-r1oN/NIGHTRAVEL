@@ -11,6 +11,7 @@ using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -306,6 +307,27 @@ namespace StreamingHubs
             }
             return result;
         }
+
+        /// <summary>
+        /// ステータス強化選択肢を複数取得する
+        /// </summary>
+        /// <param name="rarity"></param>
+        /// <returns></returns>
+        List<STAT_UPGRADE_OPTION> DrawStatusUpgrateOption(int elementCnt)
+        {
+            GameDbContext dbContext = new GameDbContext();
+            List <STAT_UPGRADE_OPTION> drawIds = new List<STAT_UPGRADE_OPTION>();
+
+            // 重複なしで指定個数分のステータス強化の選択肢を取得する
+            for (int i = 0; i < elementCnt; i++)
+            {
+                var rarity = DrawRarity(false);
+                var option = dbContext.Status_Enhancements.Where(option => !drawIds.Contains((STAT_UPGRADE_OPTION)option.id)).First();
+                drawIds.Add((STAT_UPGRADE_OPTION)option.id);
+            }
+
+            return drawIds;
+        } 
 
         /// <summary>
         /// レリック抽選処理
@@ -1035,21 +1057,7 @@ namespace StreamingHubs
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
             // 強化選択肢格納リスト
-            List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList = new List<EnumManager.STAT_UPGRADE_OPTION>();
-
-            // リストが3になるまでループ
-            do
-            {
-                // ランダムな選択肢を乱数で設定(ランダムの第２引数はTypeの最後の項目を指定)
-                var rndOption = new Random().Next(0, (int)EnumManager.STAT_UPGRADE_OPTION.Unique_MovementSpeed);
-
-                // 設定された選択肢がリスト内に無い場合
-                if (!statusOptionList.Contains((EnumManager.STAT_UPGRADE_OPTION)rndOption))
-                {
-                    // 選択肢をリストに入れる
-                    statusOptionList.Add((EnumManager.STAT_UPGRADE_OPTION)rndOption);
-                }
-            } while (statusOptionList.Count <= 3);
+            List<STAT_UPGRADE_OPTION> statusOptionList = DrawStatusUpgrateOption(3);
 
             // 強化後ステータス格納リスト
             Dictionary<Guid, CharacterStatusData> characterStatusDataList = new Dictionary<Guid, CharacterStatusData>();
@@ -1058,18 +1066,18 @@ namespace StreamingHubs
             foreach (var user in this.roomContext.JoinedUserList)
             {
                 // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
-                var playerData = this.roomContext.characterDataList[user.Key];
+                var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
 
                 // 各最大値を10%増加(仮)
-                playerData.Status.hp = (int)(playerData.Status.hp * 1.1f);
-                playerData.Status.power = (int)(playerData.Status.power * 1.1f);
-                playerData.Status.defence = (int)(playerData.Status.defence * 1.1f);
-                playerData.Status.jumpPower *= 1.1f;
-                playerData.Status.moveSpeed *= 1.1f;
-                playerData.Status.healRate *= 1.1f;
+                playerData.hp = (int)(playerData.hp * 1.1f);
+                playerData.power = (int)(playerData.power * 1.1f);
+                playerData.defence = (int)(playerData.defence * 1.1f);
+                playerData.jumpPower *= 1.1f;
+                playerData.moveSpeed *= 1.1f;
+                playerData.healRate *= 1.1f;
 
                 // 強化後のステータスをGuidをキーにして格納
-                characterStatusDataList.Add(user.Key, playerData.Status);
+                characterStatusDataList.Add(user.Key, playerData);
             }
 
             // 参加者全員にレベルアップしたことを通知
