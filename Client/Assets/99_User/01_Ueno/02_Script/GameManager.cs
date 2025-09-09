@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float yRadius;          // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;  // 生成しない範囲
     [SerializeField] int knockTermsNum;      // エネミーの撃破数条件
-    [SerializeField] List<GameObject> portal;
+    [SerializeField] List<GameObject> portals;
 
     float elapsedTime;
 
@@ -105,14 +105,6 @@ public class GameManager : MonoBehaviour
             RoomModel.Instance.OnSameStartSyn += this.StartGame;
             await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
         }
-
-        foreach (GameObject obj in portal)
-        {
-            if (obj != null)
-            {
-                obj.SetActive(false);
-            }
-        }
     }
 
     private void OnDisable()
@@ -161,7 +153,7 @@ public class GameManager : MonoBehaviour
 
     public void DisplayPortal()
     {
-        foreach (var item in portal)
+        foreach (var item in portals)
         {
             item.gameObject.SetActive(true);
         }
@@ -172,7 +164,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ChengScene()
     {// シーン遷移
-        SceneManager.LoadScene("stage");
+        SceneManager.LoadScene("Stage Ueno");
 
         isGameStart = false;
     }
@@ -215,9 +207,11 @@ public class GameManager : MonoBehaviour
         // 死んだ判定にする
         isBossDead = true;
 
-        foreach(GameObject obj in portal)
+        GameObject portal;
+
+        for(int i = 0; i < portals.Count; i++)
         {
-            obj.SetActive(true);
+            portal = Instantiate(portals[i], portals[i].transform.position, Quaternion.identity);
         }
 
         //Invoke(nameof(ChengScene), 15f);

@@ -268,7 +268,7 @@ MonoBehaviour:
   - {fileID: 8288426215254106694, guid: dde13f186e2f72e41b00f03bed4e6621, type: 3}
   - {fileID: 4113829005332862926, guid: 7219590b6296b324bbc135ad6e27fdee, type: 3}
   - {fileID: -5099292496197868168, guid: 2911128385d5f0846bec2b8c25d70990, type: 3}
-  - {fileID: -2966200626249415253, guid: a07771eb04eba29428189a197dd56654, type: 3}
+  - {fileID: 21300000, guid: a07771eb04eba29428189a197dd56654, type: 3}
   - {fileID: -1540426309290004842, guid: 9bf3f1c8ab0d7d44196e74cac3dbb230, type: 3}
   - {fileID: 8389134475083476877, guid: b81d8a8cef6a52844bc5c04ab2890dec, type: 3}
   - {fileID: -6270953770400647376, guid: 647e70382396fa542ae5b485c8b400d7, type: 3}
@@ -1437,11 +1437,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1027980511}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &218818885 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  m_PrefabInstance: {fileID: 1650753475}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &231020317
 GameObject:
   m_ObjectHideFlags: 0
@@ -1873,7 +1868,7 @@ GameObject:
   m_Component:
   - component: {fileID: 399011667}
   m_Layer: 0
-  m_Name: Portal
+  m_Name: unkoPortal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2028,7 +2023,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &446371201
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -14483,7 +14478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &1143165352
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -16400,8 +16395,6 @@ MonoBehaviour:
   - {fileID: 519303592}
   charaSwordPrefab: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
   playerObjSelf: {fileID: 420946193}
-  players:
-  - {fileID: 218818885}
   projectilePrefabs: []
 --- !u!1 &1594664040
 GameObject:
@@ -41542,9 +41535,9 @@ MonoBehaviour:
   yRadius: 6
   distMinSpawnPos: 3
   knockTermsNum: 50
-  portal:
-  - {fileID: 446371200}
-  - {fileID: 1143165351}
+  portals:
+  - {fileID: 3085695151427005101, guid: 1cc46382ad62fdf47bbc66efcb784ce2, type: 3}
+  - {fileID: 4386894591710737428, guid: 9be9aa6c854e311418f296ff2a89ef34, type: 3}
 --- !u!4 &2102152737
 Transform:
   m_ObjectHideFlags: 0
