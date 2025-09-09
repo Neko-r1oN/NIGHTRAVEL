@@ -97,9 +97,6 @@ namespace StreamingHubs
 
             this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
-            // ルームデータから接続IDを指定して自身のデータを取得
-            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
-            playerData.IsDead = false; // 死亡判定をfalseにする
             this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
 
             // 参加中のユーザー情報を返す
@@ -190,11 +187,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-                // ルームデータから接続IDを指定して自身のデータを取得
-                var gottenData = this.roomContext.GetPlayerData(playerData.ConnectionId);
-
-                // 取得したデータを受け取ったデータに置き換える
-                gottenData = playerData;
 
                 // キャラクターデータリストに自身のデータがない場合
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
@@ -223,11 +215,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-                // ルームデータから接続IDを指定して自身のデータを取得
-                var gottenPlayerData = this.roomContext.GetPlayerData(this.ConnectionId);
-
-                // 取得したデータを受け取ったマスターデータに置き換え
-                gottenPlayerData = masterClientData.PlayerData;
 
                 // ルームデータから敵のリストを取得し、該当する要素を更新する
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
@@ -723,7 +710,7 @@ namespace StreamingHubs
 
                         //DBからレリック情報取得
                         GameDbContext dbContext = new GameDbContext();
-                        var relicData = dbContext.Relics.Where(data => data.id.ToString() == relic.uniqueId).First();
+                        var relicData = dbContext.Relics.Where(data => data.id == (int)relic.RelicType).First();
 
                         // 取得したレリックをリストに入れる
                         this.roomContext.relicDataList.Add(relicData);
