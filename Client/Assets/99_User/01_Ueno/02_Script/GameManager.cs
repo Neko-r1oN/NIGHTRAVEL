@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     int level;                  // レベル
     bool isBossDead;            // ボスが死んだかどうか
     bool isGameStart;           // ゲームが開始したかどうか
+    GameObject bossTerminal;    // ボス端末
     #endregion
 
     #region その他
@@ -95,6 +96,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     async void Start()
     {
+        bossTerminal = GameObject.Find("BossTerminal");     // ステージに1つのユニークな端末の為、名前で取得
         isBossDead = false;
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
@@ -202,7 +204,7 @@ public class GameManager : MonoBehaviour
     {
         //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
-        RelicManager.Instance.GenerateRelic(Terminal.Instance.gameObject);
+        RelicManager.Instance.GenerateRelic(bossTerminal);
 
         // 死んだ判定にする
         isBossDead = true;

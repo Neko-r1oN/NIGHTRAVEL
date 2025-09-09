@@ -13,7 +13,6 @@ namespace Shared.Interfaces.StreamingHubs
     [MessagePackObject]
     public class EnumManager
     {
-
         #region システム関連
 
         /// レア度の種類
@@ -93,13 +92,27 @@ namespace Shared.Interfaces.StreamingHubs
             Multiplicative // 乗算 (×1.1, ×1.5など)
         }
 
+        /// <summary>
+        /// ターミナルの種類
+        /// </summary>
+        public enum TERMINAL_TYPE
+        {
+            None = 0,
+            Enemy,
+            Speed,
+            Deal,
+            Elite,
+            Jumble,
+            Boss
+        }
+
         #endregion
 
-        #region キャラクター関連
+            #region キャラクター関連
 
-        /// <summary>
-        /// 状態異常の種類
-        /// </summary>
+            /// <summary>
+            /// 状態異常の種類
+            /// </summary>
         public enum DEBUFF_TYPE
         {
             None = 0,

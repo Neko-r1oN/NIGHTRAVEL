@@ -528,7 +528,7 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
-    /// 最大値の変更＆それに応じた現在値の変更
+    /// レリックの最大値の変更＆それに応じた現在値の変更
     /// </summary>
     /// <param name="changeData">強化後のステータス</param>
     public void ChangeRelicStatusData(PlayerRelicStatusData relicStatus)

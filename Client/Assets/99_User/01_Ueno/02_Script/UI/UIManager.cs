@@ -4,6 +4,7 @@
 //----------------------------------------------------
 using DG.Tweening;
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using static Terminal;
 using ColorUtility = UnityEngine.ColorUtility;
 using Random = UnityEngine.Random;
 
@@ -20,7 +22,6 @@ public class UIManager : MonoBehaviour
     PlayerBase player;
     EnemyBase boss;
     LevelManager level;
-    Terminal terminal;
 
     #region 各UI
     [Foldout("キャンバス")]
@@ -100,11 +101,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image relicImg;                 // レリックのイメージ
 
     [Foldout("その他")]
-    [SerializeField] List<GameObject> playerStatus; // 自分以外のプレイヤーのステータス
+    [SerializeField] List<GameObject> playerStatus;     // 自分以外のプレイヤーのステータス
     [Foldout("その他")]
-    [SerializeField] GameObject terminalExplanation;// ターミナル説明用オブジェクト
+    [SerializeField] GameObject terminalExplanationObj; // ターミナル説明用オブジェクト
     [Foldout("その他")]
-    [SerializeField] GameObject statusUpButton;     // ステータスアップボタン
+    [SerializeField] GameObject statusUpButton;         // ステータスアップボタン
 
     [Foldout("各環境用UI")]
     [SerializeField] GameObject gamePadUI;          // パッド操作UI
@@ -155,6 +156,18 @@ public class UIManager : MonoBehaviour
     private System.Collections.Generic.List<Color> initialTextColors = new System.Collections.Generic.List<Color>();
 
     bool isRelicGet;
+
+    // ターミナル起動時の定型文
+    private Dictionary<TERMINAL_TYPE, string> terminalExplanation = new Dictionary<TERMINAL_TYPE, string>
+    {
+        {TERMINAL_TYPE.None,""},
+        {TERMINAL_TYPE.Enemy,"出現した敵を全て倒せ" },
+        {TERMINAL_TYPE.Speed,"出現したゲートを全て通れ" },
+        {TERMINAL_TYPE.Deal,"" },
+        {TERMINAL_TYPE.Jumble,"" },
+        {TERMINAL_TYPE.Elite,"出現したエリート敵を全て倒せ" },
+        {TERMINAL_TYPE.Boss,"" }
+    };
 
     private static UIManager instance;
 
@@ -210,8 +223,6 @@ public class UIManager : MonoBehaviour
     {
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
-        terminal = Terminal.Instance;
-
         //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
 
         playerHpBar.maxValue = player.MaxHP;
@@ -258,7 +269,7 @@ public class UIManager : MonoBehaviour
             diffText.color = color;
         }
 
-        terminalExplanation.SetActive(false);
+        terminalExplanationObj.SetActive(false);
         endWindow.SetActive(false);
 
         spectatingWindow.SetActive(false);
@@ -788,24 +799,15 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void DisplayTerminalExplanation()
+    public void DisplayTerminalExplanation(TERMINAL_TYPE type)
     {
-        if (Terminal.Instance.code == (Terminal.TerminalCode)2)
-        {
-            TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = 
-                terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
-        }
-        else if(Terminal.Instance.code != (Terminal.TerminalCode)8)
-        {
-            terminalExplanation.SetActive(true);
+        terminalExplanationObj.SetActive(true);
 
-            terminalExplanationText.text =
-                terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
-        }
+        terminalExplanationText.text = terminalExplanation[type].ToString();
     }
     public void DisplayTimeInstructions()
     {
-        terminalExplanation.SetActive(false);
+        terminalExplanationObj.SetActive(false);
         TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " 敵衛システム復旧まで";
     }
 
