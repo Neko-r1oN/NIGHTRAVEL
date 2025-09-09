@@ -270,7 +270,7 @@ public class Terminal : MonoBehaviour
         }
 
         //ƒŒƒŠƒbƒN‚ğ”ro‚·‚é
-        RelicManager.Instance.DropRelicRequest(posStack);
+        RelicManager.Instance.DropRelicRequest(posStack, false);
     }
 
     /// <summary>

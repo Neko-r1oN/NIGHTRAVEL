@@ -228,11 +228,11 @@ public class RelicManager : MonoBehaviour
     }
 
     // レリックドロップリクエスト
-    public async void DropRelicRequest(Stack<Vector2> pos)
+    public async void DropRelicRequest(Stack<Vector2> pos , bool includeBossRarity)
     {
         if (RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            await RoomModel.Instance.DropRelicAsync(pos);
+            await RoomModel.Instance.DropRelicAsync(pos, includeBossRarity);
         }
         else
         {
