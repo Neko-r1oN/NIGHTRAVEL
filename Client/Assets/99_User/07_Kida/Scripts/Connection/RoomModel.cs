@@ -508,9 +508,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// €”õŠ®—¹“¯Šú
     /// </summary>
     /// <returns></returns>
-    public async UniTask ReadyAsync()
+    public async UniTask ReadyAsync(int characterId)
     {
-        await roomHub.ReadyAsync();
+        await roomHub.ReadyAsync(characterId);
     }
     #endregion
     #region ƒQ[ƒ€“à
