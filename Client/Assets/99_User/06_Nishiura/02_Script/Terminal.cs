@@ -62,7 +62,6 @@ public class Terminal : MonoBehaviour
 
     //レリック管理クラス
     RelicManager relicManager;
-    UIManager uiManager;
 
     private static Terminal instance;
 
@@ -74,11 +73,11 @@ public class Terminal : MonoBehaviour
     // 端末タイプ列挙型
     public enum TerminalCode
     {
-        None = 0,
-        Type_Enemy,
+        Type_Enemy = 1,
         Type_Speed,
         Type_Deal,
         Type_Jumble,
+        Type_Return,
         Type_Elite,
         Type_Boss
     }
@@ -87,13 +86,10 @@ public class Terminal : MonoBehaviour
 
     public Dictionary<TerminalCode, string> Terminalexplanation = new Dictionary<TerminalCode, string>
     {
-        {TerminalCode.None,""},
         {TerminalCode.Type_Enemy,"出現した敵を全て倒せ" },
         {TerminalCode.Type_Speed,"出現したゲートを全て通れ" },
         {TerminalCode.Type_Deal,"取引成立" },
         {TerminalCode.Type_Jumble,"" },
-        {TerminalCode.Type_Return,"" },
-        {TerminalCode.Type_Elite,"出現した敵を全て倒せ" }
         {TerminalCode.Type_Return,"" },
         {TerminalCode.Type_Elite,"出現したエリート敵を全て倒せ" },
         {TerminalCode.Type_Boss,"" }
@@ -359,7 +355,6 @@ public class Terminal : MonoBehaviour
                 // ごちゃまぜの場合
                 isUsed = true;  // 使用済みにする
 
-                RelicManager.Instance.GenerateRelicTest();
                 break;
             case (int)TerminalCode.Type_Elite:
                 // エリート敵生成の場合
