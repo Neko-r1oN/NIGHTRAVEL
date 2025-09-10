@@ -324,8 +324,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
 
+<<<<<<< HEAD
+=======
+   /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
+    {
+    }
+>>>>>>> feature/k-kawaguchi
     #endregion
-    #region 敵通知関連
+    #region 敵通知関連*/
 
     /// <summary>
     /// 敵の生成通知
