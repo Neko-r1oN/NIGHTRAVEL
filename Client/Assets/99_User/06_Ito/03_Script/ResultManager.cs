@@ -23,4 +23,12 @@ public class ResultManager : MonoBehaviour
         //SceneManager.LoadScene("TitleScene");
         Initiate.Fade("Title Ueno", Color.black, 1.0f);   // フェード時間1秒
     }
+
+    /// <summary>
+    /// リザルト画面からロビーに移動
+    /// </summary>
+    public void BackLobbySceneButton()
+    {
+        Initiate.Fade("PlayStandbyScene", Color.black, 1.0f);   // フェード時間1秒
+    }
 }

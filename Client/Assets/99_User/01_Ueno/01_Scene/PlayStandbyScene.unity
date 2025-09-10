@@ -734,7 +734,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 575156501}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 599487848}
+        m_TargetAssemblyTypeName: StandbyScreenManager, Assembly-CSharp
+        m_MethodName: ChangeScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &575156501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,6 +829,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8efb153598d9494448d42bc6eb010cd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setText: {fileID: 2021052156}
 --- !u!1 &639923742
 GameObject:
   m_ObjectHideFlags: 0

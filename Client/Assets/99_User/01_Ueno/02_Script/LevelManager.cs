@@ -67,11 +67,10 @@ public class LevelManager : MonoBehaviour
 
         gameLevel++;
 
-        //foreach(var enemy in CharacterManager.Instance.Enemies.Values)
-        //{
-        //    enemy.Enemy.ApplyStatusModifierByRate(10, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
-        //}
-        
+        foreach (var enemy in CharacterManager.Instance.Enemies.Values)
+        {
+            enemy.Enemy.ApplyMaxStatusModifierByRate(0.1f, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
+        }
 
         UIManager.Instance.UpGameLevelText();
 

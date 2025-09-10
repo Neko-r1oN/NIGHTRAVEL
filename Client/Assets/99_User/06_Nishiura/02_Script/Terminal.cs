@@ -41,6 +41,8 @@ public class Terminal : MonoBehaviour
     //制限時間
     public int limitTime;
 
+    bool isTerminal;
+
     //端末のアイコン
     [SerializeField] GameObject terminalIcon;
 
@@ -89,7 +91,7 @@ public class Terminal : MonoBehaviour
         {TerminalCode.Type_Boss,"" }
     };
 
-    bool isTerminal;
+    
 
 
     public bool IsTerminal { get { return isTerminal; } }
@@ -139,8 +141,10 @@ public class Terminal : MonoBehaviour
         {
             isPlayerIn = false; // 触れていないこととする
             Debug.Log("No Terminal");
-        }
+        }   
     }
+
+    
 
     /// <summary>
     /// ギミックの起動
@@ -333,7 +337,6 @@ public class Terminal : MonoBehaviour
                 //報酬を排出
                 GiveRewardRequest();
 
-
                 break;
             case (int)TerminalCode.Type_Deal:
                 // 取引の場合
@@ -521,4 +524,6 @@ public class Terminal : MonoBehaviour
         GiveReward();
         RelicManager.Instance.ShuffleRelic();
     }
+
+    
 }
