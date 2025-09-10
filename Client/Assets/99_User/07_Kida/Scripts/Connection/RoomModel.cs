@@ -324,12 +324,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
 
-<<<<<<< HEAD
-=======
+
    /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
     {
     }
->>>>>>> feature/k-kawaguchi
+feature/k-kawaguchi
+
     #endregion
     #region “G’Ê’mŠÖ˜A*/
 
