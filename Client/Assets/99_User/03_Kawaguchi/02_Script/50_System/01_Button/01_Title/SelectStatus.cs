@@ -1,13 +1,11 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UI; // UIコンポーネントの使用
+using UnityEngine.UI; 
 using UnityEngine.InputSystem;
 
-public class menu : MonoBehaviour
+public class SelectStatus : MonoBehaviour
 {
-    Button cube;
-    Button sphere;
-    Button cylinder;
+    [SerializeField] Button cube;
 
     private Gamepad gamepad;
     private bool isConnected;
@@ -17,9 +15,6 @@ public class menu : MonoBehaviour
     {
        
         isClick = false;
-
-        // ボタンコンポーネントの取得
-        cube = GameObject.Find("/Canvas/Buttons/Button(Solo)").GetComponent<Button>();
 
         // 最初に選択状態にしたいボタンの設定
         //cube.Select();
@@ -33,6 +28,7 @@ public class menu : MonoBehaviour
         }
 
         gamepad = Gamepad.current;
+
 
         if (gamepad == null)
         {
