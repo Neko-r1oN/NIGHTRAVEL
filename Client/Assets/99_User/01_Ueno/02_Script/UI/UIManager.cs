@@ -86,6 +86,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject endWindow;           // 終了のウィンドウ
     [Foldout("ウィンドウ関係")]
     [SerializeField] GameObject spectatingWindow;    // 観戦ウィンドウ
+    [Foldout("ウィンドウ関係")]
+    [SerializeField] GameObject nextStageWindow;     // ステージ遷移ウィンドウ
 
     [Foldout("バナー関係")]
     [SerializeField] GameObject bossWindow;          // ボス出現UI
@@ -723,6 +725,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ゲーム内レベルアップ
+    /// </summary>
     public void UpGameLevelText()
     {
         if(level.GameLevel + 1 > 
@@ -809,6 +814,7 @@ public class UIManager : MonoBehaviour
                 terminal.Terminalexplanation[(Terminal.TerminalCode)terminal.TerminalType].ToString();
         }
     }
+
     public void DisplayTimeInstructions()
     {
         terminalExplanation.SetActive(false);
@@ -825,7 +831,7 @@ public class UIManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                ChangTitleScene();
+                GameManager.Instance.CangeResult();
                 break; 
             case 1:
                 endWindow.SetActive(false); 
@@ -1063,6 +1069,24 @@ public class UIManager : MonoBehaviour
                 gunIconObjs[3].localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 gunIconImages[3].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             }
+        }
+    }
+
+    public void DisplayNextStageWindow()
+    {
+        nextStageWindow.SetActive(true);
+    }
+
+    public void NextGameButtonPush(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                GameManager.Instance.ChengScene();
+                break;
+            case 1:
+                nextStageWindow.SetActive(false);
+                break;
         }
     }
 }
