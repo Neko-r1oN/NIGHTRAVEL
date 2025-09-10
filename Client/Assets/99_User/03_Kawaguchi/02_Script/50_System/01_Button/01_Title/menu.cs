@@ -22,7 +22,7 @@ public class menu : MonoBehaviour
         cube = GameObject.Find("/Canvas/Buttons/Button(Solo)").GetComponent<Button>();
 
         // 最初に選択状態にしたいボタンの設定
-        cube.Select();
+        //cube.Select();
     }
 
     private void Update()
@@ -32,21 +32,8 @@ public class menu : MonoBehaviour
             isClick = true;
         }
 
-        if (isClick || isConnected)
-        {
+      
 
-             // 左スティックの入力値を取得
-             Vector2 stickInput = gamepad.leftStick.ReadValue();
-
-             if (stickInput.x != 0 || stickInput.y != 0)
-             {
-                 if (isClick)
-                 {
-                     cube.Select();
-                     isClick = false;
-                 }
-             }
-        }
 
         if (gamepad == null)
         {
@@ -54,6 +41,18 @@ public class menu : MonoBehaviour
         }
         else if (gamepad != null)
         {
+
+            // 左スティックの入力値を取得
+            Vector2 stickInput = gamepad.leftStick.ReadValue();
+
+            if (stickInput.x != 0 || stickInput.y != 0)
+            {
+                if (isClick)
+                {
+                    cube.Select();
+                    isClick = false;
+                }
+            }
 
             if (isConnected) return;
             cube.Select();
