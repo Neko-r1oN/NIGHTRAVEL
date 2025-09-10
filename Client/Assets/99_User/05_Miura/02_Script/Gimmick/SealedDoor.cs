@@ -21,10 +21,10 @@ public class SealedDoor : ObjectBase
 
     public override void ApplyDamage()
     {
-        if(isBroken==true)
-        {
-            return;
-        }
+        //if(isBroken==true)
+        //{
+        //    return;
+        //}
 
         isBroken = true;
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
