@@ -20,6 +20,7 @@ public class MatchingManager : MonoBehaviour
     [SerializeField] GameObject userPrefab; //ユーザーの情報
     [SerializeField] Text inputFieldRoomId; //ルームのID(デバッグ用)
     [SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
+    [SerializeField] Text inputFieldCharacterId; //ユーザーのID(デバッグ用)
     #endregion
     UserModel userModel;                    //ユーザーModel
     JoinedUser joinedUser;                  //このクライアントユーザーの情報
@@ -90,7 +91,9 @@ public class MatchingManager : MonoBehaviour
     /// </summary>
     public async void Ready()
     {
-        await RoomModel.Instance.ReadyAsync();
+        //キャラクターを送る
+        int character = Int32.Parse(inputFieldCharacterId.text);
+        await RoomModel.Instance.ReadyAsync(character);
     }
     #endregion
 
@@ -139,7 +142,7 @@ public class MatchingManager : MonoBehaviour
     {
         //ゲーム開始の時の処理を書く
         Debug.Log("ゲームを開始します");
-        SceneManager.LoadScene("01_Stage");
+        SceneManager.LoadScene("Stage Kida");
     }
 
     public void OnChangedMasterClient()

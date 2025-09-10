@@ -52,6 +52,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         [Key(6)]
         public bool IsTouchBossTerm { get; set; } = false;
+
+        /// <summary>
+        /// キャラクターID
+        /// </summary>
+        [Key(7)]
+        public int CharacterID {  get; set; }
     }
 
 }

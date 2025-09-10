@@ -13,6 +13,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+
 public class Terminal : MonoBehaviour
 {
     // プレイヤーが端末に触れているかの判定変数
@@ -22,6 +23,7 @@ public class Terminal : MonoBehaviour
     // 端末の種別
     public int terminalType;
 
+    //生成する敵の最大数
     [SerializeField] int maxSpawnEnemy;
 
     public int TerminalType { get { return terminalType; } }
@@ -32,9 +34,6 @@ public class Terminal : MonoBehaviour
     //UIManager
     UIManager uiManager;
     public GameObject TerminalObj {  get; private set; }
-
-    //カウントダウン用のテキスト
-    //public Text countDownText;
 
     //TimerDirecter
     TimerDirector timerDirector;
@@ -49,12 +48,9 @@ public class Terminal : MonoBehaviour
     [SerializeField] List<GameObject> pointList;
     [SerializeField] List<Transform> relicSpawnPoints = new List<Transform>();
 
-
     List<GameObject> terminalSpawnList = new List<GameObject>();
     public List<GameObject> TerminalSpawnList { get { return terminalSpawnList; } set { terminalSpawnList = value; } }
     List<GameObject> terminalEnemyList = new List<GameObject>();
-
-    
 
     GameManager gameManager;
     SpawnManager spawnManager;
@@ -62,7 +58,6 @@ public class Terminal : MonoBehaviour
 
     //レリック管理クラス
     RelicManager relicManager;
-    UIManager uiManager;
 
     private static Terminal instance;
 
@@ -74,8 +69,7 @@ public class Terminal : MonoBehaviour
     // 端末タイプ列挙型
     public enum TerminalCode
     {
-        None = 0,
-        Type_Enemy,
+        Type_Enemy = 1,
         Type_Speed,
         Type_Deal,
         Type_Jumble,
@@ -87,18 +81,13 @@ public class Terminal : MonoBehaviour
 
     public Dictionary<TerminalCode, string> Terminalexplanation = new Dictionary<TerminalCode, string>
     {
-        {TerminalCode.None,""},
         {TerminalCode.Type_Enemy,"出現した敵を全て倒せ" },
         {TerminalCode.Type_Speed,"出現したゲートを全て通れ" },
         {TerminalCode.Type_Deal,"取引成立" },
         {TerminalCode.Type_Jumble,"" },
-        {TerminalCode.Type_Return,"" },
-        {TerminalCode.Type_Elite,"出現した敵を全て倒せ" }
-        {TerminalCode.Type_Return,"" },
         {TerminalCode.Type_Elite,"出現したエリート敵を全て倒せ" },
         {TerminalCode.Type_Boss,"" }
     };
-
 
     bool isTerminal;
 
@@ -187,7 +176,7 @@ public class Terminal : MonoBehaviour
         System.Random rand = new System.Random();
         int rndNum; //敵生成数
 
-        UIManager.Instance.DisplayTerminalExplanation();
+        //UIManager.Instance.DisplayTerminalExplanation();
 
         // 端末タイプで処理を分ける
         switch (terminalType)
@@ -254,6 +243,9 @@ public class Terminal : MonoBehaviour
                 // ごちゃまぜの場合
                 isUsed = true;  // 使用済みにする
 
+                //端末のアイコンを1.5秒かけてフェードアウトする
+                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
+
                 JumbleRelic();
 
                 break;
@@ -265,19 +257,6 @@ public class Terminal : MonoBehaviour
                 isTerminal = true;
 
                 rndNum = rand.Next(6, maxSpawnEnemy); // 生成数を乱数(6-10)で設定
-
-                int childCnt = this.gameObject.transform.childCount;
-
-                List<Transform> child = new List<Transform>();
-
-                for (int i = 0; i < childCnt; i++)
-                {
-                    child.Add(this.gameObject.transform.GetChild(i));
-                }
-
-                TerminalGenerateEnemy(rndNum, child[0].position, child[1].position);   // 敵生成
-
-                break;
 
                 childrenCnt = this.gameObject.transform.childCount;
 
@@ -335,10 +314,6 @@ public class Terminal : MonoBehaviour
                 // ターミナルの効果を終了する
                 isTerminal = false;
 
-                //cowntDownTextを削除
-                //Destroy(countDownText);
-                terminalIcon.GetComponent<Renderer>().material.DOFade(0, 1.5f);
-
                 UIManager.Instance.DisplayTimeInstructions();
 
                 GiveRewardRequest();
@@ -347,32 +322,61 @@ public class Terminal : MonoBehaviour
             case (int)TerminalCode.Type_Speed:
                 // スピードの場合
 
+                // ターミナルの効果を終了する
+                isTerminal = false;
+
+                UIManager.Instance.DisplayTimeInstructions();
+
                 //カウントダウンを停止する
                 CancelInvoke("CountDown");
+
+                //報酬を排出
+                GiveRewardRequest();
+
 
                 break;
             case (int)TerminalCode.Type_Deal:
                 // 取引の場合
+
+                // ターミナルの効果を終了する
+                isTerminal = false;
+
+                UIManager.Instance.DisplayTimeInstructions();
+
+                GiveRewardRequest();
 
                 break;
             case (int)TerminalCode.Type_Jumble:
                 // ごちゃまぜの場合
                 isUsed = true;  // 使用済みにする
 
-                RelicManager.Instance.GenerateRelicTest();
+                GiveRewardRequest();
+
+                // ターミナルの効果を終了する
+                isTerminal = false;
+
                 break;
             case (int)TerminalCode.Type_Elite:
                 // エリート敵生成の場合
-                // 敵生成の場合
                 isUsed = true;
+
                 // ターミナルの効果を終了する
                 isTerminal = false;
 
                 UIManager.Instance.DisplayTimeInstructions();
 
+                GiveRewardRequest();
+
                 break;
             case (int)TerminalCode.Type_Boss:
                 isUsed = true;
+
+                // ターミナルの効果を終了する
+                isTerminal = false;
+
+                UIManager.Instance.DisplayTimeInstructions();
+
+                GiveRewardRequest();
 
                 break;
         }

@@ -47,11 +47,11 @@ public class SpawnManager : MonoBehaviour
 
     #region 敵関連
     [SerializeField] List<GameObject> enemyPrefabs;      // エネミーのプレファブリスト
-    [SerializeField] List<EnumManager.ENEMY_TYPE> emitEnemyTypes;   // 生成対象の敵の種類
-    public List<EnumManager.ENEMY_TYPE> EmitEnemyTypes { get { return emitEnemyTypes; } }
+    [SerializeField] List<ENEMY_TYPE> emitEnemyTypes;   // 生成対象の敵の種類
+    public List<ENEMY_TYPE> EmitEnemyTypes { get { return emitEnemyTypes; } }
 
-    [SerializeField] Dictionary<EnumManager.ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
-    public Dictionary<EnumManager.ENEMY_TYPE, GameObject> IdEnemyPrefabPairs { get { return idEnemyPrefabPairs; } }
+    [SerializeField] Dictionary<ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
+    public Dictionary<ENEMY_TYPE, GameObject> IdEnemyPrefabPairs { get { return idEnemyPrefabPairs; } }
 
     int eliteEnemyCnt;
     List<GameObject> terminalEnemyList = new List<GameObject>();
@@ -126,7 +126,6 @@ public class SpawnManager : MonoBehaviour
         {
             if (GameManager.Instance.IsGameStart)
             {
-
                 if (crashNum >= knockTermsNum && IsSpawnBoss)
                 {
                     SpawnBoss();
@@ -169,7 +168,7 @@ public class SpawnManager : MonoBehaviour
     /// </summary>
     void SetEnemyPrefabList()
     {
-        idEnemyPrefabPairs = new Dictionary<EnumManager.ENEMY_TYPE, GameObject>();
+        idEnemyPrefabPairs = new Dictionary<ENEMY_TYPE, GameObject>();
         foreach (var prefab in enemyPrefabs)
         {
             Debug.Log(prefab.GetComponent<EnemyBase>().EnemyTypeId + "：" + prefab.name);
@@ -315,7 +314,7 @@ public class SpawnManager : MonoBehaviour
             // 生成座標が確定している場合は敵を生成する
             if (spawnPos != null)
             {
-                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
+                var spawnType = SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // 一旦このまま
                 spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
             }

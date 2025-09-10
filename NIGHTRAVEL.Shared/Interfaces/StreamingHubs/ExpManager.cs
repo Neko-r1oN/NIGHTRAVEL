@@ -23,7 +23,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         [Key(1)]
-        public int RequiredExp { get; set; }
+        public int RequiredExp { get; set; } = 500;     // 初回必要な経験値量
 
         /// <summary>
         /// 所持経験値
