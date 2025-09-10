@@ -130,6 +130,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         public List<int> succededTerminalList { get; } = new List<int>();
 
         /// <summary>
+        /// 端末情報リスト
+        /// </summary>
+        public List<TerminalData> terminalList { get; set; } = new List<TerminalData>();
+
+        /// <summary>
         /// 取得アイテムリスト
         /// Author:Nishiura
         /// </summary>

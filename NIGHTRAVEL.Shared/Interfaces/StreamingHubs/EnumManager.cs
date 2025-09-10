@@ -93,7 +93,7 @@ namespace Shared.Interfaces.StreamingHubs
         }
 
         /// <summary>
-        /// ターミナルの種類
+        /// 端末の種類
         /// </summary>
         public enum TERMINAL_TYPE
         {
@@ -106,13 +106,25 @@ namespace Shared.Interfaces.StreamingHubs
             Boss
         }
 
+        /// <summary>
+        /// 端末の状態
+        /// </summary>
+        public enum TERMINAL_STATE
+        {
+            None = 0,
+            Inactive,   // 非アクティブ状態
+            Active,     // アクティブ状態
+            Success,    // 成功状態
+            Failure     // 失敗状態
+        }
+
         #endregion
 
-            #region キャラクター関連
+        #region キャラクター関連
 
-            /// <summary>
-            /// 状態異常の種類
-            /// </summary>
+        /// <summary>
+        /// 状態異常の種類
+        /// </summary>
         public enum DEBUFF_TYPE
         {
             None = 0,

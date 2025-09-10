@@ -137,7 +137,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// 同時開始通知
         /// Author:木田晃輔
         /// </summary>
-        void OnSameStart();
+        void OnSameStart(List<TerminalData> list);
 
         /// <summary>
         /// ギミック起動通知

@@ -54,7 +54,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnStartedGame { get; set; }
 
     //同時開始通知
-    public Action OnSameStartSyn { get; set; }
+    public Action<List<TerminalData>> OnSameStartSyn { get; set; }
 
     //難易度上昇通知
     public Action<int> OnAscendDifficultySyn { get; set; }
@@ -454,9 +454,9 @@ feature/k-kawaguchi
     /// 同時開始
     /// Aughtor:木田晃輔
     /// </summary>
-    public void OnSameStart()
+    public void OnSameStart(List<TerminalData> list)
     {
-        OnSameStartSyn();
+        OnSameStartSyn(list);
     }
 
     /// <summary>
