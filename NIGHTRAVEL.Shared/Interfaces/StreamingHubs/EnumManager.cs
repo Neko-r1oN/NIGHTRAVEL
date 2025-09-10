@@ -81,6 +81,10 @@ namespace Shared.Interfaces.StreamingHubs
         {
             BoxBullet,
             MissileBullet,
+            NodeBullet_N,
+            NodeBullet_O,
+            NodeBullet_D,
+            NodeBullet_E,
         }
 
         /// <summary>
@@ -108,11 +112,11 @@ namespace Shared.Interfaces.StreamingHubs
 
         #endregion
 
-            #region キャラクター関連
+        #region キャラクター関連
 
-            /// <summary>
-            /// 状態異常の種類
-            /// </summary>
+        /// <summary>
+        /// 状態異常の種類
+        /// </summary>
         public enum DEBUFF_TYPE
         {
             None = 0,

@@ -20,11 +20,7 @@ public class EnemyChaseAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-    }
-
-    private void Update()
-    {
-        //DoChase(targetObj,distance)
+        agent.speed = GetComponent<EnemyBase>().MoveSpeed * 1.2f;
     }
 
     /// <summary>

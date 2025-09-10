@@ -275,10 +275,6 @@ public class Hakonov : EnemyBase
     {
         base.OnSpawnAnimEvent();
         SetAnimId((int)ANIM_ID.Spawn);
-
-        // ëOÇ…îÚÇ—çûÇﬁ
-        Vector2 jumpVec = new Vector2(moveSpeed * 1.2f * TransformUtils.GetFacingDirection(transform), jumpPower);
-        m_rb2d.linearVelocity = jumpVec;
     }
 
     /// <summary>

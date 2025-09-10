@@ -787,7 +787,7 @@ abstract public class EnemyBase : CharacterBase
         {
             foreach (var coroutine in managedCoroutines.Values)
             {
-                StopCoroutine(coroutine);
+                if(coroutine != null) StopCoroutine(coroutine);
             }
         }
 

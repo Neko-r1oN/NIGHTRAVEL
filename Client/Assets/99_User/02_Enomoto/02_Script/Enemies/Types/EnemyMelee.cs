@@ -33,7 +33,7 @@
 //    [SerializeField] Vector2 groundCheckRadius = new Vector2(0.5f, 0.2f);
 
 //    // 落下チェック
-//    [SerializeField] Transform fallCheck;
+//    [SerializeField] Transform frontFallCheck;
 //    [SerializeField] float fallCheckRange = 0.9f;
 //    #endregion
 
@@ -128,7 +128,7 @@
 //        SetAnimId((int)ANIM_ID.Run);
 //        Vector2 speedVec = Vector2.zero;
 
-//        if (IsFall() || IsWall())
+//        if (IsFrontFall() || IsWall())
 //        {
 //            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
 //        }
@@ -147,7 +147,7 @@
 //    protected override void Patorol()
 //    {
 //        SetAnimId((int)ANIM_ID.Run);
-//        if (IsFall() || IsWall()) Flip();
+//        if (IsFrontFall() || IsWall()) Flip();
 //        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
 //        m_rb2d.linearVelocity = speedVec;
 //    }
@@ -210,9 +210,9 @@
 //    /// 落下中かどうか
 //    /// </summary>
 //    /// <returns></returns>
-//    bool IsFall()
+//    bool IsFrontFall()
 //    {
-//        return !Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
+//        return !Physics2D.OverlapCircle(frontFallCheck.position, fallCheckRange, terrainLayerMask);
 //    }
 
 //    /// <summary>
@@ -264,10 +264,10 @@
 //        }
 
 //        // 落下チェック
-//        if (fallCheck)
+//        if (frontFallCheck)
 //        {
 //            Gizmos.color = Color.green;
-//            Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
+//            Gizmos.DrawWireSphere(frontFallCheck.position, fallCheckRange);
 //        }
 //    }
 //}
