@@ -26,6 +26,12 @@ namespace StreamingHubs
         private RoomContext roomContext;
         RoomContextRepository roomContextRepos;
 
+        // ターミナル関連 (MAXの値はRandで用いるため、上限+1の数)
+        private const int MIN_TERMINAL_NUM = 3;
+        private const int MAX_TERMINAL_NUM = 7;
+        private const int MIN_TERMINAL_ID = 1;
+        private const int MAX_TERMINAL_ID = 6;
+
         #region 接続・切断処理
         //接続した場合
         protected override ValueTask OnConnected()
@@ -458,6 +464,9 @@ namespace StreamingHubs
                     // 成功した端末リストをクリア
                     this.roomContext.succededTerminalList.Clear();
 
+                    // 生成した端末リストをクリア
+                    this.roomContext.terminalList.Clear();
+
                     // 生成した敵のリストを初期化
                     this.roomContext.enemyDataList.Clear();
 
@@ -499,13 +508,46 @@ namespace StreamingHubs
                 // 進行できる場合、進行通知をする
                 if (canAdvenceStage)
                 {
-                    this.roomContext.Group.All.OnSameStart();
+                    // 端末データを抽選・保存
+                    var terminals = LotteryTerminal();
+                    roomContext.terminalList = terminals;
+
+                    // 同期開始通知と共に端末データを送信
+                    this.roomContext.Group.All.OnSameStart(terminals);
 
                     joinedUser.IsAdvance = false; // 準備完了を解除する
                     canAdvenceStage = false;
                     roomContext.isAdvanceRequest = false;
                 }
             }
+        }
+
+        /// <summary>
+        /// 端末データ抽選処理
+        /// Autho:Nakamoto
+        /// </summary>
+        /// <returns></returns>
+        private List<TerminalData> LotteryTerminal()
+        {
+            // ID1,2は固定で設定
+            List<TerminalData> terminals = new List<TerminalData>()
+            {
+                new TerminalData(){ ID = 1, Type = TERMINAL_TYPE.Boss, State = TERMINAL_STATE.Inactive},
+                new TerminalData(){ ID = 2, Type = TERMINAL_TYPE.Speed, State = TERMINAL_STATE.Inactive},
+            };
+
+            // 3以降は抽選
+            Random rand = new Random();
+            int terminalCount = rand.Next(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
+
+            for(int i = 3; i <= terminalCount; i++ )
+            {
+                int termID = rand.Next(MIN_TERMINAL_ID, MAX_TERMINAL_ID);
+
+                terminals.Add(new TerminalData() { ID = i, Type = (TERMINAL_TYPE)termID, State = TERMINAL_STATE.Inactive });
+            }
+
+            return terminals;
         }
 
         /// <summary>

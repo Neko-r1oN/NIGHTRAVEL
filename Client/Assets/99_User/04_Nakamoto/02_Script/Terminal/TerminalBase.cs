@@ -48,7 +48,7 @@ public class TerminalBase : MonoBehaviour
     /// <summary>
     /// 端末の種別
     /// </summary>
-    public EnumManager.TERMINAL_TYPE TerminalType { get { return terminalType; } }
+    public EnumManager.TERMINAL_TYPE TerminalType { get { return terminalType; } set { terminalType = value; } }
 
     #endregion
 
@@ -81,13 +81,14 @@ public class TerminalBase : MonoBehaviour
     /// <summary>
     ///  初期処理
     /// </summary>
-    private void Start()
+    protected virtual void Start()
     {
         gameManager = GameManager.Instance;
-        uiManager = UIManager.Instance;
         spawnManager = SpawnManager.Instance;
+        uiManager = UIManager.Instance;
         relicManager = RelicManager.Instance;
-        player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
+        characterManager = CharacterManager.Instance;
+        player = characterManager.PlayerObjSelf.GetComponent<PlayerBase>();
 
         currentTime = limitTime;    // 制限時間をセット
     }
@@ -95,7 +96,7 @@ public class TerminalBase : MonoBehaviour
     /// <summary>
     /// 更新処理
     /// </summary>
-    private void Update()
+    protected void Update()
     {
         // Eキー入力かつプレイヤーが端末に触れている場合かつその端末が未使用である場合、端末を起動
         if (Input.GetKeyDown(KeyCode.E) && isUsed == false && isPlayerIn == true)

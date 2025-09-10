@@ -3,6 +3,7 @@
 // Author : Souma Ueno
 //----------------------------------------------------
 using JetBrains.Annotations;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -12,6 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Grpc.Core.Metadata;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
@@ -59,6 +61,16 @@ public class GameManager : MonoBehaviour
     //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
     #endregion
 
+    #region
+
+    // ターミナル関連 (MAXの値はRandで用いるため、上限+1の数)
+    private const int MIN_TERMINAL_NUM = 3;
+    private const int MAX_TERMINAL_NUM = 7;
+    private const int MIN_TERMINAL_ID = 1;
+    private const int MAX_TERMINAL_ID = 6;
+
+    #endregion
+
     #region Instance
     [Header("Instance")]
     public static GameManager Instance
@@ -96,12 +108,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     async void Start()
     {
-        bossTerminal = GameObject.Find("BossTerminal");     // ステージに1つのユニークな端末の為、名前で取得
+        if (GameObject.Find("BossTerminal") != null) // ステージに1つのユニークな端末の為、名前で取得
+            bossTerminal = GameObject.Find("BossTerminal");
+        
         isBossDead = false;
         //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
 
-        if (!RoomModel.Instance) Invoke("StartGame", 0f);
+        if (!RoomModel.Instance) StartGame(LotteryTerminal());
         else
         {
             RoomModel.Instance.OnSameStartSyn += this.StartGame;
@@ -225,8 +239,11 @@ public class GameManager : MonoBehaviour
         //Invoke(nameof(ChengScene), 15f);
     }
 
-    public void StartGame()
+    public void StartGame(List<TerminalData> list)
     {
+        // 端末情報をステージに反映
+        TerminalManager.Instance.SetTerminal(list);
+
         isGameStart = true;
         Debug.Log("同時開始！！");
         foreach(var player in CharacterManager.Instance.PlayerObjs)
@@ -234,5 +251,32 @@ public class GameManager : MonoBehaviour
             player.Value.gameObject.GetComponent<PlayerBase>().CanMove = true;
             player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         }
+    }
+
+    /// <summary>
+    /// 端末データ抽選処理
+    /// Autho:Nakamoto
+    /// </summary>
+    /// <returns></returns>
+    private List<TerminalData> LotteryTerminal()
+    {
+        // ID1,2は固定で設定
+        List<TerminalData> terminals = new List<TerminalData>()
+            {
+                new TerminalData(){ ID = 1, Type = TERMINAL_TYPE.Boss, State = TERMINAL_STATE.Inactive},
+                new TerminalData(){ ID = 2, Type = TERMINAL_TYPE.Speed, State = TERMINAL_STATE.Inactive},
+            };
+
+        // 3以降は抽選
+        int terminalCount = Random.Range(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
+
+        for (int i = 3; i <= terminalCount; i++)
+        {
+            int termID = Random.Range(MIN_TERMINAL_ID, MAX_TERMINAL_ID);
+
+            terminals.Add(new TerminalData() { ID = i, Type = (TERMINAL_TYPE)termID, State = TERMINAL_STATE.Inactive });
+        }
+
+        return terminals;
     }
 }
