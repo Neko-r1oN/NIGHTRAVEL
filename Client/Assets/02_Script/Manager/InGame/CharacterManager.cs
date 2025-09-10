@@ -26,6 +26,7 @@ public class CharacterManager : MonoBehaviour
     #region プレイヤー関連
     [SerializeField] List<Transform> startPoints = new List<Transform>();   // 各プレイヤーの初期位置
     [SerializeField] GameObject charaSwordPrefab;
+    [SerializeField] GameObject charaGunnerPrefab;
     [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
 
@@ -165,19 +166,36 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void GenerateCharacters()
     {
-        foreach (var key in RoomModel.Instance.joinedUserList.Keys)
+        foreach (var joinduser in RoomModel.Instance.joinedUserList)
         {
             var point = startPoints[0];
             startPoints.RemoveAt(0);
 
-            var playerObj = Instantiate(charaSwordPrefab, point.position, Quaternion.identity);
-            playerObjs.Add(key, playerObj);
-
-            if (key == RoomModel.Instance.ConnectionId)
+            if(joinduser.Value.CharacterID == 1)
             {
-                playerObjSelf = playerObj;
-                Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+                var playerObj = Instantiate(charaSwordPrefab, point.position, Quaternion.identity);
+
+                playerObjs.Add(joinduser.Key, playerObj);
+
+                if (joinduser.Key == RoomModel.Instance.ConnectionId)
+                {
+                    playerObjSelf = playerObj;
+                    Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+                }
             }
+            else if(joinduser.Value.CharacterID == 2)
+            {
+                var playerObj = Instantiate(charaGunnerPrefab, point.position, Quaternion.identity);
+
+                playerObjs.Add(joinduser.Key, playerObj);
+
+                if (joinduser.Key == RoomModel.Instance.ConnectionId)
+                {
+                    playerObjSelf = playerObj;
+                    Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+                }
+            }
+
         }
     }
 
@@ -433,6 +451,7 @@ public class CharacterManager : MonoBehaviour
 
         // プレイヤーの情報更新
         var player = playerObjs[masterClientData.PlayerData.ConnectionId].GetComponent<PlayerBase>();
+        if (player == null) Debug.Log("データが入っていません");
         UpdateCharacter(masterClientData.PlayerData, player);
 
         // 敵の情報更新

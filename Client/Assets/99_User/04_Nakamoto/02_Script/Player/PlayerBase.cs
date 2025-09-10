@@ -988,7 +988,8 @@ abstract public class PlayerBase : CharacterBase
 
         Camera.main.gameObject.GetComponent<SpectatorModeManager>().FocusCameraOnAlivePlayer();
 
-        Destroy(this.gameObject);
+        this.gameObject.SetActive(false);
+        //Destroy(this.gameObject);
     }
 
     /// <summary>

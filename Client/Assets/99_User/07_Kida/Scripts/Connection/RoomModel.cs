@@ -250,9 +250,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="conID"></param>
-    public void OnReady(Guid conID)
+    public void OnReady(JoinedUser joinedUser)
     {
-        OnReadySyn(conID);
+        joinedUserList[joinedUser.ConnectionId] = joinedUser;
+        OnReadySyn(joinedUser.ConnectionId);
     }
     #endregion
     #region プレイヤー通知関連
