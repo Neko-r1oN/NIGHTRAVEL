@@ -542,7 +542,12 @@ namespace StreamingHubs
 
             for(int i = 3; i <= terminalCount; i++ )
             {
-                int termID = rand.Next(MIN_TERMINAL_ID, MAX_TERMINAL_ID);
+                int termID = 0;
+                
+                while(termID == 0 || termID == 2 || termID == 6)
+                {   // SpeedとBossは固定で設定しているため、抽選から除外
+                    termID = rand.Next(MIN_TERMINAL_ID, MAX_TERMINAL_ID);
+                }
 
                 terminals.Add(new TerminalData() { ID = i, Type = (TERMINAL_TYPE)termID, State = TERMINAL_STATE.Inactive });
             }
