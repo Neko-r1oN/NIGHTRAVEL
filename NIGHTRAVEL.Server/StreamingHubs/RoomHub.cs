@@ -161,7 +161,7 @@ namespace StreamingHubs
                 joinedUser.CharacterID = characterId; //キャラクターIDを保存
 
                 // ルーム参加者全員に、自分が準備完了した通知を送信
-                this.roomContext.Group.All.OnReady(this.ConnectionId);
+                this.roomContext.Group.All.OnReady(joinedUser);
 
                 foreach (var user in this.roomContext.JoinedUserList)
                 { // 現在の参加者数分ループ

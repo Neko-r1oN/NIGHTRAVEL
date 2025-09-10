@@ -41,7 +41,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// 準備完了通知
         /// </summary>
         /// <param name="conID">接続ID</param>
-        void OnReady(Guid conID);
+        void OnReady(JoinedUser joinedUser);
 
         /// <summary>
         /// ゲーム開始通知

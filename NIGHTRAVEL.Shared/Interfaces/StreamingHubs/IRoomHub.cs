@@ -39,7 +39,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <returns></returns>
-        Task ReadyAsync(int c);
+        Task ReadyAsync(int characterID);
 
         #endregion
 
