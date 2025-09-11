@@ -17,6 +17,11 @@ public class TitleManagerk : MonoBehaviour
 
     void Start()
     {
+        //全てのBGMをフェードアウト
+        BGMManager.Instance.FadeIn(1.0f);
+        //全てのBGMをフェードアウト
+        SEManager.Instance.FadeIn(1.0f);
+
         fade.SetActive(true);               //フェードを有効化
       //  menu.SetActive(false);              //メニューを非表示
         isMenuFlag = false;                 //メニューフラグを無効化
@@ -55,10 +60,7 @@ public class TitleManagerk : MonoBehaviour
            callback: null              //再生終了後の処理
         );
 
-        //全てのBGMをフェードイン
-        BGMManager.Instance.FadeIn(1.0f);
-        //全てのSEをフェードイン
-        SEManager.Instance.FadeIn(13.0f);
+        
     }
 
     public void OpenOptionButton()
@@ -84,7 +86,7 @@ public class TitleManagerk : MonoBehaviour
         
     }
 
-    void CloseMenu()
+    void MuteSound()
     {
        // menu.SetActive(false);
     }
