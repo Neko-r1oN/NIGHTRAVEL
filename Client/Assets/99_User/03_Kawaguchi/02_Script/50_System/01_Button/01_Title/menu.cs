@@ -5,9 +5,7 @@ using UnityEngine.InputSystem;
 
 public class menu : MonoBehaviour
 {
-    Button cube;
-    Button sphere;
-    Button cylinder;
+    Button button;
 
     private Gamepad gamepad;
     private bool isConnected;
@@ -19,7 +17,7 @@ public class menu : MonoBehaviour
         isClick = false;
 
         // ボタンコンポーネントの取得
-        cube = GameObject.Find("/Canvas/Buttons/Button(Solo)").GetComponent<Button>();
+        button = GameObject.Find("/Canvas/Buttons/Button(Solo)").GetComponent<Button>();
 
         // 最初に選択状態にしたいボタンの設定
         //cube.Select();
@@ -48,13 +46,14 @@ public class menu : MonoBehaviour
             {
                 if (isClick)
                 {
-                    cube.Select();
+                    button.Select();
                     isClick = false;
                 }
             }
 
             if (isConnected) return;
-            cube.Select();
+
+            button.Select();
             isConnected = true;
         }
     }
