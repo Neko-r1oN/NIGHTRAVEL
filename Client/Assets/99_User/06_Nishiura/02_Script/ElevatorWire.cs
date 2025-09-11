@@ -3,6 +3,7 @@
 // Author:Nishiura
 // Date:2025/07/08
 //===================
+using DG.Tweening;
 using UnityEngine;
 
 public class ElevatorWire : ObjectBase
@@ -21,10 +22,18 @@ public class ElevatorWire : ObjectBase
         Debug.Log(Elevator.GetComponent<Rigidbody2D>().bodyType);
     }
 
-    public override void FadeFragment(Transform fragment)
+    override public void DestroyFragment(Transform obj)
     {
-        throw new System.NotImplementedException();
     }
+
+    /// <summary>
+    /// 壊れるオブジェクトの破片をフェードする関数
+    /// </summary>
+    /// <param name="fragment">破片</param>
+    override public void FadeFragment(Transform fragment)
+    {
+    }
+
     public override void TurnOnPower()
     {
         throw new System.NotImplementedException();
