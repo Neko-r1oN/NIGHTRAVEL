@@ -45,6 +45,46 @@ public class EnemyAnimationEventController : MonoBehaviour
 
     #endregion
 
+    #region 攻撃パターン３
+
+    /// <summary>
+    /// 攻撃のイベント
+    /// </summary>
+    public void OnAttack3Event()
+    {
+        m_EnemyBase.OnAttackAnim3Event();
+    }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント
+    /// </summary>
+    public void OnEndAttack3Event()
+    {
+        m_EnemyBase.OnEndAttackAnim3Event();
+    }
+
+    #endregion
+
+    #region 攻撃パターン４
+
+    /// <summary>
+    /// 攻撃のイベント
+    /// </summary>
+    public void OnAttack4Event()
+    {
+        m_EnemyBase.OnAttackAnim4Event();
+    }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント
+    /// </summary>
+    public void OnEndAttack4Event()
+    {
+        m_EnemyBase.OnEndAttackAnim4Event();
+    }
+
+    #endregion
+
     /// <summary>
     /// 移動するアニメイトイベント
     /// </summary>

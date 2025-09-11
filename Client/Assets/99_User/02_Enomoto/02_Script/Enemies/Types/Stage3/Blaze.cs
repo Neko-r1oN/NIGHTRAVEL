@@ -1,8 +1,7 @@
 //**************************************************
-//  [敵] カルカスのクラス
+//  [敵] ブレイズのクラス
 //  Author:r-enomoto
 //**************************************************
-using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using System;
@@ -13,7 +12,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
-public class Carcass_Old : EnemyBase
+public class Blaze : EnemyBase
 {
     /// <summary>
     /// アニメーションID
@@ -22,11 +21,8 @@ public class Carcass_Old : EnemyBase
     {
         Spawn = 0,
         Idle,
-        RotateAttack,
-        RotateAttack_Rotate,
-        RotateAttack_Finish,
-        MeleeAttack,
-        Run,
+        Attack_Laser,
+        Attack_Punch,
         Hit,
         Dead,
     }
@@ -37,10 +33,11 @@ public class Carcass_Old : EnemyBase
     public enum DECIDE_TYPE
     {
         Waiting = 1,
-        RotateAttack,
-        MeleeAttack,
+        Attack_Laser,
+        Attack_Punch,
+        AirMovement,
         Tracking,
-        AirMovement
+        BackOff,
     }
     DECIDE_TYPE nextDecide = DECIDE_TYPE.Waiting;
 
@@ -50,9 +47,15 @@ public class Carcass_Old : EnemyBase
     public enum COROUTINE
     {
         NextDecision,
-        RotateAnim,
+        BackOff,
         AttackCooldown,
     }
+
+    #region 攻撃関連
+    [Foldout("攻撃関連")]
+    [SerializeField]
+    Transform aimTransform; // AIM部分
+    #endregion
 
     #region チェック関連
     // 近距離攻撃の範囲
@@ -79,10 +82,17 @@ public class Carcass_Old : EnemyBase
     // 落下チェック
     [Foldout("チェック関連")]
     [SerializeField]
-    Transform fallCheck;
+    Transform frontFallCheck;
     [Foldout("チェック関連")]
     [SerializeField]
-    Vector2 fallCheckRange;
+    Vector2 frontFallCheckRange;
+
+    [Foldout("チェック関連")]
+    [SerializeField]
+    Transform backFallCheck;
+    [Foldout("チェック関連")]
+    [SerializeField]
+    Vector2 backFallCheckRange;
     #endregion
 
     #region 抽選関連
@@ -91,26 +101,17 @@ public class Carcass_Old : EnemyBase
     bool endDecision;
     #endregion
 
-    #region ターゲットと離す距離
-    readonly float disToTargetMin = 0.25f;
-    #endregion
-
     #region オリジナル
-    [Foldout("オリジナル")]
-    [SerializeField]
-    GameObject selfCurledObj;
-
-    [Foldout("オリジナル")]
-    [SerializeField]
-    float rotateSpeed;
+    EnemyProjectileChecker projectileChecker;
     #endregion
 
     protected override void Start()
     {
+        base.Start();
+        projectileChecker = aimTransform.GetComponent<EnemyProjectileChecker>();
         isAttacking = false;
         doOnceDecision = true;
         NextDecision();
-        base.Start();
     }
 
     /// <summary>
@@ -126,21 +127,24 @@ public class Carcass_Old : EnemyBase
             {
                 case DECIDE_TYPE.Waiting:
                     Idle();
-                    NextDecision(1f);
+                    NextDecision();
                     break;
-                case DECIDE_TYPE.RotateAttack:
-                    Attack(nextDecide);
+                case DECIDE_TYPE.Attack_Laser:
+                    AttackLaser();
                     break;
-                case DECIDE_TYPE.MeleeAttack:
-                    Attack(nextDecide);
-                    break;
-                case DECIDE_TYPE.Tracking:
-                    Tracking();
-                    NextDecision(0);
+                case DECIDE_TYPE.Attack_Punch:
+                    AttackPunch();
                     break;
                 case DECIDE_TYPE.AirMovement:
                     AirMovement();
-                    NextDecision(0);
+                    NextDecision(false);
+                    break;
+                case DECIDE_TYPE.Tracking:
+                    Tracking();
+                    NextDecision(false);
+                    break;
+                case DECIDE_TYPE.BackOff:
+                    StartBackOff();
                     break;
             }
         }
@@ -161,15 +165,20 @@ public class Carcass_Old : EnemyBase
     /// 抽選処理を呼ぶ
     /// </summary>
     /// <param name="time"></param>
-    void NextDecision(float? time = null)
+    void NextDecision(bool isRndTime = true, float? rndMaxTime = null)
     {
-        if (time == null) time = UnityEngine.Random.Range(0.1f, decisionTimeMax);
+        float time = 0;
+        if (isRndTime)
+        {
+            if (rndMaxTime == null) rndMaxTime = decisionTimeMax;
+            time = UnityEngine.Random.Range(0.1f, (float)rndMaxTime);
+        }
 
         // 実行していなければ、行動の抽選のコルーチンを開始
         string key = COROUTINE.NextDecision.ToString();
         if (!ContaintsManagedCoroutine(key))
         {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine((float)time, () => { RemoveAndStopCoroutineByKey(key); }));
+            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
             managedCoroutines.Add(key, coroutine);
         }
     }
@@ -185,44 +194,35 @@ public class Carcass_Old : EnemyBase
 
         #region 各行動パターンの重み付け
 
+        const float punchDist = 4f;
+        bool canAttackPunch = canAttack && !sightChecker.IsObstructed() && disToTarget <= punchDist;
+        bool canAttackLaser = canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed() && 
+            disToTarget >= punchDist && disToTarget <= attackDist;
         Dictionary<DECIDE_TYPE, int> weights = new Dictionary<DECIDE_TYPE, int>();
-        if (isSpawn)
-        {
-            weights[DECIDE_TYPE.Waiting] = 100;
-        }
-        else if (canChaseTarget && !IsGround())
-        {
-            weights[DECIDE_TYPE.AirMovement] = 100;
-        }
-        else if (canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist)
-        {
-            weights[DECIDE_TYPE.Waiting] = 15;
 
-            if (disToTarget <= attackDist / 4) 
-            {
-                weights[DECIDE_TYPE.RotateAttack] = 25;
-                weights[DECIDE_TYPE.MeleeAttack] = 50;
-            }
-            else if (disToTarget <= attackDist)
-            {
-                weights[DECIDE_TYPE.RotateAttack] = 50;
-                weights[DECIDE_TYPE.MeleeAttack] = 25;
-            }
-        }
-        else if (moveSpeed > 0 && canChaseTarget && Mathf.Abs(disToTargetX) > disToTargetMin)
+        if (canChaseTarget && !IsGround())
         {
-            if (canChaseTarget && IsWall() && !canJump)
-            {
-                weights[DECIDE_TYPE.Waiting] = 50;
-            }
-            else if (canChaseTarget && target)
-            {
-                weights[DECIDE_TYPE.Tracking] = 50;
-            }
+            weights[DECIDE_TYPE.AirMovement] = 10;
         }
-        else weights[DECIDE_TYPE.Waiting] = 100;
+        else if (canAttackPunch || canAttackLaser)
+        {
+            bool wasAttacking = nextDecide == DECIDE_TYPE.Attack_Laser || nextDecide == DECIDE_TYPE.Attack_Punch;
+            if(!IsBackFall()) weights[DECIDE_TYPE.BackOff] = wasAttacking ? 15 : 5;
 
-        weights.Values.OrderBy(x => x); ;  // 昇順に並び替え
+            if (canAttackPunch) weights[DECIDE_TYPE.Attack_Punch] = wasAttacking ? 5 : 15;
+            else if(canAttackLaser) weights[DECIDE_TYPE.Attack_Laser] = wasAttacking ? 5 : 15;
+        }
+        else if (canChaseTarget && target)
+        {
+            weights[DECIDE_TYPE.Tracking] = 10;
+        }
+        else
+        {
+            weights[DECIDE_TYPE.Waiting] = 10;
+        }
+
+        // valueを基準に昇順で並べ替え
+        var sortedWeights = weights.OrderBy(x => x.Value);
         #endregion
 
         // 全体の長さを使って抽選
@@ -231,7 +231,7 @@ public class Carcass_Old : EnemyBase
 
         // 抽選した値で次の行動パターンを決定する
         int currentWeight = 0;
-        foreach(var weight in weights)
+        foreach (var weight in sortedWeights)
         {
             currentWeight += weight.Value;
             if (currentWeight >= randomDecision)
@@ -250,56 +250,28 @@ public class Carcass_Old : EnemyBase
     #region 攻撃処理関連
 
     /// <summary>
-    /// 攻撃処理
+    /// レーザーによる攻撃処理開始
     /// </summary>
-    public void Attack(DECIDE_TYPE attackType)
+    void AttackLaser()
     {
-        if(attackType == DECIDE_TYPE.RotateAttack || attackType == DECIDE_TYPE.MeleeAttack)
-        {
-            isAttacking = true;
-            m_rb2d.linearVelocity = Vector2.zero;
-
-            switch (attackType)
-            {
-                case DECIDE_TYPE.RotateAttack:
-                    SetAnimId((int)ANIM_ID.RotateAttack);
-                    break;
-                case DECIDE_TYPE.MeleeAttack:
-                    SetAnimId((int)ANIM_ID.MeleeAttack);
-                    break;
-            }
-        }
-        else
-        {
-            NextDecision(0);
-        }
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_Laser);
     }
 
     /// <summary>
-    /// [Animationイベントからの呼び出し] 回転攻撃処理
+    /// パンチによる攻撃処理開始
     /// </summary>
-
-    public override void OnAttackAnimEvent()
+    void AttackPunch()
     {
-        m_rb2d.linearVelocity = Vector3.zero;
-        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-
-        // 実行していなければ、回転攻撃のコルーチンを開始
-        string cooldownKey = COROUTINE.RotateAnim.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(RotateAttackCoroutine(() =>
-            {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_Punch);
     }
 
     /// <summary>
-    /// [Animationイベントからの呼び出し] 近接攻撃処理
+    /// [Animationイベントからの呼び出し] パンチ処理
     /// </summary>
-
     public override void OnAttackAnim2Event()
     {
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
@@ -310,60 +282,16 @@ public class Carcass_Old : EnemyBase
         {
             if (collidersEnemies[i].gameObject.tag == "Player")
             {
-                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
+                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Big, applyEffect);
             }
-        }
-
-        // 実行していなければ、クールダウンのコルーチンを開始
-        string cooldownKey = COROUTINE.AttackCooldown.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
         }
     }
 
     /// <summary>
-    /// 回転攻撃のコルーチン
+    /// [Animationイベントからの呼び出し] 攻撃クールダウン処理
     /// </summary>
-    /// <returns></returns>
-    IEnumerator RotateAttackCoroutine(Action onFinished)
+    public override void OnEndAttackAnimEvent()
     {
-        bool isAttacked = false;
-        float startAttackSec = 2f;
-        float currentSec = 0;
-
-        while (true)
-        {
-            currentSec += Time.deltaTime;
-            //selfCurledObj.transform.Rotate(0, 0, rotateSpeed * Time.deltaTime);
-
-            if (currentSec >= startAttackSec && !isAttacked)
-            {
-                isAttacked = true;
-
-                // ターゲットのいる方向に突進
-                m_rb2d.bodyType = RigidbodyType2D.Dynamic;
-                m_rb2d.linearVelocity = Vector3.zero;
-                m_rb2d.AddForce((target.transform.position - transform.position).normalized * jumpPower * 1.2f, ForceMode2D.Impulse);
-            }
-            else if (currentSec >= startAttackSec / 2 && !isAttacked)
-            {
-                // 空中で静止
-                m_rb2d.bodyType = RigidbodyType2D.Static;
-            }
-
-            if (IsGround() && isAttacked)
-            {
-                SetAnimId((int)ANIM_ID.RotateAttack_Finish);
-                break;
-            }
-
-            yield return null;
-        }
-
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
         if (!ContaintsManagedCoroutine(cooldownKey))
@@ -373,8 +301,6 @@ public class Carcass_Old : EnemyBase
             }));
             managedCoroutines.Add(cooldownKey, coroutine);
         }
-
-        onFinished?.Invoke();
     }
 
     /// <summary>
@@ -384,9 +310,9 @@ public class Carcass_Old : EnemyBase
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
         isAttacking = true;
+        Idle();
         yield return new WaitForSeconds(time);
         isAttacking = false;
-        Idle();
         NextDecision();
         onFinished?.Invoke();
     }
@@ -400,9 +326,9 @@ public class Carcass_Old : EnemyBase
     /// </summary>
     protected override void Tracking()
     {
-        SetAnimId((int)ANIM_ID.Run);
+        SetAnimId((int)ANIM_ID.Idle);
         Vector2 speedVec = Vector2.zero;
-        if (IsFall() || IsWall())
+        if (IsFrontFall() || IsWall())
         {
             speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
         }
@@ -419,13 +345,70 @@ public class Carcass_Old : EnemyBase
     /// </summary>
     void AirMovement()
     {
-        SetAnimId((int)ANIM_ID.Run);
+        SetAnimId((int)ANIM_ID.Idle);
 
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
         Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
         Vector3 velocity = Vector3.zero;
         m_rb2d.linearVelocity = Vector3.SmoothDamp(m_rb2d.linearVelocity, targetVelocity, ref velocity, 0.05f);
+    }
+
+    /// <summary>
+    /// BackOffCoroutineを呼び出す
+    /// </summary>
+    void StartBackOff()
+    {
+        float coroutineTime = UnityEngine.Random.Range(1f, 3f);
+
+        // 実行していなければ、クールダウンのコルーチンを開始
+        string cooldownKey = COROUTINE.BackOff.ToString();
+        if (!ContaintsManagedCoroutine(cooldownKey))
+        {
+            Coroutine coroutine = StartCoroutine(BackOffCoroutine(coroutineTime, () => {
+                RemoveAndStopCoroutineByKey(cooldownKey);
+            }));
+            managedCoroutines.Add(cooldownKey, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// 距離をとり続けるコルーチン
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    IEnumerator BackOffCoroutine(float time, Action onFinished)
+    {
+        float waitSec = 0.1f;
+        while (time > 0)
+        {
+            time -= waitSec;
+            BackOff();
+            yield return new WaitForSeconds(waitSec);
+        }
+
+        NextDecision(false);
+        onFinished?.Invoke();
+    }
+
+    /// <summary>
+    /// 距離をとる
+    /// </summary>
+    void BackOff()
+    {
+        SetAnimId((int)ANIM_ID.Idle);
+
+        Vector2 speedVec = Vector2.zero;
+        if (IsBackFall())
+        {
+            speedVec = new Vector2(0f, m_rb2d.linearVelocity.y);
+        }
+        else
+        {
+            float distToPlayer = target.transform.position.x - this.transform.position.x;
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -0.8f, m_rb2d.linearVelocity.y);
+        }
+        m_rb2d.linearVelocity = speedVec;
     }
 
     #endregion
@@ -439,7 +422,6 @@ public class Carcass_Old : EnemyBase
     {
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
-        m_rb2d.bodyType = RigidbodyType2D.Dynamic;
     }
 
     /// <summary>
@@ -454,19 +436,6 @@ public class Carcass_Old : EnemyBase
     #endregion
 
     #region テクスチャ・アニメーション関連
-
-    /// <summary>
-    /// スポーンアニメメーション開始時
-    /// </summary>
-    public override void OnSpawnAnimEvent()
-    {
-        base.OnSpawnAnimEvent();
-        SetAnimId((int)ANIM_ID.Spawn);
-
-        // 前に飛び込む
-        Vector2 jumpVec = new Vector2(moveSpeed * 1.2f * TransformUtils.GetFacingDirection(transform), jumpPower);
-        m_rb2d.linearVelocity = jumpVec;
-    }
 
     /// <summary>
     /// スポーンアニメーションが終了したとき
@@ -489,7 +458,7 @@ public class Carcass_Old : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Carcass_Damage_Animation", 0, 0);
+                animator.Play("Hit_Blaze2", 0, 0);
                 break;
             default:
                 break;
@@ -510,6 +479,8 @@ public class Carcass_Old : EnemyBase
         {
             target = sightChecker.GetTargetInSight();
         }
+
+        DecideBehavior();
     }
 
     #endregion
@@ -526,12 +497,21 @@ public class Carcass_Old : EnemyBase
     }
 
     /// <summary>
-    /// 落下中かどうか
+    /// 目の前に足場がないかどうか
     /// </summary>
     /// <returns></returns>
-    bool IsFall()
+    bool IsFrontFall()
     {
-        return !Physics2D.OverlapBox(fallCheck.position, fallCheckRange, 0, terrainLayerMask);
+        return !Physics2D.OverlapBox(frontFallCheck.position, frontFallCheckRange, 0, terrainLayerMask);
+    }
+
+    /// <summary>
+    /// 後ろに足場がないかどうか
+    /// </summary>
+    /// <returns></returns>
+    bool IsBackFall()
+    {
+        return !Physics2D.OverlapBox(backFallCheck.position, frontFallCheckRange, 0, terrainLayerMask);
     }
 
     /// <summary>
@@ -583,10 +563,11 @@ public class Carcass_Old : EnemyBase
         }
 
         // 落下チェック
-        if (fallCheck)
+        if (frontFallCheck && backFallCheck)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(fallCheck.position, fallCheckRange);
+            Gizmos.DrawWireCube(frontFallCheck.position, frontFallCheckRange);
+            Gizmos.DrawWireCube(backFallCheck.position, backFallCheckRange);
         }
     }
 

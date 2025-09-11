@@ -73,10 +73,10 @@
 //    // 落下チェック
 //    [Foldout("チェック関連")]
 //    [SerializeField] 
-//    Transform fallCheck;
+//    Transform frontFallCheck;
 //    [Foldout("チェック関連")]
 //    [SerializeField] 
-//    float fallCheckRange = 0.9f;
+//    float frontFallCheckRange = 0.9f;
 //    #endregion
 
 //    #region ターゲットとの距離
@@ -121,7 +121,7 @@
 //            }
 //            else if (canChaseTarget && target)
 //            {
-//                Tracking();
+//                Teleport();
 //            }
 //            else if (canPatrol)
 //            {
@@ -235,7 +235,7 @@
 //    /// <summary>
 //    /// 追跡する処理
 //    /// </summary>
-//    protected override void Tracking()
+//    protected override void Teleport()
 //    {
 //        SetAnimId((int)ANIM_ID.Run);
 //        float distToPlayer = target.transform.position.x - this.transform.position.x;
@@ -249,7 +249,7 @@
 //    protected override void Patorol()
 //    {
 //        SetAnimId((int)ANIM_ID.Run);
-//        if (IsFall() || IsWall()) Flip();
+//        if (IsFrontFall() || IsWall()) Flip();
 //        Vector2 speedVec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, m_rb2d.linearVelocity.y);
 //        m_rb2d.linearVelocity = speedVec;
 //    }
@@ -306,9 +306,9 @@
 //    /// 落下中かどうか
 //    /// </summary>
 //    /// <returns></returns>
-//    bool IsFall()
+//    bool IsFrontFall()
 //    {
-//        return !Physics2D.OverlapCircle(fallCheck.position, fallCheckRange, terrainLayerMask);
+//        return !Physics2D.OverlapCircle(frontFallCheck.position, frontFallCheckRange, terrainLayerMask);
 //    }
 
 //    /// <summary>
@@ -366,10 +366,10 @@
 //        }
 
 //        // 落下チェック
-//        if (fallCheck)
+//        if (frontFallCheck)
 //        {
 //            Gizmos.color = Color.green;
-//            Gizmos.DrawWireSphere(fallCheck.position, fallCheckRange);
+//            Gizmos.DrawWireSphere(frontFallCheck.position, frontFallCheckRange);
 //        }
 //    }
 

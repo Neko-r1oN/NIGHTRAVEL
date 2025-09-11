@@ -92,7 +92,7 @@
 //        }
 //        else if (moveSpeed > 0 && canChaseTarget && target)
 //        {
-//            Tracking();
+//            Teleport();
 //        }
 //        else if (moveSpeed > 0 && canPatrol && !isPatrolPaused)
 //        {
@@ -167,7 +167,7 @@
 //    /// <summary>
 //    /// ’ÇÕ‚·‚éˆ—
 //    /// </summary>
-//    protected override void Tracking()
+//    protected override void Teleport()
 //    {
 //        StopPatorol();
 //        chaseAI.DoChase(target);

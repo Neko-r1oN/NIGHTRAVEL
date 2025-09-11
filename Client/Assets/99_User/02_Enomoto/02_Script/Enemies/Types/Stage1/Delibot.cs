@@ -169,7 +169,7 @@ public class Delibot : EnemyBase
         if (canAttack && projectileChecker.CanFireProjectile(target) && !sightChecker.IsObstructed())
         {
             int weightRate = nextDecide == DECIDE_TYPE.Attack ? 3 : 1;
-            weights[DECIDE_TYPE.Attack] = 10 / weightRate;
+            if (!isAttacking) weights[DECIDE_TYPE.Attack] = 10 / weightRate;
             weights[DECIDE_TYPE.RndMove] = 5 * weightRate;
         }
         else if (target)
@@ -290,7 +290,7 @@ public class Delibot : EnemyBase
                 // 弾の生成リクエスト
                 await RoomModel.Instance.ShootBulletAsync(PROJECTILE_TYPE.BoxBullet, debuffs, power, aimTransform.position, shootVec, Quaternion.identity);
             }
-            else
+            else if (!RoomModel.Instance)
             {
                 var bulletObj = Instantiate(boxBulletPrefab, aimTransform.position, Quaternion.identity);
                 bulletObj.GetComponent<ProjectileBase>().Init(debuffs, power);
@@ -317,7 +317,6 @@ public class Delibot : EnemyBase
         yield return new WaitForSeconds(time);
         Idle();
         isAttacking = false;
-        doOnceDecision = true;
         NextDecision();
         onFinished?.Invoke();
     }

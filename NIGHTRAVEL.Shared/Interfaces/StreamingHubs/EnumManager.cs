@@ -81,6 +81,10 @@ namespace Shared.Interfaces.StreamingHubs
         {
             BoxBullet,
             MissileBullet,
+            NodeBullet_N,
+            NodeBullet_O,
+            NodeBullet_D,
+            NodeBullet_E,
         }
 
         /// <summary>

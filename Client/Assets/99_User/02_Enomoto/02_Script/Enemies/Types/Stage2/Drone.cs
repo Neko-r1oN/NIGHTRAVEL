@@ -467,6 +467,11 @@ public class Drone : EnemyBase
             _ => DECIDE_TYPE.Waiting,
         };
 
+        if (target == null)
+        {
+            target = sightChecker.GetTargetInSight();
+        }
+
         DecideBehavior();
     }
 
