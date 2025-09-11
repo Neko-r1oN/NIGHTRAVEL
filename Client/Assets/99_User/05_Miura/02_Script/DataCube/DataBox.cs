@@ -25,33 +25,29 @@ public class DataBox : Item
     // Update is called once per frame
     void Update()
     {
-        //プレイヤーがデータボックスを調べたら
-        if (isTouch == true && Input.GetKey(KeyCode.E) && isOpened == false)
-        {
-            isOpened = true;
+        if (isTouch == true && isOpened == false)
+        {//データボックスに触れた&&データボックスを開けていなかったら
+            isOpened = true; //データボックスを開けたことにする
             ItemManager.Instance.GetItemRequest(GetComponent<Item>(), CharacterManager.Instance.PlayerObjSelf);
         }
     }
 
     public override void OnGetItem(bool isSelfAcquired)
     {
-        Instantiate(openObj, new Vector2(this.transform.position.x, this.transform.position.y), this.transform.rotation);
-        Destroy(gameObject);
+        Instantiate(openObj, new Vector2(this.transform.position.x, this.transform.position.y), this.transform.rotation);//openObjを生成
+        Destroy(gameObject); //データボックスを消す
     }
 
+    /// <summary>
+    /// データボックス開封処理
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
-        {
-            isTouch= true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
-        {
-            isTouch = false;
+        {//プレイヤーがデータボックスに触れたら
+            ItemManager.Instance.GetItemRequest(GetComponent<Item>(), collision.gameObject);
+            isTouch = true; //データボックスに触れたことにする
         }
     }
 }
