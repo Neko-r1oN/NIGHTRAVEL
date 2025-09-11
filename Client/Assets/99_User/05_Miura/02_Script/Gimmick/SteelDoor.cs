@@ -45,6 +45,7 @@ public class SteelDoor : GimmickBase
 
     public override void TurnOnPower()
     {
+        if (isPowerd) return;   // ‚·‚Å‚É‹N“®‚µ‚Ä‚ ‚éê‡‚Íˆ—‚µ‚È‚¢
         isPowerd = true;
     }
 
