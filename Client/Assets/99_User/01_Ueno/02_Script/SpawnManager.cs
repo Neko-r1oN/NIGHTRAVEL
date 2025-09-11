@@ -327,11 +327,14 @@ public class SpawnManager : MonoBehaviour
     /// <summary>
     /// 端末操作時の敵生成処理
     /// </summary>
-    public void TerminalGenerateEnemy(int num, Vector2 minPos, Vector2 maxPos)
+    public void TerminalGenerateEnemy(int generateNum, int termID , Vector2 minPos, Vector2 maxPos)
     {
+        // マスタクライアント以外は処理をしない
+        if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+
         int enemyCnt = 0;
 
-        while (enemyCnt < num)
+        while (enemyCnt < generateNum)
         {
             // 生成する敵の抽選
             var emitResult = EmitEnemy(emitEnemyTypes.ToArray());
@@ -353,9 +356,9 @@ public class SpawnManager : MonoBehaviour
             {
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
                 Vector3 scale = Vector3.one;    // 一旦このまま
-                var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+                var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType, true, termID);
 
-                SpawnEnemyRequest(null, spawnData);
+                SpawnEnemyRequest(spawnData);
 
                 // 端末から出た敵をリストに追加
                 terminalEnemyList = CharacterManager.Instance.GetEnemiesBySpawnType(EnumManager.SPAWN_ENEMY_TYPE.ByTerminal);
@@ -484,7 +487,7 @@ public class SpawnManager : MonoBehaviour
     /// <param name="positions"></param>
     /// <param name="canPromoteToElite"></param>
     /// <returns></returns>
-    public SpawnEnemyData CreateSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType, bool canPromoteToElite = true)
+    public SpawnEnemyData CreateSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType, bool canPromoteToElite = true, int? termID = null)
     {
         if (entryData.EnemyType == null)
         {
@@ -523,6 +526,7 @@ public class SpawnManager : MonoBehaviour
             Scale = enemyScale,
             SpawnType = spawnType,
             EliteType = eliteType,
+            TerminalID = termID.HasValue ? termID.Value : 0,
         };
     }
 
@@ -585,14 +589,20 @@ public class SpawnManager : MonoBehaviour
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
         enemy.PromoteToElite(eliteType);
         enemy.UniqueId = spawnEnemyData.UniqueId;
-        CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(spawnEnemyData.UniqueId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType));
+
+        var spawnedEnemy = (spawnEnemyData.SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)? 
+            new SpawnedEnemy(spawnEnemyData.UniqueId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType, spawnEnemyData.TerminalID) : 
+            new SpawnedEnemy(spawnEnemyData.UniqueId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType);
+
+        CharacterManager.Instance.AddEnemiesToList(spawnedEnemy);
+
 
         #region ワームの各パーツ用の処理
         if (enemy.EnemyTypeId == ENEMY_TYPE.FullMetalWorm)
         {
             // ワームを生成する際、ワームの各パーツも生成した敵のリストに含める
             List<FullMetalBody> bodys = new List<FullMetalBody>(enemyObj.GetComponentsInChildren<FullMetalBody>(true));
-            foreach(var body in bodys)
+            foreach (var body in bodys)
             {
                 CharacterManager.Instance.AddEnemiesToList(new SpawnedEnemy(body.UniqueId, body.gameObject, body, spawnEnemyData.SpawnType));
             }

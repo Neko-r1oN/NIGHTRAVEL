@@ -48,5 +48,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// 生成タイプ
         /// </summary>
         public EnumManager.SPAWN_ENEMY_TYPE SpawnType { get; set; }
+
+        /// <summary>
+        /// 端末ID
+        /// </summary>
+        [Key(6)]
+        public int TerminalID { get; set; }
     }
 }

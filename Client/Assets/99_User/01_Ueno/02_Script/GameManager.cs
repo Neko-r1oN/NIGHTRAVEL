@@ -262,11 +262,16 @@ public class GameManager : MonoBehaviour
             };
 
         // 3以降は抽選
-        int terminalCount = Random.Range(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
+        int terminalCount = Random.Range(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM);   // 3～6個の端末を抽選
 
         for (int i = 3; i <= terminalCount; i++)
         {
-            int termID = Random.Range(MIN_TERMINAL_ID, MAX_TERMINAL_ID);
+            int termID = 0;
+
+            while (termID == 0 || termID == 2 || termID == 6)
+            {   // SpeedとBossは固定で設定しているため、抽選から除外
+                termID = Random.Range(MIN_TERMINAL_ID, MAX_TERMINAL_ID);
+            }
 
             terminals.Add(new TerminalData() { ID = i, Type = (TERMINAL_TYPE)termID, State = TERMINAL_STATE.Inactive });
         }
