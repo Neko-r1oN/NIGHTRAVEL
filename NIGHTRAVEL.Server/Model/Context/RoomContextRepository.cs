@@ -28,6 +28,20 @@ namespace NIGHTRAVEL.Server.Model.Context
             }
             
         }
+
+        //ゲームコンテキストの全取得
+        public ConcurrentDictionary<string, RoomContext> GetALLContext()
+        {
+            if(contexts != null)
+            {
+                return contexts;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         //ゲームコンテキストの削除
         public void RemoveContext(string roomName)
         {

@@ -17,11 +17,14 @@ using UnityEngine.UI;
 public class MatchingManager : MonoBehaviour
 {
     #region [SerializeField]：木田晃輔
-    [SerializeField] GameObject userPrefab; //ユーザーの情報
+    //[SerializeField] GameObject userPrefab; //ユーザーの情報
     [SerializeField] Text inputFieldRoomId; //ルームのID(デバッグ用)
-    [SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
-    [SerializeField] Text inputFieldCharacterId; //ユーザーのID(デバッグ用)
+    //[SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
+    //[SerializeField] Text inputFieldCharacterId; //キャラID(デバッグ用)
+    [SerializeField] int userId;//新マッチング用のユーザーID
+    [SerializeField] int characterId;//新マッチング用のキャラクターID
     #endregion
+
     UserModel userModel;                    //ユーザーModel
     JoinedUser joinedUser;                  //このクライアントユーザーの情報
 
@@ -65,8 +68,8 @@ public class MatchingManager : MonoBehaviour
     public async void JoinRoom()
     {
 
-        int userId;
-        int.TryParse(inputFieldUserId.text, out userId);
+        //int userId;
+        //int.TryParse(inputFieldUserId.text, out userId);
         string roomName=inputFieldRoomId.text;
         
         //RoomModel.Instanceの入室同期を呼び出す
@@ -92,7 +95,7 @@ public class MatchingManager : MonoBehaviour
     public async void Ready()
     {
         //キャラクターを送る
-        int character = Int32.Parse(inputFieldCharacterId.text);
+        int character = characterId;
         await RoomModel.Instance.ReadyAsync(character);
     }
     #endregion
@@ -108,7 +111,10 @@ public class MatchingManager : MonoBehaviour
         {
             //入室したときの処理を書く
             Debug.Log(data.UserData.Name + "が入室しました。");
+
         }
+
+        
         
     }
 

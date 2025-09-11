@@ -41,6 +41,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     #region システム
 
+    //ルーム検索通知
+    public Action<string,string> OnSearchedRoom {  get; set; }
+
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
 
@@ -216,6 +219,18 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     #region 通知の処理
     #region 入室・退室・準備完了通知
+
+    /// <summary>
+    /// ルーム検索通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="roomName"></param>
+    /// <param name="userName"></param>
+    public void OnSearchRoom(string roomName,string userName)
+    {
+        OnSearchedRoom(roomName,userName);
+    }
+
     /// <summary>
     /// 入室通知(IRoomHubReceiverインターフェイスの実装)
     /// Aughter:木田晃輔

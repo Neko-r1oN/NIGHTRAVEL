@@ -11,6 +11,7 @@ using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace StreamingHubs
     public class RoomHub(RoomContextRepository roomContextRepository) : StreamingHubBase<IRoomHub, IRoomHubReceiver>, IRoomHub
     {
         //コンテキスト定義
+        private ConcurrentDictionary<string, RoomContext> roomContexts;
         private RoomContext roomContext;
         RoomContextRepository roomContextRepos;
 
@@ -49,6 +51,30 @@ namespace StreamingHubs
         #endregion
 
         #region マッチングしてからゲーム開始までの処理
+        /// <summary>
+        /// ルーム検索
+        /// Aughtor:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        public async Task SearchRoomAsync()
+        {
+            lock(roomContextRepository)
+            {//同時に生成しないように排他制御
+
+                //すべてのルーム取得
+                this.roomContexts = roomContextRepository.GetALLContext();
+
+                //１個ずつルームを通知する
+                foreach(var context in roomContexts)
+                {
+                    this.roomContext = context.Value;
+                    this.roomContext.Group.Except([this.ConnectionId]).OnSearchRoom(roomContext.Name, 
+                                                                                    roomContext.JoinedUserList[this.ConnectionId].UserData.Name);
+                }
+            }
+
+        }
+
         /// <summary>
         /// 入室処理
         /// Author:Kida

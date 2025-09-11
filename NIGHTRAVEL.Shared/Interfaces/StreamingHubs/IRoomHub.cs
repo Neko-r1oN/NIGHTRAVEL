@@ -5,6 +5,7 @@
 
 using MagicOnion;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,13 @@ namespace Shared.Interfaces.StreamingHubs
         //ここにクライアント～サーバー定義
 
         #region 入室からゲーム開始まで
+
+        /// <summary>
+        /// ルーム検索
+        /// </summary>
+        /// <returns></returns>
+        Task SearchRoomAsync();
+
         /// <summary>
         /// ユーザー入室
         /// Author:Kida
