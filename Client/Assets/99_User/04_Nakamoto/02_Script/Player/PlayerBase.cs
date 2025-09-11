@@ -517,7 +517,7 @@ abstract public class PlayerBase : CharacterBase
             m_Rigidbody2D.linearVelocity = new Vector2(0, zipSpeed);
             m_Rigidbody2D.gravityScale = 0f;
         }
-        else
+        else if(canMove)
         {
             m_Rigidbody2D.gravityScale = gravity;
         }

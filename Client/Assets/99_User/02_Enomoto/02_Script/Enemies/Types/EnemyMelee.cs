@@ -34,7 +34,7 @@
 
 //    // 落下チェック
 //    [SerializeField] Transform frontFallCheck;
-//    [SerializeField] float fallCheckRange = 0.9f;
+//    [SerializeField] float frontFallCheckRange = 0.9f;
 //    #endregion
 
 //    #region ターゲットと離す距離
@@ -71,7 +71,7 @@
 //            }
 //            else if (canChaseTarget && target)
 //            {
-//                Tracking();
+//                Teleport();
 //            }
 //            else if (canPatrol)
 //            {
@@ -123,7 +123,7 @@
 //    /// <summary>
 //    /// 追跡する処理
 //    /// </summary>
-//    protected override void Tracking()
+//    protected override void Teleport()
 //    {
 //        SetAnimId((int)ANIM_ID.Run);
 //        Vector2 speedVec = Vector2.zero;
@@ -212,7 +212,7 @@
 //    /// <returns></returns>
 //    bool IsFrontFall()
 //    {
-//        return !Physics2D.OverlapCircle(frontFallCheck.position, fallCheckRange, terrainLayerMask);
+//        return !Physics2D.OverlapCircle(frontFallCheck.position, frontFallCheckRange, terrainLayerMask);
 //    }
 
 //    /// <summary>
@@ -267,7 +267,7 @@
 //        if (frontFallCheck)
 //        {
 //            Gizmos.color = Color.green;
-//            Gizmos.DrawWireSphere(frontFallCheck.position, fallCheckRange);
+//            Gizmos.DrawWireSphere(frontFallCheck.position, frontFallCheckRange);
 //        }
 //    }
 //}

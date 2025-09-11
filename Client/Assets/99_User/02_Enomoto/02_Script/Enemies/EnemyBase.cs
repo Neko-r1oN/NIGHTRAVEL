@@ -711,6 +711,34 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
+    #region 攻撃パターン３
+
+    /// <summary>
+    /// 攻撃アニメーションのイベント通知処理
+    /// </summary>
+    public virtual void OnAttackAnim3Event() { }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント通知処理
+    /// </summary>
+    public virtual void OnEndAttackAnim3Event() { }
+
+    #endregion
+
+    #region 攻撃パターン４
+
+    /// <summary>
+    /// 攻撃アニメーションのイベント通知処理
+    /// </summary>
+    public virtual void OnAttackAnim4Event() { }
+
+    /// <summary>
+    /// 攻撃のアニメーション終了時のイベント通知処理
+    /// </summary>
+    public virtual void OnEndAttackAnim4Event() { }
+
+    #endregion
+
     /// <summary>
     /// 移動するアニメーションイベント通知
     /// </summary>
