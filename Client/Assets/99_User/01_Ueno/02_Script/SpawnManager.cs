@@ -59,8 +59,6 @@ public class SpawnManager : MonoBehaviour
     #endregion
 
     #region ボス関連
-    GameObject boss;            // ボス
-    public GameObject Boss { get { return boss; }}
     [SerializeField] GameObject bossTerminal;
     [SerializeField] ENEMY_TYPE bossId;
     bool isSpawnBoss;           // ボスが生成されたかどうか
@@ -599,6 +597,8 @@ public class SpawnManager : MonoBehaviour
         }
         #endregion
 
+        if(enemy.GetComponent<EnemyBase>().IsBoss) UIManager.Instance.DisplayBossUI();
+
         return enemyObj;
     }
 
@@ -739,8 +739,6 @@ public class SpawnManager : MonoBehaviour
 
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
-
-                boss = idEnemyPrefabPairs[bossId];
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // 一旦このまま
 
@@ -768,8 +766,6 @@ public class SpawnManager : MonoBehaviour
             }
 
             isSpawnBoss = true;
-
-            UIManager.Instance.DisplayBossUI();
 
             SpawnEnemyRequest(spawnEnemyDatas.ToArray());
         }

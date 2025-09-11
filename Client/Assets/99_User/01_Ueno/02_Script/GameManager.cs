@@ -32,14 +32,14 @@ public class GameManager : MonoBehaviour
 
     #region その他
     [Header("その他")]
-    [SerializeField] GameObject bossPrefab;  // ボスプレハブ
-    [SerializeField] Transform minCameraPos; // カメラ範囲の最小値
-    [SerializeField] Transform maxCameraPos; // カメラ範囲の最大値
-    [SerializeField] float xRadius;          // 生成範囲のx半径
-    [SerializeField] float yRadius;          // 生成範囲のy半径
-    [SerializeField] float distMinSpawnPos;  // 生成しない範囲
-    [SerializeField] int knockTermsNum;      // エネミーの撃破数条件
-    [SerializeField] List<GameObject> portals;
+    [SerializeField] GameObject bossPrefab;    // ボスプレハブ
+    [SerializeField] Transform minCameraPos;   // カメラ範囲の最小値
+    [SerializeField] Transform maxCameraPos;   // カメラ範囲の最大値
+    [SerializeField] float xRadius;            // 生成範囲のx半径
+    [SerializeField] float yRadius;            // 生成範囲のy半径
+    [SerializeField] float distMinSpawnPos;    // 生成しない範囲
+    [SerializeField] int knockTermsNum;        // エネミーの撃破数条件
+    [SerializeField] List<GameObject> portals; // 遷移用ポータル
 
     float elapsedTime;
 
@@ -167,6 +167,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ポータルの表示
+    /// </summary>
     public void DisplayPortal()
     {
         foreach (var item in portals)
@@ -185,6 +188,9 @@ public class GameManager : MonoBehaviour
         isGameStart = false;
     }
 
+    /// <summary>
+    /// リザルトのシーンを読み込み
+    /// </summary>
     public void CangeResult()
     {
         SceneManager.UnloadSceneAsync("UIScene");
@@ -212,6 +218,9 @@ public class GameManager : MonoBehaviour
     }
 
     [ContextMenu("DeathBoss")]
+    /// <summary>
+    /// ボスが死んだ処理
+    /// </summary>
     private void DeathBoss()
     {
         //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
@@ -225,6 +234,8 @@ public class GameManager : MonoBehaviour
 
         GameObject portal;
 
+        UIManager.Instance.HideBossUI();
+
         for(int i = 0; i < portals.Count; i++)
         {
             portal = Instantiate(portals[i], portals[i].transform.position, Quaternion.identity);
@@ -233,10 +244,14 @@ public class GameManager : MonoBehaviour
         //Invoke(nameof(ChengScene), 15f);
     }
 
+    /// <summary>
+    /// ゲーム開始処理
+    /// </summary>
+    /// <param name="list"></param>
     public void StartGame(List<TerminalData> list)
     {
         // 端末情報をステージに反映
-        TerminalManager.Instance.SetTerminal(list);
+        //TerminalManager.Instance.SetTerminal(list);
 
         isGameStart = true;
         Debug.Log("同時開始！！");
