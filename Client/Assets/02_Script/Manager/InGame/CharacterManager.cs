@@ -348,6 +348,23 @@ public class CharacterManager : MonoBehaviour
         return enemyDatas;
     }
 
+    /// <summary>
+    /// ƒ{ƒX‚ğ•Ô‚·ˆ—
+    /// </summary>
+    /// <returns></returns>
+    public EnemyBase GetBossObject()
+    {
+        foreach(var enemy in enemies.Values)
+        {
+            if (enemy.Enemy.IsBoss)
+            {
+                return enemy.Enemy;
+            }
+        }
+
+        return null;
+    }
+
     #region “¯Šúˆ—ŠÖ˜A
 
     /// <summary>

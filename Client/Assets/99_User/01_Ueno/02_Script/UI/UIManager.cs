@@ -299,8 +299,6 @@ public class UIManager : MonoBehaviour
     {
         // 操作UI変更処理
         InputChangeUI();
-
-        
         
         if (player == null)
         {
@@ -347,6 +345,12 @@ public class UIManager : MonoBehaviour
                 }
             }
 
+            if (boss != null)
+            {
+                bossHpBar.value = boss.HP;
+                bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
+            }
+
             if (player.HP <= 0)
             {
                 playerHpBar.value = 0;
@@ -355,24 +359,27 @@ public class UIManager : MonoBehaviour
 
                 if (CheckAllPlayersDead())
                 {
-                    ChangTitleScene();
+                    GameManager.Instance.CangeResult();
                 }
             }
         }
     }
 
+    /// <summary>
+    /// ボスUI表示
+    /// </summary>
     public void DisplayBossUI()
     {// ボスがスポーンした
-        boss = SpawnManager.Instance.Boss.GetComponent<EnemyBase>();
+        boss = CharacterManager.Instance.GetBossObject();
         // ボスステータスUI
-        bossHpBar.maxValue = boss.HP;
-        bossHpBar.value = boss.HP;
+        bossHpBar.maxValue = boss.BaseHP;
+        bossHpBar.value = boss.BaseHP;
         bossSliderText.text = "" + bossHpBar.maxValue;
 
-        if (boss.HP <= 0)
-        {// ボスのHP表示がマイナスにならないようにする
-            bossHpBar.value = 0;
-        }
+        //if (boss.HP <= 0)
+        //{// ボスのHP表示がマイナスにならないようにする
+        //    bossHpBar.value = 0;
+        //}
 
         bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
 
@@ -381,9 +388,12 @@ public class UIManager : MonoBehaviour
         clashNumText.enabled = false;
     }
 
-    private void ChangTitleScene()
+    /// <summary>
+    /// ボスUI非表示
+    /// </summary>
+    public void HideBossUI()
     {
-        SceneManager.LoadScene("Title ueno");
+        bossStatus.SetActive(false);
     }
 
     /// <summary>
@@ -435,6 +445,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 同レリックの所持数更新
+    /// </summary>
+    /// <param name="relicSprite"></param>
+    /// <param name="num"></param>
     public void totalRelics(Sprite relicSprite, int num)
     {
         int count = 0;
@@ -457,6 +472,9 @@ public class UIManager : MonoBehaviour
         GetRelicBanner(relicSprite);
     }
 
+    /// <summary>
+    /// ステータス強化ウィンドウ表示
+    /// </summary>
     public void OpenStatusWindow()
     {
         if (isStatusWindow)
@@ -531,6 +549,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ボス条件のテキスト更新
+    /// </summary>
+    /// <param name="crashNum"></param>
     public void CountTermsText(int crashNum)
     {
         clashNumText.text = "条件:" + crashNum + "/" + SpawnManager.Instance.KnockTermsNum;
@@ -810,6 +832,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ターミナルの説明文表示・変更処理
+    /// </summary>
+    /// <param name="type"></param>
     public void DisplayTerminalExplanation(TERMINAL_TYPE type)
     {
         terminalExplanationObj.SetActive(true);
@@ -817,17 +843,27 @@ public class UIManager : MonoBehaviour
         terminalExplanationText.text = terminalExplanation[type].ToString();
     }
 
+    /// <summary>
+    /// ターミナル説明文非表示・テキストを戻す
+    /// </summary>
     public void DisplayTimeInstructions()
     {
         terminalExplanationObj.SetActive(false);
         TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " 敵衛システム復旧まで";
     }
 
+    /// <summary>
+    /// ゲーム終了確認ウィンドウ表示
+    /// </summary>
     public void DisplayEndGameWindow()
     {
         endWindow.SetActive(true);
     }
 
+    /// <summary>
+    /// ゲーム終了ボタン
+    /// </summary>
+    /// <param name="id"></param>
     public void EndGameButtonPush(int id)
     {
         switch (id)
@@ -841,11 +877,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// ゲーム終了
+    /// </summary>
     public void EndGame()
     {
         UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
     }
 
+    /// <summary>
+    /// 観戦画面用UIの更新
+    /// </summary>
     public void DisplaySpectatingPlayer()
     {
         spectatingWindow.SetActive(true);
@@ -860,6 +903,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 全プレイヤーが死亡したか確認する処理
+    /// </summary>
+    /// <returns></returns>
     private bool CheckAllPlayersDead()
     {
         if(CharacterManager.Instance.PlayerObjs == null)
@@ -1074,11 +1121,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 次の画面に移動するか確認するウィンドウの表示
+    /// </summary>
     public void DisplayNextStageWindow()
     {
         nextStageWindow.SetActive(true);
     }
 
+    /// <summary>
+    /// 次ステージ移動のボタン処理
+    /// </summary>
+    /// <param name="id"></param>
     public void NextGameButtonPush(int id)
     {
         switch (id)
