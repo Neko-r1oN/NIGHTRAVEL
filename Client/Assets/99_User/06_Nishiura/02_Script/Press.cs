@@ -12,7 +12,7 @@ public class Press : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // プレイヤーがつぶしエリアに入った場合
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             playerBase = collision.gameObject.GetComponent<PlayerBase>();   // つぶされ対象からPlayerBaseを取得
             bool isGround =  playerBase.GetGrounded();  // PlayerBaseから接地判定変数を取得

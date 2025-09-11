@@ -87,8 +87,9 @@ public class Elevator : GimmickBase
     /// <summary>
     /// “dŒ¹ƒIƒ“ŠÖ”
     /// </summary>
-    override public void TurnOnPower()
+    public override void TurnOnPower()
     {
+        if (isPowerd) return;   // ‚·‚Å‚É‹N“®‚µ‚Ä‚ ‚éê‡‚Íˆ—‚µ‚È‚¢
         isPowerd = true;
     }
 

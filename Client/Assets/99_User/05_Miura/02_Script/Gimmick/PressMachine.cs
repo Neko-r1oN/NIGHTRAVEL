@@ -19,26 +19,14 @@ public class PressMachine : GimmickBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if(isPowerd==false)
-        {
-            return;
-        }
-
-        MovePress();
-        Debug.Log(isPowerd);
-    }
-
-    private void Update()
-    {
-
+        if(!isPowerd) return;
+        MovePress();    // 起動する
     }
 
     public void MovePress()
     {
         if (isPowerd == true)
         {
-            Debug.Log(isPowerd);
-
             //Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
 
@@ -52,16 +40,14 @@ public class PressMachine : GimmickBase
                     .AppendInterval(1)
                     .SetLoops(-1);
         }
-        if (isPowerd == false)
-        {
-            Debug.Log(isPowerd);
-            return;
-        }
+
+        if (!isPowerd) return;
     }
 
     public override void TurnOnPower()
     {
+        if (isPowerd) return;   // すでに起動してある場合は処理しない
         isPowerd = true;
+        MovePress();
     }
-
 }

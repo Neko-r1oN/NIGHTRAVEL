@@ -59,12 +59,12 @@ public class ShortCircuit : MonoBehaviour
     /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {//「Player」タグが付いたオブジェクトが触れたら
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
             InvokeRepeating("HitPlayerDamage", 0.1f,0.5f);
         }
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy") && !RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {//「Enemy」タグが付いたオブジェクトが触れたら
             enemyBase = collision.gameObject.GetComponent<EnemyBase>();
             InvokeRepeating("HitEnemyDamage", 0.1f, 0.5f);

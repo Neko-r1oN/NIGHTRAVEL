@@ -7,7 +7,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PressurePlate : MonoBehaviour
+public class PressurePlate : GimmickBase
 {
     // âüâ∫îªíËïœêî
     private bool isPushed = false;
@@ -22,46 +22,10 @@ public class PressurePlate : MonoBehaviour
         {
             isPushed = true; 
             this.transform.DOMoveY((this.gameObject.transform.position.y -0.19f), 0.2f);
-            PowerOn();
-            Debug.Log("Plate Activated");
-        }
-    }
 
-    /// <summary>
-    /// ìdåπÉIÉìèàóù
-    /// </summary>
-    private void PowerOn()
-    {
-        foreach (GameObject gimmick in linkedGimmick)
-        {
-            switch (gimmick.tag)
+            foreach (GameObject obj in linkedGimmick)
             {
-                case "Gimmick/SteelDoor":
-                    gimmick.GetComponent<SteelDoor>().TurnOnPower();
-                    break;
-
-                case "Gimmick/BeltConveyor":
-
-                    break;
-
-                case "Gimmick/Fan":
-
-                    break;
-
-                case "Gimmick/PressMachine":
-                    gimmick.GetComponent<PressMachine>().TurnOnPower();
-                    break;
-
-                case "Gimmick/SawBlade":
-                    gimmick.GetComponent<SawBlade>().TurnOnPower();
-                    break;
-
-                case "Gimmick/Elevator":
-                    gimmick.GetComponent<Elevator>().TurnOnPower();
-                    break;
-
-                default:
-                    break;
+                obj.GetComponent<GimmickBase>().TurnOnPowerRequest(collision.gameObject);
             }
         }
     }

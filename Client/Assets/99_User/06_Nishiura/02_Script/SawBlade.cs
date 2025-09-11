@@ -25,7 +25,7 @@ public class SawBlade : GimmickBase
         // このゲームオブジェクトのポジションを取得
         pos = this.gameObject.transform.position;
         // 電源オンの場合
-        if (isPowerd == true)
+        if (isPowerd)
         {
             MoveBlade();    // 移動開始
             // 回転させる
@@ -37,13 +37,12 @@ public class SawBlade : GimmickBase
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isPowerd == true && collision.transform.tag == "Player")
+        if (isPowerd == true && collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
             // プレイヤーの最大HP30%相当のダメージに設定
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.30f);
             playerBase.ApplyDamage(damage, pos);
-            Debug.Log("Hit SawBlade");
         }
     }
 
@@ -71,6 +70,7 @@ public class SawBlade : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
+        if (isPowerd) return;   // すでに起動してある場合は処理しない
         isPowerd = true;
         MoveBlade();
         // 回転させる
