@@ -24,14 +24,14 @@ public class Burner : GimmickBase
         OFF
     };
 
-    private void Start()
+    private void OnEnable()
     {
-        TuenOnPowerByMaster();
-    }
-
-    private void Update()
-    {
-
+        // オフライン or マルチプレイ時にマスタクライアントの場合
+        if(!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
+            //3秒間隔で点火と消火を繰り返す
+            InvokeRepeating("Ignition", 0.1f, 3);
+        }
     }
 
     /// <summary>
@@ -42,19 +42,29 @@ public class Burner : GimmickBase
     {
         if (collision.CompareTag("Player"))
         {//触れたオブジェクトのタグが「Player」だったら
-            player = GetComponent<PlayerBase>();
-            statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
 
-            statusEffectController.ApplyStatusEffect(DEBUFF_TYPE.Burn); //プレイヤーに炎上状態を付与
-            Debug.Log("プレイヤーに炎上状態を付与");
+            // ダメージを適用させる対象が自分の操作キャラの場合
+            if(collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
+            {
+                player = GetComponent<PlayerBase>();
+                statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
+
+                statusEffectController.ApplyStatusEffect(DEBUFF_TYPE.Burn); //プレイヤーに炎上状態を付与
+                Debug.Log("プレイヤーに炎上状態を付与");
+            }
         }
 
         if (collision.CompareTag("Enemy"))
         {//触れたオブジェクトのタグが「Enemy」だったら
-            enemy = GetComponent<EnemyBase>();
-            statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerを取得する
 
-            Debug.Log("敵に炎上状態を付与");
+            // オフライン時 or マルチプレイ時でマスタクライアントの場合
+            if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+            {
+                enemy = GetComponent<EnemyBase>();
+                statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerを取得する
+
+                Debug.Log("敵に炎上状態を付与");
+            }
         }
     }
 

@@ -4,11 +4,11 @@
 // Date:2025/07/01
 //======================
 
+using System;
 using UnityEngine;
 
 abstract public class GimmickBase : MonoBehaviour
 {
-
     // 識別用ID
     int uniqueId;
     public int UniqueId {  get { return uniqueId; } set { uniqueId = value; } }
@@ -42,21 +42,7 @@ abstract public class GimmickBase : MonoBehaviour
         else if (RoomModel.Instance && player == CharacterManager.Instance.PlayerObjSelf)
         {
             // サーバーに対してリクエスト処理
+            await RoomModel.Instance.BootGimmickAsync(uniqueId);
         }
     }
-
-    /// <summary>
-    /// マスタクライアントによるギミック起動
-    /// ※対象のギミック：SawBladeやBurnなど、一定間隔で動作するギミック
-    /// </summary>
-    public virtual void TuenOnPowerByMaster()
-    {
-        // オフライン時 || マルチプレイ中かつ自身がマスタクライアントの場合
-        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
-        {
-
-            TurnOnPower();
-        }
-    }
-
 }
