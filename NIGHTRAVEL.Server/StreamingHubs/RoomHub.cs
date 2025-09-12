@@ -896,7 +896,7 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
-        public async Task ShootBulletsAsync(List<ShootBulletData> shootBulletDatas)
+        public async Task ShootBulletsAsync(params ShootBulletData[] shootBulletDatas)
         {
             // 参加者全員に端末の結果を通知
             this.roomContext.Group.All.OnShootBullets(shootBulletDatas);

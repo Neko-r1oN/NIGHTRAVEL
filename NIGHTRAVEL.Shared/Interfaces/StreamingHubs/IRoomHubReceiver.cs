@@ -94,7 +94,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="type">発射物の種類</param>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
-        void OnShootBullets(List<ShootBulletData> shootBulletDatas);
+        void OnShootBullets(params ShootBulletData[] shootBulletDatas);
 
         /// <summary>
         /// ステータス更新通知

@@ -102,7 +102,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
         /// <returns></returns>
-        Task ShootBulletsAsync(List<ShootBulletData> shootBulletDatas);
+        Task ShootBulletsAsync(params ShootBulletData[] shootBulletDatas);
         #endregion
         #region 敵関連
         /// <summary>

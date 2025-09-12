@@ -16,6 +16,7 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -320,9 +321,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 発射物の生成通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnShootBullets(List<ShootBulletData> shootBulletDatas)
+    public void OnShootBullets(params ShootBulletData[] shootBulletDatas)
     {
-        OnShootedBullet(shootBulletDatas);
+        OnShootedBullet(shootBulletDatas.ToList());
     }
 
     /// <summary>
@@ -579,7 +580,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="spawnPos">生成位置</param>
     /// <param name="shootVec">発射ベクトル</param>
     /// <returns></returns>
-    public async UniTask ShootBulletAsync(List<ShootBulletData> shootBulletDatas)
+    public async UniTask ShootBulletAsync(params ShootBulletData[] shootBulletDatas)
     {
         await roomHub.ShootBulletsAsync(shootBulletDatas);
     }
