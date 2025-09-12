@@ -311,7 +311,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// プレイヤーのレベルアップ通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList)
+    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, Guid optionsKey, List<Status_Enhancement> statusOptionList)
     {
        // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
     }

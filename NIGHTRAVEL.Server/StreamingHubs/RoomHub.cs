@@ -11,6 +11,7 @@ using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -307,10 +308,11 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="rarity"></param>
         /// <returns></returns>
-        List<STAT_UPGRADE_OPTION> DrawStatusUpgrateOption(int elementCnt)
+        List<Status_Enhancement> DrawStatusUpgrateOption(int elementCnt)
         {
             GameDbContext dbContext = new GameDbContext();
             List <STAT_UPGRADE_OPTION> drawIds = new List<STAT_UPGRADE_OPTION>();
+            List<Status_Enhancement> result = new List<Status_Enhancement>();
 
             // 重複なしで指定個数分のステータス強化の選択肢を取得する
             for (int i = 0; i < elementCnt; i++)
@@ -318,9 +320,10 @@ namespace StreamingHubs
                 var rarity = DrawRarity(false);
                 var option = dbContext.Status_Enhancements.Where(option => !drawIds.Contains((STAT_UPGRADE_OPTION)option.id)).First();
                 drawIds.Add((STAT_UPGRADE_OPTION)option.id);
+                result.Add(option);
             }
 
-            return drawIds;
+            return result;
         } 
 
         /// <summary>
@@ -789,96 +792,102 @@ namespace StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
-        public async Task ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+        public async Task ChooseUpgrade(Guid optionsKey, STAT_UPGRADE_OPTION upgradeOpt)
         {
-            // ルームデータから接続IDを指定して最大ステータスのインスタンス取得
-            var status = this.roomContext.playerStatusDataList[this.ConnectionId].Item1;
-
-            //DBからステータス強化選択肢情報取得
-            GameDbContext dbContext = new GameDbContext();
-            var upgrade = dbContext.Status_Enhancements.Where(status => status.id == (int)upgradeOpt).First();
-
-            switch (upgrade.type)   // 各強化をタイプで識別
+            lock (roomContextRepository)
             {
-                case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
-                    // 第1効果
-                    status.hp += (int)upgrade.const_effect1;
-                    status.hp *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.hp += (int)upgrade.const_effect2;
-                    status.hp *= (int)upgrade.rate_effect2;
+                if (!this.roomContext.statusOptionList[this.ConnectionId].ContainsKey(optionsKey)) return;
+                this.roomContext.statusOptionList[this.ConnectionId].Remove(optionsKey);
 
-                    if(status.hp <= 0)status.hp = 1; // HPが0を下回った場合、1にする
-                    break;
+                // ルームデータから接続IDを指定して最大ステータスのインスタンス取得
+                var status = this.roomContext.playerStatusDataList[this.ConnectionId].Item1;
 
-                case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
-                    // 第1効果
-                    status.power += (int)upgrade.const_effect1;
-                    status.power *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.power += (int)upgrade.const_effect2;
-                    status.power *= (int)upgrade.rate_effect2;
+                //DBからステータス強化選択肢情報取得
+                GameDbContext dbContext = new GameDbContext();
+                var upgrade = dbContext.Status_Enhancements.Where(status => status.id == (int)upgradeOpt).First();
 
-                    if (status.power <= 0) status.power = 1; // 攻撃力が0を下回った場合、1にする
-                    break;
-                
-                case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
-                    // 第1効果
-                    status.defence += (int)upgrade.const_effect1;
-                    status.defence *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.defence += (int)upgrade.const_effect2;
-                    status.defence *= (int)upgrade.rate_effect2;
+                switch (upgrade.type)   // 各強化をタイプで識別
+                {
+                    case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
+                                                            // 第1効果
+                        status.hp += (int)upgrade.const_effect1;
+                        status.hp *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.hp += (int)upgrade.const_effect2;
+                        status.hp *= (int)upgrade.rate_effect2;
 
-                    if (status.defence <= 0) status.defence = 1; // 防御力が0を下回った場合、1にする
-                    break;
-                
-                case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
-                    // 第1効果
-                    status.jumpPower += (int)upgrade.const_effect1;
-                    status.jumpPower *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.jumpPower += (int)upgrade.const_effect2;
-                    status.jumpPower *= (int)upgrade.rate_effect2;
+                        if (status.hp <= 0) status.hp = 1; // HPが0を下回った場合、1にする
+                        break;
 
-                    if (status.jumpPower <= 0) status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
-                    break;
-                
-                case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
-                    // 第1効果
-                    status.moveSpeed += (int)upgrade.const_effect1;
-                    status.moveSpeed *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.moveSpeed += (int)upgrade.const_effect2;
-                    status.moveSpeed *= (int)upgrade.rate_effect2;
+                    case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
+                                                                // 第1効果
+                        status.power += (int)upgrade.const_effect1;
+                        status.power *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.power += (int)upgrade.const_effect2;
+                        status.power *= (int)upgrade.rate_effect2;
 
-                    if (status.moveSpeed <= 0) status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
-                    break;
-                
-                case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
-                    // 第1効果
-                    status.healRate += (int)upgrade.const_effect1;
-                    status.healRate *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.healRate += (int)upgrade.const_effect2;
-                    status.healRate *= (int)upgrade.rate_effect2;
+                        if (status.power <= 0) status.power = 1; // 攻撃力が0を下回った場合、1にする
+                        break;
 
-                    if (status.healRate <= 0) status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
-                    break;
-                
-                case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                    // 第1効果
-                    status.attackSpeedFactor += (int)upgrade.const_effect1;
-                    status.attackSpeedFactor *= (int)upgrade.rate_effect1;
-                    // 第2効果
-                    status.attackSpeedFactor += (int)upgrade.const_effect2;
-                    status.attackSpeedFactor *= (int)upgrade.rate_effect2;
+                    case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
+                                                                // 第1効果
+                        status.defence += (int)upgrade.const_effect1;
+                        status.defence *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.defence += (int)upgrade.const_effect2;
+                        status.defence *= (int)upgrade.rate_effect2;
 
-                    if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
-                    break;
+                        if (status.defence <= 0) status.defence = 1; // 防御力が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
+                                                                    // 第1効果
+                        status.jumpPower += (int)upgrade.const_effect1;
+                        status.jumpPower *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.jumpPower += (int)upgrade.const_effect2;
+                        status.jumpPower *= (int)upgrade.rate_effect2;
+
+                        if (status.jumpPower <= 0) status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
+                                                                    // 第1効果
+                        status.moveSpeed += (int)upgrade.const_effect1;
+                        status.moveSpeed *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.moveSpeed += (int)upgrade.const_effect2;
+                        status.moveSpeed *= (int)upgrade.rate_effect2;
+
+                        if (status.moveSpeed <= 0) status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
+                                                                // 第1効果
+                        status.healRate += (int)upgrade.const_effect1;
+                        status.healRate *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.healRate += (int)upgrade.const_effect2;
+                        status.healRate *= (int)upgrade.rate_effect2;
+
+                        if (status.healRate <= 0) status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
+                                                                            // 第1効果
+                        status.attackSpeedFactor += (int)upgrade.const_effect1;
+                        status.attackSpeedFactor *= (int)upgrade.rate_effect1;
+                        // 第2効果
+                        status.attackSpeedFactor += (int)upgrade.const_effect2;
+                        status.attackSpeedFactor *= (int)upgrade.rate_effect2;
+
+                        if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
+                        break;
+                }
+
+                GetStatusWithRelics();
             }
-
-            GetStatusWithRelics();
         }
 
         /// <summary>
@@ -1079,9 +1088,6 @@ namespace StreamingHubs
         /// </summary>
         protected void LevelUp(ExpManager expManager)
         {
-            // 強化選択肢リストを初期化
-            this.roomContext.statusOptionList.Clear();
-
             // レベルアップ処理
             expManager.Level++; // 現在のレベルを上げる
             expManager.nowExp = expManager.nowExp - expManager.RequiredExp;    // 超過した分の経験値を現在の経験値量として保管
@@ -1090,7 +1096,8 @@ namespace StreamingHubs
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
             // 強化選択肢格納リスト
-            List<STAT_UPGRADE_OPTION> statusOptionList = DrawStatusUpgrateOption(3);
+            List<Status_Enhancement> statusOptionList = DrawStatusUpgrateOption(3);
+            Guid optionsKey = Guid.NewGuid();
 
             // 強化後ステータス格納リスト
             Dictionary<Guid, CharacterStatusData> characterStatusDataList = new Dictionary<Guid, CharacterStatusData>();
@@ -1098,6 +1105,9 @@ namespace StreamingHubs
             // 参加者リストをループ
             foreach (var user in this.roomContext.JoinedUserList)
             {
+                // ステータス強化選択肢をルームデータで管理
+                this.roomContext.statusOptionList[user.Key][optionsKey].AddRange(statusOptionList);
+
                 // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
                 var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
 
@@ -1114,7 +1124,7 @@ namespace StreamingHubs
             }
 
             // 参加者全員にレベルアップしたことを通知
-            this.roomContext.Group.All.OnLevelUp(expManager.Level, expManager.nowExp, characterStatusDataList, this.roomContext.statusOptionList);
+            this.roomContext.Group.All.OnLevelUp(expManager.Level, expManager.nowExp, characterStatusDataList, optionsKey, statusOptionList);
         }
 
         /// <summary>

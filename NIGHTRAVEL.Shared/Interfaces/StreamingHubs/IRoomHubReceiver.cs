@@ -197,7 +197,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="nowExp">現在の経験値</param>
         /// <param name="characterStatusDataList">プレイヤーステータスリスト</param>
         /// <param name="statusOptionList">強化選択肢リスト</param>
-        void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList);
+        void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, Guid optionsKey, List<Status_Enhancement> statusOptionList);
 
         #endregion
         #endregion
