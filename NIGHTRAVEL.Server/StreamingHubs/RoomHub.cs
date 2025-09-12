@@ -447,7 +447,7 @@ namespace StreamingHubs
             {
                 // 進行申請を申請済みにするにする
                 this.roomContext.isAdvanceRequest = true;
-
+                this.roomContext.totalClearStageCount++;
                 if (isAdvance)
                 {
                     if((int)this.roomContext.NowStage == 3)
@@ -1086,6 +1086,9 @@ namespace StreamingHubs
             expManager.Level++; // 現在のレベルを上げる
             expManager.nowExp = expManager.nowExp - expManager.RequiredExp;    // 超過した分の経験値を現在の経験値量として保管
 
+            // 最終レベルに現在のレベルを代入
+            this.roomContext.resultLevel = expManager.Level;
+
             // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
@@ -1128,17 +1131,29 @@ namespace StreamingHubs
             var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
 
             // 必要なデータを代入
-            resultData.Difficulty = this.roomContext.NowDifficulty; // 難易度
-            resultData.Level = this.roomContext.ExpManager.Level;   //レベル
-            resultData.AliveTime = 66666;   // 生存時間(仮)
-            resultData.PlayerClass = playerData.Class;  // プレイヤーのクラス
-            resultData.TotalGottenItem = this.roomContext.gottenItemList.Count; // 総獲得アイテム数
+            resultData.Difficulty = this.roomContext.NowDifficulty;                         // 難易度
+            resultData.Level = this.roomContext.ExpManager.Level;                           // レベル
+            resultData.AliveTime = 66666;                                                   // 生存時間(仮)
+            resultData.PlayerClass = playerData.Class;                                      // プレイヤーのクラス
+            resultData.TotalGottenItem = this.roomContext.gottenItemList.Count;             // 総獲得アイテム数
             resultData.TotalActivedTerminal = this.roomContext.bootedTerminalList.Count;    // 総起動端末数
-            resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;  // 総付与ダメージ数
-            resultData.EnemyKillCount = this.roomContext.totalKillCount;    // 総キルカウント
-            resultData.GottenRelicList = this.roomContext.relicDataList;    // 獲得レリックリスト
-            resultData.TotalReceivedDamage = this.roomContext.totalGainDamage;  // 合計被弾値
+            resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;                  // 総付与ダメージ数
+            resultData.EnemyKillCount = this.roomContext.totalKillCount;                    // 総キルカウント
+            resultData.GottenRelicList = this.roomContext.relicDataList;                    // 獲得レリックリスト
+            resultData.TotalReceivedDamage = this.roomContext.totalGainDamage;              // 合計被弾値
+            resultData.TotalClearStageCount = this.roomContext.totalClearStageCount;        // 合計クリアステージ数
+            resultData.MaxLevel = this.roomContext.resultLevel;                             // 最終レベル
 
+            // 合計スコア
+            resultData.TotalScore = (resultData.TotalGottenItem * 10) + 
+                        (resultData.TotalActivedTerminal * 10) + 
+                        (resultData.EnemyKillCount * 10) +
+                        (resultData.TotalGaveDamage * 2) +
+                        (resultData.TotalClearStageCount * 100) + 
+                        (resultData.MaxLevel * 10) -
+                        (resultData.TotalReceivedDamage * 5) * 
+                        (resultData.Difficulty / 2);
+                                               
             this.roomContext.Group.All.OnGameEnd(resultData);
         }
     }
