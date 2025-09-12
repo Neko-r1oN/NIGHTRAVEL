@@ -102,7 +102,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
         /// <returns></returns>
-        Task ShootBulletAsync(EnumManager.PROJECTILE_TYPE type, List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation);
+        Task ShootBulletsAsync(List<ShootBulletData> shootBulletDatas);
         #endregion
         #region 敵関連
         /// <summary>

@@ -94,7 +94,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="type">発射物の種類</param>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
-        void OnShootBullet(EnumManager.PROJECTILE_TYPE type,List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation);
+        void OnShootBullets(List<ShootBulletData> shootBulletDatas);
 
         /// <summary>
         /// ステータス更新通知
@@ -181,13 +181,6 @@ namespace Shared.Interfaces.StreamingHubs
 
         #region ゲーム内
         #region プレイヤー関連
-
-        /// <summary>
-        /// プレイヤー体力増減通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
 
         /// <summary>
         /// レベルアップ通知

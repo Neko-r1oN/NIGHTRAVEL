@@ -896,10 +896,10 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
-        public async Task ShootBulletAsync(EnumManager.PROJECTILE_TYPE type, List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
+        public async Task ShootBulletsAsync(List<ShootBulletData> shootBulletDatas)
         {
             // 参加者全員に端末の結果を通知
-            this.roomContext.Group.All.OnShootBullet(type, debuffs, power, spawnPos, shootVec, rotation);
+            this.roomContext.Group.All.OnShootBullets(shootBulletDatas);
         }
 
         #endregion

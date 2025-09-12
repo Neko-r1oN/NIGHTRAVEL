@@ -20,6 +20,7 @@ using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System.Xml;
 using System.Threading.Tasks;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using Rewired;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -488,11 +489,14 @@ public class CharacterManager : MonoBehaviour
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>
     /// <param name="shootVec"></param>
-    void OnShootedBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
+    void OnShootedBullet(List<ShootBulletData> shootBulletDatas)
     {
-        var projectile =  Instantiate(projectilePrefabsByType[type], spawnPos, rotation);
-        projectile.GetComponent<ProjectileBase>().Init(debuffs, power);
-        projectile.GetComponent<ProjectileBase>().Shoot(shootVec);
+        foreach(var shootBulletData in shootBulletDatas)
+        {
+            var projectile = Instantiate(projectilePrefabsByType[shootBulletData.Type], shootBulletData.SpawnPos, shootBulletData.Rotation);
+            projectile.GetComponent<ProjectileBase>().Init(shootBulletData.Debuffs, shootBulletData.Power);
+            projectile.GetComponent<ProjectileBase>().Shoot(shootBulletData.ShootVec);
+        }
     }
     #endregion
 

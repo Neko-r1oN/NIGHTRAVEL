@@ -137,7 +137,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     #region 発射物
 
     // 発射物の生成通知
-    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2, Vector2, Quaternion> OnShootedBullet { get; set; }
+    public Action<List<ShootBulletData>> OnShootedBullet { get; set; }
 
     #endregion
 
@@ -320,19 +320,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 発射物の生成通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnShootBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
+    public void OnShootBullets(List<ShootBulletData> shootBulletDatas)
     {
-        OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
+        OnShootedBullet(shootBulletDatas);
     }
-
-
-   /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
-    {
-    }
-feature/k-kawaguchi
-
-    #endregion
-    #region 敵通知関連*/
 
     /// <summary>
     /// 敵の生成通知
@@ -588,9 +579,9 @@ feature/k-kawaguchi
     /// <param name="spawnPos">生成位置</param>
     /// <param name="shootVec">発射ベクトル</param>
     /// <returns></returns>
-    public async UniTask ShootBulletAsync(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
+    public async UniTask ShootBulletAsync(List<ShootBulletData> shootBulletDatas)
     {
-        await roomHub.ShootBulletAsync(type, debuffs, power, spawnPos, shootVec, rotation);
+        await roomHub.ShootBulletsAsync(shootBulletDatas);
     }
 
     #endregion
