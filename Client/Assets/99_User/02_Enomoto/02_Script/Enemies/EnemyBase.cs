@@ -226,6 +226,13 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void FixedUpdate()
     {
+        if (target)
+        {
+            // ターゲットとの距離を取得する
+            disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
+            disToTargetX = target.transform.position.x - transform.position.x;
+        }
+
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
         // ターゲットが存在しない || 現在のターゲットが死亡している場合
@@ -253,10 +260,6 @@ abstract public class EnemyBase : CharacterBase
             else Idle();
             return;
         }
-
-        // ターゲットとの距離を取得する
-        disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
-        disToTargetX = target.transform.position.x - transform.position.x;
 
         // ターゲットのいる方向にテクスチャを反転
         if (canChaseTarget)
@@ -583,7 +586,7 @@ abstract public class EnemyBase : CharacterBase
 
             if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
 
-            DoKnokBack();
+            if(canCancelAttackOnHit) DoKnokBack();
         }
 
         if (hp <= 0)
