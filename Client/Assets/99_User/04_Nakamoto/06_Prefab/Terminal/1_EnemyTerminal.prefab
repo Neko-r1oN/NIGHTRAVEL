@@ -151,10 +151,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6673542916159894072}
   - component: {fileID: 8040144760946709246}
-  - component: {fileID: 8074441131835052167}
+  - component: {fileID: -1963335062878193866}
   m_Layer: 0
   m_Name: 1_EnemyTerminal
-  m_TagString: Untagged
+  m_TagString: Interact
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,7 +226,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.4667509, y: 1.0600424}
   m_EdgeRadius: 0
---- !u!114 &8074441131835052167
+--- !u!114 &-1963335062878193866
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -235,12 +235,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 3578154494887838034}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aefb1760c25301247a82758e5b6d20c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 0872960b6aec3f64c83ace4e7b4d4e04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limitTime: 25
   timerText: {fileID: 4453598001366744481}
-  terminalIcon: {fileID: 0}
+  terminalSprite: {fileID: 7058015757069762866}
+  iconSprite: {fileID: 2963919740832030198}
+  limitTime: 25
+  relicSpawnPoints:
+  - {fileID: 9219126308887975955}
+  - {fileID: 5592963189890683523}
+  - {fileID: 464036883469847633}
+  - {fileID: 7786990097918308139}
 --- !u!1 &4077602304638209997
 GameObject:
   m_ObjectHideFlags: 0

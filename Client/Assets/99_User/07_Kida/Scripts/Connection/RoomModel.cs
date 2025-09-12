@@ -132,6 +132,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //端末結果通知
     public Action<int, bool> OnTerminalsResultSyn { get; set; }
 
+    //端末ジャンブル適用通知
+    public Action<List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic>> OnTerminalJumbled {  get; set; }
+
     #endregion
 
     #region 発射物
@@ -215,6 +218,25 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     #region 通知の処理
+
+    /// <summary>
+    /// 同時開始
+    /// Aughtor:木田晃輔
+    /// </summary>
+    public void OnSameStart(List<TerminalData> list)
+    {
+        OnSameStartSyn(list);
+    }
+
+    /// <summary>
+    /// ゲーム終了通知
+    /// </summary>
+    /// <param name="result"></param>
+    public void OnGameEnd(ResultData result)
+    {
+        OnGameEndSyn(result);
+    }
+
     #region 入室・退室・準備完了通知
     /// <summary>
     /// 入室通知(IRoomHubReceiverインターフェイスの実装)
@@ -256,6 +278,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnReadySyn(joinedUser.ConnectionId);
     }
     #endregion
+
     #region プレイヤー通知関連
     /// <summary>
     /// プレイヤーの移動通知
@@ -313,7 +336,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList)
     {
-       // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
+        // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
     }
 
     /// <summary>
@@ -325,14 +348,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
     }
 
-
-   /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
-    {
-    }
-feature/k-kawaguchi
-
     #endregion
-    #region 敵通知関連*/
+
+    #region 敵通知関連
 
     /// <summary>
     /// 敵の生成通知
@@ -355,6 +373,7 @@ feature/k-kawaguchi
     }
 
     #endregion
+
     #region レリック通知関連
 
     /// <summary>
@@ -369,25 +388,8 @@ feature/k-kawaguchi
     }
 
     #endregion
-    #region ゲーム内UI・仕様の同期関連
-    /// <summary>
-    /// ゲーム開始通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    public void OnStartGame()
-    {
-        OnStartedGame();
-    }
 
-    /// <summary>
-    /// ギミックの起動通知
-    /// Aughter:木田晃輔
-    /// </summary>
-    /// <param name="gimmickData"></param>
-    public void OnBootGimmick(int gimmickId)
-    {
-        OnBootedGimmick(gimmickId);
-    }
+    #region 端末関連
 
     /// <summary>
     /// 端末起動通知
@@ -408,6 +410,37 @@ feature/k-kawaguchi
     public void OnTerminalsResult(int termID, bool result)
     {
         OnTerminalsResultSyn(termID, result);
+    }
+
+    /// <summary>
+    /// 端末ジャンブル通知
+    /// </summary>
+    /// <param name="termID"></param>
+    public void OnTerminalJumble(List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic> relics)
+    {
+        OnTerminalJumbled(relics);
+    }
+
+    #endregion
+
+    #region ゲーム内UI・仕様の同期関連
+    /// <summary>
+    /// ゲーム開始通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnStartGame()
+    {
+        OnStartedGame();
+    }
+
+    /// <summary>
+    /// ギミックの起動通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="gimmickData"></param>
+    public void OnBootGimmick(int gimmickId)
+    {
+        OnBootedGimmick(gimmickId);
     }
 
     /// <summary>
@@ -436,7 +469,7 @@ feature/k-kawaguchi
     /// <param name="stageID"></param>
     public void OnAdanceNextStage(bool isAdvance, STAGE_TYPE stageType)
     {
-        OnAdanceNextStageSyn(isAdvance,stageType);
+        OnAdanceNextStageSyn(isAdvance, stageType);
     }
 
     /// <summary>
@@ -450,26 +483,10 @@ feature/k-kawaguchi
 
     #endregion
 
-    /// <summary>
-    /// 同時開始
-    /// Aughtor:木田晃輔
-    /// </summary>
-    public void OnSameStart(List<TerminalData> list)
-    {
-        OnSameStartSyn(list);
-    }
-
-    /// <summary>
-    /// ゲーム終了通知
-    /// </summary>
-    /// <param name="result"></param>
-    public void OnGameEnd(ResultData result)
-    {
-        OnGameEndSyn(result);
-    }
     #endregion
 
     #region リクエスト関連
+
     #region 入室からゲーム開始まで
     /// <summary>
     /// 入室同期
@@ -512,7 +529,9 @@ feature/k-kawaguchi
         await roomHub.ReadyAsync(characterId);
     }
     #endregion
+
     #region ゲーム内
+
     #region プレイヤー関連
     /// <summary>
     /// プレイヤーの更新同期
@@ -547,36 +566,13 @@ feature/k-kawaguchi
     }
 
     /// <summary>
-    /// 端末起動
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="termID">端末種別ID</param>
-    /// <returns></returns>
-    public async UniTask BootTerminalAsync(int termID)
-    {
-        await roomHub.BootTerminalAsync(termID); 
-    }
-
-    /// <summary>
-    /// 端末成功処理
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="termID">端末種別ID</param>
-    /// <param name="result">端末結果</param>
-    /// <returns></returns>
-     public async UniTask TerminalsResultAsync(int termID, bool result)
-    {
-        await roomHub.TerminalsResultAsync(termID, result);
-    }
-
-    /// <summary>
     /// アイテム獲得
     /// Author:Nishiura
     /// </summary>
     /// <param name="itemType">アイテムの種類</param>
     /// <param name="itemID">識別ID(文字列)</param>
     /// <returns></returns>
-     public async UniTask GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID)
+    public async UniTask GetItemAsync(EnumManager.ITEM_TYPE itemType, string itemID)
     {
         await roomHub.GetItemAsync(itemType, itemID);
     }
@@ -594,6 +590,7 @@ feature/k-kawaguchi
     }
 
     #endregion
+
     #region 敵関連
     /// <summary>
     /// 敵の生成同期
@@ -636,11 +633,12 @@ feature/k-kawaguchi
     /// <param name="conID">接続ID</param>
     /// <param name="upgradeOpt">強化項目</param>
     /// <returns></returns>
-     public async UniTask ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+    public async UniTask ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
     {
         await roomHub.ChooseUpgrade(upgradeOpt);
     }
     #endregion
+
     #region レリック関連
 
     /// <summary>
@@ -655,6 +653,7 @@ feature/k-kawaguchi
         await roomHub.DropRelicAsync(pos, includeBossRarity);
     }
     #endregion
+
     #region ゲーム内UI、仕様関連
     /// <summary>
     /// ギミックの起動同期
@@ -696,6 +695,35 @@ feature/k-kawaguchi
         await roomHub.AdvancedStageAsync();
     }
     #endregion
+
+    #region 端末関連
+
+    /// <summary>
+    /// 端末起動
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="termID">端末種別ID</param>
+    /// <returns></returns>
+    public async UniTask BootTerminalAsync(int termID)
+    {
+        await roomHub.BootTerminalAsync(termID);
+    }
+
+    /// <summary>
+    /// 端末成功処理
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="termID">端末種別ID</param>
+    /// <param name="result">端末結果</param>
+    /// <returns></returns>
+    public async UniTask TerminalsResultAsync(int termID, bool result)
+    {
+        await roomHub.TerminalsResultAsync(termID, result);
+    }
+
     #endregion
+
+    #endregion
+
     #endregion
 }

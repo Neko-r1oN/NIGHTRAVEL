@@ -41,10 +41,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8379511248903050299}
   - component: {fileID: 3232732826001487876}
-  - component: {fileID: 966153323468341807}
+  - component: {fileID: 5492900914839625578}
   m_Layer: 0
   m_Name: 5_JanbleTerminal
-  m_TagString: Untagged
+  m_TagString: Interact
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62,8 +62,8 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 5034675232080946878}
   - {fileID: 2978417521818580977}
+  - {fileID: 5034675232080946878}
   - {fileID: 4435249384887867330}
   - {fileID: 1338678549509661010}
   m_Father: {fileID: 0}
@@ -114,7 +114,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.9933736, y: 2.5199835}
   m_EdgeRadius: 0
---- !u!114 &966153323468341807
+--- !u!114 &5492900914839625578
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -123,12 +123,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 843722266690155365}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aefb1760c25301247a82758e5b6d20c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f4873ef28c067e4880d68f856d9f87d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limitTime: 25
   timerText: {fileID: 3876557638657429729}
-  terminalIcon: {fileID: 0}
+  terminalSprite: {fileID: 2970226881298818281}
+  iconSprite: {fileID: 5206198603788833175}
+  limitTime: 25
+  relicSpawnPoints:
+  - {fileID: 3082399756012493922}
+  - {fileID: 7695380462972729845}
+  - {fileID: 7299732532262811266}
+  - {fileID: 6303938191574330665}
 --- !u!1 &1042372247226887483
 GameObject:
   m_ObjectHideFlags: 0

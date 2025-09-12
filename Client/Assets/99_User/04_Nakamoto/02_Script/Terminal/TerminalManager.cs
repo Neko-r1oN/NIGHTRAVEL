@@ -26,6 +26,8 @@ public class TerminalManager : MonoBehaviour
 
     #endregion
 
+    #region 端末情報
+
     /// <summary>
     /// 生成端末リスト
     /// </summary>
@@ -34,7 +36,17 @@ public class TerminalManager : MonoBehaviour
     /// <summary>
     /// 生成された端末オブジェクトリスト
     /// </summary>
-    private Dictionary<int,GameObject> terminalObjs = new Dictionary<int, GameObject>();
+    private Dictionary<int, GameObject> terminalObjs = new Dictionary<int, GameObject>();
+
+    #endregion
+
+    #region 情報参照用プロパティ
+
+    public List<TerminalData> TerminalDatas { get { return terminalDatas; } set { terminalDatas = value; } }
+
+    public Dictionary<int, GameObject> TerminalObjs { get { return terminalObjs; } set { terminalObjs = value; } }
+
+    #endregion
 
     #region Instance
 
@@ -55,6 +67,9 @@ public class TerminalManager : MonoBehaviour
     //--------------------------------
     // メソッド
 
+    /// <summary>
+    /// 起動処理
+    /// </summary>
     private void Awake()
     {
         if (instance == null)
@@ -69,11 +84,25 @@ public class TerminalManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 初期処理
+    /// </summary>
+    private async void Start()
+    {
+        if (RoomModel.Instance)
+        {
+            RoomModel.Instance.OnBootedTerminal += this.OnBootedTerminal;
+            await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
+        }
+    }
+
+    /// <summary>
     /// 端末の生成処理
     /// </summary>
     /// <param name="list"></param>
     public void SetTerminal(List<TerminalData> list)
     {
+        terminalDatas = list;
+
         foreach (var data in list)
         {
             var terminal = Instantiate(terminalPrefabs[(int)data.Type - 1], generatePos[data.ID - 1].transform.position, Quaternion.identity);
@@ -97,8 +126,9 @@ public class TerminalManager : MonoBehaviour
     /// 指定端末の起動処理
     /// </summary>
     /// <param name="ID"></param>
-    public void BootTerminal(int ID)
+    public void OnBootedTerminal(int ID)
     {
-        terminalObjs[ID].GetComponent<TerminalBase>().BootTerminal();
+        terminalDatas[ID - 1].State = EnumManager.TERMINAL_STATE.Active;
+        terminalObjs[ID - 1].GetComponent<TerminalBase>().BootTerminal();
     }
 }

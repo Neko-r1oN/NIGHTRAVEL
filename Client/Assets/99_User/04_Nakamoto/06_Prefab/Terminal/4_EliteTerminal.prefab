@@ -653,10 +653,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3069637759243907086}
   - component: {fileID: 1291970022326230576}
-  - component: {fileID: 3893049371996003399}
+  - component: {fileID: 7414746087647375770}
   m_Layer: 0
   m_Name: 4_EliteTerminal
-  m_TagString: Gimmick/Terminal
+  m_TagString: Interact
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -730,7 +730,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.4667509, y: 1.0600424}
   m_EdgeRadius: 0
---- !u!114 &3893049371996003399
+--- !u!114 &7414746087647375770
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -739,12 +739,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 7946448241375556597}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aefb1760c25301247a82758e5b6d20c1, type: 3}
+  m_Script: {fileID: 11500000, guid: a9e157c737beedf4594843b5778629c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limitTime: 25
   timerText: {fileID: 885999902171882723}
-  terminalIcon: {fileID: 0}
+  terminalSprite: {fileID: 803947954995306303}
+  iconSprite: {fileID: 541642352692047432}
+  limitTime: 25
+  relicSpawnPoints:
+  - {fileID: 3593760521039280803}
+  - {fileID: 4986817885051313430}
+  - {fileID: 1477851416393574755}
+  - {fileID: 8526183672581836856}
 --- !u!1 &8210152658003354220
 GameObject:
   m_ObjectHideFlags: 0
