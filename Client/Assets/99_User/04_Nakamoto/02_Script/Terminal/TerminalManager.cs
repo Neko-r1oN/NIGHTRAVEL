@@ -91,6 +91,7 @@ public class TerminalManager : MonoBehaviour
         if (RoomModel.Instance)
         {
             RoomModel.Instance.OnBootedTerminal += this.OnBootedTerminal;
+            RoomModel.Instance.OnTerminalFailured += this.OnTerminalFailured;
             await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
         }
     }
@@ -114,10 +115,10 @@ public class TerminalManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ターミナル情報の更新
+    /// 更新通知処理
     /// </summary>
     /// <param name="gimmicks"></param>
-    public void UpdateTerminals(List<TerminalData> terminals)
+    public void OnUpdateTerminals(List<TerminalData> terminals)
     {
         terminalDatas = terminals;
     }
@@ -125,10 +126,20 @@ public class TerminalManager : MonoBehaviour
     /// <summary>
     /// 指定端末の起動処理
     /// </summary>
-    /// <param name="ID"></param>
-    public void OnBootedTerminal(int ID)
+    /// <param name="id"></param>
+    public void OnBootedTerminal(int id)
     {
-        terminalDatas[ID - 1].State = EnumManager.TERMINAL_STATE.Active;
-        terminalObjs[ID - 1].GetComponent<TerminalBase>().BootTerminal();
+        terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Active;
+        terminalObjs[id - 1].GetComponent<TerminalBase>().BootTerminal();
+    }
+
+    /// <summary>
+    /// 指定端末の失敗処理
+    /// </summary>
+    /// <param name="id"></param>
+    public void OnTerminalFailured(int id)
+    {
+        terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Failure;
+        terminalObjs[id - 1].GetComponent<TerminalBase>().FailureTerminal();
     }
 }

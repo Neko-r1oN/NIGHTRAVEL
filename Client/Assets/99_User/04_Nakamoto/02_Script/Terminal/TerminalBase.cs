@@ -6,9 +6,11 @@ using DG.Tweening;
 using DG.Tweening.Core.Easing;
 using KanKikuchi.AudioManager;
 using Shared.Interfaces.StreamingHubs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
@@ -53,13 +55,13 @@ public abstract class TerminalBase : MonoBehaviour
     #region 外部設定
 
     // タイマー表示用テキスト
-    [SerializeField] private Text timerText;
+    [SerializeField] protected Text timerText;
 
     // 端末スプライト
-    [SerializeField] private SpriteRenderer terminalSprite;
+    [SerializeField] protected SpriteRenderer terminalSprite;
 
     // アイコンスプライト
-    [SerializeField] private SpriteRenderer iconSprite;
+    [SerializeField] protected SpriteRenderer iconSprite;
 
     // 制限時間
     [SerializeField] protected int limitTime = 25;
@@ -133,20 +135,24 @@ public abstract class TerminalBase : MonoBehaviour
     /// <summary>
     /// カウントダウン処理
     /// </summary>
-    /// <returns></returns>
-    protected IEnumerator Countdown()
+    public void CountDown()
     {
-        while (currentTime > 0)
+        //limitTImeを1ずつ減らす
+        currentTime--;
+        timerText.text = currentTime.ToString();
+
+        //制限時間が0以下になったら(時間切れ)
+        if (currentTime <= 0)
         {
-            timerText.text = currentTime.ToString();
-            yield return new WaitForSeconds(1f);
-            currentTime--;
+            //limitTimeを0にする
+            currentTime = 0;
+
+            //カウントダウンを停止する
+            CancelInvoke("CountDown");
+
+            // 失敗リクエスト
+            FailureRequest();
         }
-
-        timerText.text = "0"; // 最後に0を表示
-
-        // タイムアップ時の処理をここに記述
-        TimeUp();
     }
 
     /// <summary>
@@ -193,16 +199,33 @@ public abstract class TerminalBase : MonoBehaviour
     public abstract void BootTerminal();
 
     /// <summary>
-    /// 時間切れ
+    /// 失敗リクエスト
     /// </summary>
-    public virtual void TimeUp()
+    public async virtual void FailureRequest()
     {
-        // タイムアップ時の処理をここに記述
-        Debug.Log("Time Up!");
+        // リストの該当端末IDの状態を失敗にする
+        if (RoomModel.Instance)
+        {
+            //++ サーバーに失敗通知
+            await RoomModel.Instance.TerminalFailureAsync(terminalID);
+        }
+        else
+        {
+            FailureTerminal();
+        }
+    }
+
+    /// <summary>
+    /// 失敗処理
+    /// </summary>
+    public virtual void FailureTerminal()
+    {
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Failure;
 
         // ターミナル非表示
-        terminalSprite.DOFade(0, 1.5f);
-        iconSprite.DOFade(0, 1.5f);
+        terminalSprite.DOFade(0, 2.5f);
+        iconSprite.DOFade(0, 2.5f);
         gameObject.SetActive(false);
     }
 

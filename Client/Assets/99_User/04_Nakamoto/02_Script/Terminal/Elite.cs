@@ -7,6 +7,12 @@ using UnityEngine;
 
 public class Elite : TerminalBase
 {
+    //--------------------------------
+    // フィールド
+
+    //--------------------------------
+    // メソッド
+
     /// <summary>
     /// 初期処理
     /// </summary>

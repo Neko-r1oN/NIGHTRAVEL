@@ -50,15 +50,36 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            // 二回攻撃の抽選
-            if (player.LotteryRelic(RELIC_TYPE.Rugrouter))
+            // ボスかどうか判定
+            if (collision.gameObject.GetComponent<EnemyBase>().IsBoss)
             {
-                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
-                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, true, player.LotteryDebuff());
+                // 二回攻撃の抽選
+                if (player.LotteryRelic(RELIC_TYPE.Rugrouter))
+                {
+                    collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
+                    collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, true, player.LotteryDebuff());
+                }
+                else
+                {
+                    collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
+                }
             }
             else
             {
-                collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
+                // ボスの場合はボスエリアに入っているか確認
+                if (player.IsBossArea)
+                {
+                    // 二回攻撃の抽選
+                    if (player.LotteryRelic(RELIC_TYPE.Rugrouter))
+                    {
+                        collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
+                        collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power / 2, player.gameObject, true, true, player.LotteryDebuff());
+                    }
+                    else
+                    {
+                        collision.GetComponent<EnemyBase>().ApplyDamageRequest(player.Power, player.gameObject, true, true, player.LotteryDebuff());
+                    }
+                }
             }
         }
         else if (collision.gameObject.tag == "Object")

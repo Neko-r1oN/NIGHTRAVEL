@@ -137,6 +137,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="relics"></param>
         void OnTerminalJumble(List<Relic> relics);
+
+        /// <summary>
+        /// 端末失敗通知
+        /// </summary>
+        /// <param name="termID"></param>
+        void OnTerminalFailure(int termID);
         #endregion
         #region ゲーム内UI、仕様
 

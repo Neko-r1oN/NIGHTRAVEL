@@ -46,7 +46,9 @@ public class Deal : TerminalBase
     public override void BootTerminal()
     {
         isUsed = true; // 端末使用中にする
-        TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Success;
+
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Success;
 
         // レリック生成リクエスト
         GiveRewardRequest();

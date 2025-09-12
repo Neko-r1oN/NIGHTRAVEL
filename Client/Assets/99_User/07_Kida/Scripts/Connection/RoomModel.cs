@@ -132,8 +132,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //端末結果通知
     public Action<int, bool> OnTerminalsResultSyn { get; set; }
 
+    // 端末失敗通知
+    public Action<int> OnTerminalFailured { get; set; }
+
     //端末ジャンブル適用通知
-    public Action<List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic>> OnTerminalJumbled {  get; set; }
+    public Action<List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic>> OnTerminalJumbled { get; set; }
 
     #endregion
 
@@ -410,6 +413,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnTerminalsResult(int termID, bool result)
     {
         OnTerminalsResultSyn(termID, result);
+    }
+
+    /// <summary>
+    /// 端末失敗通知
+    /// </summary>
+    /// <param name="termID"></param>
+    public void OnTerminalFailure(int termID)
+    {
+        OnTerminalFailured(termID);
     }
 
     /// <summary>
@@ -719,6 +731,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask TerminalsResultAsync(int termID, bool result)
     {
         await roomHub.TerminalsResultAsync(termID, result);
+    }
+
+    /// <summary>
+    /// 端末失敗処理
+    /// </summary>
+    /// <param name="termID"></param>
+    /// <returns></returns>
+    public async UniTask TerminalFailureAsync(int termID)
+    {
+        await roomHub.TerminalFailureAsync(termID);
     }
 
     #endregion
