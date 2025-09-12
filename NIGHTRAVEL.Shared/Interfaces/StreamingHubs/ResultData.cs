@@ -42,5 +42,13 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         //合計獲得アイテム
         public int TotalGottenItem { get; set; }
 
+        // 最終到達レベル
+        public int MaxLevel { get; set; }
+
+        // 合計クリアステージ数
+        public int TotalClearStageCount { get; set; }
+
+        // 合計スコア
+        public int TotalScore { get; set; }
     }
 }

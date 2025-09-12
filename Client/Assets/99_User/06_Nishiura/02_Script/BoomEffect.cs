@@ -21,13 +21,14 @@ public class BoomEffect : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.tag == "Player")
-        {
+        { 
+            Invoke("DeleteThis", 0.6f);
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
             // プレイヤーの最大HP30%相当のダメージに設定
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.3f);
             playerBase.ApplyDamage(damage, pos);
 
-            Invoke("DeleteThis", 0.3f);
+
         }
         else if(collision.transform.tag =="Enemy")
         {
@@ -37,7 +38,7 @@ public class BoomEffect : MonoBehaviour
             int damage = Mathf.FloorToInt(enemyBase.MaxHP * 0.3f);
             enemyBase.ApplyDamageRequest(damage);
 
-            Invoke("DeleteThis", 0.3f);
+            Invoke("DeleteThis", 0.6f);
         }
     }
 

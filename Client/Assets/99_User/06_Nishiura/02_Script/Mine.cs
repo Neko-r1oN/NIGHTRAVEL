@@ -9,9 +9,6 @@ public class Mine : MonoBehaviour
 {
     [SerializeField] GameObject boomEffect; // 爆発エフェクトプレハブ
 
-    PlayerBase playerBase;
-    EnemyBase enemyBase;
-
     Vector2 pos;
 
     private void Start()
@@ -20,15 +17,15 @@ public class Mine : MonoBehaviour
         pos = this.gameObject.transform.position;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" /*&& collision.gameObject == CharacterManager.Instance.PlayerObjSelf*/)
         {
-            Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
+            Instantiate(boomEffect, pos + new Vector2(0.0f, 0.5f), Quaternion.identity);    // 爆発エフェクトを生成
             Destroy(this.gameObject);   // 自身を破壊
             Debug.Log("Boomed Mine");
         }
-        else if (collision.transform.tag == "Enemy")
+        else if (collision.transform.tag == "Enemy" && !RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
             Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
             Destroy(this.gameObject);   // 自身を破壊

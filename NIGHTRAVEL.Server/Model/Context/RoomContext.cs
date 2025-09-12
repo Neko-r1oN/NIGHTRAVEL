@@ -71,6 +71,18 @@ namespace NIGHTRAVEL.Server.Model.Context
         public int totalGainDamage = 0;
 
         /// <summary>
+        /// 合計クリアステージ数
+        /// Author:Nishiura
+        /// </summary>
+        public int totalClearStageCount = 0;
+
+        /// <summary>
+        /// 最終到達レベル
+        /// Author:Nishiura
+        /// </summary>
+        public int resultLevel = 0;
+
+        /// <summary>
         /// グループ
         /// Author:Kida
         /// </summary>

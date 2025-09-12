@@ -15,7 +15,7 @@ public class Wall : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // プレイヤーがエレベーター内に入った場合
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             GetComponent<TilemapRenderer>().material.DOFade(0, fadeSpeed);
         }
@@ -24,7 +24,7 @@ public class Wall : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         // プレイヤーがエレベーター内に入った場合
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             GetComponent<TilemapRenderer>().material.DOFade(1, fadeSpeed);
         }
