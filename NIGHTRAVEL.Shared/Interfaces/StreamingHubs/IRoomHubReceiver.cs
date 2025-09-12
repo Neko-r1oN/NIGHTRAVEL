@@ -74,21 +74,6 @@ namespace Shared.Interfaces.StreamingHubs
         void OnPlayerDead(Guid conID);
 
         /// <summary>
-        /// 端末起動通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="termID">端末識別ID</param>
-        void OnBootTerminal(int termID);
-
-        /// <summary>
-        /// 端末結果通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="termID">端末識別ID</param>
-        /// <param name="result">端末結果</param>
-        void OnTerminalsResult(int termID, bool result);
-
-        /// <summary>
         /// 発射物の生成通知
         /// </summary>
         /// <param name="type">発射物の種類</param>
@@ -130,6 +115,28 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="relicDatas">レリックリスト</param>
         void OnDropRelic(Dictionary<string, DropRelicData>relicDatas);
+        #endregion
+        #region 端末関連
+        /// <summary>
+        /// 端末起動通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末識別ID</param>
+        void OnBootTerminal(int termID);
+
+        /// <summary>
+        /// 端末結果通知
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末識別ID</param>
+        /// <param name="result">端末結果</param>
+        void OnTerminalsResult(int termID, bool result);
+
+        /// <summary>
+        /// ジャンブル結果通知
+        /// </summary>
+        /// <param name="relics"></param>
+        void OnTerminalJumble(List<Relic> relics);
         #endregion
         #region ゲーム内UI、仕様
 

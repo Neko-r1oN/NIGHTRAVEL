@@ -5,7 +5,7 @@ public class RelicData
 {
     public string ID { get; private set; }
     public RARITY_TYPE Rarity { get; private set; }
-    public string Name { get; private set; }
+    public string Name { get; set; }
 
     public RelicData(string id, RARITY_TYPE rarity)
     {

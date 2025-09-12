@@ -1,5 +1,5 @@
 //--------------------------------------------------------------
-// エネミー出現ターミナル [ EnemyTerminal.cs ]
+// エネミー出現ターミナル [ Enemy.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
 using Shared.Interfaces.StreamingHubs;
@@ -9,8 +9,6 @@ public class Enemy : TerminalBase
 {
     //--------------------------------
     // フィールド
-
-
 
     //--------------------------------
     // メソッド
@@ -31,8 +29,7 @@ public class Enemy : TerminalBase
     /// </summary>
     public override void BootTerminal()
     {
-        base.BootTerminal();
-
-        //++ 起動リクエストをサーバーに送信
+        isUsed = true; // 端末使用中にする
+        TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
     }
 }

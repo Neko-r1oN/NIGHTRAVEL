@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 1295658336900710832}
   - component: {fileID: 2916651477094372756}
   - component: {fileID: 7879866119261726966}
-  - component: {fileID: -775323642539415507}
+  - component: {fileID: -6131357599918206289}
   m_Layer: 0
   m_Name: 6_BossTerminal
   m_TagString: Interact
@@ -369,7 +369,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.7235913, y: 1.6582737}
   m_EdgeRadius: 0
---- !u!114 &-775323642539415507
+--- !u!114 &-6131357599918206289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -378,12 +378,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5435072304138559539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aefb1760c25301247a82758e5b6d20c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 99daf04f7623db849bbbb3b88f331be9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limitTime: 25
   timerText: {fileID: 2011147804113727825}
-  terminalIcon: {fileID: 2916651477094372756}
+  terminalSprite: {fileID: 0}
+  iconSprite: {fileID: 0}
+  limitTime: 25
+  relicSpawnPoints:
+  - {fileID: 1244195284768695737}
+  - {fileID: 5027018920492141950}
+  - {fileID: 3356567927747667438}
+  - {fileID: 6074525648777044630}
 --- !u!1 &6412296068251416337
 GameObject:
   m_ObjectHideFlags: 0
