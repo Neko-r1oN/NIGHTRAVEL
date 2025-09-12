@@ -479,7 +479,7 @@ public class Terminal : MonoBehaviour
                     Vector3 scale = Vector3.one;    // ˆê’U‚±‚Ì‚Ü‚Ü
                     var spawnData = spawnManager.CreateTerminalSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
 
-                    spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
+                    //spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
                 }
                 else
                 {
@@ -487,7 +487,7 @@ public class Terminal : MonoBehaviour
                     Vector3 scale = Vector3.one;    // ˆê’U‚±‚Ì‚Ü‚Ü
                     var spawnData = spawnManager.CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
 
-                    spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
+                    //spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
                 }
             }
 
@@ -522,7 +522,7 @@ public class Terminal : MonoBehaviour
     public void JumbleRelic()
     {
         GiveReward();
-        RelicManager.Instance.ShuffleRelic();
+        //RelicManager.Instance.ShuffleRelic();
     }
 
     

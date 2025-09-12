@@ -381,7 +381,7 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-                for(int i = 0; i <  spawnEnemyData.Count; i++)
+                for (int i = 0; i < spawnEnemyData.Count; i++)
                 {
                     // 個体識別用のIDを設定
                     spawnEnemyData[i].UniqueId = Guid.NewGuid().ToString();
@@ -392,6 +392,13 @@ namespace StreamingHubs
 
                     // 設定した情報をルームデータに保存
                     this.roomContext.SetEnemyData(spawnEnemyData[i].UniqueId, enemy);
+
+                    // 端末IDが設定されている場合は、その端末の生成した敵リストに追加
+                    if (spawnEnemyData[i].TerminalID != 0)
+                    {
+                        var terminal = this.roomContext.terminalList.Where(term => term.ID == spawnEnemyData[i].TerminalID).First();
+                        terminal.EnemyList.Add(spawnEnemyData[i].UniqueId);
+                    }
                 }
             }
 
@@ -693,46 +700,58 @@ namespace StreamingHubs
 
         /// <summary>
         /// 端末起動同期処理
-        /// Author:Nishiura
         /// </summary>
         /// <param name="termID">端末識別ID</param>
         /// <returns></returns>
         public async Task BootTerminalAsync(int termID)
         {
-            // 受け取った端末が起動済みである場合処理しない
-            if (this.roomContext.bootedTerminalList.Contains(termID)) return;
+            // 渡ってきた端末の種類に応じてステータスを変更
+            lock (roomContextRepository)
+            {
+                // 引数の端末IDから端末データを取得
+                var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
+                terminal.State = TERMINAL_STATE.Active; // 端末の状態をアクティブにする
 
-            // 起動済み端末リストに入れる
-            this.roomContext.bootedTerminalList.Add(termID);
+                // リクエスト者に対してディール・ジャンブルの効果適用
+                if (terminal.Type == TERMINAL_TYPE.Deal)
+                {
+                    terminal.State = TERMINAL_STATE.Success;
+                }
+                else if(terminal.Type == TERMINAL_TYPE.Jumble)
+                {
+                    // リクエスト者に対してジャンブルの効果適用
+                    JumbleRelic(this.ConnectionId);
+                    this.roomContext.Group.Single(this.ConnectionId).OnTerminalJumble(this.roomContext.relicDataList[this.ConnectionId]);
+                    terminal.State = TERMINAL_STATE.Success;
+                }
 
-            // 参加者全員に端末の起動を通知
-            this.roomContext.Group.All.OnBootTerminal(termID);
+                // 参加者全員に端末が起動したことを通知
+                this.roomContext.Group.All.OnBootTerminal(termID);
+            }
         }
 
         /// <summary>
         /// 端末成功同期処理
-        /// Author:Nishiura
         /// </summary>
-        /// <param name="termID">端末識別ID</param>
-        /// <param name="result">端末結果</param>
         /// <returns></returns>
         public async Task TerminalsResultAsync(int termID, bool result)
         {
-            // 受け取った端末がクリア済みである場合処理しない
-            if (this.roomContext.succededTerminalList.Contains(termID)) return;
 
-            if (result == true) // クリアの場合
-            {
-                // クリア済みとしてリストに入れる
-                this.roomContext.succededTerminalList.Add(termID);
+        }
 
-                // 参加者全員に端末の結果を通知
-                this.roomContext.Group.All.OnTerminalsResult(termID, result);
-            }
-            else if (result == false) // 失敗の場合
+        /// <summary>
+        /// リクエスト者に対してジャンブルの効果適用
+        /// </summary>
+        /// <param name="connectionId"></param>
+        /// <returns></returns>
+        private void JumbleRelic(Guid connectionId)
+        {
+            var haveCnt = this.roomContext.relicDataList[connectionId].Count;
+            this.roomContext.relicDataList[connectionId].Clear();
+
+            for(int i = 0; i < haveCnt; i++)
             {
-                // 参加者全員に端末の結果を通知
-                this.roomContext.Group.All.OnTerminalsResult(termID, result);
+                this.roomContext.relicDataList[connectionId].Add(DrawRelic(DrawRarity(true)));
             }
         }
 
@@ -760,7 +779,7 @@ namespace StreamingHubs
                         var relicData = dbContext.Relics.Where(data => data.id == (int)relic.RelicType).First();
 
                         // 取得したレリックをリストに入れる
-                        this.roomContext.relicDataList.Add(relicData);
+                        this.roomContext.relicDataList[this.ConnectionId].Add(relicData);
 
                         // レリック強化を付与
                         GetStatusWithRelics();
@@ -930,7 +949,7 @@ namespace StreamingHubs
             PlayerRelicStatusData relicStatus = statusData.Item2;   // インスタンス取得
 
             // ここで所持レリックを基にresultDataを更新する
-            foreach (var relic in this.roomContext.relicDataList)
+            foreach (var relic in this.roomContext.relicDataList[this.ConnectionId])
             {
                 if (relic.status_type <= (int)STATUS_TYPE.HealRate) // タイプがステータス上昇の場合
                 {
@@ -1136,7 +1155,7 @@ namespace StreamingHubs
             resultData.TotalActivedTerminal = this.roomContext.bootedTerminalList.Count;    // 総起動端末数
             resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;  // 総付与ダメージ数
             resultData.EnemyKillCount = this.roomContext.totalKillCount;    // 総キルカウント
-            resultData.GottenRelicList = this.roomContext.relicDataList;    // 獲得レリックリスト
+            resultData.GottenRelicList = this.roomContext.relicDataList[this.ConnectionId];    // 獲得レリックリスト
             resultData.TotalReceivedDamage = this.roomContext.totalGainDamage;  // 合計被弾値
 
             this.roomContext.Group.All.OnGameEnd(resultData);

@@ -7,11 +7,12 @@ using DG.Tweening.Core.Easing;
 using KanKikuchi.AudioManager;
 using Shared.Interfaces.StreamingHubs;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
-public class TerminalBase : MonoBehaviour
+public abstract class TerminalBase : MonoBehaviour
 {
     //--------------------------------
     // フィールド
@@ -22,19 +23,16 @@ public class TerminalBase : MonoBehaviour
     private bool isPlayerIn = false;
 
     // 起動判定
-    private bool isUsed = false;
+    protected bool isUsed = false;
 
     // 端末ID
-    private int terminalID = 0;
+    protected int terminalID = 0;
 
     // 端末の種別
     protected EnumManager.TERMINAL_TYPE terminalType;
 
-    // 制限時間
-    [SerializeField] protected int limitTime = 25;
-
     // カウントダウン
-    private int currentTime;
+    protected int currentTime;
 
     #endregion
 
@@ -52,13 +50,22 @@ public class TerminalBase : MonoBehaviour
 
     #endregion
 
-    #region UI関連
+    #region 外部設定
 
     // タイマー表示用テキスト
     [SerializeField] private Text timerText;
 
-    // 端末のアイコン
-    [SerializeField] private SpriteRenderer terminalIcon;
+    // 端末スプライト
+    [SerializeField] private SpriteRenderer terminalSprite;
+
+    // アイコンスプライト
+    [SerializeField] private SpriteRenderer iconSprite;
+
+    // 制限時間
+    [SerializeField] protected int limitTime = 25;
+
+    // レリック生成位置
+    [SerializeField] protected Transform[] relicSpawnPoints;
 
     #endregion
 
@@ -102,7 +109,7 @@ public class TerminalBase : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && isUsed == false && isPlayerIn == true)
         {
             Debug.Log("Terminal Booted");
-            BootTerminal(); // 端末を起動
+            BootRequest(); // 端末を起動
         }
     }
 
@@ -142,30 +149,48 @@ public class TerminalBase : MonoBehaviour
         TimeUp();
     }
 
+    /// <summary>
+    /// 端末起動リクエスト処理
+    /// </summary>
+    public virtual async void BootRequest()
+    {
+        isUsed = true; // 起動済みにする
+
+        // 起動リクエストをサーバーに送信
+        if(RoomModel.Instance)
+        {
+            await RoomModel.Instance.BootTerminalAsync(terminalID);
+        }
+        else
+        {
+            BootTerminal();
+        }
+    }
+
+    /// <summary>
+    /// 報酬排出リクエスト処理
+    /// </summary>
+    protected void GiveRewardRequest()
+    {
+        Stack<Vector2> posStack = new Stack<Vector2>();
+
+        foreach (var point in relicSpawnPoints)
+        {
+            posStack.Push(point.position);
+        }
+
+        //レリックを排出する
+        RelicManager.Instance.DropRelicRequest(posStack, false);
+    }
+
     #endregion
 
     #region 端末毎に処理実装
 
     /// <summary>
-    /// 端末起動処理
+    /// 起動処理
     /// </summary>
-    public virtual void BootTerminal()
-    {
-        isUsed = true; // 起動済みにする
-    }
-
-    /// <summary>
-    /// 報酬排出処理
-    /// </summary>
-    public virtual void GiveReward()
-    {
-        // レリックを排出する
-        //RelicManager.Instance.GenerateRelic(gameObject);
-
-        // ターミナル非表示
-        terminalIcon.DOFade(0, 1.5f);
-        gameObject.SetActive(false);
-    }
+    public abstract void BootTerminal();
 
     /// <summary>
     /// 時間切れ
@@ -176,7 +201,8 @@ public class TerminalBase : MonoBehaviour
         Debug.Log("Time Up!");
 
         // ターミナル非表示
-        terminalIcon.DOFade(0, 1.5f);
+        terminalSprite.DOFade(0, 1.5f);
+        iconSprite.DOFade(0, 1.5f);
         gameObject.SetActive(false);
     }
 

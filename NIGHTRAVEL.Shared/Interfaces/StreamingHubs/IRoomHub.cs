@@ -70,23 +70,6 @@ namespace Shared.Interfaces.StreamingHubs
         Task PlayerDeadAsync();
 
         /// <summary>
-        /// 端末起動
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="termID">端末種別ID</param>
-        /// <returns></returns>
-        Task BootTerminalAsync(int termID);
-
-        /// <summary>
-        /// 端末成功処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="termID">端末種別ID</param>
-        /// <param name="result">端末結果</param>
-        /// <returns></returns>
-        Task TerminalsResultAsync(int termID, bool result);
-
-        /// <summary>
         /// アイテム獲得
         /// Author:Nishiura
         /// </summary>
@@ -150,6 +133,24 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task DropRelicAsync(Stack<Vector2> pos, bool includeBossRarity);
 
+        #endregion
+        #region 端末関連
+        /// <summary>
+        /// 端末起動
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末種別ID</param>
+        /// <returns></returns>
+        Task BootTerminalAsync(int termID);
+
+        /// <summary>
+        /// 端末成功処理
+        /// Author:Nishiura
+        /// </summary>
+        /// <param name="termID">端末種別ID</param>
+        /// <param name="result">端末結果</param>
+        /// <returns></returns>
+        Task TerminalsResultAsync(int termID, bool result);
         #endregion
         #region ゲーム内UI、仕様関連
 

@@ -115,7 +115,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// <summary>
         /// レリックの情報リスト
         /// </summary>
-        public List<Relic> relicDataList {  get; } = new List<Relic>();
+        public Dictionary<Guid,List<Relic>> relicDataList { get; } = new Dictionary<Guid, List<Relic>>();
 
         /// <summary>
         /// 起動済み端末IDリスト

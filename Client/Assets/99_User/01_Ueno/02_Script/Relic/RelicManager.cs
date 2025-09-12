@@ -63,6 +63,7 @@ public class RelicManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
+        RoomModel.Instance.OnTerminalJumbled += this.OnTerminalJumbled;
         Invoke("Test",10.0f);
     }
 
@@ -87,7 +88,6 @@ public class RelicManager : MonoBehaviour
     {
         if (haveRelicList.Find(X => X.ID == relic.ID) != null)
         {
-            
             CountRelic(relic.ID);
         }
         else
@@ -155,25 +155,24 @@ public class RelicManager : MonoBehaviour
         //}
     }
 
-    [ContextMenu("ShuffleRelic")]
     /// <summary>
-    /// 持ち物を入れ替える処理
+    /// レリック入れ替え処理
     /// </summary>
-    public void ShuffleRelic()
+    /// <param name="relics"></param>
+    public void OnTerminalJumbled (List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic> relics)
     {
-        int count = haveRelicList.Count;
-
+        // レリック消去
         haveRelicList.Clear();
         UIManager.Instance.ClearRelic();
 
-        for (int i = 0; i < count; i++)
+        // 受け取ったレリックデータを適用
+        foreach(var relic in relics)
         {
-            int relicnum = Random.Range(0, relicSprites.Count);
+            // レリックデータの作成
+            var data = new RelicData(relic.id.ToString(), (RARITY_TYPE)relic.rarity);
+            data.Name = relic.name;
 
-            // シャッフルしたあとに持ち物に追加するために呼び出し 一応残してる
-            relic.GetComponent<Relic>().AddRelic();
-
-            //relicPrefabs[relicnum].GetComponent<Relic>().AddRelic();
+            AddRelic(data);
         }
     }
 

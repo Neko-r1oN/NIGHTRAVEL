@@ -236,6 +236,21 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 指定した端末IDに紐づく敵を返す
+    /// </summary>
+    /// <param name="terminalID"></param>
+    /// <returns></returns>
+    public List<GameObject> GetEnemysByTerminalID(int terminalID)
+    {
+        List<GameObject> result = new List<GameObject>();   // 返す敵のリスト
+        foreach (var data in enemies)
+        {
+            if (data.Value.TerminalID == terminalID && data.Value.Enemy.HP > 0) result.Add(data.Value.Object);
+        }
+        return result;
+    }
+
+    /// <summary>
     /// 発射物のプレファブをタイプ事にまとめる
     /// </summary>
     public void SetProjectilePrefabsByType()

@@ -72,10 +72,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3698992253662415494}
   - component: {fileID: 756572155824285165}
-  - component: {fileID: 6211738938951227130}
+  - component: {fileID: -5974394610358276686}
   m_Layer: 0
   m_Name: 2_SpeedTerminal
-  m_TagString: Gimmick/Terminal
+  m_TagString: Interact
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,8 +93,8 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 6513936014691337255}
   - {fileID: 1844458485250277814}
+  - {fileID: 6513936014691337255}
   - {fileID: 2842391818489880181}
   - {fileID: 4255814428809331951}
   m_Father: {fileID: 0}
@@ -145,7 +145,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.9933736, y: 2.5199835}
   m_EdgeRadius: 0
---- !u!114 &6211738938951227130
+--- !u!114 &-5974394610358276686
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,12 +154,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 676358712193016643}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aefb1760c25301247a82758e5b6d20c1, type: 3}
+  m_Script: {fileID: 11500000, guid: fb756b5c39f9f8748bf43b9873c20814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limitTime: 25
   timerText: {fileID: 6375614736533641218}
-  terminalIcon: {fileID: 0}
+  terminalSprite: {fileID: 101607301524932738}
+  iconSprite: {fileID: 7867893729283295211}
+  limitTime: 25
+  relicSpawnPoints:
+  - {fileID: 1951703533823577703}
+  - {fileID: 7323655869719264787}
+  - {fileID: 360011112810778649}
+  - {fileID: 8876222766119595447}
 --- !u!1 &1011048537596854069
 GameObject:
   m_ObjectHideFlags: 0

@@ -641,66 +641,6 @@ public class SpawnManager : MonoBehaviour
             SpawnEnemy(spawnEnemyData);
         }
     }
-
-    /// <summary>
-    /// ターミナル用敵生成リクエスト
-    /// </summary>
-    /// <param name="spawnEnemy"></param>
-    /// <param name="spawnPos"></param>
-    public async void SpawnTerminalEnemyRequest(params SpawnEnemyData[] spawnDatas)
-    {
-        List<GameObject> enemyObj = new List<GameObject>();
-
-        if (spawnDatas.Any(x => x == null))
-        {
-            Debug.LogWarning("spawnDatasにnullの要素が見つかったため、敵の生成を中断しました。");
-            return;
-        }
-
-        // ここで敵の生成リクエスト
-        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
-        {
-            // SpawnEnemyAsyncを呼び出す
-            await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
-            return;
-        }
-
-        foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
-        {
-            if (spawnEnemyData == null) continue;
-            enemyObj.Add(SpawnEnemy(spawnEnemyData));
-        }
-    }
-
-    /// <summary>
-    /// ターミナル用敵生成リクエスト
-    /// </summary>
-    /// <param name="spawnEnemy"></param>
-    /// <param name="spawnPos"></param>
-    public async void SpawnTerminalEnemyRequest(Terminal terminal, params SpawnEnemyData[] spawnDatas)
-    {
-        if (spawnDatas.Any(x => x == null))
-        {
-            Debug.LogWarning("spawnDatasにnullの要素が見つかったため、敵の生成を中断しました。");
-            return;
-        }
-
-        // ここで敵の生成リクエスト
-        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
-        {
-            // SpawnEnemyAsyncを呼び出す
-            await RoomModel.Instance.SpawnEnemyAsync(spawnDatas.ToList());
-            return;
-        }
-
-        foreach (SpawnEnemyData spawnEnemyData in spawnDatas)
-        {
-            if (spawnEnemyData == null) continue;
-            GameObject enemy = SpawnEnemy(spawnEnemyData);
-            enemy.GetComponent<EnemyBase>().TerminalManager = terminal;
-            terminal.TerminalSpawnList.Add(enemy);
-        }
-    }
     #endregion
 
     #region 通知関連
@@ -804,5 +744,4 @@ public class SpawnManager : MonoBehaviour
         // 最後に記録されたオブジェクトを返す
         return result?.transform;
     }
-
 }
