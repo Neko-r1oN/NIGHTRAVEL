@@ -111,11 +111,15 @@ public class Boxgeist : EnemyBase
     #endregion
 
     #region オリジナル
+
+    [SerializeField]
+    GameObject finishBoxParticleObj;
+
     Vector3 targetPos;
+    float defaultGravityScale;
 
     [SerializeField]
     float maxMoveTime = 2f;
-
     [SerializeField]
     float minMoveTime = 0.5f;
     #endregion
@@ -126,6 +130,7 @@ public class Boxgeist : EnemyBase
         isAttacking = false;
         doOnceDecision = true;
         targetPos = Vector3.zero;
+        defaultGravityScale = m_rb2d.gravityScale;
         NextDecision();
     }
 
@@ -212,10 +217,10 @@ public class Boxgeist : EnemyBase
 
         if (canAttack && target)
         {
-            //weights[DECIDE_TYPE.Attack_Range] = nextDecide != DECIDE_TYPE.Attack_Range ? 30 : 1;
-            //weights[DECIDE_TYPE.Attack_Shotgun] = nextDecide != DECIDE_TYPE.Attack_Shotgun ? 30 : 1;
-            //weights[DECIDE_TYPE.Attack_Golem] = nextDecide != DECIDE_TYPE.Attack_Golem ? 20 : 1;
-            weights[DECIDE_TYPE.Attack_FallBlock] = nextDecide != DECIDE_TYPE.Attack_FallBlock ? 20 : 1;
+            weights[DECIDE_TYPE.Attack_Range] = nextDecide != DECIDE_TYPE.Attack_Range ? 30 : 0;
+            weights[DECIDE_TYPE.Attack_Shotgun] = nextDecide != DECIDE_TYPE.Attack_Shotgun ? 30 : 0;
+            weights[DECIDE_TYPE.Attack_Golem] = nextDecide != DECIDE_TYPE.Attack_Golem ? 20 : 0;
+            weights[DECIDE_TYPE.Attack_FallBlock] = nextDecide != DECIDE_TYPE.Attack_FallBlock ? 20 : 0;
         }
         else
         {
@@ -299,22 +304,18 @@ public class Boxgeist : EnemyBase
     {
         const float waitSec = 0.1f;
         float currentSec = 0;
-        while (disToTarget < attackDist || disToTarget < attackDist && currentSec <= maxMoveTime)
+        Vector2 targetPos = target.transform.position;
+        while (Vector2.Distance(targetPos, transform.position) < attackDist * 2 || 
+            Vector2.Distance(targetPos, transform.position) < attackDist * 2 && currentSec <= maxMoveTime)
         {
-            BackOff();
+            BackOff(targetPos);
             yield return new WaitForSeconds(waitSec);
             currentSec += waitSec;
         }
 
-        // 真上に飛んで落下し始めたらその場で攻撃開始
-        JumpUp();
-        while(m_rb2d.linearVelocityY > 0)
-        {
-            yield return null;
-        }
+        // 攻撃開始
         m_rb2d.linearVelocity = Vector2.zero;
         m_rb2d.bodyType = RigidbodyType2D.Static;
-
         SetAnimId((int)ANIM_ID.Attack_Range);
         onFinished?.Invoke();
     }
@@ -387,7 +388,7 @@ public class Boxgeist : EnemyBase
     }
 
     /// <summary>
-    /// [AttackShotgun] ターゲットと距離をとってから攻撃を開始する
+    /// [AttackShotgun] ターゲットに近づいてから攻撃開始
     /// </summary>
     /// <returns></returns>
     IEnumerator AttackShotgunCoroutine(Action onFinished)
@@ -422,15 +423,20 @@ public class Boxgeist : EnemyBase
             if (applyEffect != null) debuffs.Add((DEBUFF_TYPE)applyEffect);
 
             List<ShootBulletData> shootBulletDatas = new List<ShootBulletData>();
+            int currentIndex = 0;
             foreach(var point in shotgunAttackSpawnPoints)
             {
-                // 生成位置と移動ベクトルを取得
-                var shootVec = (transform.position - point.position).normalized * 60;
+                // 角度をラジアンに変換した移動ベクトルと生成位置を取得
+                currentIndex++;
+                float angle = 360 - (360 / shotgunAttackSpawnPoints.Count * currentIndex);
+                float rad = angle * Mathf.Deg2Rad;
+                Vector3 direction = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0);
+                var shootVec = direction.normalized * 30;
                 currentRangeAttackPoint = currentRangeAttackPoint >= rangedAttackSpawnPoints.Count - 1 ? 0 : currentRangeAttackPoint + 1;
 
                 ShootBulletData data = new ShootBulletData()
                 {
-                    Type = PROJECTILE_TYPE.BoxBullet,
+                    Type = PROJECTILE_TYPE.BoxBullet_Big,
                     Debuffs = debuffs,
                     Power = power,
                     SpawnPos = point.position,
@@ -482,7 +488,7 @@ public class Boxgeist : EnemyBase
     }
 
     /// <summary>
-    /// [AttackGolem] ターゲットと距離をとってから攻撃を開始する
+    /// [AttackGolem] ターゲットに近づいてから攻撃開始
     /// </summary>
     /// <param name="onFinished"></param>
     /// <returns></returns>
@@ -490,13 +496,16 @@ public class Boxgeist : EnemyBase
     {
         const float waitSec = 0.1f;
         float currentSec = 0;
-        while (currentSec <= minMoveTime && disToTarget < attackDist ||
-            disToTarget < attackDist && currentSec <= maxMoveTime)
+        while (currentSec <= minMoveTime && disToTargetX > attackDist ||
+            currentSec <= maxMoveTime && disToTargetX > attackDist)
         {
             CloseIn();
             yield return new WaitForSeconds(waitSec);
             currentSec += waitSec;
         }
+
+        SetAnimId((int)ANIM_ID.Attack_Golem);
+        yield return new WaitForSeconds(0.45f);     // ゴーレムに形態変化が完了する時間
 
         // ターゲットのいる方向にテクスチャを反転
         if (canChaseTarget)
@@ -505,7 +514,6 @@ public class Boxgeist : EnemyBase
                 || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
         }
 
-        SetAnimId((int)ANIM_ID.Attack_Golem);
         onFinished?.Invoke();
     }
 
@@ -514,7 +522,16 @@ public class Boxgeist : EnemyBase
     /// </summary>
     public override void OnAttackAnim3Event()
     {
-        m_rb2d.linearVelocity = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed * 2, 0);
+        const float forcePower = 30;
+        m_rb2d.AddForce(new Vector2(TransformUtils.GetFacingDirection(transform) * forcePower, 0), ForceMode2D.Impulse);
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] ダッシュを停止する
+    /// </summary>
+    public override void OnEndAttackAnim3Event()
+    {
+        m_rb2d.linearVelocity = Vector2.zero;
     }
 
     #endregion
@@ -548,45 +565,23 @@ public class Boxgeist : EnemyBase
     IEnumerator AttackFakkBlockCoroutine(Action onFinished)
     {
         const float targetDist = 0.5f;
-        while (disToTarget < targetDist)
+        while (disToTargetX > targetDist)
         {
             CloseIn();
             yield return null;
         }
 
-        // 真上に飛んで落下し始めたらその場で攻撃開始
-        JumpUp();
-        while (m_rb2d.linearVelocityY > 0)
-        {
-            yield return null;
-        }
+        // 攻撃開始
         m_rb2d.linearVelocity = Vector2.zero;
         m_rb2d.bodyType = RigidbodyType2D.Static;
         SetAnimId((int)ANIM_ID.Attack_FallBlock);
 
-        // 地面に着いたら攻撃を終了する
-        while (true)
-        {
-            if (IsGround())
-            {
-                yield return new WaitForSeconds(0.5f);
-                break;
-            }
-            yield return null;
-        }
+        // ブロックの向きを正しくする
+        Vector2 direction = transform.localScale;
+        var isRightDir = TransformUtils.GetFacingDirection(transform) > 1;
+        transform.localScale = new Vector2(Mathf.Abs(direction.x), Mathf.Abs(direction.y));
 
-        OnEndAttackAnimEvent();
         onFinished?.Invoke();
-    }
-
-    /// <summary>
-    /// [Animationイベントからの呼び出し] 攻撃判定開始し、勢い良く落下する
-    /// </summary>
-    public override void OnAttackAnim4Event()
-    {
-        m_rb2d.bodyType = RigidbodyType2D.Dynamic;
-        m_rb2d.linearVelocity = Vector2.zero;
-        m_rb2d.AddForce(Vector2.down * jumpPower, ForceMode2D.Impulse);
     }
 
     #endregion
@@ -614,6 +609,13 @@ public class Boxgeist : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        // ターゲットのいる方向にテクスチャを反転
+        if (canChaseTarget)
+        {
+            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        }
+
         m_rb2d.bodyType = RigidbodyType2D.Dynamic;
         isAttacking = true;
         Idle();
@@ -658,8 +660,9 @@ public class Boxgeist : EnemyBase
     /// <summary>
     /// ターゲットとの距離をとる
     /// </summary>
-    void BackOff()
+    void BackOff(Vector2? optionPos = null)
     {
+        Vector2 targetPos = optionPos == null ? target.transform.position : (Vector2)optionPos;
         SetAnimId((int)ANIM_ID.Idle);
 
         Vector2 speedVec = Vector2.zero;
@@ -669,7 +672,7 @@ public class Boxgeist : EnemyBase
         }
         else
         {
-            float distToPlayer = target.transform.position.x - this.transform.position.x;
+            float distToPlayer = targetPos.x - this.transform.position.x;
             speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -1, m_rb2d.linearVelocity.y);
         }
         m_rb2d.linearVelocity = speedVec;

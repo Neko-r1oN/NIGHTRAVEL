@@ -8,19 +8,19 @@ public class BoxBullet : ProjectileBase
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isDead) return;
+        if(isDead) return;
 
         // レイヤーが地形やギミックの場合
-        if (collision.gameObject.layer == 0 || collision.gameObject.layer == 13)
+        if (collision.gameObject.tag != "Player" || collision.gameObject.tag != "Enemy")
         {
             isDead = true;
-            InvokeRepeating("Destroy", 0, 0.2f);
+            InvokeRepeating("Destroy", 0, 0.1f);
         }
         else if (collision.gameObject.tag == "Player")
         {
             DEBUFF_TYPE? debuff = null;
             if(debuffs.Count > 0) debuff = debuffs[0];
-            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(power, null, KB_POW.Medium, debuff);
+            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Small, debuff);
         }
     }
 

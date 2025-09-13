@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8207734994208010254}
   - component: {fileID: 3589583939993759861}
   m_Layer: 3
-  m_Name: BoxBullet_TypeA
+  m_Name: BoxBullet_TypeA_Big
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 216472265252347854}
@@ -50,7 +50,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 0
   m_GravityScale: 3
   m_Material: {fileID: 6200000, guid: 58f20e64a4db6fb4684452a14f75968c, type: 2}
   m_IncludeLayers:
@@ -98,7 +98,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 0.55, y: 0.55}
   m_Direction: 0
 --- !u!70 &8207734994208010254
 CapsuleCollider2D:
@@ -135,7 +135,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 0.55, y: 0.55}
   m_Direction: 0
 --- !u!114 &3589583939993759861
 MonoBehaviour:
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8b78931bc897b47b7456f20c52e211, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typeId: 0
+  typeId: 6
   isDestructible: 1
 --- !u!1 &9024861808723322544
 GameObject:

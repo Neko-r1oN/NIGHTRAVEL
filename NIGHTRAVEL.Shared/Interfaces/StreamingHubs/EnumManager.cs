@@ -85,6 +85,7 @@ namespace Shared.Interfaces.StreamingHubs
             NodeBullet_O,
             NodeBullet_D,
             NodeBullet_E,
+            BoxBullet_Big,
         }
 
         /// <summary>

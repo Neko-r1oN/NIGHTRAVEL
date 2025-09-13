@@ -9,6 +9,9 @@ public class BoxgeistDamageCollider : MonoBehaviour
     EnemyBase m_EnemyBase;
 
     [SerializeField]
+    float powerRate;
+
+    [SerializeField]
     KB_POW knockbackPower;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -17,7 +20,7 @@ public class BoxgeistDamageCollider : MonoBehaviour
         {
             // 自身がエリート個体の場合、付与する状態異常の種類を取得する
             DEBUFF_TYPE? applyEffect = m_EnemyBase.GetStatusEffectToApply();
-            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(m_EnemyBase.power * 3, transform.position, knockbackPower, applyEffect);
+            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage((int)(m_EnemyBase.power * powerRate), transform.position, knockbackPower, applyEffect);
         }
     }
 }

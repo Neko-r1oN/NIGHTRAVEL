@@ -230,7 +230,12 @@ abstract public class EnemyBase : CharacterBase
         {
             // ターゲットとの距離を取得する
             disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
-            disToTargetX = target.transform.position.x - transform.position.x;
+            disToTargetX = MathF.Abs(target.transform.position.x - transform.position.x);
+        }
+        else
+        {
+            disToTarget = float.MaxValue;
+            disToTargetX = float.MaxValue;
         }
 
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
