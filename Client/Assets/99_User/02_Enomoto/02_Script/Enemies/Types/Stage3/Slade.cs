@@ -37,7 +37,6 @@ public class Slade : EnemyBase
     {
         Waiting = 1,
         Attack_Upward_Slash,
-        Attack_Downward_Slash,
         Attack_Charge,
         Attack_Combo_Slash,
         Teleport,
@@ -106,9 +105,6 @@ public class Slade : EnemyBase
                     break;
                 case DECIDE_TYPE.Attack_Upward_Slash:
                     AttackUpwardSlash();
-                    break;
-                case DECIDE_TYPE.Attack_Downward_Slash:
-                    AttackDownwardSlash();
                     break;
                 case DECIDE_TYPE.Attack_Charge:
                     AttackCharge();
@@ -182,7 +178,6 @@ public class Slade : EnemyBase
         if (canAttackSlash)
         {
             weights[DECIDE_TYPE.Attack_Upward_Slash] = nextDecide == DECIDE_TYPE.Attack_Upward_Slash ? 5 : 20;
-            weights[DECIDE_TYPE.Attack_Downward_Slash] = nextDecide == DECIDE_TYPE.Attack_Downward_Slash ? 5 : 20;
         }
         if (canAttackCharge)
         {

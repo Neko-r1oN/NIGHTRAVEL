@@ -4,6 +4,7 @@
 //**************************************************
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -163,9 +164,18 @@ public class MissileMachine : EnemyBase
         if (RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
             // 弾の生成リクエスト
-            await RoomModel.Instance.ShootBulletAsync(PROJECTILE_TYPE.BoxBullet, debuffs, power, aimTransform.position, shootVec, aimTransform.rotation);
+            ShootBulletData shootBulletData = new ShootBulletData()
+            {
+                Type = PROJECTILE_TYPE.MissileBullet,
+                Debuffs = debuffs,
+                Power = power,
+                SpawnPos = aimTransform.position,
+                ShootVec = shootVec,
+                Rotation = aimTransform.rotation
+            };
+            await RoomModel.Instance.ShootBulletAsync(shootBulletData);
         }
-        else
+        else if(!RoomModel.Instance)
         {
             var missile = Instantiate(missileBulletPrefab, aimTransform.position, aimTransform.rotation);
             missile.GetComponent<ProjectileBase>().Init(debuffs, power);

@@ -288,7 +288,16 @@ public class Delibot : EnemyBase
             if (RoomModel.Instance && RoomModel.Instance.IsMaster)
             {
                 // 弾の生成リクエスト
-                await RoomModel.Instance.ShootBulletAsync(PROJECTILE_TYPE.BoxBullet, debuffs, power, aimTransform.position, shootVec, Quaternion.identity);
+                ShootBulletData shootBulletData = new ShootBulletData()
+                {
+                    Type = PROJECTILE_TYPE.BoxBullet,
+                    Debuffs = debuffs,
+                    Power = power,
+                    SpawnPos = aimTransform.position,
+                    ShootVec = shootVec,
+                    Rotation = Quaternion.identity
+                };
+                await RoomModel.Instance.ShootBulletAsync(shootBulletData);
             }
             else if (!RoomModel.Instance)
             {

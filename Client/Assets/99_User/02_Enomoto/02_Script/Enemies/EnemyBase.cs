@@ -226,6 +226,18 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void FixedUpdate()
     {
+        if (target)
+        {
+            // ターゲットとの距離を取得する
+            disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
+            disToTargetX = MathF.Abs(target.transform.position.x - transform.position.x);
+        }
+        else
+        {
+            disToTarget = float.MaxValue;
+            disToTargetX = float.MaxValue;
+        }
+
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
         // ターゲットが存在しない || 現在のターゲットが死亡している場合
@@ -253,10 +265,6 @@ abstract public class EnemyBase : CharacterBase
             else Idle();
             return;
         }
-
-        // ターゲットとの距離を取得する
-        disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
-        disToTargetX = target.transform.position.x - transform.position.x;
 
         // ターゲットのいる方向にテクスチャを反転
         if (canChaseTarget)
@@ -583,7 +591,7 @@ abstract public class EnemyBase : CharacterBase
 
             if (hp > 0 && canCancelAttackOnHit) ApplyStun(hitTime);
 
-            DoKnokBack();
+            if(canCancelAttackOnHit) DoKnokBack();
         }
 
         if (hp <= 0)
@@ -875,6 +883,7 @@ abstract public class EnemyBase : CharacterBase
         enemyData.UniqueId = this.UniqueId;
         enemyData.EnemyName = this.gameObject.name;
         enemyData.isBoss = this.IsBoss;
+        enemyData.IsInvincible = this.isInvincible;
         Exp = this.Exp;
 
         return enemyData;
@@ -898,6 +907,7 @@ abstract public class EnemyBase : CharacterBase
         uniqueId = enemyData.UniqueId;
         gameObject.name = enemyData.EnemyName;
         isBoss = enemyData.isBoss;
+        isInvincible = enemyData.IsInvincible;
         exp = enemyData.Exp;
     }
 

@@ -79,7 +79,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="type">発射物の種類</param>
         /// <param name="spawnPos">生成位置</param>
         /// <param name="shootVec">発射ベクトル</param>
-        void OnShootBullet(EnumManager.PROJECTILE_TYPE type,List<EnumManager.DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation);
+        void OnShootBullets(params ShootBulletData[] shootBulletDatas);
 
         /// <summary>
         /// ステータス更新通知
@@ -190,13 +190,6 @@ namespace Shared.Interfaces.StreamingHubs
         #region プレイヤー関連
 
         /// <summary>
-        /// プレイヤー体力増減通知
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="playerID">プレイヤー識別ID</param>
-        /// <param name="playerHP">プレイヤー体力</param>
-
-        /// <summary>
         /// レベルアップ通知
         /// Author:Nishiura
         /// </summary>
@@ -204,7 +197,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="nowExp">現在の経験値</param>
         /// <param name="characterStatusDataList">プレイヤーステータスリスト</param>
         /// <param name="statusOptionList">強化選択肢リスト</param>
-        void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList);
+        void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, Guid optionsKey, List<Status_Enhancement> statusOptionList);
 
         #endregion
         #endregion

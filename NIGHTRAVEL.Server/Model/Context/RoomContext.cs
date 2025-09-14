@@ -154,8 +154,10 @@ namespace NIGHTRAVEL.Server.Model.Context
 
         /// <summary>
         /// ステータス強化選択肢リスト
+        /// key1:ユーザー毎のconnectionId
+        /// key2:ユニークid
         /// </summary>
-        public List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList { get; } = new List<EnumManager.STAT_UPGRADE_OPTION>();
+        public Dictionary<Guid, Dictionary<Guid, List<Status_Enhancement>>> statusOptionList { get; set; } = new Dictionary<Guid, Dictionary<Guid, List<Status_Enhancement>>>();
 
         //[その他、ゲームのルームデータをフィールドに保存]
         #endregion

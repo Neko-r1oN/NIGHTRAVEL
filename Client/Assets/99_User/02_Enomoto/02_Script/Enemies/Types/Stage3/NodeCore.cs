@@ -4,6 +4,7 @@
 //**************************************************
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -270,7 +271,16 @@ public class NodeCore : EnemyBase
             if (RoomModel.Instance && RoomModel.Instance.IsMaster)
             {
                 // 弾の生成リクエスト
-                await RoomModel.Instance.ShootBulletAsync(bulletType, debuffs, power, aimTransform.position, shootVec, Quaternion.identity);
+                ShootBulletData shootBulletData = new ShootBulletData()
+                {
+                    Type = bulletType,
+                    Debuffs = debuffs,
+                    Power = power,
+                    SpawnPos = aimTransform.position,
+                    ShootVec = shootVec,
+                    Rotation = Quaternion.identity
+                };
+                await RoomModel.Instance.ShootBulletAsync(shootBulletData);
             }
             else if(!RoomModel.Instance)
             {

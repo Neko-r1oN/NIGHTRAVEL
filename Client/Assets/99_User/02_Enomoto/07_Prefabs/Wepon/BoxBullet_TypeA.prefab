@@ -51,7 +51,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 2
   m_Material: {fileID: 6200000, guid: 58f20e64a4db6fb4684452a14f75968c, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -61,7 +61,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!70 &7995837447968109379
 CapsuleCollider2D:
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeId: 0
-  isDestructible: 0
+  isDestructible: 1
 --- !u!1 &9024861808723322544
 GameObject:
   m_ObjectHideFlags: 0

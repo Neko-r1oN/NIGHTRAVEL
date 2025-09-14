@@ -16,6 +16,7 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -140,7 +141,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     #region 発射物
 
     // 発射物の生成通知
-    public Action<PROJECTILE_TYPE, List<DEBUFF_TYPE>, int, Vector2, Vector2, Quaternion> OnShootedBullet { get; set; }
+    public Action<List<ShootBulletData>> OnShootedBullet { get; set; }
 
     #endregion
 
@@ -334,7 +335,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// プレイヤーのレベルアップ通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList)
+    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, Guid optionsKey, List<Status_Enhancement> statusOptionList)
     {
         // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
     }
@@ -343,14 +344,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 発射物の生成通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnShootBullet(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
+    public void OnShootBullets(params ShootBulletData[] shootBulletDatas)
     {
-        OnShootedBullet(type, debuffs, power, spawnPos, shootVec, rotation);
+        OnShootedBullet(shootBulletDatas.ToList());
     }
-
-    #endregion
-
-    #region 敵通知関連
 
     /// <summary>
     /// 敵の生成通知
@@ -584,9 +581,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="spawnPos">生成位置</param>
     /// <param name="shootVec">発射ベクトル</param>
     /// <returns></returns>
-    public async UniTask ShootBulletAsync(PROJECTILE_TYPE type, List<DEBUFF_TYPE> debuffs, int power, Vector2 spawnPos, Vector2 shootVec, Quaternion rotation)
+    public async UniTask ShootBulletAsync(params ShootBulletData[] shootBulletDatas)
     {
-        await roomHub.ShootBulletAsync(type, debuffs, power, spawnPos, shootVec, rotation);
+        await roomHub.ShootBulletsAsync(shootBulletDatas);
     }
 
     #endregion

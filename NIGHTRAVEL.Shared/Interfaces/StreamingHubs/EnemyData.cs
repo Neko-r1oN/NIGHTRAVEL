@@ -36,12 +36,19 @@ namespace Shared.Interfaces.StreamingHubs
 
         [Key(11)]
         /// <summary>
+        /// 無敵状態かどうか
+        /// Author:Enomoto
+        /// </summary>
+        public bool IsInvincible { get; set; }
+
+        [Key(12)]
+        /// <summary>
         /// 経験値
         /// Author:Nishiura
         /// </summary>
         public int Exp { get; set; }
 
-        [Key(12)]
+        [Key(13)]
         /// <summary>
         /// Quaternionのオプション
         /// Author:Enomoto

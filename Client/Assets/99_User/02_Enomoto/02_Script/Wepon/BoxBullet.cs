@@ -5,22 +5,44 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 public class BoxBullet : ProjectileBase
 {
     bool isDead = false;
+    Rigidbody2D rb2d;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void Start()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+        InvokeRepeating("Flip", 0, 0.2f);
+    }
+
+    void Flip()
+    {
+        var x  = Mathf.Abs(transform.localScale.x);
+        var y  = transform.localScale.y;
+
+        if (rb2d.linearVelocity.x < 0) transform.localScale = new Vector2(x * -1, y);
+        else transform.localScale = new Vector2(x, y);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (isDead) return;
 
-        // レイヤーが地形やギミックの場合
+        // 地形やギミックに触れることで破棄
         if (collision.gameObject.layer == 0 || collision.gameObject.layer == 13)
         {
             isDead = true;
-            InvokeRepeating("Destroy", 0, 0.2f);
+            InvokeRepeating("Destroy", 0, 0.1f);
         }
-        else if (collision.gameObject.tag == "Player")
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(isDead) return;
+
+        if (collision.gameObject.tag == "Player")
         {
             DEBUFF_TYPE? debuff = null;
             if(debuffs.Count > 0) debuff = debuffs[0];
-            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(power, null, KB_POW.Medium, debuff);
+            collision.gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Small, debuff);
         }
     }
 
