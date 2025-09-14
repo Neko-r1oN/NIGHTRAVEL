@@ -95,7 +95,7 @@ Transform:
   m_GameObject: {fileID: 1395234046079949995}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.44, y: -2.78, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -104,6 +104,7 @@ Transform:
   - {fileID: 6842891605598635317}
   - {fileID: 1803955710875451920}
   - {fileID: 983653986825249776}
+  - {fileID: 6940678894527482201}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3479849324699657788
@@ -166,13 +167,6 @@ MonoBehaviour:
   baseJumpPower: 5
   baseMoveSpeed: 2
   baseHealRate: 0.001
-  maxHp: 0
-  maxDefense: 0
-  maxPower: 0
-  maxJumpPower: 0
-  maxMoveSpeed: 0
-  maxAttackSpeedFactor: 0
-  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -184,7 +178,10 @@ MonoBehaviour:
   enemyTypeId: 6
   uniqueId: 
   destroyWaitSec: 1
-  spriteRenderers: []
+  spriteRenderers:
+  - {fileID: 5743595125749893163}
+  - {fileID: 5102030267456204163}
+  - {fileID: 7879653685911357599}
   bulletNum: 3
   shotsPerSecond: 0.5
   attackCoolTime: 4
@@ -935,6 +932,7 @@ GameObject:
   - component: {fileID: 983653986825249776}
   - component: {fileID: 362872783955883856}
   - component: {fileID: 7090493311024878470}
+  - component: {fileID: 3335255722412530194}
   m_Layer: 0
   m_Name: Animatioin
   m_TagString: Untagged
@@ -998,3 +996,85 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EnemyBase: {fileID: 8287365989805299656}
+--- !u!210 &3335255722412530194
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8891110750453600233}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
+  m_SortAtRoot: 0
+--- !u!1001 &3768937052351073532
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3653658462037449542}
+    m_Modifications:
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.064
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600986288683839466, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: VelocityModule.y.scalar
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600986288683839466, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 7783622868316634417, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_Name
+      value: SpawnEffect_Base 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+--- !u!4 &6940678894527482201 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+  m_PrefabInstance: {fileID: 3768937052351073532}
+  m_PrefabAsset: {fileID: 0}

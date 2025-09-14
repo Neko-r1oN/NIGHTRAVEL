@@ -40174,6 +40174,7 @@ GameObject:
   - component: {fileID: 8528455429976223235}
   - component: {fileID: 1376384270870028801}
   - component: {fileID: 2060597367474640901}
+  - component: {fileID: 868646785695322362}
   m_Layer: 0
   m_Name: Animation
   m_TagString: Untagged
@@ -40203,6 +40204,7 @@ Transform:
   - {fileID: 1268432025304347694}
   - {fileID: 5857505609655804829}
   - {fileID: 2597282472579819544}
+  - {fileID: 3481484270608553925}
   m_Father: {fileID: 8277741081766865474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1376384270870028801
@@ -40240,6 +40242,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EnemyBase: {fileID: 4946741110832464916}
+--- !u!210 &868646785695322362
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5129282904584690586}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
+  m_SortAtRoot: 0
 --- !u!1 &5680411643006709062
 GameObject:
   m_ObjectHideFlags: 0
@@ -40345,13 +40359,6 @@ MonoBehaviour:
   baseJumpPower: 10
   baseMoveSpeed: 2
   baseHealRate: 0.001
-  maxHp: 0
-  maxDefense: 0
-  maxPower: 0
-  maxJumpPower: 0
-  maxMoveSpeed: 0
-  maxAttackSpeedFactor: 0
-  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -40363,7 +40370,13 @@ MonoBehaviour:
   enemyTypeId: 19
   uniqueId: 
   destroyWaitSec: 1
-  spriteRenderers: []
+  spriteRenderers:
+  - {fileID: 870167290805216534}
+  - {fileID: 4478697048221858217}
+  - {fileID: 75686948195347603}
+  - {fileID: 5949223069899150061}
+  - {fileID: 6227989054636976625}
+  - {fileID: 2573768655490635785}
   bulletNum: 3
   shotsPerSecond: 0.5
   attackCoolTime: 2
@@ -40378,7 +40391,7 @@ MonoBehaviour:
   canJump: 0
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
-  spawnGroundOffset: 0
+  spawnGroundOffset: 1.4
   canDrawRay: 1
   baseExp: 100
   exp: 100
@@ -40429,7 +40442,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.1, y: 2.3}
+  m_Size: {x: 1.4, y: 2.3}
   m_Direction: 0
 --- !u!70 &1396874395800132224
 CapsuleCollider2D:
@@ -40466,7 +40479,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.1, y: 2.3}
+  m_Size: {x: 1.4, y: 2.3}
   m_Direction: 0
 --- !u!50 &2908143051098640432
 Rigidbody2D:
@@ -60335,3 +60348,81 @@ Transform:
   - {fileID: 2237692259351296330}
   m_Father: {fileID: 8528455429976223235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &7228134011138642528
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8528455429976223235}
+    m_Modifications:
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.29000044
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600986288683839466, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: ShapeModule.m_Scale.x
+      value: 4.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600986288683839466, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: VelocityModule.y.scalar
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600986288683839466, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600986288683839466, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 7783622868316634417, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+      propertyPath: m_Name
+      value: SpawnEffect_Base 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+--- !u!4 &3481484270608553925 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6061786728265221541, guid: 985848966daef1f4c88650fe49f71843, type: 3}
+  m_PrefabInstance: {fileID: 7228134011138642528}
+  m_PrefabAsset: {fileID: 0}

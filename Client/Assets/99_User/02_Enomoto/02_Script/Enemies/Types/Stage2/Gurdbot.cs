@@ -22,6 +22,7 @@ public class Gurdbot : EnemyBase
         Idle,
         Attack,
         Run,
+        Jump,
         Hit,
         Dead,
     }
@@ -82,7 +83,12 @@ public class Gurdbot : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if (canChaseTarget && !IsGround())
+        if(canChaseTarget && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump
+            && m_rb2d.linearVelocityY == 0)
+        {
+            Jump();
+        }
+        else if (canChaseTarget && !IsGround())
         {
             AirMovement();
         }
@@ -177,6 +183,16 @@ public class Gurdbot : EnemyBase
     #region 移動処理関連
 
     /// <summary>
+    /// 壁があったらジャンプする
+    /// </summary>
+    void Jump()
+    {
+        SetAnimId((int)ANIM_ID.Jump);
+        transform.position += Vector3.up * groundCheckRadius.y;
+        m_rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+    }
+
+    /// <summary>
     /// 巡回する処理
     /// </summary>
     protected override void Patorol()
@@ -211,8 +227,6 @@ public class Gurdbot : EnemyBase
     /// </summary>
     void AirMovement()
     {
-        SetAnimId((int)ANIM_ID.Run);
-
         // ジャンプ(落下)中にプレイヤーに向かって移動する
         float distToPlayer = target.transform.position.x - this.transform.position.x;
         Vector3 targetVelocity = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed, m_rb2d.linearVelocity.y);
