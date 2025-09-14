@@ -314,6 +314,7 @@ public class Boxgeist : EnemyBase
         }
 
         // UŒ‚ŠJŽn
+        isInvincible = true;
         m_rb2d.linearVelocity = Vector2.zero;
         m_rb2d.bodyType = RigidbodyType2D.Static;
         SetAnimId((int)ANIM_ID.Attack_Range);
@@ -403,6 +404,7 @@ public class Boxgeist : EnemyBase
             currentSec += waitSec;
         }
 
+        isInvincible = true;
         SetAnimId((int)ANIM_ID.Attack_Shotgun);
         onFinished?.Invoke();
     }
@@ -504,6 +506,7 @@ public class Boxgeist : EnemyBase
             currentSec += waitSec;
         }
 
+        isInvincible = true;
         SetAnimId((int)ANIM_ID.Attack_Golem);
         yield return new WaitForSeconds(0.45f);     // ƒS[ƒŒƒ€‚ÉŒ`‘Ô•Ï‰»‚ªŠ®—¹‚·‚éŽžŠÔ
 
@@ -572,6 +575,7 @@ public class Boxgeist : EnemyBase
         }
 
         // UŒ‚ŠJŽn
+        isInvincible = true;
         m_rb2d.linearVelocity = Vector2.zero;
         m_rb2d.bodyType = RigidbodyType2D.Static;
         SetAnimId((int)ANIM_ID.Attack_FallBlock);
@@ -616,6 +620,7 @@ public class Boxgeist : EnemyBase
                 || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
         }
 
+        isInvincible = false;
         m_rb2d.bodyType = RigidbodyType2D.Dynamic;
         isAttacking = true;
         Idle();

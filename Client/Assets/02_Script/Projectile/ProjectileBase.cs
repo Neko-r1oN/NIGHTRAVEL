@@ -23,9 +23,11 @@ public class ProjectileBase : MonoBehaviour
         this.power = power;
     }
 
-    public void Shoot(Vector3 shootDirection)
+    public void Shoot(Vector3 shootVec)
     {
-        GetComponent<Rigidbody2D>().AddForce(shootDirection, ForceMode2D.Impulse);
+        var rb2d = GetComponent<Rigidbody2D>();
+        if (typeId == PROJECTILE_TYPE.BoxBullet_Big) rb2d.linearVelocity = shootVec;
+        else rb2d.AddForce(shootVec, ForceMode2D.Impulse);
     }
 
     public void ApplyDamage()

@@ -5,6 +5,22 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 public class BoxBullet : ProjectileBase
 {
     bool isDead = false;
+    Rigidbody2D rb2d;
+
+    private void Start()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+        InvokeRepeating("Flip", 0, 0.2f);
+    }
+
+    void Flip()
+    {
+        var x  = Mathf.Abs(transform.localScale.x);
+        var y  = transform.localScale.y;
+
+        if (rb2d.linearVelocity.x < 0) transform.localScale = new Vector2(x * -1, y);
+        else transform.localScale = new Vector2(x, y);
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
