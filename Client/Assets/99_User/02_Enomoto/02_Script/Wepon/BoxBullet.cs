@@ -6,17 +6,23 @@ public class BoxBullet : ProjectileBase
 {
     bool isDead = false;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(isDead) return;
+        if (isDead) return;
 
-        // レイヤーが地形やギミックの場合
-        if (collision.gameObject.tag != "Player" || collision.gameObject.tag != "Enemy")
+        // 地形やギミックに触れることで破棄
+        if (collision.gameObject.layer == 0 || collision.gameObject.layer == 13)
         {
             isDead = true;
             InvokeRepeating("Destroy", 0, 0.1f);
         }
-        else if (collision.gameObject.tag == "Player")
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(isDead) return;
+
+        if (collision.gameObject.tag == "Player")
         {
             DEBUFF_TYPE? debuff = null;
             if(debuffs.Count > 0) debuff = debuffs[0];
