@@ -103,6 +103,9 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    ResultData resultData;
+    public ResultData ResultData { get { return resultData; } }
+
     /// <summary>
     /// ‰Šúİ’è
     /// </summary>

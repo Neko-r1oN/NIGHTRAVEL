@@ -1,15 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Splines;
 
 public class CameraFollow : MonoBehaviour
 {
 	public float FollowSpeed = 2f;
 	public Transform Target;
 
-	// Transform of the camera to shake. Grabs the Object's transform
-	// if null.
-	private Transform camTransform;
+    Transform player; // カメラが追従するプレイヤーのTransform
+    public Vector2 minCameraBounds; // ステージの左下(最小)座標
+    public Vector2 maxCameraBounds; // ステージの右上(最大)座標
+
+    // Transform of the camera to shake. Grabs the Object's transform
+    // if null.
+    private Transform camTransform;
 
 	// How long the object should shake for.
 	public float shakeDuration = 0f;
@@ -55,4 +60,17 @@ public class CameraFollow : MonoBehaviour
 		originalPos = camTransform.localPosition;
 		shakeDuration = 0.2f;
 	}
+
+    private void LateUpdate()
+    {
+        Vector3 newPosition = Target.position;
+
+        // カメラの位置をステージの範囲内に制限
+        newPosition.x = Mathf.Clamp(newPosition.x, minCameraBounds.x, maxCameraBounds.x);
+        newPosition.y = Mathf.Clamp(newPosition.y, minCameraBounds.y, maxCameraBounds.y);
+		newPosition.z = -10f;
+
+        // カメラの位置を更新
+        transform.position = newPosition;
+    }
 }

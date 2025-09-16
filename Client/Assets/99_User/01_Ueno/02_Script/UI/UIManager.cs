@@ -16,6 +16,8 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Terminal;
 using ColorUtility = UnityEngine.ColorUtility;
 using Random = UnityEngine.Random;
+using System.Linq;
+using System.Xml.Schema;
 
 public class UIManager : MonoBehaviour
 {
@@ -33,107 +35,109 @@ public class UIManager : MonoBehaviour
     [SerializeField] Slider expBar;                  // 経験値バー
                                                      
     [Foldout("テキスト")]                            
-    [SerializeField] Text playerSliderText;         // プレイヤーの最大HPテキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] Text bossSliderText;           // ボスの最大HPテキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] Text levelText;                // レベルテキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] Text pointText;                // ポイントテキスト
-    [Foldout("テキスト")]                            
-    [SerializeField] List<Text> relicCntText;       // レリックを持ってる数を表示するテキスト
-    //[Foldout("テキスト")]
-    //[SerializeField] List<Text>  statusText;      // ステータスアップ説明テキスト
+    [SerializeField] Text playerSliderText;              // プレイヤーの最大HPテキスト
+    [Foldout("テキスト")]                                 
+    [SerializeField] Text bossSliderText;                // ボスの最大HPテキスト
+    [Foldout("テキスト")]                                 
+    [SerializeField] Text levelText;                     // レベルテキスト
+    [Foldout("テキスト")]                                 
+    [SerializeField] Text pointText;                     // ポイントテキスト
+    [Foldout("テキスト")]                                 
+    [SerializeField] List<Text> relicCntText;            // レリックを持ってる数を表示するテキスト
     [Foldout("テキスト")]
-    [SerializeField] Text levelUpStock;             // レベルアップストックテキスト
+    [SerializeField] List<Text> statusItemText;          // ステータスアップ説明テキスト
     [Foldout("テキスト")]
-    [SerializeField] Text levelUpText;              // 強化可能テキスト
+    [SerializeField] List<Text> statusExplanationsTexts; // ステータスアップ説明テキスト
     [Foldout("テキスト")]
-    [SerializeField] Text clashNumText;             // 撃破数テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text tmText;                   // クリア条件テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] GameObject playerDmgText;      // プレイヤーダメージ表記
-    [Foldout("テキスト")]                           
-    [SerializeField] GameObject otherDmgText;       // その他ダメージ表記
-    [Foldout("テキスト")]                           
-    [SerializeField] Text relicName;                // レリック名テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text diffText;                 // 難易度テキスト
-    [Foldout("テキスト")]                           
-    [SerializeField] Text terminalExplanationText;  // ターミナル説明テキスト
-    [Foldout("テキスト")]
-    [SerializeField] Text spectatingNameText;       // 観戦中プレイヤー名テキスト
-    [Foldout("テキスト")]
-    [SerializeField] GameObject healText;           // その他ダメージ表記
+    [SerializeField] Text levelUpStock;                  // レベルアップストックテキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] Text levelUpText;                   // 強化可能テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] Text clashNumText;                  // 撃破数テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] Text tmText;                        // クリア条件テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] GameObject playerDmgText;           // プレイヤーダメージ表記
+    [Foldout("テキスト")]                                
+    [SerializeField] GameObject otherDmgText;            // その他ダメージ表記
+    [Foldout("テキスト")]                                
+    [SerializeField] Text relicName;                     // レリック名テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] Text diffText;                      // 難易度テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] Text terminalExplanationText;       // ターミナル説明テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] Text spectatingNameText;            // 観戦中プレイヤー名テキスト
+    [Foldout("テキスト")]                                
+    [SerializeField] GameObject healText;                // その他ダメージ表記
 
     [Foldout("フェードアウト")]                      
-    [SerializeField] Canvas parentCanvas;            // テキストが表示されるキャンバスを割り当ててください
-    [Foldout("フェードアウト")]                      
-    [SerializeField] float fadeDuration = 2f;        // テキストがフェードアウトにかかる時間（秒）
-    [Foldout("フェードアウト")]                      
-    [SerializeField] float displayDuration = 1f;     // テキストが完全に表示される時間（フェード開始まで）
-
-    [Foldout("ボス関連")]
-    [SerializeField] Slider bossHpBar;               // ボスのHPバー
-    [Foldout("ボス関連")]                  
-    [SerializeField] GameObject bossStatus;          // ボスのステータス
-                                                     
-    [Foldout("ウィンドウ関係")]                      
-    [SerializeField] GameObject statusUpWindow;      // ステータス強化ウィンドウ
-    [Foldout("ウィンドウ関係")]                      
-    [SerializeField] float windowTime;               // ウィンドウが表示される秒数
-    [Foldout("ウィンドウ関係")]
-    [SerializeField] GameObject endWindow;           // 終了のウィンドウ
-    [Foldout("ウィンドウ関係")]
-    [SerializeField] GameObject spectatingWindow;    // 観戦ウィンドウ
-    [Foldout("ウィンドウ関係")]
-    [SerializeField] GameObject nextStageWindow;     // ステージ遷移ウィンドウ
-
-    [Foldout("バナー関係")]
-    [SerializeField] GameObject bossWindow;          // ボス出現UI
-    [Foldout("バナー関係")]                          
-    [SerializeField] GameObject termsBanner;         // クリア条件バナー
-    [Foldout("バナー関係")]                          
-    [SerializeField] GameObject relicBanner;         // 取得したレリックバナー
+    [SerializeField] Canvas parentCanvas;                // テキストが表示されるキャンバスを割り当ててください
+    [Foldout("フェードアウト")]                          
+    [SerializeField] float fadeDuration = 2f;            // テキストがフェードアウトにかかる時間（秒）
+    [Foldout("フェードアウト")]                          
+    [SerializeField] float displayDuration = 1f;         // テキストが完全に表示される時間（フェード開始まで）
+                                                         
+    [Foldout("ボス関連")]                                
+    [SerializeField] Slider bossHpBar;                   // ボスのHPバー
+    [Foldout("ボス関連")]                                
+    [SerializeField] GameObject bossStatus;              // ボスのステータス
+                                                         
+    [Foldout("ウィンドウ関係")]                          
+    [SerializeField] GameObject statusUpWindow;          // ステータス強化ウィンドウ
+    [Foldout("ウィンドウ関係")]                          
+    [SerializeField] float windowTime;                   // ウィンドウが表示される秒数
+    [Foldout("ウィンドウ関係")]                          
+    [SerializeField] GameObject endWindow;               // 終了のウィンドウ
+    [Foldout("ウィンドウ関係")]                          
+    [SerializeField] GameObject spectatingWindow;        // 観戦ウィンドウ
+    [Foldout("ウィンドウ関係")]                          
+    [SerializeField] GameObject nextStageWindow;         // ステージ遷移ウィンドウ
+                                                         
+    [Foldout("バナー関係")]                              
+    [SerializeField] GameObject bossWindow;              // ボス出現UI
+    [Foldout("バナー関係")]                              
+    [SerializeField] GameObject termsBanner;             // クリア条件バナー
+    [Foldout("バナー関係")]                              
+    [SerializeField] GameObject relicBanner;             // 取得したレリックバナー
 
     [Foldout("レリック関連")]
     [SerializeField] List<Image> relicImages;
     [Foldout("レリック関連")]
-    [SerializeField] Image relicImg;                 // レリックのイメージ
+    [SerializeField] Image relicImg;                     // レリックのイメージ
 
     [Foldout("その他")]
-    [SerializeField] List<GameObject> playerStatus;     // 自分以外のプレイヤーのステータス
+    [SerializeField] List<GameObject> playerStatus;      // 自分以外のプレイヤーのステータス
     [Foldout("その他")]
-    [SerializeField] GameObject terminalExplanationObj; // ターミナル説明用オブジェクト
-    [Foldout("その他")]
-    [SerializeField] GameObject statusUpButton;         // ステータスアップボタン
+    [SerializeField] GameObject terminalExplanationObj;  // ターミナル説明用オブジェクト
+    [Foldout("その他")]                                  
+    [SerializeField] GameObject statusUpButton;          // ステータスアップボタン
 
     [Foldout("各環境用UI")]
-    [SerializeField] GameObject gamePadUI;          // パッド操作UI
-    [Foldout("各環境用UI")]
-    [SerializeField] GameObject keyBoardUI;         // キーボード操作UI
-    [Foldout("各環境用UI")]
-    [SerializeField] GameObject swordSkillUI;       // 剣士スキルUI
-    [Foldout("各環境用UI")]
-    [SerializeField] GameObject gunnerSkillUI;      // ガンナースキルUI
-
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] Image skillCoolDownImage;      // スキルクールダウン
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] Image blinkCoolDownImage;      // ブリンククールダウン
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] RectTransform[] swordIconObjs; // 剣アイコンオブジェ一覧
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] Image[] swordIconImages;       // 剣アイコン画像一覧
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] RectTransform[] gunIconObjs;   // 銃アイコンオブジェ一覧
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] Image[] gunIconImages;         // 銃アイコン画像一覧
-    [Foldout("ACTアイコンUI")]
-    [SerializeField] GameObject gunSkillLockObj;    // ブリンククールダウン
-
-    private bool isInputGamePad;                    // ゲームパッド入力かどうか
+    [SerializeField] GameObject gamePadUI;               // パッド操作UI
+    [Foldout("各環境用UI")]                              
+    [SerializeField] GameObject keyBoardUI;              // キーボード操作UI
+    [Foldout("各環境用UI")]                              
+    [SerializeField] GameObject swordSkillUI;            // 剣士スキルUI
+    [Foldout("各環境用UI")]                              
+    [SerializeField] GameObject gunnerSkillUI;           // ガンナースキルUI
+                                                         
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] Image skillCoolDownImage;           // スキルクールダウン
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] Image blinkCoolDownImage;           // ブリンククールダウン
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] RectTransform[] swordIconObjs;      // 剣アイコンオブジェ一覧
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] Image[] swordIconImages;            // 剣アイコン画像一覧
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] RectTransform[] gunIconObjs;        // 銃アイコンオブジェ一覧
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] Image[] gunIconImages;              // 銃アイコン画像一覧
+    [Foldout("ACTアイコンUI")]                           
+    [SerializeField] GameObject gunSkillLockObj;         // ブリンククールダウン
+                                                         
+    private bool isInputGamePad;                         // ゲームパッド入力かどうか
 
     public bool IsInputGamePad { get { return isInputGamePad; } }
 
@@ -480,16 +484,43 @@ public class UIManager : MonoBehaviour
         if (isStatusWindow)
         {
             statusUpWindow.SetActive(true);
+
+            var pair = LevelManager.Instance.Options.FirstOrDefault();
+
+            int currentIndex = 0;
+            foreach(var item in pair.Value)
+            {
+                statusItemText[currentIndex].text = item.name;
+                statusExplanationsTexts[currentIndex].text = item.explanation;
+
+                currentIndex++;
+            }
         }
     }
 
     /// <summary>
     /// ステータスの強化
     /// </summary>
-    public void UpPlayerStatus(int statusID)
+    public void UpPlayerStatus(int buttonId)
     {
-        //ステータス変更
-        UpStatusChange();
+        if (!RoomModel.Instance)
+        {// オフライン
+            //ステータス変更
+            UpStatusChange();
+        }
+        else
+        {// オンライン
+
+        }
+
+        var values = LevelManager.Instance.Options.FirstOrDefault().Value;
+        var key = LevelManager.Instance.Options.FirstOrDefault().Key;
+
+        var item = values[buttonId];
+
+        LevelManager.Instance.Options.Remove(key);
+
+        ChangeUpStatusText();
 
         statusStock--;
 
@@ -518,6 +549,21 @@ public class UIManager : MonoBehaviour
         Debug.Log(type);
 
         player.ApplyMaxStatusModifierByRate(0.15f, type);
+    }
+
+    public void ChangeUpStatusText()
+    {
+        var pair = LevelManager.Instance.Options.First();
+        var data = pair.Value;
+
+        int currentIndex = 0;
+        foreach (var item in data)
+        {
+            statusItemText[currentIndex].text = item.name;
+            statusExplanationsTexts[currentIndex].text = item.explanation;
+
+            currentIndex++;
+        }
     }
 
     /// <summary>
