@@ -7,6 +7,12 @@ using UnityEngine;
 
 public class Elite : TerminalBase
 {
+    //--------------------------------
+    // フィールド
+
+    //--------------------------------
+    // メソッド
+
     /// <summary>
     /// 初期処理
     /// </summary>
@@ -24,6 +30,8 @@ public class Elite : TerminalBase
     public override void BootTerminal()
     {
         isUsed = true; // 端末使用中にする
-        TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
+
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
     }
 }

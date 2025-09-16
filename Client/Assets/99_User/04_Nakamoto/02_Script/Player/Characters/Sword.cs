@@ -229,18 +229,39 @@ public class Sword : PlayerBase
                         break;
                 }
 
-                // 二回攻撃の抽選
-                if (LotteryRelic(RELIC_TYPE.Rugrouter))
+                // ボスかどうか判定
+                if(!collidersEnemies[i].gameObject.GetComponent<EnemyBase>().IsBoss)
                 {
-                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
-                    enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, true, LotteryDebuff());
+                    // 二回攻撃の抽選
+                    if (LotteryRelic(RELIC_TYPE.Rugrouter))
+                    {
+                        enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
+                        enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, true, LotteryDebuff());
+                    }
+                    else
+                    {
+                        enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
+                    }
                 }
                 else
                 {
-                    enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
+                    // ボスの場合はボスエリアに入っているか確認
+                    if(isBossArea)
+                    {
+                        // 二回攻撃の抽選
+                        if (LotteryRelic(RELIC_TYPE.Rugrouter))
+                        {
+                            enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
+                            enemyComponent.ApplyDamageRequest(attackPower / 2, gameObject, true, true, LotteryDebuff());
+                        }
+                        else
+                        {
+                            enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
+                        }
+                    }
                 }
 
-                processedEnemies.Add(enemyComponent); // 処理済みリストに追加
+                    processedEnemies.Add(enemyComponent); // 処理済みリストに追加
             }
         }
 

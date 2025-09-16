@@ -24,6 +24,18 @@ public class Boss : TerminalBase
     public override void BootTerminal()
     {
         isUsed = true; // 端末使用中にする
-        TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
+
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Success;
+
+        // マスタクライアント以外は処理をしない
+        if(!RoomModel.Instance)
+        {
+            SpawnManager.Instance.SpawnBoss();
+        }
+        else if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+
+        // ボス生成処理
+        SpawnManager.Instance.SpawnBoss();
     }
 }

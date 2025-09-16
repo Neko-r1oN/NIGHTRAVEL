@@ -9,17 +9,17 @@ public class GoalPoint : MonoBehaviour
 {
     [SerializeField] GameObject terminal;
 
-    Terminal terminalScript;
+    Speed speedScript;
 
     private void Start()
     {
-        terminalScript = terminal.GetComponent<Terminal>();
+        speedScript = terminal.GetComponent<Speed>();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Player")
         {
-            terminalScript.HitGoalPoint(this.gameObject);
+            speedScript.HitGoalPoint(this.gameObject);
         }
     }
 }

@@ -143,6 +143,11 @@ abstract public class PlayerBase : CharacterBase
     /// 操作キャラのタイプ
     /// </summary>
     public Player_Type PlayerType { get { return playerType; } }
+
+    /// <summary>
+    /// ボスエリア侵入フラグ
+    /// </summary>
+    public bool IsBossArea { get { return isBossArea; } }
     #endregion
 
     #region レリック外部参照用プロパティ
@@ -249,6 +254,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool isSkill = false;   // スキル使用中フラグ
     protected bool canSkill = true;   // スキル使用可能フラグ
     protected bool isRegene = true;
+    protected bool isBossArea = false;  
     #endregion
 
     #region プレイヤーに関する定数
@@ -767,7 +773,7 @@ abstract public class PlayerBase : CharacterBase
     {
         if (collision.gameObject.tag == "Gimmick/Scaffold") m_IsScaffold = true;
 
-        if (collision.gameObject.tag == "Relic")
+        if (collision.gameObject.tag == "Heal")
         {
             int healVol = (int)(MaxHP * MEATHEAL_RATE) * DigitalMeatCnt;
 
@@ -801,8 +807,10 @@ abstract public class PlayerBase : CharacterBase
             MoveCheckPoint();
         }
 
+        if (collision.gameObject.tag == "BossArea") isBossArea = true;
+
         // インタラクトオブジェ接触判定
-        if(collision.gameObject.tag == "Interact")
+        if (collision.gameObject.tag == "Interact")
         {   // インタラクトUI表示
             SpriteRenderer spriteRenderer = interactObj.gameObject.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = (UIManager.Instance.IsInputGamePad) ? interactSprits[0] : interactSprits[1];
@@ -819,6 +827,8 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="collision"></param>
     protected void OnTriggerExit2D(Collider2D collision)
     {
+        if (collision.gameObject.tag == "BossArea") isBossArea = false;
+
         // インタラクトオブジェ接触判定
         if (collision.gameObject.tag == "Interact")
         {   // インタラクトUI非表示

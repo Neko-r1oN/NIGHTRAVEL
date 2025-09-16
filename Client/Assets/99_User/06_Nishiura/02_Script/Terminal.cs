@@ -386,29 +386,6 @@ public class Terminal : MonoBehaviour
     }
 
     /// <summary>
-    /// ゴールポイントに触れた際の処理
-    /// </summary>
-    /// <param name="obj"></param>
-    public void HitGoalPoint(GameObject obj)
-    {
-        if (pointList.Contains(obj))    // 渡されたオブジェクトがリスト内にあった場合
-        {
-            //isTerminalをfalseにする
-            isTerminal = false;
-
-            pointList.Remove(obj);  // それを除去する
-            Destroy(obj);   // それを破壊する
-
-            if (pointList.Count <= 0)
-            { // リストが空になった場合、報酬を付与する
-                GiveReward();
-
-                uiManager.DisplayTimeInstructions();
-            }
-        }
-    }
-
-    /// <summary>
     /// カウントダウン処理
     /// </summary>
     public void CountDown()

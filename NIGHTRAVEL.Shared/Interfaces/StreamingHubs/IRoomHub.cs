@@ -44,6 +44,7 @@ namespace Shared.Interfaces.StreamingHubs
         #endregion
 
         #region ゲーム内
+
         #region プレイヤー関連
 
         /// <summary>
@@ -151,6 +152,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="result">端末結果</param>
         /// <returns></returns>
         Task TerminalsResultAsync(int termID, bool result);
+
+        /// <summary>
+        /// 端末失敗処理
+        /// </summary>
+        /// <param name="termID"></param>
+        /// <returns></returns>
+        Task TerminalFailureAsync(int termID);
         #endregion
         #region ゲーム内UI、仕様関連
 
@@ -185,6 +193,7 @@ namespace Shared.Interfaces.StreamingHubs
         Task AdvancedStageAsync();
 
         #endregion
+
         #endregion
     }
 }
