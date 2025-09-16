@@ -122,6 +122,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ギミックの起動通知
     public Action<int> OnBootedGimmick { get; set; }
 
+    // オブジェクト生成通知
+    public Action<OBJECT_TYPE, Vector2, int> OnSpawnedObjectSyn { get; set; }
 
     #endregion
 
@@ -478,6 +480,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnAdvancedStageSyn();
     }
 
+    public void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, int uniqueId)
+    {
+        OnSpawnedObjectSyn(type, spawnPos, uniqueId);
+    }
+
     #endregion
 
     #endregion
@@ -630,9 +637,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <param name="conID">接続ID</param>
     /// <param name="upgradeOpt">強化項目</param>
     /// <returns></returns>
-    public async UniTask ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
+    public async UniTask ChooseUpgrade(Guid optionsKey, STAT_UPGRADE_OPTION upgradeOpt)
     {
-        await roomHub.ChooseUpgrade(upgradeOpt);
+        await roomHub.ChooseUpgrade(optionsKey, upgradeOpt);
     }
     #endregion
 
@@ -658,9 +665,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="gimID"></param>
     /// <returns></returns>
-    public async UniTask BootGimmickAsync(int gimID)
+    public async UniTask BootGimmickAsync(int gimID, bool triggerOnce)
     {
-        await roomHub.BootGimmickAsync(gimID);
+        await roomHub.BootGimmickAsync(gimID, triggerOnce);
     }
 
     /// <summary>
@@ -691,6 +698,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         await roomHub.AdvancedStageAsync();
     }
+
+    /// <summary>
+    /// オブジェクト生成リクエスト
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask SpawnObjectAsync(OBJECT_TYPE type, Vector2 spawnPos)
+    {
+        await roomHub.SpawnObjectAsync(type, spawnPos);
+    }
+
     #endregion
 
     #region 端末関連

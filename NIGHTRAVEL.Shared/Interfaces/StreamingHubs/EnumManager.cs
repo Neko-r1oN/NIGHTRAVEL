@@ -89,6 +89,14 @@ namespace Shared.Interfaces.StreamingHubs
         }
 
         /// <summary>
+        /// オブジェクトの種類
+        /// </summary>
+        public enum OBJECT_TYPE
+        {
+            Box,
+        }
+
+        /// <summary>
         /// 計算方法の種類
         /// </summary>
         public enum CalculationType

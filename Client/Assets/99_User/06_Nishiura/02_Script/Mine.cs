@@ -5,7 +5,7 @@
 //===================
 using UnityEngine;
 
-public class Mine : MonoBehaviour
+public class Mine : GimmickBase
 {
     [SerializeField] GameObject boomEffect; // 爆発エフェクトプレハブ
 
@@ -21,15 +21,20 @@ public class Mine : MonoBehaviour
     {
         if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
-            Instantiate(boomEffect, pos + new Vector2(0.0f, 0.5f), Quaternion.identity);    // 爆発エフェクトを生成
-            Destroy(this.gameObject);   // 自身を破壊
-            Debug.Log("Boomed Mine");
+            TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
         }
-        else if (collision.transform.tag == "Enemy" && !RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+        else if (collision.transform.tag == "Enemy")
         {
-            Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
-            Destroy(this.gameObject);   // 自身を破壊
-            Debug.Log("Boomed Mine");
+            if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+            {
+                TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+            }
         }
+    }
+
+    public override void TurnOnPower()
+    {
+        Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
+        Destroy(this.gameObject);   // 自身を破壊
     }
 }

@@ -15,6 +15,8 @@ using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using NIGHTRAVEL.Shared.Unity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
+using System.Threading.Tasks;
 
 namespace Shared.Interfaces.StreamingHubs
 {
@@ -168,6 +170,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="isAdvance">次ステージ進行判定</param>
         /// <param name="stageType">次ステージ</param>
         void OnAdanceNextStage(bool isAdvance, EnumManager.STAGE_TYPE stageType);
+
+        /// <summary>
+        /// オブジェクト生成通知
+        /// </summary>
+        /// <returns></returns>
+        void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, int uniqueId);
+
         #endregion
         #endregion
 

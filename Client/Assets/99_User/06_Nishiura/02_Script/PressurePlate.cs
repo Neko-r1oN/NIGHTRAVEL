@@ -18,15 +18,21 @@ public class PressurePlate : GimmickBase
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // ÉvÉåÉCÉÑÅ[Ç™êGÇÍÇΩèÍçáÇ©Ç¬âüÇ≥ÇÍÇΩèÛë‘Ç≈Ç»Ç¢èÍçá
-        if (collision.transform.tag == "Player" && isPushed != true)
+        if (collision.transform.tag == "Player" && isPushed != true && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
-            isPushed = true; 
-            this.transform.DOMoveY((this.gameObject.transform.position.y -0.19f), 0.2f);
+            isPushed = true;
+            TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+        }
+    }
 
-            foreach (GameObject obj in linkedGimmick)
-            {
-                obj.GetComponent<GimmickBase>().TurnOnPowerRequest(collision.gameObject);
-            }
+    public override void TurnOnPower()
+    {
+        isPushed = true;
+        this.transform.DOMoveY((this.gameObject.transform.position.y - 0.19f), 0.2f);
+
+        foreach (GameObject obj in linkedGimmick)
+        {
+            obj.GetComponent<GimmickBase>().TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
         }
     }
 }

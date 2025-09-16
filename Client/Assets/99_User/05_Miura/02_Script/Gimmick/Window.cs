@@ -12,23 +12,22 @@ public class Window : GimmickBase
     [SerializeField] GameObject windObj;
     bool isWind;
 
-    public enum Power_ID
-    {
-        ON = 0,
-        OFF
-    };
+    // マスタクライアントが自身に切り替わったとき用
+    const float repeatRate = 5f;
+    float timer = 0;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        TurnOnPower();
-        InvokeRepeating("SendWind", 0.1f, 5);
+        // オフライン時 or マルチプレイ時に自身がマスタクライアントの場合
+        if(!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) 
+        {
+            InvokeRepeating("RequestActivateGimmick", 0.1f, repeatRate);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-
+        timer += Time.deltaTime;
     }
 
     /// <summary>
@@ -36,7 +35,8 @@ public class Window : GimmickBase
     /// </summary>
     public void SendWind()
     {
-        if(isWind==true)
+        timer = 0;
+        if (isWind==true)
         {
             windObj.SetActive(false);
             isWind=false;
@@ -48,21 +48,28 @@ public class Window : GimmickBase
         }
     }
 
-    public override void TurnOnPower()
+    /// <summary>
+    /// ギミック起動リクエスト
+    /// </summary>
+    void RequestActivateGimmick()
     {
-        //    switch ()
-        //    {
-        //        case 0:
-        //            windObj.SetActive(true);
-        //            break;
-
-        //        case 1:
-        //            windObj.SetActive(false);
-        //            break;
-
-        //        default:
-        //            break;
-        //    }
+        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
     }
 
+    /// <summary>
+    /// ギミック起動処理
+    /// </summary>
+    public override void TurnOnPower()
+    {
+        SendWind();
+    }
+
+    /// <summary>
+    /// ギミック再起動処理
+    /// </summary>
+    public override void Reactivate()
+    {
+        if(timer > repeatRate) timer = repeatRate;
+        InvokeRepeating("RequestActivateGimmick", repeatRate - timer, repeatRate);
+    }
 }

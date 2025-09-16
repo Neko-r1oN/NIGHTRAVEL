@@ -14,7 +14,7 @@ abstract public class ObjectBase : GimmickBase
     /// <summary>
     /// 壊れるオブジェクトのダメージ関数
     /// </summary>
-    abstract public void ApplyDamage ();
+    abstract protected void ApplyDamage ();
 
     abstract public void DestroyFragment(Transform obj);
 

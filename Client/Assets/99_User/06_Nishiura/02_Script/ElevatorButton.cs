@@ -16,10 +16,8 @@ public class ElevatorButton : GimmickBase
     
     // ボタンの種別(f:下降t:上昇)
     public bool buttonType;
-
     bool isEnterd = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         elevatorScript = targetElevator.GetComponent<Elevator>();
@@ -29,7 +27,7 @@ public class ElevatorButton : GimmickBase
     {
         if (Input.GetKeyDown(KeyCode.E) && isEnterd && !elevatorScript.isMoving)
         {
-            TurnOnPower();
+            TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
         }
     }
 
@@ -41,6 +39,7 @@ public class ElevatorButton : GimmickBase
             isEnterd = true;
         }
     }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         // プレイヤーがボタン範囲内から出た場合

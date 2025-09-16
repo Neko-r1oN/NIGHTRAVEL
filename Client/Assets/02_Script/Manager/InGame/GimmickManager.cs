@@ -7,6 +7,7 @@ public class GimmickManager : MonoBehaviour
 {
     [SerializeField] List<GimmickBase> gimmicks = new List<GimmickBase>();
     Dictionary<int, GimmickBase> managedGimmicks = new Dictionary<int, GimmickBase>();
+    public Dictionary<int, GimmickBase> ManagedGimmicks { get; private set; }
 
     static GimmickManager instance;
     public static GimmickManager Instance
@@ -41,12 +42,14 @@ public class GimmickManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnBootedGimmick += this.OnBootGimmick;
+        RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
     }
 
     private void OnDisable()
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnBootedGimmick -= this.OnBootGimmick;
+        RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
     }
 
     /// <summary>
@@ -64,9 +67,7 @@ public class GimmickManager : MonoBehaviour
                 {
                     GimmickID = gimmick.Key,
                     GimmickName = gimmick.Value.name,
-                    IsActivated = gimmick.Value.IsBoot,
                     Position = gimmick.Value.transform.position,
-                    Rotation = gimmick.Value.transform.rotation,
                 };
 
                 gimmickDatas.Add(gimmickData);
@@ -83,9 +84,7 @@ public class GimmickManager : MonoBehaviour
     {
         foreach(var data in gimmickDatas)
         {
-            managedGimmicks[data.GimmickID].IsBoot = data.IsActivated;
             managedGimmicks[data.GimmickID].transform.position = data.Position;
-            managedGimmicks[data.GimmickID].transform.rotation = data.Rotation;
         }
     }
 
@@ -99,5 +98,26 @@ public class GimmickManager : MonoBehaviour
         {
             managedGimmicks[uniqueId].TurnOnPower();
         }
+    }
+
+    /// <summary>
+    /// 自身がマスタクライアントになったとき
+    /// </summary>
+    void OnChangedMasterClient()
+    {
+        foreach(var gimmick in managedGimmicks.Values)
+        {
+            gimmick.Reactivate();
+        }
+    }
+
+    /// <summary>
+    /// 新たなギミックをリストに追加
+    /// </summary>
+    /// <param name="uniqueId"></param>
+    /// <param name="gimmick"></param>
+    public void AddGimmickFromList(int uniqueId, GimmickBase gimmick)
+    {
+        managedGimmicks.Add(uniqueId, gimmick);
     }
 }

@@ -63,7 +63,7 @@ public class Bullet : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Object")
         {
-            collision.gameObject.GetComponent<ObjectBase>().ApplyDamage();
+            collision.gameObject.GetComponent<ObjectBase>().TurnOnPowerRequest(gameObject);
         }
         else if(collision.gameObject.layer == LayerMask.NameToLayer("Gimmick") || collision.gameObject.tag == "ground")
         {
