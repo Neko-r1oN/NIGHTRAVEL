@@ -6,7 +6,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class ElevatorButton : MonoBehaviour
+public class ElevatorButton : GimmickBase
 {
     // 対象エレベータのプレハブ
     [SerializeField] GameObject targetElevator;
@@ -29,15 +29,14 @@ public class ElevatorButton : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E) && isEnterd && !elevatorScript.isMoving)
         {
-            elevatorScript.MoveButton(buttonType);
-            MoveButton();
+            TurnOnPower();
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // プレイヤーがボタン範囲内に入った場合
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             isEnterd = true;
         }
@@ -45,7 +44,7 @@ public class ElevatorButton : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         // プレイヤーがボタン範囲内から出た場合
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             isEnterd = false;
         }
@@ -63,5 +62,14 @@ public class ElevatorButton : MonoBehaviour
                  .Append(buttonObj.transform.DOMoveY(buttonObj.transform.position.y, 0.5f));
         //Playで実行
         sequence.Play();
+    }
+
+    /// <summary>
+    /// 電源オン関数
+    /// </summary>
+    public override void TurnOnPower()
+    {
+        elevatorScript.MoveButton(buttonType);
+        MoveButton();
     }
 }

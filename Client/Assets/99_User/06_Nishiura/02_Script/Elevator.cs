@@ -44,10 +44,10 @@ public class Elevator : GimmickBase
         if (isBroken == true || isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
 
         // プレイヤーがエレベーター内に入った場合
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             isMoving = true;    // 動作中にする
-            Invoke("MoveElevator", 1f);  //昇降開始
+            Invoke("TurnOnPower", 1f);  //昇降開始
         }
     }
 
@@ -89,8 +89,18 @@ public class Elevator : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
-        if (isPowerd) return;   // すでに起動してある場合は処理しない
-        isPowerd = true;
+        Invoke("MovingCheck", 4f);  //動作チェック
+        if (!isRised)
+        {   //上昇済みでない場合
+            tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
+            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
+        }
+        else
+        {   //上昇済みの場合
+            tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
+            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
+
+        }
     }
 
     /// <summary>

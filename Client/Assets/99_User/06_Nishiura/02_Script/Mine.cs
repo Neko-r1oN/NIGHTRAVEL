@@ -19,7 +19,7 @@ public class Mine : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Player" /*&& collision.gameObject == CharacterManager.Instance.PlayerObjSelf*/)
+        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             Instantiate(boomEffect, pos + new Vector2(0.0f, 0.5f), Quaternion.identity);    // 爆発エフェクトを生成
             Destroy(this.gameObject);   // 自身を破壊
