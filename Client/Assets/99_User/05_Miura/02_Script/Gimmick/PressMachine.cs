@@ -12,6 +12,7 @@ using UnityEngine;
 public class PressMachine : GimmickBase
 {
     PlayerBase player;
+    Vector2 startPos;
     public float addPow;
     public float pullPow;
     public bool isPowerd;
@@ -19,8 +20,12 @@ public class PressMachine : GimmickBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        startPos = transform.position;
+
         if(!isPowerd) return;
         isPowerd = true;
+
+        if(!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         MovePress();
     }
 
@@ -41,8 +46,6 @@ public class PressMachine : GimmickBase
                     .AppendInterval(1)
                     .SetLoops(-1);
         }
-
-        if (!isPowerd) return;
     }
 
     /// <summary>
@@ -50,6 +53,7 @@ public class PressMachine : GimmickBase
     /// </summary>
     public override void Reactivate()
     {
-        transform.DORestart();
+        transform.position = startPos;
+        MovePress();
     }
 }

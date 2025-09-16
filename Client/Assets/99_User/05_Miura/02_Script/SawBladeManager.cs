@@ -21,14 +21,14 @@ public class SawBladeManager : GimmickBase
     // 電源判定
     public bool isPowerd;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-            TurnOnPower();
-            isPowerd = true;
+        isPowerd = true;
 
         // このゲームオブジェクトのポジションを取得
         pos = this.transform.position;
+
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) TurnOnPower();
     }
 
     /// <summary>
@@ -59,5 +59,14 @@ public class SawBladeManager : GimmickBase
         sparkObj.SetActive(true);
         MoveBlade();
         sawBlade.StateRotet();
+    }
+
+    /// <summary>
+    /// ギミック再起動処理
+    /// </summary>
+    public override void Reactivate()
+    {
+        transform.position = pos;
+        TurnOnPower();
     }
 }
