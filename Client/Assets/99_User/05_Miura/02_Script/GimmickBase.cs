@@ -9,6 +9,9 @@ using UnityEngine;
 
 abstract public class GimmickBase : MonoBehaviour
 {
+    [SerializeField]
+    bool triggerOnce;
+
     // 識別用ID
     int uniqueId;
     public int UniqueId {  get { return uniqueId; } set { uniqueId = value; } }
@@ -42,7 +45,16 @@ abstract public class GimmickBase : MonoBehaviour
         else if (RoomModel.Instance && player == CharacterManager.Instance.PlayerObjSelf)
         {
             // サーバーに対してリクエスト処理
-            await RoomModel.Instance.BootGimmickAsync(uniqueId);
+            await RoomModel.Instance.BootGimmickAsync(uniqueId, triggerOnce);
         }
+    }
+
+    /// <summary>
+    /// [マスタクライアントが自身に切り替わったときに呼ばれる]
+    /// ギミック再起動処理
+    /// </summary>
+    public virtual void Reactivate()
+    {
+        Debug.Log($"{gameObject.name}が再起動した。");
     }
 }

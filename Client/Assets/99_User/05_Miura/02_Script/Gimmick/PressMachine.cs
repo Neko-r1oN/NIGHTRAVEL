@@ -20,10 +20,11 @@ public class PressMachine : GimmickBase
     void Start()
     {
         if(!isPowerd) return;
-        MovePress();    // 起動する
+        isPowerd = true;
+        MovePress();
     }
 
-    public void MovePress()
+    void MovePress()
     {
         if (isPowerd == true)
         {
@@ -44,10 +45,11 @@ public class PressMachine : GimmickBase
         if (!isPowerd) return;
     }
 
-    public override void TurnOnPower()
+    /// <summary>
+    /// ギミック再起動処理
+    /// </summary>
+    public override void Reactivate()
     {
-        if (isPowerd) return;   // すでに起動してある場合は処理しない
-        isPowerd = true;
-        MovePress();
+        transform.DORestart();
     }
 }

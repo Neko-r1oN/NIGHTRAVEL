@@ -16,13 +16,9 @@ public class Burner : GimmickBase
     [SerializeField] GameObject flame;
     bool isFlame;
 
-    //オブジェクトの起動状態のID
-    //triggerIDが起動状態のIDになる
-    public enum Power_ID
-    {
-        ON = 0,
-        OFF
-    };
+    // マスタクライアントが自身に切り替わったとき用
+    const float repeatRate = 3f;
+    float timer = 0;
 
     private void OnEnable()
     {
@@ -30,8 +26,13 @@ public class Burner : GimmickBase
         if(!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
             //3秒間隔で点火と消火を繰り返す
-            InvokeRepeating("Ignition", 0.1f, 3);
+            InvokeRepeating("RequestActivateGimmick", 0.1f, repeatRate);
         }
+    }
+
+    void Update()
+    {
+        timer += Time.deltaTime;
     }
 
     /// <summary>
@@ -73,7 +74,8 @@ public class Burner : GimmickBase
     /// </summary>
     private void Ignition()
     {
-        if(isFlame==true)
+        timer = 0;
+        if (isFlame==true)
         {//isFlameがtrueだったら
             //NavMeshObstacleコンポーネントを非アクティブ状態にする
             GetComponent<NavMeshObstacle>().enabled = false;
@@ -93,9 +95,28 @@ public class Burner : GimmickBase
         }
     }
 
+    /// <summary>
+    /// ギミック起動リクエスト
+    /// </summary>
+    void RequestActivateGimmick()
+    {
+        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+    }
+
+    /// <summary>
+    /// ギミック起動処理
+    /// </summary>
     public override void TurnOnPower()
     {
-        //3秒間隔で点火と消火を繰り返す
-        InvokeRepeating("Ignition", 0.1f, 3);
+        Ignition();
+    }
+
+    /// <summary>
+    /// ギミック再起動処理
+    /// </summary>
+    public override void Reactivate()
+    {
+        if (timer > repeatRate) timer = repeatRate;
+        InvokeRepeating("RequestActivateGimmick", repeatRate - timer, repeatRate);
     }
 }

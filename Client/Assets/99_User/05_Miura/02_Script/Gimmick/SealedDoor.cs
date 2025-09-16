@@ -6,13 +6,7 @@ public class SealedDoor : ObjectBase
     [SerializeField] GameObject DoorFragment;　//破片エフェクトを取得
     bool isBroken = false;
 
-    public enum Power_ID
-    {
-        ON = 0,
-        OFF
-    };
-
-    public override void ApplyDamage()
+    protected override void ApplyDamage()
     {
         if (isBroken == true) return;
 
@@ -57,7 +51,7 @@ public class SealedDoor : ObjectBase
     }
 
     /// <summary>
-    /// 電源オン処理
+    /// ドア破壊処理
     /// </summary>
     public override void TurnOnPower()
     {

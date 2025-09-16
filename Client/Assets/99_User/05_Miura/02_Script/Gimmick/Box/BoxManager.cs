@@ -4,36 +4,89 @@
 // Date:2025/07/20
 //====================
 
+using System.Collections.Generic;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class BoxManager : MonoBehaviour
 {
     [SerializeField] GameObject BoxPrefab;  //箱プレハブ取得
+    const float leftPosX = 27.09f;
+    const float rightPosX = 28.9f;
+    const float posY = 27f;
 
     public float spawnTime;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         //SpawnBox関数を繰り返し呼び出して、箱を繰り返し生成する
         InvokeRepeating("SpawnBox", 0.1f, spawnTime);
+
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnSpawnedObjectSyn += OnSpawnObject;
+    }
+
+    private void OnDisable()
+    {
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnSpawnedObjectSyn -= OnSpawnObject;
     }
 
     /// <summary>
     /// 箱を生成する処理
     /// </summary>
-    public void SpawnBox()
+    void SpawnBox()
     {
-        float spawnX = Random.Range(1, 3);
-        if (spawnX == 1)
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            //箱を生成する
-            Instantiate(BoxPrefab, new Vector2(27.09f, 27), Quaternion.identity);
+            float spawnX = Random.Range(1, 3) == 1 ? leftPosX : rightPosX;
+            Vector2 spawnPos = new Vector2(spawnX, posY);
+            SpawnObjectRequest(OBJECT_TYPE.Box, spawnPos);
         }
-        if (spawnX == 2)
+    }
+
+    /// <summary>
+    /// オブジェクト生成実行
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <param name="spawnPos"></param>
+    void SpawnObject(GameObject prefab, Vector2 spawnPos, int uniqueId)
+    {
+        var obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+        GimmickManager.Instance.AddGimmickFromList(uniqueId, obj.GetComponent<GimmickBase>());
+    }
+
+    /// <summary>
+    /// オブジェクト生成通知
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="spawnPos"></param>
+    /// <param name="uniqueId"></param>
+    void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, int uniqueId)
+    {
+        switch (type)
         {
-            //箱を生成する
-            Instantiate(BoxPrefab, new Vector2(28.9f, 27), Quaternion.identity);
+            case OBJECT_TYPE.Box:
+                SpawnObject(BoxPrefab, spawnPos, uniqueId);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// アイテム獲得リクエスト
+    /// </summary>
+    /// <param name="item">アイテム情報</param>
+    /// <param name="player">獲得しようとしているプレイヤー</param>
+    public async void SpawnObjectRequest(OBJECT_TYPE type, Vector2 spawnPos)
+    {
+        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
+            await RoomModel.Instance.SpawnObjectAsync(type, spawnPos);
+        }
+        else
+        {
+            // オフライン用
+            SpawnObject(BoxPrefab, spawnPos, GimmickManager.Instance.ManagedGimmicks.Count);
         }
     }
 }

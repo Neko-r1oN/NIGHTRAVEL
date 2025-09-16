@@ -273,7 +273,7 @@ public class Sword : PlayerBase
                 var objectComponent = collidersEnemies[i].gameObject.GetComponent<ObjectBase>();
                 if (objectComponent != null)
                 {
-                    objectComponent.ApplyDamage();
+                    objectComponent.TurnOnPowerRequest(gameObject);
                 }
             }
         }

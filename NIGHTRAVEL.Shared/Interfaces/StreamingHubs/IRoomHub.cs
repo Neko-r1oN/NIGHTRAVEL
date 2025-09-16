@@ -5,11 +5,11 @@
 
 using MagicOnion;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
 
 namespace Shared.Interfaces.StreamingHubs
@@ -45,7 +45,6 @@ namespace Shared.Interfaces.StreamingHubs
         #endregion
 
         #region ゲーム内
-
         #region プレイヤー関連
 
         /// <summary>
@@ -123,7 +122,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
-        //Task ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
+        Task ChooseUpgrade(Guid optionsKey, STAT_UPGRADE_OPTION upgradeOpt);
         #endregion
         #region レリック関連
 
@@ -153,13 +152,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="result">端末結果</param>
         /// <returns></returns>
         Task TerminalsResultAsync(int termID, bool result);
-
-        /// <summary>
-        /// 端末失敗処理
-        /// </summary>
-        /// <param name="termID"></param>
-        /// <returns></returns>
-        Task TerminalFailureAsync(int termID);
         #endregion
         #region ゲーム内UI、仕様関連
 
@@ -168,8 +160,9 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="gimID">ギミック識別ID</param>
+        /// <param name="triggerOnce">一度しか起動できないかどうか</param>
         /// <returns></returns>
-        Task BootGimmickAsync(int gimID);
+        Task BootGimmickAsync(int gimID, bool triggerOnce);
 
         /// <summary>
         /// 難易度上昇
@@ -193,8 +186,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task AdvancedStageAsync();
 
-        #endregion
+        /// <summary>
+        /// オブジェクト生成リクエスト
+        /// </summary>
+        /// <returns></returns>
+        Task SpawnObjectAsync(OBJECT_TYPE type, Vector2 spawnPos);
 
+        #endregion
         #endregion
     }
 }

@@ -31,7 +31,7 @@ public class Box : ObjectBase
         }
     }
 
-    public override void ApplyDamage()
+    protected override void ApplyDamage()
     {
         if (isBroken == true) return;
 
@@ -76,7 +76,7 @@ public class Box : ObjectBase
     }
 
     /// <summary>
-    /// 電源オン処理
+    /// ボックス破壊処理
     /// </summary>
     public override void TurnOnPower()
     {

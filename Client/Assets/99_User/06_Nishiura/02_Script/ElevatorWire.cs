@@ -11,7 +11,7 @@ public class ElevatorWire : ObjectBase
     // エレベーターのプレハブ
     [SerializeField] GameObject Elevator;
 
-    public override void ApplyDamage()
+    protected override void ApplyDamage()
     {
         Destroy(this.gameObject);   // ワイヤーを破壊
         Elevator.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
