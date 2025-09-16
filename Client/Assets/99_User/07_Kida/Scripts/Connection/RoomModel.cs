@@ -700,7 +700,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt)
     {
-        await roomHub.ChooseUpgrade(upgradeOpt);
+        //await roomHub.ChooseUpgrade(upgradeOpt);
     }
     #endregion
 

@@ -123,7 +123,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="upgradeOpt">強化項目</param>
         /// <returns></returns>
-        Task ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
+        //Task ChooseUpgrade(EnumManager.STAT_UPGRADE_OPTION upgradeOpt);
         #endregion
         #region レリック関連
 
