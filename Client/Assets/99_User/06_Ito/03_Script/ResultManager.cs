@@ -1,12 +1,56 @@
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ResultManager : MonoBehaviour
 {
+    [Foldout("テキスト")]
+    [SerializeField] Text jobText;                  // 職業
+    [Foldout("テキスト")]                           
+    [SerializeField] Text levelText;                // ゲームレベル
+    [Foldout("テキスト")]                           
+    [SerializeField] Text stageNumText;             // 攻略ステージ
+    [Foldout("テキスト")]
+    [SerializeField] Text arrivalLevelText;         // 到達レベル
+    [Foldout("テキスト")]                           
+    [SerializeField] Text survivalTimeText;         // 生存時間
+    [Foldout("テキスト")]
+    [SerializeField] Text totalExterminationText;   // 討伐数
+    [Foldout("テキスト")]                           
+    [SerializeField] Text grantDamageText;          // 総付与ダメージ
+    [Foldout("テキスト")]                           
+    [SerializeField] Text receiveDamageText;        // 被ダメージ
+    [Foldout("テキスト")]                           
+    [SerializeField] Text totalEarningsItemText;    // 総獲得アイテム
+    [Foldout("テキスト")]
+    [SerializeField] Text terminalStartupNumText;   // 端末起動回数
+    [Foldout("テキスト")]
+    [SerializeField] Text totalScore;               // 総スコア
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        // テストデータ
+        ResultData resultData = new ResultData()
+        {
+            AliveTime = 200,
+            Difficulty = 2,
+            PlayerClass = EnumManager.Player_Type.Sword,
+            EnemyKillCount = 20,
+            TotalGaveDamage = 50,
+            TotalReceivedDamage = 20,
+            TotalGottenItem = 2,
+            TotalActivedTerminal = 3
+        };
+
+        DisplayResultData(resultData);
+
+        //DisplayResultData(GameManager.Instance.ResultData);
     }
 
     // Update is called once per frame
@@ -30,5 +74,23 @@ public class ResultManager : MonoBehaviour
     public void BackLobbySceneButton()
     {
         Initiate.Fade("PlayStandbyScene", Color.black, 1.0f);   // フェード時間1秒
+    }
+
+    /// <summary>
+    /// リザルト画面更新処理
+    /// </summary>
+    public void DisplayResultData(ResultData resultData)
+    {
+        jobText.text = resultData.PlayerClass.ToString();                         // プレイヤーの情報
+        levelText.text = resultData.Difficulty.ToString();                        // ゲームの難易度
+        stageNumText.text = "3";                                                  // 攻略ステージ数
+        arrivalLevelText.text = "ハード";                                         // 到達レベル
+        survivalTimeText.text = resultData.AliveTime.ToString();                  // 生存時間
+        totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
+        grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数
+        receiveDamageText.text = resultData.TotalReceivedDamage.ToString();       // 被ダメージ数
+        totalEarningsItemText.text = resultData.TotalGottenItem.ToString();       // 総獲得アイテム数
+        terminalStartupNumText.text = resultData.TotalActivedTerminal.ToString(); // 合計端末起動数
+        totalScore.text = "50000";
     }
 }

@@ -4,9 +4,14 @@ using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using Rewired.Utils.Classes.Data;
 
 public class LevelManager : MonoBehaviour
 {
+    Dictionary<Guid, List<Status_Enhancement>> options = new Dictionary<Guid, List<Status_Enhancement>>();
+    public Dictionary<Guid, List<Status_Enhancement>> Options { get { return options; } set { options = value; } }
+
     /// <summary>
     /// ゲーム難易度
     /// </summary>
@@ -42,6 +47,23 @@ public class LevelManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        List<Status_Enhancement> statusesGroup1 = new List<Status_Enhancement>();
+        List<Status_Enhancement> statusesGroup2 = new List<Status_Enhancement>();
+
+        statusesGroup1.Add(new Status_Enhancement() { id = 0, name = "攻撃", explanation = "攻撃が上がる" });
+        statusesGroup1.Add(new Status_Enhancement() { id = 1, name = "スピード", explanation = "スピード上がる" });
+        statusesGroup1.Add(new Status_Enhancement() { id = 2, name = "防御", explanation = "防御上がる" });
+
+        statusesGroup2.Add(new Status_Enhancement() { id = 3, name = "適当", explanation = "適当に上がる" });
+        statusesGroup2.Add(new Status_Enhancement() { id = 4, name = "a", explanation = "適当に上がる" });
+        statusesGroup2.Add(new Status_Enhancement() { id = 5, name = "b", explanation = "適当に上がる" });
+
+        options.Add(Guid.NewGuid(), statusesGroup1);
+        options.Add(Guid.NewGuid(), statusesGroup2);
+    }
+
     public Dictionary<GAME_LEVEL, string> LevelName = new Dictionary<GAME_LEVEL, string>
     {
         {GAME_LEVEL.Baby,"ベビー"},
@@ -71,6 +93,8 @@ public class LevelManager : MonoBehaviour
         {
             enemy.Enemy.ApplyMaxStatusModifierByRate(0.1f, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
         }
+
+        
 
         UIManager.Instance.UpGameLevelText();
 
