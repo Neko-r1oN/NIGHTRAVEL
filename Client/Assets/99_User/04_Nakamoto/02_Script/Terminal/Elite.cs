@@ -30,6 +30,8 @@ public class Elite : TerminalBase
     public override void BootTerminal()
     {
         isUsed = true; // ’[––Žg—p’†‚É‚·‚é
-        TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
+
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
     }
 }

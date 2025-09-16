@@ -109,7 +109,6 @@ public class TerminalManager : MonoBehaviour
             var terminal = Instantiate(terminalPrefabs[(int)data.Type - 1], generatePos[data.ID - 1].transform.position, Quaternion.identity);
             terminal.GetComponent<TerminalBase>().TerminalID = data.ID;
             terminal.GetComponent<TerminalBase>().TerminalType = data.Type;
-
             terminalObjs.Add(data.ID, terminal);
         }
     }

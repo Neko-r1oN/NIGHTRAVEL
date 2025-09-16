@@ -3,6 +3,7 @@
 // Author:Enomoto Data:07/25
 //=============================
 using MessagePack;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
@@ -39,5 +40,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         [Key(3)]
         public float GameTimer { get; set; }
+
+        /// <summary>
+        /// 端末情報
+        /// </summary>
+        [Key(4)]
+        public List<TerminalData> TerminalDatas { get; set; }
     }
 }

@@ -237,7 +237,7 @@ namespace StreamingHubs
             var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
             terminal.State = TERMINAL_STATE.Failure;
 
-            // 失敗したので生成された敵を削除
+            // 失敗の場合、生成された敵を削除
             switch(terminal.Type)
             {
                 case TERMINAL_TYPE.Enemy:
@@ -343,7 +343,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-
                 // ルームデータから敵のリストを取得し、該当する要素を更新する
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
                 foreach (var enemyData in masterClientData.EnemyDatas)
@@ -353,6 +352,10 @@ namespace StreamingHubs
                         gottenEnemyDataList[enemyData.UniqueId] = enemyData;
                     }
                 }
+
+                // ルームデータから端末情報を取得し、アクティブ状態の端末を更新
+                var terminalList = this.roomContext.terminalList;
+                if()
 
                 foreach (var item in masterClientData.GimmickDatas)
                 {
