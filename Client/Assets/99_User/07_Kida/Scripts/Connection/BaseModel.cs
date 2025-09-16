@@ -13,7 +13,7 @@ using UnityEngine;
 public class BaseModel : MonoBehaviour
 {
     //localhost‚©Azure‚ÌURL‚ð“ü‚ê‚é
-    public const string ServerURL = "https://localhost:7180";
+    public const string ServerURL = "http://localhost:5244";
     /*#if DEBUG
 
     #else

@@ -5,6 +5,7 @@
 
 #region using一覧
 using MagicOnion.Server.Hubs;
+using MessagePack.Formatters;
 using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.StreamingHubs;
@@ -12,6 +13,7 @@ using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -24,6 +26,7 @@ namespace StreamingHubs
     public class RoomHub(RoomContextRepository roomContextRepository) : StreamingHubBase<IRoomHub, IRoomHubReceiver>, IRoomHub
     {
         //コンテキスト定義
+        private ConcurrentDictionary<string, RoomContext> roomContexts;
         private RoomContext roomContext;
         RoomContextRepository roomContextRepos;
 
@@ -120,6 +123,7 @@ namespace StreamingHubs
             lock (roomContextRepository) // 排他制御
             {
                 // Nullチェック入れる
+                if (roomContext == null) return;
                 //　退室するユーザーを取得
                 var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
 

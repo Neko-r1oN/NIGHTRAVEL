@@ -7,11 +7,13 @@
 ////////////////////////////////////////////////////////////////
 
 #region using一覧
+using Cysharp.Net.Http;
 using Cysharp.Threading.Tasks;
 using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Services;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -21,6 +23,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
+using static Unity.Cinemachine.CinemachineSplineRoll;
 using Vector2 = UnityEngine.Vector2;
 #endregion
 
@@ -38,9 +41,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     // 現在の参加者情報
     public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
 
+    //現在のルーム情報
+    public RoomData[] roomDataList { get;  set; }
+
     #region 通知定義一覧
 
     #region システム
+
+    //ルーム検索通知
+    public Action<List<string>, List<string>> OnSearchedRoom { get; set; }
 
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
@@ -242,6 +251,27 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     #region 入室・退室・準備完了通知
+
+    /// <summary>
+    /// ルーム検索通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="roomName"></param>
+    /// <param name="userName"></param>
+    public void OnSearchRoom(RoomData[] roomDatas)
+    {
+        List<string> roomNameList = new List<string>();
+        List<string> userNameList = new List<string>();
+
+        foreach (RoomData roomData in roomDatas)
+        {
+            roomNameList.Add(roomData.roomName);
+            userNameList.Add(roomData.userName);
+        }
+
+        OnSearchedRoom(roomNameList, userNameList);
+    }
+
     /// <summary>
     /// 入室通知(IRoomHubReceiverインターフェイスの実装)
     /// Aughter:木田晃輔
@@ -497,6 +527,32 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     #region リクエスト関連
 
     #region 入室からゲーム開始まで
+
+    /// <summary>
+    /// 部屋の検索
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public async Task SearchRoomAsync()
+    {
+        var handler = new YetAnotherHttpHandler() { Http2Only = true };
+        var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
+        var client = MagicOnionClient.Create<IRoomService>(channel);
+
+        var roomDatas = await client.GetAllRoom();
+
+        roomDataList = new RoomData[roomDatas.Length];
+
+        for (int i = 0;i<roomDatas.Length; i++)
+        {
+            roomDataList[i] = new RoomData();
+            roomDataList[i].roomName = roomDatas[i].roomName;
+            roomDataList[i].userName = roomDatas[i].userName;
+        }
+
+        OnSearchRoom(roomDataList);
+    }
+
     /// <summary>
     /// 入室同期
     /// Aughter:木田晃輔

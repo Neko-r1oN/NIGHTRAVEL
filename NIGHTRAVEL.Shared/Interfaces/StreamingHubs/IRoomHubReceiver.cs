@@ -15,6 +15,7 @@ using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Shared.Interfaces.StreamingHubs;
 using NIGHTRAVEL.Shared.Unity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using System.Collections.Concurrent;
 
 namespace Shared.Interfaces.StreamingHubs
 {
@@ -23,6 +24,7 @@ namespace Shared.Interfaces.StreamingHubs
         //ここにサーバー～クライアントの定義
 
         #region 入室からゲーム開始まで
+
         /// <summary>
         /// ユーザーの入室通知
         /// Author:Kida
