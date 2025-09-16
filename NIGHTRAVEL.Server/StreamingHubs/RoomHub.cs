@@ -5,6 +5,7 @@
 
 #region using一覧
 using MagicOnion.Server.Hubs;
+using MessagePack.Formatters;
 using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.StreamingHubs;
@@ -51,30 +52,6 @@ namespace StreamingHubs
         #endregion
 
         #region マッチングしてからゲーム開始までの処理
-        /// <summary>
-        /// ルーム検索
-        /// Aughtor:木田晃輔
-        /// </summary>
-        /// <returns></returns>
-        public async Task SearchRoomAsync()
-        {
-            lock(roomContextRepository)
-            {//同時に生成しないように排他制御
-
-                //すべてのルーム取得
-                this.roomContexts = roomContextRepository.GetALLContext();
-
-                //１個ずつルームを通知する
-                foreach(var context in roomContexts)
-                {
-                    this.roomContext = context.Value;
-                    this.roomContext.Group.Except([this.ConnectionId]).OnSearchRoom(roomContext.Name, 
-                                                                                    roomContext.JoinedUserList[this.ConnectionId].UserData.Name);
-                }
-            }
-
-        }
-
         /// <summary>
         /// 入室処理
         /// Author:Kida
@@ -145,6 +122,7 @@ namespace StreamingHubs
             lock (roomContextRepository) // 排他制御
             {
                 // Nullチェック入れる
+                if (roomContext == null) return;
                 //　退室するユーザーを取得
                 var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
 

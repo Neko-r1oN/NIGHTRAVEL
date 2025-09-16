@@ -7,11 +7,13 @@
 ////////////////////////////////////////////////////////////////
 
 #region using一覧
+using Cysharp.Net.Http;
 using Cysharp.Threading.Tasks;
 using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
+using NIGHTRAVEL.Shared.Interfaces.Services;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -20,6 +22,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
+using static Unity.Cinemachine.CinemachineSplineRoll;
 using Vector2 = UnityEngine.Vector2;
 #endregion
 
@@ -37,12 +40,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     // 現在の参加者情報
     public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
 
+    //現在のルーム情報
+    public RoomData[] roomDataList { get;  set; }
+
     #region 通知定義一覧
 
     #region システム
 
     //ルーム検索通知
-    public Action<string,string> OnSearchedRoom {  get; set; }
+    public Action<List<string>, List<string>> OnSearchedRoom { get; set; }
 
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
@@ -226,9 +232,18 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="roomName"></param>
     /// <param name="userName"></param>
-    public void OnSearchRoom(string roomName,string userName)
+    public void OnSearchRoom(RoomData[] roomDatas)
     {
-        OnSearchedRoom(roomName,userName);
+        List<string> roomNameList = new List<string>();
+        List<string> userNameList = new List<string>();
+
+        foreach (RoomData roomData in roomDatas)
+        {
+            roomNameList.Add(roomData.roomName);
+            userNameList.Add(roomData.userName);
+        }
+
+        OnSearchedRoom(roomNameList, userNameList);
     }
 
     /// <summary>
@@ -328,7 +343,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, List<EnumManager.STAT_UPGRADE_OPTION> statusOptionList)
     {
-       // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
+        // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
     }
 
     /// <summary>
@@ -341,13 +356,13 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
 
-   /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
-    {
-    }
-feature/k-kawaguchi
+    /* public void OnUpdateStatus(CharacterStatusData cdata, PlayerRelicStatusData rdata)
+     {
+     }
+ feature/k-kawaguchi
 
-    #endregion
-    #region 敵通知関連*/
+     #endregion
+     #region 敵通知関連*/
 
     /// <summary>
     /// 敵の生成通知
@@ -451,7 +466,7 @@ feature/k-kawaguchi
     /// <param name="stageID"></param>
     public void OnAdanceNextStage(bool isAdvance, STAGE_TYPE stageType)
     {
-        OnAdanceNextStageSyn(isAdvance,stageType);
+        OnAdanceNextStageSyn(isAdvance, stageType);
     }
 
     /// <summary>
@@ -486,6 +501,32 @@ feature/k-kawaguchi
 
     #region リクエスト関連
     #region 入室からゲーム開始まで
+
+    /// <summary>
+    /// 部屋の検索
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public async Task SearchRoomAsync()
+    {
+        var handler = new YetAnotherHttpHandler() { Http2Only = true };
+        var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
+        var client = MagicOnionClient.Create<IRoomService>(channel);
+
+        var roomDatas = await client.GetAllRoom();
+
+        roomDataList = new RoomData[roomDatas.Length];
+
+        for (int i = 0;i<roomDatas.Length; i++)
+        {
+            roomDataList[i] = new RoomData();
+            roomDataList[i].roomName = roomDatas[i].roomName;
+            roomDataList[i].userName = roomDatas[i].userName;
+        }
+
+        OnSearchRoom(roomDataList);
+    }
+
     /// <summary>
     /// 入室同期
     /// Aughter:木田晃輔

@@ -45,6 +45,9 @@ namespace NIGHTRAVEL.Server.Model.Context
 
         //ユーザーの実績進捗のデータベース設定
         public DbSet<AchievementStatus> Achievement_Statuses { get; set; }
+
+        //ルーム
+        public DbSet<Room> Rooms { get; set; }
         #endregion
 
         //server名;ユーザー名;パスワード指定

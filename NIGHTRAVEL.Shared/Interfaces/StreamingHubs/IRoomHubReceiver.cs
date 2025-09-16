@@ -26,13 +26,6 @@ namespace Shared.Interfaces.StreamingHubs
         #region 入室からゲーム開始まで
 
         /// <summary>
-        /// ルーム検索
-        /// </summary>
-        /// <param name="roomName"></param>
-        /// <param name="userName"></param>
-        void OnSearchRoom(string roomName,string userName);
-
-        /// <summary>
         /// ユーザーの入室通知
         /// Author:Kida
         /// </summary>
