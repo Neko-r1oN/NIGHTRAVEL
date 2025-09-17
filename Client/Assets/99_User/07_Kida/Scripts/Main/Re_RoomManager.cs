@@ -8,7 +8,7 @@ public class Re_RoomManager : MonoBehaviour
     [SerializeField] GameObject roomCreatepanel;
 
     //•”‰®¶¬Ò‚ğ”»’f
-    private static bool isCreater;
+    private static bool isCreater = false;
     public static bool IsCreater
     { get { return isCreater; } }
 

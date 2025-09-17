@@ -111,18 +111,18 @@ namespace StreamingHubs
                 // ルームコンテキストに参加ユーザーを保存
                 this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
 
-                //　ルームに参加
+                this.roomContext.resultDataList.Add(this.ConnectionId, new ResultData());
+
+                
+                
+               
                 this.roomContext.Group.Add(this.ConnectionId, Client);
 
-            this.roomContext.resultDataList.Add(this.ConnectionId, new ResultData());
-
-            //　ルームに参加
-                this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]); 
-                
                 
                 this.roomContext.Group.Only([this.ConnectionId]).OnRoom();
-            this.roomContext.Group.Add(this.ConnectionId, Client);
                 
+                //　ルームに参加
+                this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
                 this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
 
