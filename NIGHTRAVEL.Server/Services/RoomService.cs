@@ -4,12 +4,13 @@ using MagicOnion.Server;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.Services;
+using System.Security.Principal;
 
 namespace NIGHTRAVEL.Server.Services
 {
     public class RoomService : ServiceBase<IRoomService>, IRoomService
     {
-        //ステージをID指定で取得
+        //ルームをユーザーの名前で取得
         public async UnaryResult<Room> GetRoom(string user_name)
         {
             //DBを取得
@@ -33,7 +34,7 @@ namespace NIGHTRAVEL.Server.Services
             return room;
         }
 
-        //ステージの一覧を取得
+        //ルームの一覧を取得
         public async UnaryResult<Room[]> GetAllRoom()
         {
             //DBを取得
@@ -44,6 +45,45 @@ namespace NIGHTRAVEL.Server.Services
 
             //ステージのデータを返す
             return rooms;
+        }
+
+        //ルームを生成
+        public async UnaryResult<Room> RegistRoom(string room_name,string user_name)
+        {
+            Room room = new Room();
+            room.userName = user_name;
+            room.roomName = room_name;
+            room.Created_at = DateTime.Now;      //生成日時
+            room.Updated_at = DateTime.Now;      //更新日時
+
+
+            //DBを取得
+            using var context = new GameDbContext();
+
+            //ルームを追加
+            context.Add(room);
+
+            await context.SaveChangesAsync();   //データベースを保存する
+
+
+            //ステージのデータを返す
+            return room;
+        }
+
+        //ルームを削除
+        public async UnaryResult<Room> RemoveRoom(string room_name)
+        {
+            //DBを取得
+            using var context = new GameDbContext();
+
+            var room = context.Rooms.Where(room => room.roomName == room_name).First();
+
+            context.Rooms.Remove(room);
+
+            await context.SaveChangesAsync();   //データベースを保存する
+
+            //ステージのデータを返す
+            return room;
         }
     }
 }
