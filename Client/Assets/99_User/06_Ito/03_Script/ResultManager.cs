@@ -39,7 +39,7 @@ public class ResultManager : MonoBehaviour
         ResultData resultData = new ResultData()
         {
             AliveTime = new TimeSpan(0, 0, 600),
-            Difficulty = 2,
+            //Difficulty = 2,
             PlayerClass = EnumManager.Player_Type.Sword,
             EnemyKillCount = 20,
             TotalGaveDamage = 50,
@@ -81,7 +81,7 @@ public class ResultManager : MonoBehaviour
     public void DisplayResultData(ResultData resultData)
     {
         jobText.text = resultData.PlayerClass.ToString();                         // プレイヤーの情報
-        levelText.text = resultData.Difficulty.ToString();                        // ゲームの難易度
+        //levelText.text = resultData.Difficulty.ToString();                        // ゲームの難易度
         stageNumText.text = "3";                                                  // 攻略ステージ数
         arrivalLevelText.text = "ハード";                                         // 到達レベル
         survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
