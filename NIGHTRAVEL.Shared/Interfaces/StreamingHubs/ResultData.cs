@@ -30,9 +30,6 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         //取得レリックリスト
         public List<Relic> GottenRelicList { get; set; }
 
-        //合計被ダメージ
-        public int TotalReceivedDamage { get; set; }
-
         //合計付与ダメージ
         public int TotalGaveDamage { get; set; }
 

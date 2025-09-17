@@ -441,6 +441,10 @@ namespace StreamingHubs
         public async Task AscendDifficultyAsync()
         {
             this.roomContext.NowDifficulty++;
+
+            // リザルトデータを更新
+            this.roomContext.resultDataList[this.ConnectionId].Difficulty = this.roomContext.NowDifficulty;
+
             // 参加者全員に難易度の上昇を通知
             this.roomContext.Group.All.OnAscendDifficulty(this.roomContext.NowDifficulty);
         }
@@ -461,6 +465,10 @@ namespace StreamingHubs
                 // 進行申請を申請済みにするにする
                 this.roomContext.isAdvanceRequest = true;
                 this.roomContext.totalClearStageCount++;
+
+                // リザルトデータを更新
+                this.roomContext.resultDataList[this.ConnectionId].TotalClearStageCount = this.roomContext.totalClearStageCount;
+
                 if (isAdvance)
                 {
                     if((int)this.roomContext.NowStage == 3)
@@ -620,6 +628,9 @@ namespace StreamingHubs
                 // 合計付与ダメージを加算
                 this.roomContext.totalGaveDamage += enemDmgData.Damage;
 
+                // リザルトデータを更新
+                this.roomContext.resultDataList[this.ConnectionId].TotalGaveDamage += this.roomContext.totalGaveDamage;
+
                 // 敵のHPが0以下になった場合
                 if (enemDmgData.RemainingHp <= 0)
                 {
@@ -627,6 +638,9 @@ namespace StreamingHubs
                     this.roomContext.ExpManager.nowExp += enemData.Exp + (int)(enemData.Exp * addExpRate); // 被弾クラスにExpを代入
                     // 合計キル数を加算
                     this.roomContext.totalKillCount++;
+
+                    // リザルトデータを更新
+                    this.roomContext.resultDataList[this.ConnectionId].EnemyKillCount = this.roomContext.totalKillCount;
 
                     // 所持経験値が必要経験値に満ちた場合
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
@@ -750,6 +764,9 @@ namespace StreamingHubs
                     terminal.State = TERMINAL_STATE.Success;
                 }
 
+                // リザルトデータを更新
+                this.roomContext.resultDataList[this.ConnectionId].TotalActivedTerminal++;
+
                 // 参加者全員に端末が起動したことを通知
                 this.roomContext.Group.All.OnBootTerminal(termID);
             }
@@ -806,6 +823,9 @@ namespace StreamingHubs
                         // 取得したレリックをリストに入れる
                         this.roomContext.relicDataList[this.ConnectionId].Add(relicData);
 
+                        // リザルトデータを更新
+                        this.roomContext.resultDataList[this.ConnectionId].GottenRelicList = this.roomContext.relicDataList[this.ConnectionId];
+
                         // レリック強化を付与
                         GetStatusWithRelics();
                         break;
@@ -821,6 +841,9 @@ namespace StreamingHubs
 
                 // 取得済みアイテムリストに入れる
                 this.roomContext.gottenItemList.Add(itemID);
+
+                // リザルトデータを更新
+                this.roomContext.resultDataList[this.ConnectionId].TotalGottenItem = this.roomContext.gottenItemList.Count;
 
                 // アイテムの獲得を全員に通知
                 this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID);
@@ -1136,6 +1159,9 @@ namespace StreamingHubs
             // 最終レベルに現在のレベルを代入
             this.roomContext.resultLevel = expManager.Level;
 
+            // リザルトデータを更新
+            this.roomContext.resultDataList[this.ConnectionId].MaxLevel = this.roomContext.resultLevel;
+
             // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
@@ -1178,22 +1204,20 @@ namespace StreamingHubs
         /// <returns></returns>
         public async void Result()
         {
-            ResultData resultData = new ResultData();
-            var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
-
-            // 必要なデータを代入
             foreach (var conectionId in this.roomContext.JoinedUserList.Keys)
-            {
+            {   
+                var playerData = this.roomContext.GetPlayerData(conectionId);
+                var resultData = this.roomContext.resultDataList[conectionId];
+
+                // 必要なデータを代入   
                 resultData.Difficulty = this.roomContext.NowDifficulty;                         // 難易度
                 resultData.Level = this.roomContext.ExpManager.Level;                           // レベル
                 resultData.AliveTime = 66666;                                                   // 生存時間(仮)
                 resultData.PlayerClass = playerData.Class;                                      // プレイヤーのクラス
                 resultData.TotalGottenItem = this.roomContext.gottenItemList.Count;             // 総獲得アイテム数
-                resultData.TotalActivedTerminal = this.roomContext.bootedTerminalList.Count;    // 総起動端末数
                 resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;                  // 総付与ダメージ数
                 resultData.EnemyKillCount = this.roomContext.totalKillCount;                    // 総キルカウント
                 resultData.GottenRelicList = this.roomContext.relicDataList[conectionId];       // 獲得レリックリスト
-                resultData.TotalReceivedDamage = this.roomContext.totalGainDamage;              // 合計被弾値
                 resultData.TotalClearStageCount = this.roomContext.totalClearStageCount;        // 合計クリアステージ数
                 resultData.MaxLevel = this.roomContext.resultLevel;                             // 最終レベル
 
@@ -1203,8 +1227,7 @@ namespace StreamingHubs
                             (resultData.EnemyKillCount * 10) +
                             (resultData.TotalGaveDamage * 2) +
                             (resultData.TotalClearStageCount * 100) +
-                            (resultData.MaxLevel * 10) -
-                            (resultData.TotalReceivedDamage * 5) *
+                            (resultData.MaxLevel * 10) *
                             (resultData.Difficulty / 2);
 
                 this.roomContext.Group.Except([conectionId]).OnGameEnd(resultData);

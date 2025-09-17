@@ -65,12 +65,6 @@ namespace NIGHTRAVEL.Server.Model.Context
         public int totalKillCount = 0;
 
         /// <summary>
-        ///  合計被弾数
-        /// Author:Nishiura
-        /// </summary>
-        public int totalGainDamage = 0;
-
-        /// <summary>
         /// 合計クリアステージ数
         /// Author:Nishiura
         /// </summary>
@@ -128,6 +122,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// レリックの情報リスト
         /// </summary>
         public Dictionary<Guid,List<Relic>> relicDataList { get; } = new Dictionary<Guid, List<Relic>>();
+
+        /// <summary>
+        /// リザルトデータリスト
+        /// </summary>
+        public Dictionary<Guid,ResultData> resultDataList { get; }= new Dictionary<Guid, ResultData>();
 
         /// <summary>
         /// 起動済み端末IDリスト
