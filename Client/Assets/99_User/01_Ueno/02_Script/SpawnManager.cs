@@ -23,8 +23,10 @@ public class SpawnManager : MonoBehaviour
     #endregion
 
     #region 敵生成関連
+    int spawnCount;
     [SerializeField] int maxSpawnCnt; // マックススポーン回数
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
+    int enemyCnt;
     [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
     public int KnockTermsNum { get { return knockTermsNum; } }
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
@@ -133,11 +135,15 @@ public class SpawnManager : MonoBehaviour
                 {// スポーン回数が限界に達しているか
                     if (!isSpawnBoss)
                     {
+                        //enemyCnt = characterManager.Enemies.Count;
+
                         foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
                         {
-                            if (characterManager.Enemies.Count > maxSpawnCnt) break;
+                            enemyCnt = characterManager.Enemies.Count;
+
+                            if (enemyCnt > maxSpawnCnt) break;
                             if (!player) continue;
-                            if (characterManager.Enemies.Count < maxSpawnCnt / 2)
+                            if (enemyCnt < maxSpawnCnt / 2)
                             {// 敵が100体いない場合
                                 GenerateEnemy(Random.Range(7, 11), player.transform.position);
                             }
@@ -315,6 +321,9 @@ public class SpawnManager : MonoBehaviour
                 var spawnType = SPAWN_ENEMY_TYPE.ByManager;
                 Vector3 scale = Vector3.one;    // 一旦このまま
                 spawnEnemyDatas.Add(CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType));
+
+                // スポーンカウント増やす
+                spawnCount++;
             }
         }
         // 生成スポーンリスト初期化
