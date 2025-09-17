@@ -21,6 +21,7 @@ using System.Xml;
 using System.Threading.Tasks;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Rewired;
+using Pixeye.Unity;
 
 public class CharacterManager : MonoBehaviour
 {
