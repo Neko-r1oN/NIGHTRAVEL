@@ -43,7 +43,6 @@ public class ResultManager : MonoBehaviour
             PlayerClass = EnumManager.Player_Type.Sword,
             EnemyKillCount = 20,
             TotalGaveDamage = 50,
-            TotalReceivedDamage = 20,
             TotalGottenItem = 2,
             TotalActivedTerminal = 3
         };
@@ -88,7 +87,6 @@ public class ResultManager : MonoBehaviour
         survivalTimeText.text = resultData.AliveTime.ToString();                  // 生存時間
         totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
         grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数
-        receiveDamageText.text = resultData.TotalReceivedDamage.ToString();       // 被ダメージ数
         totalEarningsItemText.text = resultData.TotalGottenItem.ToString();       // 総獲得アイテム数
         terminalStartupNumText.text = resultData.TotalActivedTerminal.ToString(); // 合計端末起動数
         totalScore.text = "50000";
