@@ -8,6 +8,7 @@ using MagicOnion.Server.Hubs;
 using MessagePack.Formatters;
 using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
+using NIGHTRAVEL.Server.Services;
 using NIGHTRAVEL.Server.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
@@ -29,6 +30,8 @@ namespace StreamingHubs
         private ConcurrentDictionary<string, RoomContext> roomContexts;
         private RoomContext roomContext;
         RoomContextRepository roomContextRepos;
+        Room room = new Room();
+        RoomService roomService = new RoomService();
 
         // ターミナル関連 (MAXの値はRandで用いるため、上限+1の数)
         private const int MIN_TERMINAL_NUM = 3;
@@ -64,53 +67,67 @@ namespace StreamingHubs
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
+
+                GameDbContext dbContext = new GameDbContext();
+                //DBからユーザー情報取得
+                var user = dbContext.Users.Where(user => user.Id == userId).First();
+
+
                 // ルームに参加＆ルームを保持
                 this.roomContext = roomContextRepository.GetContext(roomName);
                 if (this.roomContext == null)
                 { //無かったら生成
                     this.roomContext = roomContextRepository.CreateContext(roomName);
+                    //DBに生成
+                    room.roomName = roomName;
+                    room.userName = user.Name;
+                    roomService.RegistRoom(room.roomName, room.userName);
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
                     roomContextRepository.RemoveContext(roomName);                      //ルーム情報を削除
                     this.roomContext = roomContextRepository.CreateContext(roomName);   //ルームを生成
+                    //DBに生成
+                    room.roomName = roomName;
+                    room.userName = user.Name;
+                    roomService.RegistRoom(room.roomName, room.userName);
                 }
+
+                // グループストレージにユーザーデータを格納
+                var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
+
+                if (roomContext.JoinedUserList.Count == 0)
+                {//roomContext内の参加人数が0である場合
+
+                    //参加順番の初期化
+                    joinedUser.JoinOrder = 1;
+
+                    //1人目をマスタークライアントにする
+                    joinedUser.IsMaster = true;
+                }
+                else
+                {
+                    //参加順番の設定
+                    joinedUser.JoinOrder = roomContext.JoinedUserList.Count + 1;
+                }
+
+                // ルームコンテキストに参加ユーザーを保存
+                this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
+
+                //　ルームに参加
+                this.roomContext.Group.Add(this.ConnectionId, Client);
+
+                this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]); 
+                
+                
+                this.roomContext.Group.Only([this.ConnectionId]).OnRoom();
+                
+
+                this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
+
+                // 参加中のユーザー情報を返す
+                return this.roomContext.JoinedUserList;
             }
-
-            //DBからユーザー情報取得
-            GameDbContext dbContext = new GameDbContext();
-            var user = dbContext.Users.Where(user => user.Id == userId).First();
-
-            // グループストレージにユーザーデータを格納
-            var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
-
-            if (roomContext.JoinedUserList.Count == 0)
-            {//roomContext内の参加人数が0である場合
-
-                //参加順番の初期化
-                joinedUser.JoinOrder = 1;
-
-                //1人目をマスタークライアントにする
-                joinedUser.IsMaster = true;
-            }
-            else
-            {
-                //参加順番の設定
-                joinedUser.JoinOrder = roomContext.JoinedUserList.Count + 1;
-            }
-
-            // ルームコンテキストに参加ユーザーを保存
-            this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
-
-            //　ルームに参加
-            this.roomContext.Group.Add(this.ConnectionId, Client);
-
-            this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
-
-            this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
-
-            // 参加中のユーザー情報を返す
-            return this.roomContext.JoinedUserList;
         }
 
         /// <summary>
@@ -124,6 +141,9 @@ namespace StreamingHubs
             {
                 // Nullチェック入れる
                 if (roomContext == null) return;
+
+                GameDbContext context = new GameDbContext();
+
                 //　退室するユーザーを取得
                 var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
 
@@ -138,6 +158,12 @@ namespace StreamingHubs
                             this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
                         }
                     }
+                }
+
+                //最後の1人の場合ルームを削除
+                if(this.roomContext.JoinedUserList.Count == 1)
+                {
+                    roomService.RemoveRoom(this.roomContext.Name);
                 }
 
                 // ルーム参加者全員に、ユーザーの退室通知を送信

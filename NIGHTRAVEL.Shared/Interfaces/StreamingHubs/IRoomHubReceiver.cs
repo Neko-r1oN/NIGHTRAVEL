@@ -26,6 +26,12 @@ namespace Shared.Interfaces.StreamingHubs
         #region 入室からゲーム開始まで
 
         /// <summary>
+        /// ルーム作成通知
+        /// Author:Kida
+        /// </summary>
+        void OnRoom();
+
+        /// <summary>
         /// ユーザーの入室通知
         /// Author:Kida
         /// </summary>

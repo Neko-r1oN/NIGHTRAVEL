@@ -51,6 +51,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ルーム検索通知
     public Action<List<string>, List<string>> OnSearchedRoom { get; set; }
 
+    //ルーム生成通知
+    public Action OnCreatedRoom { get; set; }
+
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
 
@@ -270,6 +273,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         }
 
         OnSearchedRoom(roomNameList, userNameList);
+    }
+
+    /// <summary>
+    /// ルーム生成通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public void OnRoom()
+    {
+        OnCreatedRoom();
     }
 
     /// <summary>
@@ -552,6 +565,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
         OnSearchRoom(roomDataList);
     }
+
+
 
     /// <summary>
     /// 入室同期
