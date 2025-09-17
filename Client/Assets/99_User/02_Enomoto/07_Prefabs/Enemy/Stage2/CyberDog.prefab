@@ -1990,19 +1990,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3c588392de9b6a4db890f174a47c438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 100
+  baseHp: 150
   baseDefense: 15
   basePower: 35
   baseJumpPower: 7
   baseMoveSpeed: 8
   baseHealRate: 0.001
-  maxHp: 0
-  maxDefense: 0
-  maxPower: 0
-  maxJumpPower: 0
-  maxMoveSpeed: 0
-  maxAttackSpeedFactor: 0
-  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -2012,6 +2005,7 @@ MonoBehaviour:
   healRate: 0
   animator: {fileID: 55089399200334659}
   enemyTypeId: 10
+  uniqueId: 
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 8821416632199840584}
@@ -2040,7 +2034,7 @@ MonoBehaviour:
   canDrawRay: 1
   baseExp: 100
   exp: 100
-  spawnWeight: 10
+  spawnWeight: 30
   isByWorm: 0
   meleeAttackCheck: {fileID: 984287513036131797}
   meleeAttackRange: 0.6

@@ -83,7 +83,7 @@ public class Gurdbot : EnemyBase
     protected override void DecideBehavior()
     {
         // 行動パターン
-        if(canChaseTarget && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump
+        if(canChaseTarget && target && IsWall() && IsGround() && Mathf.Abs(disToTargetX) > disToTargetMin && canJump
             && m_rb2d.linearVelocityY == 0)
         {
             Jump();

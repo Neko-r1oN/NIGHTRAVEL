@@ -144,11 +144,18 @@ abstract public class EnemyBase : CharacterBase
     protected float disToTargetX;
     #endregion
 
-    #region システム
-    [Foldout("システム")]
+    #region スポーン関連
+    [Foldout("スポーン関連")]
     [Tooltip("生成されるときの地面からの距離")]
     [SerializeField]
-    float spawnGroundOffset;
+    protected float spawnGroundOffset;
+
+    [Foldout("スポーン関連")]
+    [SerializeField]
+    protected int spawnWeight = 1;  // スポーンの抽選する際の重み
+    #endregion
+
+    #region システム
 
     [Foldout("システム")]
     [Tooltip("判定を描画するかどうか")]
@@ -163,10 +170,6 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("システム")]
     [SerializeField]
     protected int exp = 100;    // 現在の獲得可能経験値量
-
-    [Foldout("システム")]
-    [SerializeField]
-    protected int spawnWeight = 1;  // スポーンの抽選する際の重み
     #endregion
 
     #region 外部参照用プロパティ

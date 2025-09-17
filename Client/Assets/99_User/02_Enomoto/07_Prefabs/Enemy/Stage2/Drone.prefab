@@ -34598,19 +34598,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86c6d2a67d0134d48b4ac4f34960d703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 40
+  baseHp: 60
   baseDefense: 40
   basePower: 20
   baseJumpPower: 1
   baseMoveSpeed: 5
   baseHealRate: 0.001
-  maxHp: 0
-  maxDefense: 0
-  maxPower: 0
-  maxJumpPower: 0
-  maxMoveSpeed: 0
-  maxAttackSpeedFactor: 0
-  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -34642,7 +34635,7 @@ MonoBehaviour:
   canDrawRay: 0
   baseExp: 100
   exp: 100
-  spawnWeight: 3
+  spawnWeight: 15
   patorolRange: 7
   aimTransform: {fileID: 3195488026561358393}
   gunPsController: {fileID: 7974167630358644758}

@@ -16,7 +16,7 @@ public class EnemySightChecker : MonoBehaviour
     private void Start()
     {
         // 視認するLayer [プレイヤー、地面・壁]
-        targetLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player");
+        targetLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick") |  LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player");
     }
 
     /// <summary>

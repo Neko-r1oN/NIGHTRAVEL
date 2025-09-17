@@ -433,9 +433,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beacad8221ae3f24dae996443f75ea2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 10
+  baseHp: 200
   baseDefense: 10
-  basePower: 10
+  basePower: 60
   baseJumpPower: 20
   baseMoveSpeed: 2.5
   baseHealRate: 0.001
@@ -484,7 +484,7 @@ MonoBehaviour:
   canDrawRay: 1
   baseExp: 100
   exp: 100
-  spawnWeight: 1
+  spawnWeight: 35
   meleeAttackCheck: {fileID: 2705632039561035241}
   meleeAttackRange: 0.7
   wallCheck: {fileID: 7224352700501539797}

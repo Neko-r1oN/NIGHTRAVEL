@@ -5811,11 +5811,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd6367345b02f7444929c303edbd1d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 10
+  baseHp: 150
   baseDefense: 10
-  basePower: 10
+  basePower: 40
   baseJumpPower: 10
-  baseMoveSpeed: 1
+  baseMoveSpeed: 2
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -5852,7 +5852,7 @@ MonoBehaviour:
   canDrawRay: 1
   baseExp: 100
   exp: 100
-  spawnWeight: 1
+  spawnWeight: 20
   aimTransform: {fileID: 1105150690222412937}
   boxBulletPrefab: {fileID: 3308511046266845085, guid: e2be8c925bf27324aa1093eaed69a039, type: 3}
   wallCheck: {fileID: 3735475187154772272}
