@@ -288,6 +288,7 @@ namespace NavMeshPlus.Extensions
 
         public static void CollectTileSources(List<NavMeshBuildSource> sources, Tilemap tilemap, int area, NavMeshBuilder2dState builder)
         {
+            Debug.Log(tilemap.name);
             var bound = tilemap.cellBounds;
 
             var modifierTilemap = tilemap.GetComponent<NavMeshModifierTilemap>();

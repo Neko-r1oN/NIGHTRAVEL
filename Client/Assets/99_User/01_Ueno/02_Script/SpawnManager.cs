@@ -521,7 +521,7 @@ public class SpawnManager : MonoBehaviour
         var playerPos = FetchNearObjectWithTag("Player");
         float scaleX = playerPos.position.x - entryData.Position.x;
         scaleX = scaleX >= 0 ? 1 : -1;
-        var enemyScale = new Vector3(scaleX, 1, 1);
+        var enemyScale = new Vector3(entryData.Scale.x * scaleX, entryData.Scale.y, entryData.Scale.z);
 
         // 返すデータ作成
         string uniqueId = entryData.PresetId == "" ? Guid.NewGuid().ToString() : entryData.PresetId;    // 事前に識別用IDが設定されていない場合は生成する
@@ -715,11 +715,11 @@ public class SpawnManager : MonoBehaviour
             if (spawnPos != null)
             {// 返り値がnullじゃないとき
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
-                Vector3 scale = Vector3.one;    // 一旦このまま
+                //Vector3 scale = Vector3.one;    // 一旦このまま
 
                 List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
                 {
-                    new EnemySpawnEntry(bossId, (Vector3)spawnPos, scale)
+                    new EnemySpawnEntry(bossId, (Vector3)spawnPos, bossEnemy.transform.localScale)
                 };
 
                 #region サーバーにワームの各パーツの情報を登録するための処理
