@@ -252,6 +252,22 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 指定端末に紐づく敵の削除
+    /// </summary>
+    /// <param name="termID"></param>
+    public void DeleteTerminalEnemy(int termID)
+    {
+        foreach (var data in enemies)
+        {
+            if (data.Value.TerminalID == termID && data.Value.Enemy.HP > 0)
+            {
+                Destroy(data.Value.Object);
+                enemies.Remove(data.Key);
+            }
+        }
+    }
+
+    /// <summary>
     /// 発射物のプレファブをタイプ事にまとめる
     /// </summary>
     public void SetProjectilePrefabsByType()

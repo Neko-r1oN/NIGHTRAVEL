@@ -91,6 +91,7 @@ public class TerminalManager : MonoBehaviour
         if (RoomModel.Instance)
         {
             RoomModel.Instance.OnBootedTerminal += this.OnBootedTerminal;
+            RoomModel.Instance.OnTerminalsSuccessed += this.OnTerminalsSuccessed;
             RoomModel.Instance.OnTerminalFailured += this.OnTerminalFailured;
             await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
         }
@@ -114,12 +115,31 @@ public class TerminalManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 報酬排出処理
+    /// </summary>
+    /// <param name="termID"></param>
+    public void DropRelic(int termID)
+    {
+        terminalObjs[termID - 1].GetComponent<TerminalBase>().GiveRewardRequest();
+    }
+
+    /// <summary>
     /// 指定端末の起動処理
     /// </summary>
     /// <param name="id"></param>
     public void OnBootedTerminal(int id)
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Active;
+        terminalObjs[id - 1].GetComponent<TerminalBase>().BootTerminal();
+    }
+
+    /// <summary>
+    /// 指定端末の成功処理
+    /// </summary>
+    /// <param name="id"></param>
+    public void OnTerminalsSuccessed(int id)
+    {
+        terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Success;
         terminalObjs[id - 1].GetComponent<TerminalBase>().BootTerminal();
     }
 

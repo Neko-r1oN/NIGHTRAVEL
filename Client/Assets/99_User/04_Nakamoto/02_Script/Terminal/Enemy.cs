@@ -54,4 +54,15 @@ public class Enemy : TerminalBase
         else
             timerText.text = currentTime.ToString();
     }
+
+    /// <summary>
+    /// ¸”sˆ—
+    /// </summary>
+    public override void FailureTerminal()
+    {
+        base.FailureTerminal();
+
+        // ©g‚Ì’[––‚©‚ç¶¬‚³‚ê‚½“G‚Ìíœ
+        CharacterManager.Instance.DeleteTerminalEnemy(terminalID);
+    }
 }

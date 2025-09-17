@@ -191,7 +191,7 @@ public abstract class TerminalBase : MonoBehaviour
     /// <summary>
     /// 報酬排出リクエスト処理
     /// </summary>
-    protected void GiveRewardRequest()
+    public void GiveRewardRequest()
     {
         Stack<Vector2> posStack = new Stack<Vector2>();
 
@@ -202,6 +202,19 @@ public abstract class TerminalBase : MonoBehaviour
 
         //レリックを排出する
         RelicManager.Instance.DropRelicRequest(posStack, false);
+    }
+
+    /// <summary>
+    /// 端末成功処理
+    /// </summary>
+    public async void SuccessTerminal()
+    {
+        // ターミナル非表示
+        terminalSprite.DOFade(0, 2.5f);
+        iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
+
+        // マスターはレリック要求
+        if(RoomModel.Instance.IsMaster) GiveRewardRequest();
     }
 
     #endregion
@@ -240,8 +253,7 @@ public abstract class TerminalBase : MonoBehaviour
 
         // ターミナル非表示
         terminalSprite.DOFade(0, 2.5f);
-        iconSprite.DOFade(0, 2.5f);
-        gameObject.SetActive(false);
+        iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
     }
 
     #endregion
