@@ -10,7 +10,10 @@ using UnityEngine;
 abstract public class GimmickBase : MonoBehaviour
 {
     [SerializeField]
-    bool triggerOnce;
+    bool triggerOnce;   // 起動できるのが一度きりかどうか
+
+    [SerializeField]
+    bool requiresReactivation;  // マスタクライアントに切り替わったときに、再起動が必要かどうか
 
     // 識別用ID
     int uniqueId;
