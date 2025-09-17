@@ -38,7 +38,7 @@ public class ResultManager : MonoBehaviour
         // テストデータ
         ResultData resultData = new ResultData()
         {
-            AliveTime = 200,
+            //AliveTime = 200,
             Difficulty = 2,
             PlayerClass = EnumManager.Player_Type.Sword,
             EnemyKillCount = 20,

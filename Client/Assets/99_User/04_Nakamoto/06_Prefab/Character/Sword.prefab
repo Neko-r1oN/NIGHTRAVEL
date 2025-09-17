@@ -9840,20 +9840,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3fb1b0d6d484a46ab54291ed3c55a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 0
-  baseHp: 150
+  baseHp: 250
   baseDefense: 5
   basePower: 100
   baseJumpPower: 10
   baseMoveSpeed: 60
   baseHealRate: 0.001
-  maxHp: 0
-  maxDefense: 0
-  maxPower: 0
-  maxJumpPower: 0
-  maxMoveSpeed: 0
-  maxAttackSpeedFactor: 0
-  maxHealRate: 0
   hp: 150
   defense: 0
   power: 50
@@ -9894,6 +9886,7 @@ MonoBehaviour:
   interactSprits:
   - {fileID: 4249578791139060025, guid: 91bcf8dfedfa76c44a5e5198cec2ebd9, type: 3}
   - {fileID: 1622727937493990531, guid: b58036db173295744ba4bb4317f15737, type: 3}
+  groundSmoke: {fileID: 6813416509558619124, guid: 25892220d2d1ab140ac36838bae9fb41, type: 3}
   skillForth: 45
   skillTime: 0.25
   skillCoolDown: 3
