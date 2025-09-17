@@ -167,9 +167,6 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("システム")]
     [SerializeField]
     protected int spawnWeight = 1;  // スポーンの抽選する際の重み
-
-    [Foldout("システム")]
-    private Terminal terminalManager;
     #endregion
 
     #region 外部参照用プロパティ
@@ -193,8 +190,6 @@ abstract public class EnemyBase : CharacterBase
     public bool IsElite { get { return isElite; } }
 
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
-
-    public Terminal TerminalManager { get { return terminalManager; } set { terminalManager = value; } }
     #endregion
 
     #region 定数
@@ -624,23 +619,22 @@ abstract public class EnemyBase : CharacterBase
             }
 
             if (CharacterManager.Instance.Enemies[uniqueId].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
-            {// 生成タイプがターミナルなら
-                // 死んだ敵をリストから削除
-                terminalManager.TerminalSpawnList.Remove(this.gameObject);
-                if (terminalManager.TerminalSpawnList.Count <= 0)
-                {// リストのカウントが0なら
-                    // レリックの生成
-                    terminalManager.GiveReward(); // レリックの生成
-                    //RelicManager.Instance.GenerateRelic(terminalManager.gameObject.transform.position);
+            {   // 生成タイプがターミナルなら
+                var termId = CharacterManager.Instance.Enemies[uniqueId].TerminalID;    // 端末IDを保管
+                CharacterManager.Instance.RemoveEnemyFromList(uniqueId);                // リストから削除
+                
+                if(CharacterManager.Instance.GetEnemysByTerminalID(termId).Count == 0)
+                {   // 生成端末の敵が全員倒されたら報酬出す
+                    TerminalManager.Instance.DropRelic(termId);
                 }
             }
             else
             {
                 // Instanceがあるなら敵撃破関数を呼ぶ
                 if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
-            }
 
-            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
+                CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
+            }
 
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             yield return new WaitForSeconds(destroyWaitSec);

@@ -325,7 +325,7 @@ public class SpawnManager : MonoBehaviour
     /// <summary>
     /// 端末操作時の敵生成処理
     /// </summary>
-    public void TerminalGenerateEnemy(int generateNum, int termID , Vector2 minPos, Vector2 maxPos)
+    public void TerminalGenerateEnemy(int generateNum, int termID , Vector2 minPos, Vector2 maxPos, bool elite)
     {
         // マスタクライアント以外は処理をしない
         if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
@@ -354,7 +354,7 @@ public class SpawnManager : MonoBehaviour
             {
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
                 Vector3 scale = Vector3.one;    // 一旦このまま
-                var spawnData = CreateSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType, true, termID);
+                var spawnData = CreateTerminalSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType, termID , elite);
 
                 SpawnEnemyRequest(spawnData);
 
@@ -485,7 +485,7 @@ public class SpawnManager : MonoBehaviour
     /// <param name="positions"></param>
     /// <param name="canPromoteToElite"></param>
     /// <returns></returns>
-    public SpawnEnemyData CreateSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType, bool canPromoteToElite = true, int? termID = null)
+    public SpawnEnemyData CreateSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType, bool canPromoteToElite = true)
     {
         if (entryData.EnemyType == null)
         {
@@ -524,21 +524,37 @@ public class SpawnManager : MonoBehaviour
             Scale = enemyScale,
             SpawnType = spawnType,
             EliteType = eliteType,
-            TerminalID = termID.HasValue ? termID.Value : 0,
+            TerminalID = -1,
         };
     }
 
-
-    public SpawnEnemyData CreateTerminalSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType)
+    /// <summary>
+    /// 端末用敵生成処理
+    /// </summary>
+    /// <param name="entryData"></param>
+    /// <param name="spawnType"></param>
+    /// <param name="canPromoteToElite"></param>
+    /// <param name="termID"></param>
+    /// <returns></returns>
+    public SpawnEnemyData CreateTerminalSpawnEnemyData(EnemySpawnEntry entryData, SPAWN_ENEMY_TYPE spawnType, int termID, bool canPromoteToElite = true)
     {
         if (entryData.EnemyType == null)
         {
             Debug.LogWarning("entryData.EnemyTypeがnullだったため、データの生成を中断しました。");
             return null;
         }
-        ENEMY_ELITE_TYPE eliteType = (EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
+        ENEMY_ELITE_TYPE eliteType = ENEMY_ELITE_TYPE.None;
 
-        Debug.Log(eliteType);
+        if (canPromoteToElite)
+        {
+            eliteType = (EnumManager.ENEMY_ELITE_TYPE)Random.Range(1, 4);
+
+            Debug.Log(eliteType);
+        }
+        else if (!canPromoteToElite)
+        {
+            eliteType = ENEMY_ELITE_TYPE.None;
+        }
 
         // プレイヤーの向きを算出
         var playerPos = FetchNearObjectWithTag("Player");
@@ -556,6 +572,7 @@ public class SpawnManager : MonoBehaviour
             Scale = enemyScale,
             SpawnType = spawnType,
             EliteType = eliteType,
+            TerminalID = termID
         };
     }
 
@@ -593,7 +610,6 @@ public class SpawnManager : MonoBehaviour
             new SpawnedEnemy(spawnEnemyData.UniqueId, enemyObj, enemyObj.GetComponent<EnemyBase>(), spawnEnemyData.SpawnType);
 
         CharacterManager.Instance.AddEnemiesToList(spawnedEnemy);
-
 
         #region ワームの各パーツ用の処理
         if (enemy.EnemyTypeId == ENEMY_TYPE.FullMetalWorm)

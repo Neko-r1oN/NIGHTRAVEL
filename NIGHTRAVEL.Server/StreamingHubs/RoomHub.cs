@@ -233,6 +233,9 @@ namespace StreamingHubs
                     }
                 }
 
+                // ルームデータから端末情報を取得し、アクティブ状態の端末を更新
+                roomContext.terminalList = masterClientData.TerminalDatas; 
+
                 foreach (var item in masterClientData.GimmickDatas)
                 {
                     // すでにルームコンテキストにギミックが含まれている場合
@@ -397,7 +400,7 @@ namespace StreamingHubs
                     this.roomContext.SetEnemyData(spawnEnemyData[i].UniqueId, enemy);
 
                     // 端末IDが設定されている場合は、その端末の生成した敵リストに追加
-                    if (spawnEnemyData[i].TerminalID != 0)
+                    if (spawnEnemyData[i].TerminalID != -1)
                     {
                         var terminal = this.roomContext.terminalList.Where(term => term.ID == spawnEnemyData[i].TerminalID).First();
                         terminal.EnemyList.Add(spawnEnemyData[i].UniqueId);
@@ -637,6 +640,7 @@ namespace StreamingHubs
                     float addExpRate = this.roomContext.playerStatusDataList[this.ConnectionId].Item2.AddExpRate;   // 獲得可能経験値倍率
                     this.roomContext.ExpManager.nowExp += enemData.Exp + (int)(enemData.Exp * addExpRate); // 被弾クラスにExpを代入
                     // 合計キル数を加算
+                    DeleteEnemyData(enemID);
                     this.roomContext.totalKillCount++;
 
                     // リザルトデータを更新
@@ -651,6 +655,36 @@ namespace StreamingHubs
 
                 // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知
                 this.roomContext.Group.All.OnEnemyHealth(enemDmgData);
+            }
+        }
+
+        /// <summary>
+        /// 指定された敵の除外
+        /// </summary>
+        /// <param name="uniqueId"></param>
+        public void DeleteEnemyData(string uniqueId)
+        {
+            this.roomContext.enemyDataList.Remove(uniqueId);
+
+            // 以下に端末生成の敵の処理を記載
+            foreach (var item in this.roomContext.terminalList)
+            {
+                if (item.Type == EnumManager.TERMINAL_TYPE.Enemy && item.State == EnumManager.TERMINAL_STATE.Active ||
+                    item.Type == EnumManager.TERMINAL_TYPE.Elite && item.State == EnumManager.TERMINAL_STATE.Active)
+                {   // エネミーかエリートがアクティブになってる場合
+                    foreach (var enemyID in item.EnemyList)
+                    {   // 引数のユニークIDと一致する敵を検索、削除
+                        if (enemyID == uniqueId)
+                        {
+                            item.EnemyList.Remove(uniqueId);
+
+                            if (item.EnemyList.Count == 0)
+                            {   // 端末の敵を全部倒した時
+                                this.roomContext.Group.All.OnTerminalsSuccess(item.ID);
+                            }
+                        }
+                    }
+                }
             }
         }
 

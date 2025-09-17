@@ -142,7 +142,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnBootedTerminal { get; set; }
 
     //端末結果通知
-    public Action<int, bool> OnTerminalsResultSyn { get; set; }
+    public Action<int> OnTerminalsSuccessed{ get; set; }
 
     // 端末失敗通知
     public Action<int> OnTerminalFailured { get; set; }
@@ -439,9 +439,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="termID"></param>
     /// <param name="result"></param>
-    public void OnTerminalsResult(int termID, bool result)
+    public void OnTerminalsSuccess(int termID)
     {
-        OnTerminalsResultSyn(termID, result);
+        OnTerminalsSuccessed(termID);
     }
 
     /// <summary>

@@ -454,7 +454,7 @@ public class Terminal : MonoBehaviour
                 {
                     var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByTerminal;
                     Vector3 scale = Vector3.one;    // ˆê’U‚±‚Ì‚Ü‚Ü
-                    var spawnData = spawnManager.CreateTerminalSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
+                    // var spawnData = spawnManager.CreateTerminalSpawnEnemyData(new EnemySpawnEntry(enemyType, (Vector3)spawnPos, scale), spawnType);
 
                     //spawnManager.SpawnTerminalEnemyRequest(this, spawnData);
                 }
