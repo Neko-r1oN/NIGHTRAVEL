@@ -77,6 +77,8 @@ public class Slade : EnemyBase
     #endregion
 
     #region オリジナル
+    [SerializeField]
+    CapsuleCollider2D terrainCollider;
     List<GameObject> hitPlayers = new List<GameObject>();
     #endregion
 
@@ -273,6 +275,7 @@ public class Slade : EnemyBase
     /// </summary>
     void AttackCharge()
     {
+        terrainCollider.enabled = true;
         hitPlayers.Clear();
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
@@ -284,6 +287,8 @@ public class Slade : EnemyBase
     /// </summary>
     public override void OnAttackAnim2Event()
     {
+        terrainCollider.enabled = false;
+
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackChargeCoroutine.ToString();
         if (!ContaintsManagedCoroutine(cooldownKey))
@@ -444,6 +449,7 @@ public class Slade : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        terrainCollider.enabled = true;
         canCancelAttackOnHit = true;
         isAttacking = true;
         Idle();
@@ -565,6 +571,7 @@ public class Slade : EnemyBase
             target = sightChecker.GetTargetInSight();
         }
 
+        terrainCollider.enabled = true;
         DecideBehavior();
     }
 
