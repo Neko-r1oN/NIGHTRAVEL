@@ -132,7 +132,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// ジャンブル結果通知
         /// </summary>
         /// <param name="relics"></param>
-        void OnTerminalJumble(List<Relic> relics);
+        void OnTerminalJumble(List<DropRelicData> relics);
 
         /// <summary>
         /// 端末結果通知

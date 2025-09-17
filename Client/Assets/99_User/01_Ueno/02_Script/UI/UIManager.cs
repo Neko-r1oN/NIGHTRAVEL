@@ -13,7 +13,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
-using static Terminal;
 using ColorUtility = UnityEngine.ColorUtility;
 using Random = UnityEngine.Random;
 using System.Linq;

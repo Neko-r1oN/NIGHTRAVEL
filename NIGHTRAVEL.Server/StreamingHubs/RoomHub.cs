@@ -809,7 +809,7 @@ namespace StreamingHubs
                 {
                     // リクエスト者に対してジャンブルの効果適用
                     JumbleRelic(this.ConnectionId);
-                    this.roomContext.Group.Single(this.ConnectionId).OnTerminalJumble(this.roomContext.relicDataList[this.ConnectionId]);
+                    this.roomContext.Group.Single(this.ConnectionId).OnTerminalJumble(CastDropRelicData(roomContext.relicDataList[this.ConnectionId]));
                     terminal.State = TERMINAL_STATE.Success;
                 }
 
@@ -844,6 +844,27 @@ namespace StreamingHubs
             {
                 this.roomContext.relicDataList[connectionId].Add(DrawRelic(DrawRarity(true)));
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private List<DropRelicData> CastDropRelicData(List<Relic> list)
+        {
+            var relicList = new List<DropRelicData>();
+
+            foreach (var rel in list)
+            {
+                var data = new DropRelicData();
+                data.uniqueId = rel.id.ToString();
+                data.RarityType = (RARITY_TYPE)rel.rarity;
+                data.Name = rel.name;
+                relicList.Add(data);
+            }
+
+            return relicList;
         }
 
         /// <summary>

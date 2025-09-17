@@ -159,7 +159,7 @@ public class RelicManager : MonoBehaviour
     /// レリック入れ替え処理
     /// </summary>
     /// <param name="relics"></param>
-    public void OnTerminalJumbled (List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic> relics)
+    public void OnTerminalJumbled (List<DropRelicData> relics)
     {
         // レリック消去
         haveRelicList.Clear();
@@ -169,8 +169,8 @@ public class RelicManager : MonoBehaviour
         foreach(var relic in relics)
         {
             // レリックデータの作成
-            var data = new RelicData(relic.id.ToString(), (RARITY_TYPE)relic.rarity);
-            data.Name = relic.name;
+            var data = new RelicData(relic.uniqueId, relic.RarityType);
+            data.Name = relic.Name;
 
             AddRelic(data);
         }
