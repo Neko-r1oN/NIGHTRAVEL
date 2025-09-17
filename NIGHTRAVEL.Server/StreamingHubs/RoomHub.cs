@@ -99,6 +99,8 @@ namespace StreamingHubs
             // ルームコンテキストに参加ユーザーを保存
             this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
 
+            this.roomContext.resultDataList.Add(this.ConnectionId, new ResultData());
+
             //　ルームに参加
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
@@ -176,8 +178,15 @@ namespace StreamingHubs
                 }
                 // 難易度を初期値にする
                 this.roomContext.NowDifficulty = 0;
+
                 // ゲームが開始できる場合、開始通知をする
-                if (canStartGame) this.roomContext.Group.All.OnStartGame();
+                if (canStartGame)
+                {
+                    this.roomContext.Group.All.OnStartGame();
+
+                    // 現在時刻を代入
+                    this.roomContext.startTime = DateTime.Now;
+                }
             }
         }
         #endregion
@@ -733,7 +742,13 @@ namespace StreamingHubs
                 }
 
                 // 全滅した場合、ゲーム終了通知を全員に出す
-                if (isAllDead) Result();
+                if (isAllDead)
+                {
+                    // 経過時間を算出
+                    this.roomContext.resultDataList[this.ConnectionId].AliveTime = DateTime.Now - this.roomContext.startTime;
+
+                    Result();
+                }
             }
         }
 
@@ -1212,8 +1227,8 @@ namespace StreamingHubs
                 // 必要なデータを代入   
                 resultData.Difficulty = this.roomContext.NowDifficulty;                         // 難易度
                 resultData.Level = this.roomContext.ExpManager.Level;                           // レベル
-                resultData.AliveTime = 66666;                                                   // 生存時間(仮)
                 resultData.PlayerClass = playerData.Class;                                      // プレイヤーのクラス
+                resultData.AliveTime = DateTime.Now - this.roomContext.startTime;
                 resultData.TotalGottenItem = this.roomContext.gottenItemList.Count;             // 総獲得アイテム数
                 resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;                  // 総付与ダメージ数
                 resultData.EnemyKillCount = this.roomContext.totalKillCount;                    // 総キルカウント

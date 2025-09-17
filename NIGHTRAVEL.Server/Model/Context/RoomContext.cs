@@ -8,6 +8,7 @@ using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics;
 using System.Numerics;
 using UnityEngine;
 
@@ -75,6 +76,8 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         public int resultLevel = 0;
+
+        public DateTime startTime;
 
         /// <summary>
         /// グループ

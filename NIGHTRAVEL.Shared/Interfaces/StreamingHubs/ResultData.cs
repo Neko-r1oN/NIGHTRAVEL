@@ -16,7 +16,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         public int Level {  get; set; }
 
         //生存時間
-        public int AliveTime {  get; set; }
+        public TimeSpan AliveTime {  get; set; }
 
         //難易度
         public int Difficulty { get; set; }
