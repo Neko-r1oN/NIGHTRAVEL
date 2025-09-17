@@ -428,7 +428,8 @@ public class CharacterManager : MonoBehaviour
             PlayerData = GetPlayerData(),
             EnemyDatas = GetEnemyDatas(),
             GimmickDatas = GimmickManager.Instance.GetGimmickDatas(),
-            GameTimer = TimerDirector.Instance.Second
+            GameTimer = TimerDirector.Instance.Second,
+            TerminalDatas = TerminalManager.Instance.TerminalDatas
         };
 
         // ゲームタイマー更新
@@ -503,6 +504,9 @@ public class CharacterManager : MonoBehaviour
 
         // ゲームタイマー更新
         TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
+
+        // 端末情報の更新
+        TerminalManager.Instance.OnUpdateTerminal(masterClientData.TerminalDatas);
     }
 
     /// <summary>

@@ -114,15 +114,6 @@ public class TerminalManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新通知処理
-    /// </summary>
-    /// <param name="gimmicks"></param>
-    public void OnUpdateTerminals(List<TerminalData> terminals)
-    {
-        terminalDatas = terminals;
-    }
-
-    /// <summary>
     /// 指定端末の起動処理
     /// </summary>
     /// <param name="id"></param>
@@ -140,5 +131,25 @@ public class TerminalManager : MonoBehaviour
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Failure;
         terminalObjs[id - 1].GetComponent<TerminalBase>().FailureTerminal();
+    }
+
+    /// <summary>
+    /// ターミナルデータ更新
+    /// </summary>
+    /// <param name=""></param>
+    public void OnUpdateTerminal(List<TerminalData> terminalDatas)
+    {
+        // データ更新
+        TerminalDatas = terminalDatas;
+
+        // アクティブ且つエネミーかエリートの場合、テキスト表示更新
+        for (int i = 0; i < TerminalDatas.Count; i++) 
+        {
+            if (TerminalDatas[i].State == EnumManager.TERMINAL_STATE.Active && TerminalDatas[i].Type == EnumManager.TERMINAL_TYPE.Enemy ||
+                TerminalDatas[i].State == EnumManager.TERMINAL_STATE.Active && TerminalDatas[i].Type == EnumManager.TERMINAL_TYPE.Elite)
+            {
+                TerminalObjs[i].GetComponent<TerminalBase>().OnCountDown(TerminalDatas[i].Time);
+            }
+        }
     }
 }

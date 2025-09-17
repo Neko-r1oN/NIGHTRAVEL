@@ -361,8 +361,7 @@ namespace StreamingHubs
                 }
 
                 // ルームデータから端末情報を取得し、アクティブ状態の端末を更新
-                var terminalList = this.roomContext.terminalList;
-                //if()
+                roomContext.terminalList = masterClientData.TerminalDatas; 
 
                 foreach (var item in masterClientData.GimmickDatas)
                 {

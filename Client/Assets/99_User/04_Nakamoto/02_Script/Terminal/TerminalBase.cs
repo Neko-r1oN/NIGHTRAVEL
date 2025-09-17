@@ -36,6 +36,9 @@ public abstract class TerminalBase : MonoBehaviour
     // カウントダウン
     protected int currentTime;
 
+    // 敵生成数
+    protected const int SPAWN_ENEMY_NUM = 6;
+
     #endregion
 
     #region 外部参照用プロパティ
@@ -139,6 +142,10 @@ public abstract class TerminalBase : MonoBehaviour
     {
         //limitTImeを1ずつ減らす
         currentTime--;
+
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID - 1].Time = currentTime;
+
         timerText.text = currentTime.ToString();
 
         //制限時間が0以下になったら(時間切れ)
@@ -153,6 +160,14 @@ public abstract class TerminalBase : MonoBehaviour
             // 失敗リクエスト
             FailureRequest();
         }
+    }
+
+    /// <summary>
+    /// 通知時タイマー更新
+    /// </summary>
+    public void OnCountDown(int time)
+    {
+        timerText.text = time.ToString();
     }
 
     /// <summary>
@@ -206,7 +221,7 @@ public abstract class TerminalBase : MonoBehaviour
         // リストの該当端末IDの状態を失敗にする
         if (RoomModel.Instance)
         {
-            //++ サーバーに失敗通知
+            // サーバーに失敗通知
             await RoomModel.Instance.TerminalFailureAsync(terminalID);
         }
         else

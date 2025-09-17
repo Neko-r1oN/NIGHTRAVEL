@@ -35,7 +35,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         /// 残り起動時間
         /// </summary>
         [Key(3)]
-        public float Time { get; set; } = 0f;
+        public int Time { get; set; } = 0;
 
         /// <summary>
         /// 生成された敵のリスト

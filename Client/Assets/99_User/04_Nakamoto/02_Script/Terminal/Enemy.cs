@@ -10,6 +10,9 @@ public class Enemy : TerminalBase
     //--------------------------------
     // フィールド
 
+    [SerializeField] private Transform minSpawnPos;
+    [SerializeField] private Transform maxSpawnPos;
+
     //--------------------------------
     // メソッド
 
@@ -33,5 +36,22 @@ public class Enemy : TerminalBase
 
         if (RoomModel.Instance)
             TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
+        else
+        {   // オフライン状態
+            InvokeRepeating("CountDown", 1, 1);
+            SpawnManager.Instance.TerminalGenerateEnemy(SPAWN_ENEMY_NUM, terminalID,
+                new Vector2(minSpawnPos.position.x, minSpawnPos.position.y), new Vector2(maxSpawnPos.position.x, maxSpawnPos.position.y), false);
+            return;
+        }
+
+        // マスターの場合はCountDownを開始。その他は初期カウントを設定
+        if (RoomModel.Instance.IsMaster)
+        {
+            InvokeRepeating("CountDown", 1, 1);
+            SpawnManager.Instance.TerminalGenerateEnemy(SPAWN_ENEMY_NUM, terminalID, 
+                new Vector2(minSpawnPos.position.x, minSpawnPos.position.y), new Vector2(maxSpawnPos.position.x, maxSpawnPos.position.y), false);
+        }
+        else
+            timerText.text = currentTime.ToString();
     }
 }
