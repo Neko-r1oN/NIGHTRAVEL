@@ -39,14 +39,25 @@ public class Sword : PlayerBase
     [Foldout("キャラ別ステータス")]
     [SerializeField] private float skillCoolDown = 5.0f;    // スキルのクールダウン
 
-    [Foldout("スキルエフェクト")]
+    [Foldout("アタックエフェクト")]
+    [SerializeField] private ParticleSystem normalEffect1;   // 通常攻撃1
+
+    [Foldout("アタックエフェクト")]
+    [SerializeField] private ParticleSystem normalEffect2;   // 通常攻撃2
+
+    [Foldout("アタックエフェクト")]
+    [SerializeField] private ParticleSystem normalEffect3;   // 通常攻撃3
+
+    [Foldout("アタックエフェクト")]
     [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
 
-    [Foldout("スキルエフェクト")]
+    [Foldout("アタックエフェクト")]
     [SerializeField] private GameObject skillEffect2;   // 剣先に発生するエフェクト
 
-    [Foldout("スキルエフェクト")]
+    [Foldout("アタックエフェクト")]
     [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
+
+
 
     private bool isAirAttack = false;   // 空中攻撃をしたかどうか
 
@@ -100,6 +111,7 @@ public class Sword : PlayerBase
             if (canAttack && !isCombo)
             {   // 攻撃1段目
                 canAttack = false;
+                normalEffect1.Play();
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
             }
             else if (isCombo)
@@ -108,6 +120,7 @@ public class Sword : PlayerBase
 
                 if (id == (int)S_ANIM_ID.Attack1)
                 {
+                    normalEffect2.Play();
                     animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack2);
                 }
                 if (id == (int)S_ANIM_ID.Attack2)

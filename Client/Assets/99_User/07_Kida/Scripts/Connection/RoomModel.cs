@@ -151,7 +151,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnTerminalFailured { get; set; }
 
     //端末ジャンブル適用通知
-    public Action<List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic>> OnTerminalJumbled { get; set; }
+    public Action<List<DropRelicData>> OnTerminalJumbled { get; set; }
 
     #endregion
 
@@ -470,7 +470,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// 端末ジャンブル通知
     /// </summary>
     /// <param name="termID"></param>
-    public void OnTerminalJumble(List<NIGHTRAVEL.Shared.Interfaces.Model.Entity.Relic> relics)
+    public void OnTerminalJumble(List<DropRelicData> relics)
     {
         OnTerminalJumbled(relics);
     }

@@ -226,7 +226,7 @@ abstract public class PlayerBase : CharacterBase
     [SerializeField] protected Sprite[] interactSprits;         // [0] Pad [1] Key
 
     [Foldout("エフェクト・UI")]
-    [SerializeField] protected GameObject groundSmoke;
+    [SerializeField] protected ParticleSystem groundSmoke;
     #endregion
 
     #region カメラ
@@ -353,10 +353,13 @@ abstract public class PlayerBase : CharacterBase
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
 
-        // 走っている時に土煙を発生
-        if (animator.GetInteger("animation_id") == (int)ANIM_ID.Run) SetGroundSmoke();
+        // 走っている時に土煙を起こす
+        if(animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
+            groundSmoke.Play();
+        else
+            groundSmoke.Stop();
 
-        Ladder();
+            Ladder();
 
         if(m_IsZipline)
         {
@@ -1182,16 +1185,6 @@ abstract public class PlayerBase : CharacterBase
     public void KilledHPRegain()
     {
         HP += (int)(MaxHP * lifeScavengerRate);
-    }
-
-    /// <summary>
-    /// 土煙セット処理
-    /// </summary>
-    public void SetGroundSmoke()
-    {
-        var correctionPos = (m_FacingRight) ? new Vector3(-0.6f, -1.5f, 0) : new Vector3(0.6f, -1.5f, 0);
-        var smoke = Instantiate(groundSmoke, this.transform.position + correctionPos, Quaternion.identity);
-        smoke.transform.localScale = (m_FacingRight) ? new Vector3(SMOKE_SCALE,SMOKE_SCALE,SMOKE_SCALE) : new Vector3(-SMOKE_SCALE,SMOKE_SCALE,SMOKE_SCALE);
     }
     #endregion
 }
