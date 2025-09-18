@@ -609,7 +609,7 @@ public class CharacterManager : MonoBehaviour
             player.NowLv = level;
             player.OverridMaxStatus(updatedStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
         }
-        //LevelManager.Instance.Options.Add(optionsKey, statusOptionList);
+        LevelManager.Instance.Options.Add(optionsKey, statusOptionList);
     }
 
     #endregion
