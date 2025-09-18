@@ -17,6 +17,7 @@ using ColorUtility = UnityEngine.ColorUtility;
 using Random = UnityEngine.Random;
 using System.Linq;
 using System.Xml.Schema;
+using Cysharp.Threading.Tasks.Triggers;
 
 public class UIManager : MonoBehaviour
 {
@@ -92,7 +93,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject spectatingWindow;        // 観戦ウィンドウ
     [Foldout("ウィンドウ関係")]                          
     [SerializeField] GameObject nextStageWindow;         // ステージ遷移ウィンドウ
-                                                         
+
+    [Foldout("ボタン")]
+    [SerializeField] Button resultYesButton;
+    [Foldout("ボタン")]
+    [SerializeField] Button resultNoButton;
+    [Foldout("ボタン")]
+    [SerializeField] Button changeGameYesButton;
+    [Foldout("ボタン")]
+    [SerializeField] Button changeGameNoButton;
+
     [Foldout("バナー関係")]                              
     [SerializeField] GameObject bossWindow;              // ボス出現UI
     [Foldout("バナー関係")]                              
@@ -897,40 +907,6 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ゲーム終了確認ウィンドウ表示
-    /// </summary>
-    public void DisplayEndGameWindow()
-    {
-        endWindow.SetActive(true);
-    }
-
-    /// <summary>
-    /// ゲーム終了ボタン
-    /// </summary>
-    /// <param name="id"></param>
-    public void EndGameButtonPush(int id)
-    {
-        switch (id)
-        {
-            case 0:
-                GameManager.Instance.CangeResult();
-                break; 
-            case 1:
-                endWindow.SetActive(false); 
-                break;
-        }
-    }
-
-
-    /// <summary>
-    /// ゲーム終了
-    /// </summary>
-    public void EndGame()
-    {
-        UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
-    }
-
-    /// <summary>
     /// 観戦画面用UIの更新
     /// </summary>
     public void DisplaySpectatingPlayer()
@@ -1174,18 +1150,56 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 次ステージ移動のボタン処理
+    /// ゲーム終了確認ウィンドウ表示
+    /// </summary>
+    public void DisplayEndGameWindow()
+    {
+        endWindow.SetActive(true);
+    }
+
+    /// <summary>
+    /// ゲーム終了ボタン
     /// </summary>
     /// <param name="id"></param>
-    public void NextGameButtonPush(int id)
+    public async void EndGameButtonPush(int id)
     {
         switch (id)
         {
             case 0:
-                GameManager.Instance.ChengScene();
+
+                if (!RoomModel.Instance) GameManager.Instance.CangeResult();
+                else await RoomModel.Instance.StageClear(false);
+
+                changeGameYesButton.interactable = false;
+                changeGameNoButton.interactable = false;
+
+                break;
+            case 1:
+                endWindow.SetActive(false);
+
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 次ステージ移動のボタン処理
+    /// </summary>
+    /// <param name="id"></param>
+    public async void NextGameButtonPush(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                if (!RoomModel.Instance) GameManager.Instance.ChengScene();
+                else await RoomModel.Instance.StageClear(true);
+
+                changeGameYesButton.interactable = false;
+                changeGameNoButton.interactable = false;
+
                 break;
             case 1:
                 nextStageWindow.SetActive(false);
+
                 break;
         }
     }
