@@ -266,7 +266,7 @@ public class UIManager : MonoBehaviour
 
         level = LevelManager.Instance;
 
-        diffText.text = level.LevelName[level.GameLevel].ToString();
+        diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
         colorCode = "#ffc0cb";
 
         if(ColorUtility.TryParseHtmlString(colorCode,out color))
@@ -489,8 +489,8 @@ public class UIManager : MonoBehaviour
             int currentIndex = 0;
             foreach(var item in pair.Value)
             {
-                statusItemText[currentIndex].text = item.name;
-                statusExplanationsTexts[currentIndex].text = item.explanation;
+                statusItemText[currentIndex].text = item.Name;
+                statusExplanationsTexts[currentIndex].text = item.Explanation;
 
                 currentIndex++;
             }
@@ -500,8 +500,13 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// ステータスの強化
     /// </summary>
-    public void UpPlayerStatus(int buttonId)
+    public async void UpPlayerStatus(int buttonId)
     {
+        // 選択したステータス強化選択肢を取得して削除
+        var values = LevelManager.Instance.Options.FirstOrDefault().Value;
+        var key = LevelManager.Instance.Options.FirstOrDefault().Key;
+        LevelManager.Instance.Options.Remove(key);
+
         if (!RoomModel.Instance)
         {// オフライン
             //ステータス変更
@@ -509,18 +514,13 @@ public class UIManager : MonoBehaviour
         }
         else
         {// オンライン
-
+            await RoomModel.Instance.ChooseUpgrade(key, values[buttonId].TypeId);
         }
 
-        var values = LevelManager.Instance.Options.FirstOrDefault().Value;
-        var key = LevelManager.Instance.Options.FirstOrDefault().Key;
-
-        var item = values[buttonId];
-
-        LevelManager.Instance.Options.Remove(key);
-
+        // ステータス強化テキストの更新
         ChangeUpStatusText();
 
+        // ステータス強化回数の減少
         statusStock--;
 
         levelUpStock.text = "残り強化数：" + statusStock;
@@ -558,8 +558,8 @@ public class UIManager : MonoBehaviour
         int currentIndex = 0;
         foreach (var item in data)
         {
-            statusItemText[currentIndex].text = item.name;
-            statusExplanationsTexts[currentIndex].text = item.explanation;
+            statusItemText[currentIndex].text = item.Name;
+            statusExplanationsTexts[currentIndex].text = item.Explanation;
 
             currentIndex++;
         }
@@ -808,20 +808,19 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpGameLevelText()
     {
-        if(level.GameLevel + 1 > 
-            (LevelManager.GAME_LEVEL)Enum.GetValues(typeof(LevelManager.GAME_LEVEL)).Length)
+        if(level.GameLevel > level.LevelHellId)
         {
             return;
         }
              
-        diffText.text = level.LevelName[level.GameLevel].ToString();
+        diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
 
         // textの色変更
         switch (level.GameLevel)
         {// Babyはstartで設定済みのため省く
 
-            case LevelManager.GAME_LEVEL.Easy:
-                diffText.text = level.LevelName[level.GameLevel].ToString();
+            case (int)DIFFICULTY_TYPE.Easy:
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
                 colorCode = "#00ffff";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -831,9 +830,9 @@ public class UIManager : MonoBehaviour
 
                 return;
 
-            case LevelManager.GAME_LEVEL.Normal:
+            case (int)DIFFICULTY_TYPE.Normal:
 
-                diffText.text = level.LevelName[level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
                 colorCode = "#66cdaa";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -843,17 +842,17 @@ public class UIManager : MonoBehaviour
 
                 return;
 
-            case LevelManager.GAME_LEVEL.Hard:
+            case (int)DIFFICULTY_TYPE.Hard:
 
-                diffText.text = level.LevelName[level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
 
                 diffText.color = Color.red;
 
                 return;
 
-            case LevelManager.GAME_LEVEL.Berryhard:
+            case (int)DIFFICULTY_TYPE.VeryHard:
 
-                diffText.text = level.LevelName[level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
                 colorCode = "#b22222";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -863,9 +862,9 @@ public class UIManager : MonoBehaviour
 
                 return;
 
-            case LevelManager.GAME_LEVEL.Hell:
+            case (int)DIFFICULTY_TYPE.Hell:
 
-                diffText.text = level.LevelName[level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
                 colorCode = "#ff00ff";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))

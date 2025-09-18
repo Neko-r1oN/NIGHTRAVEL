@@ -46,7 +46,7 @@ namespace Shared.Interfaces.StreamingHubs
         {
             Baby,
             Easy,
-            Noraml,
+            Normal,
             Hard,
             VeryHard,
             Hell
