@@ -744,7 +744,9 @@ namespace StreamingHubs
             this.roomContext.enemyDataList.Remove(uniqueId);
 
             // 以下に端末生成の敵の処理を記載
-            foreach (var item in this.roomContext.terminalList)
+            if (roomContext.terminalList == null) return;
+
+            foreach (var item in roomContext.terminalList)
             {
                 if (item.Type == EnumManager.TERMINAL_TYPE.Enemy && item.State == EnumManager.TERMINAL_STATE.Active ||
                     item.Type == EnumManager.TERMINAL_TYPE.Elite && item.State == EnumManager.TERMINAL_STATE.Active)

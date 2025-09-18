@@ -13,6 +13,17 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-
+        User::create([
+            'name' => 'sample1'
+        ]);
+        User::create([
+            'name' => 'sample2'
+        ]);
+        User::create([
+            'name' => 'sample3'
+        ]);
+        User::create([
+            'name' => 'sample4'
+        ]);
     }
 }

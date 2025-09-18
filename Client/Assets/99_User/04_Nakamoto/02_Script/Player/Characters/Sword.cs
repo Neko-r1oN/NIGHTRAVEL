@@ -46,9 +46,6 @@ public class Sword : PlayerBase
     [SerializeField] private ParticleSystem normalEffect2;   // 通常攻撃2
 
     [Foldout("アタックエフェクト")]
-    [SerializeField] private ParticleSystem normalEffect3;   // 通常攻撃3
-
-    [Foldout("アタックエフェクト")]
     [SerializeField] private GameObject skillEffect1;   // キャラに発生するエフェクト
 
     [Foldout("アタックエフェクト")]

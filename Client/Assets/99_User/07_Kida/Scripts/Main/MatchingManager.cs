@@ -152,7 +152,7 @@ public class MatchingManager : MonoBehaviour
 
     public void OnCreatedRoom()
     {
-        SceneManager.LoadScene("Standby_Kida");
+        SceneManager.LoadScene("3_StandbyRoom");
     }
 
     /// <summary>
