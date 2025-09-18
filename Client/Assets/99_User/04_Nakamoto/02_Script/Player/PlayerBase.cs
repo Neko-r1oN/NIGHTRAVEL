@@ -127,12 +127,12 @@ abstract public class PlayerBase : CharacterBase
     /// <summary>
     /// 現レベル
     /// </summary>
-    public int NowLv { get { return nowLv; } }
+    public int NowLv { get { return nowLv; } set { nowLv = value; } }
 
     /// <summary>
     /// 現獲得経験値
     /// </summary>
-    public int NowExp { get { return nowExp; } }
+    public int NowExp { get { return nowExp; } set { nowExp = value; } }
 
     /// <summary>
     /// 次レベルまでの必要経験値
