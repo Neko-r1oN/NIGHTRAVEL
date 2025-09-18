@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ChengScene()
     {// ƒV[ƒ“‘JˆÚ
-        SceneManager.LoadScene("Stage Ueno");
+        SceneManager.LoadScene("Stage_02");
 
         isGameStart = false;
     }
