@@ -115,6 +115,7 @@ public class CharacterManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         StartCoroutine("UpdateCoroutine");
+        SetProjectilePrefabsByType();
     }
 
     private void OnDisable()

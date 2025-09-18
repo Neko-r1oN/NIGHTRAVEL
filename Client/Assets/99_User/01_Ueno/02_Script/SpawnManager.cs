@@ -135,17 +135,15 @@ public class SpawnManager : MonoBehaviour
                 {// ƒXƒ|[ƒ“‰ñ”‚ªŒÀŠE‚É’B‚µ‚Ä‚¢‚é‚©
                     if (!isSpawnBoss)
                     {
-                        //enemyCnt = characterManager.Enemies.Count;
+                        enemyCnt = characterManager.Enemies.Count;
 
                         foreach (var player in CharacterManager.Instance.PlayerObjs.Values)
                         {
-                            enemyCnt = characterManager.Enemies.Count;
-
                             if (enemyCnt > maxSpawnCnt) break;
                             if (!player) continue;
                             if (enemyCnt < maxSpawnCnt / 2)
                             {// “G‚ª100‘Ì‚¢‚È‚¢ê‡
-                                GenerateEnemy(Random.Range(7, 11), player.transform.position);
+                                GenerateEnemy(Random.Range(3, 6), player.transform.position);
                             }
                             else
                             {// ‚¢‚éê‡

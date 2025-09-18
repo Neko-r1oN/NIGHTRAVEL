@@ -656,6 +656,8 @@ namespace StreamingHubs
             lock (roomContextRepository) // 排他制御
             {
                 // ID指定で敵情報を取得
+                if (!roomContext.enemyDataList.ContainsKey(enemID)) return;
+
                 var enemData = this.roomContext.GetEnemyData(enemID);
                 if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 

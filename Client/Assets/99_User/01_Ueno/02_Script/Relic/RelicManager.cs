@@ -64,21 +64,12 @@ public class RelicManager : MonoBehaviour
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
         RoomModel.Instance.OnTerminalJumbled += this.OnTerminalJumbled;
-        Invoke("Test",10.0f);
     }
 
     private void OnDisable()
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic -= this.OnDropRelic;
-    }
-
-    public void Test()
-    {
-        Stack<Vector2> pos = new Stack<Vector2>();
-        pos.Push(Vector2.zero);
-        pos.Push(Vector2.one);
-        DropRelicRequest(pos,false);
     }
 
     /// <summary>
