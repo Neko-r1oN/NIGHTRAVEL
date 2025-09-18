@@ -182,7 +182,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="conID">接続ID</param>
         /// <param name="isAdvance">次ステージ進行判定</param>
         /// <param name="stageType">次ステージ</param>
-        void OnAdanceNextStage(bool isAdvance, EnumManager.STAGE_TYPE stageType);
+        void OnAdanceNextStage(STAGE_TYPE stageType);
 
         /// <summary>
         /// オブジェクト生成通知

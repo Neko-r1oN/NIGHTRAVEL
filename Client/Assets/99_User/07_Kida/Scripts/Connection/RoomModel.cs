@@ -73,7 +73,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnAscendDifficultySyn { get; set; }
 
     //次ステージ進行通知
-    public Action<bool, STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
+    public Action<STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
 
     //レベルアップ通知
     public Action<int, int, CharacterStatusData, Guid, List<StatusUpgrateOptionData>> OnLevelUpSyn { get; set; }
@@ -521,9 +521,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="stageID"></param>
-    public void OnAdanceNextStage(bool isAdvance, STAGE_TYPE stageType)
+    public void OnAdanceNextStage(STAGE_TYPE stageType)
     {
-        OnAdanceNextStageSyn(isAdvance, stageType);
+        OnAdanceNextStageSyn(stageType);
     }
 
     /// <summary>

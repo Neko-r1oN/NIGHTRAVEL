@@ -45,6 +45,16 @@ public class LevelManager : MonoBehaviour
             SetTestData();  // テスト用、不要になり次第削除
             return;
         }
+        else
+        {
+            RoomModel.Instance.OnAscendDifficultySyn += this.OnAscendDifficulty;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (!RoomModel.Instance) return;
+        RoomModel.Instance.OnAscendDifficultySyn -= this.OnAscendDifficulty;
     }
 
     void SetTestData()
@@ -80,9 +90,10 @@ public class LevelManager : MonoBehaviour
     }
 
     [ContextMenu("UpGameLevel")]
-    public void UpGameLevel()
+    public void UpGameLevel(int? targetLevel = null)
     {
-        gameLevel++;
+        if (targetLevel == null) gameLevel++;
+        else gameLevel = (int)targetLevel;
 
         foreach (var enemy in CharacterManager.Instance.Enemies.Values)
         {
@@ -92,5 +103,14 @@ public class LevelManager : MonoBehaviour
         UIManager.Instance.UpGameLevelText();
 
         Debug.Log(gameLevel.ToString());
+    }
+
+    /// <summary>
+    /// 難易度上昇通知
+    /// </summary>
+    /// <param name="dif"></param>
+    void OnAscendDifficulty(int dif)
+    {
+        UpGameLevel(dif);
     }
 }

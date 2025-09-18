@@ -520,7 +520,7 @@ namespace StreamingHubs
                 {
                     if((int)this.roomContext.NowStage == 3)
                     {
-                        this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
+                        this.roomContext.NowStage = STAGE_TYPE.Rust;
                     }else this.roomContext.NowStage++; // 現在のステージを加算
 
                     // 獲得したアイテムリストをクリア
@@ -539,7 +539,7 @@ namespace StreamingHubs
                     this.roomContext.enemyDataList.Clear();
 
                     // 参加者全員にステージの進行を通知
-                    this.roomContext.Group.All.OnAdanceNextStage(isAdvance, this.roomContext.NowStage);
+                    this.roomContext.Group.All.OnAdanceNextStage(this.roomContext.NowStage);
 
                     // 各進行判定変数の値をfalseにする
                     this.roomContext.JoinedUserList[this.ConnectionId].IsAdvance = false;
