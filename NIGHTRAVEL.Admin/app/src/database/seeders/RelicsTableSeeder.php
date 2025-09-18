@@ -19,7 +19,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0.05,
             'max' => 0,
             'status_type' => 3,
-            'explanation' => '攻撃力上昇+5%',
+            'explanation' => '攻撃力が少し上昇',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -28,7 +28,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0.03,
             'max' => 0,
             'status_type' => 2,
-            'explanation' => '防御力上昇+3%',
+            'explanation' => '防御力が少し上昇',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -37,7 +37,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0,
             'max' => 0,
             'status_type' => 5,
-            'explanation' => '移動速度+2',
+            'explanation' => '移動速度が少し上昇',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -46,7 +46,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0,
             'max' => 0,
             'status_type' => 6,
-            'explanation' => '攻撃速度+0.05',
+            'explanation' => '攻撃速度が少し上昇',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -55,7 +55,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 15,
             'max' => 100,
             'status_type' => 9,
-            'explanation' => '攻撃に凍結効果を付与　15%で発動',
+            'explanation' => '攻撃時に凍結効果を確率で付与',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -64,7 +64,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 15,
             'max' => 100,
             'status_type' => 8,
-            'explanation' => '攻撃に炎上効果を付与　15%で発動',
+            'explanation' => '攻撃時に炎上効果を確率で付与',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -73,7 +73,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 15,
             'max' => 100,
             'status_type' => 10,
-            'explanation' => '攻撃に感電効果を付与　15%で発動',
+            'explanation' => '攻撃時に感電効果を確率で付与',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -82,16 +82,16 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0.15,
             'max' => 0,
             'status_type' => 0,
-            'explanation' => '経験値獲得量が30%増加',
+            'explanation' => '経験値獲得量が増加',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'リゲインコード',
             'const_effect' => 0,
             'rate_effect' => 0.02,
-            'max' => 0.25,
+            'max' => 0.30,
             'status_type' => 11,
-            'explanation' => '与えたダメージの10%分回復する',
+            'explanation' => '与えたダメージを少し回復する',
             'rarity' => 1,
         ]);
         Relic::create([
@@ -100,25 +100,25 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0,
             'max' => 0,
             'status_type' => 12,
-            'explanation' => '攻撃時に2つボム(PLの攻撃力30%)をばらまく。',
+            'explanation' => '攻撃時にボムをばらまく',
             'rarity' => 1,
         ]);
         Relic::create([
             'name' => 'ホログラムアーマー',
             'const_effect' => 0,
-            'rate_effect' => 0.15,
-            'max' => 0,
+            'rate_effect' => 0.10,
+            'max' => 1,
             'status_type' => 13,
-            'explanation' => '攻撃を15%の確率で回避する',
+            'explanation' => '攻撃を確率で回避する',
             'rarity' => 2,
         ]);
         Relic::create([
             'name' => 'マウス',
             'const_effect' => 0,
             'rate_effect' => 0.10,
-            'max' => 0,
+            'max' => 1,
             'status_type' => 14,
-            'explanation' => '20%の確率でスキルのクールダウンをリセット',
+            'explanation' => '確率でスキルのクールダウンをリセット',
             'rarity' => 2,
         ]);
         Relic::create([
@@ -127,14 +127,14 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0,
             'max' => 0,
             'status_type' => 15,
-            'explanation' => '20秒ごとに最大HP5%を回復する肉塊を3つ近くに生成する　15秒経過で消滅する',
+            'explanation' => '20秒ごとに回復アイテムを生成する。15秒経過で消滅する',
             'rarity' => 2,
         ]);
         Relic::create([
             'name' => 'ファイアウォール',
             'const_effect' => 1,
-            'rate_effect' => 0.20,
-            'max' => 0,
+            'rate_effect' => 0.05,
+            'max' => 0.5,
             'status_type' => 16,
             'explanation' => '被ダメージを20%軽減',
             'rarity' => 2,
@@ -142,8 +142,8 @@ class RelicsTableSeeder extends Seeder
         Relic::create([
             'name' => 'ライフスカベンジャー',
             'const_effect' => 0,
-            'rate_effect' => 0.002,
-            'max' => 0.03,
+            'rate_effect' => 0.005,
+            'max' => 0.05,
             'status_type' => 17,
             'explanation' => '敵撃破時にHPを1%分回復する',
             'rarity' => 2,
@@ -154,14 +154,14 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0.10,
             'max' => 1.0,
             'status_type' => 18,
-            'explanation' => '攻撃時に2回ヒットする。(2回目の攻撃はダメージ50%)',
+            'explanation' => '攻撃時に確率で２回攻撃する',
             'rarity' => 3,
         ]);
         Relic::create([
             'name' => 'バックアップHDMI',
-            'const_effect' => 0,
+            'const_effect' => 1,
             'rate_effect' => 0,
-            'max' => 1.0,
+            'max' => 0,
             'status_type' => 19,
             'explanation' => '一度復活する　その後破壊される',
             'rarity' => 3,
@@ -172,7 +172,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 1.0,
             'max' => 0,
             'status_type' => 20,
-            'explanation' => '状態異常が付与されている敵に対して与える',
+            'explanation' => '状態異常が付与されている敵に対して追加ダメージを与える',
             'rarity' => 3,
         ]);
         Relic::create([
@@ -181,7 +181,7 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0.05,
             'max' => 0.50,
             'status_type' => 21,
-            'explanation' => '相手の防御を10%無視する。',
+            'explanation' => '相手の防御を一定値、無視する',
             'rarity' => 4,
         ]);
         Relic::create([
@@ -190,16 +190,16 @@ class RelicsTableSeeder extends Seeder
             'rate_effect' => 0,
             'max' => 6,
             'status_type' => 22,
-            'explanation' => '自身を中心に回転する電気玉を発生する(攻撃力15%)',
+            'explanation' => '自身を中心に回転する電気玉を発生する',
             'rarity' => 4,
         ]);
         Relic::create([
             'name' => '違法スクリプト',
             'const_effect' => 0,
-            'rate_effect' => 0.01,
-            'max' => 0.10,
+            'rate_effect' => 0.02,
+            'max' => 0.50,
             'status_type' => 23,
-            'explanation' => 'ボスを除いて3%の確率で99999ダメージを与える',
+            'explanation' => 'ボスを除いて、攻撃時に確率で99999ダメージを与える',
             'rarity' => 4,
         ]);
         Relic::create([

@@ -28,6 +28,7 @@ public class MatchingManager : MonoBehaviour
     #region [SerializeField]：木田晃輔
     //[SerializeField] GameObject userPrefab; //ユーザーの情報
     [SerializeField] Text inputFieldRoomId; //ルームのID(デバッグ用)
+    [SerializeField] Text roomSerchField;   //ルームの名前検索
     //[SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
     //[SerializeField] Text inputFieldCharacterId; //キャラID(デバッグ用)
     [SerializeField] int userId;//新マッチング用のユーザーID
@@ -37,6 +38,7 @@ public class MatchingManager : MonoBehaviour
     [SerializeField] GameObject Content;
     [SerializeField] Transform rooms;
     [SerializeField] GameObject CreateButton; //生成ボタン
+    public List<GameObject> createdRoomList; //作られたルーム
     EventSystem eventSystem;
     #endregion
 
@@ -106,6 +108,12 @@ public class MatchingManager : MonoBehaviour
     /// </summary>
     public void OnSearchedRoom(List<string> roomNameList, List<string> userNameList)
     {
+
+        foreach(var room in createdRoomList)
+        {
+            GameObject.Destroy(room);
+        }
+
         //ループ用変数
         int i = 0;
 
@@ -134,6 +142,8 @@ public class MatchingManager : MonoBehaviour
             //ホスト名を表示させる
             userNameText = userN.GetComponent<Text>();
             userNameText.text = roomData.userName;
+
+            createdRoomList.Add(newGamaObj);
 
             i++;
 

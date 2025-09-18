@@ -185,8 +185,12 @@ public class GameManager : MonoBehaviour
     /// シーン遷移
     /// </summary>
     public void ChengScene()
-    {// シーン遷移
-        SceneManager.LoadScene("Stage_02");
+    {
+        if (!RoomModel.Instance)
+        {
+            // シーン遷移
+            SceneManager.LoadScene("Stage_02");
+        }
 
         isGameStart = false;
     }
