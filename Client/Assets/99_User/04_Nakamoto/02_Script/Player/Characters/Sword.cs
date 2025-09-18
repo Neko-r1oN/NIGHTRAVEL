@@ -57,8 +57,6 @@ public class Sword : PlayerBase
     [Foldout("アタックエフェクト")]
     [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
 
-
-
     private bool isAirAttack = false;   // 空中攻撃をしたかどうか
 
     // 各攻撃の攻撃力倍率

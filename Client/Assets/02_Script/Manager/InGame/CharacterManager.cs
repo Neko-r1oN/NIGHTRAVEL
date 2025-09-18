@@ -560,6 +560,16 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
+        GameObject? attacker = playerObjs.GetValueOrDefault(damageData.AttackerId);
+
+        if(RoomModel.Instance.ConnectionId == damageData.AttackerId)
+        {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
+            var plBase = playerObjSelf.GetComponent<PlayerBase>();
+            if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
+        }
+
+        enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
+            playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
         if (IsPlayerAlive(damageData.AttackerId))
         {
             GameObject attacker = playerObjs[damageData.AttackerId];
