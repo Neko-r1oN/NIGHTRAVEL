@@ -92,7 +92,7 @@ public class RelicManager : MonoBehaviour
         }
         else
         {
-            UIManager.Instance.DisplayRelic(relicSprites[int.Parse(relic.ID)]);
+            UIManager.Instance.DisplayRelic(relicSprites[(int)relic.ID]);
         }
 
         haveRelicList.Add(relic);
@@ -110,6 +110,9 @@ public class RelicManager : MonoBehaviour
 
             relic = Instantiate(relicPrefab, data.Value.SpawnPos, Quaternion.identity);
             relic.GetComponent<Item>().UniqueId = data.Key;
+
+            relic.GetComponent<Relic>().RelicData = 
+                new RelicData(data.Value.RelicType,data.Value.RarityType,data.Value.Name);
 
             SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
             SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -169,7 +172,7 @@ public class RelicManager : MonoBehaviour
         foreach(var relic in relics)
         {
             // レリックデータの作成
-            var data = new RelicData(relic.uniqueId, relic.RarityType);
+            var data = new RelicData(relic.RelicType, relic.RarityType,relic.Name);
             data.Name = relic.Name;
 
             AddRelic(data);
@@ -180,7 +183,7 @@ public class RelicManager : MonoBehaviour
     /// 同じレリックを持っている数を数える
     /// </summary>
     /// <param name="id"></param>
-    public void CountRelic(string id)
+    public void CountRelic(RELIC_TYPE id)
     {
         int relicCnt = 0;
 
@@ -192,7 +195,7 @@ public class RelicManager : MonoBehaviour
             }
         }
 
-        UIManager.Instance.totalRelics(relicSprites[int.Parse(id)], relicCnt);
+        UIManager.Instance.totalRelics(relicSprites[(int)id], relicCnt);
     }
 
     ///// <summary>

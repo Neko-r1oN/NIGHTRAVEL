@@ -3,6 +3,8 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Pixeye.Unity;
 using Shared.Interfaces.StreamingHubs;
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -38,13 +40,16 @@ public class ResultManager : MonoBehaviour
         // テストデータ
         ResultData resultData = new ResultData()
         {
-            AliveTime = new TimeSpan(0, 0, 600),
-            //Difficulty = 2,
             PlayerClass = EnumManager.Player_Type.Sword,
+            GottenRelicList = new List<EnumManager.RELIC_TYPE>() { EnumManager.RELIC_TYPE.Firewall},
+            TotalClearStageCount = 3,
+            DifficultyLevel = 2,
+            AliveTime = new TimeSpan(0, 0, 600),
             EnemyKillCount = 20,
             TotalGaveDamage = 50,
             TotalGottenItem = 2,
-            TotalActivedTerminal = 3
+            TotalActivedTerminal = 3,
+            TotalScore = 30000
         };
 
         DisplayResultData(resultData);
