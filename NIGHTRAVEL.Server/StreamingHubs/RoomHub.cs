@@ -30,11 +30,14 @@ namespace StreamingHubs
         Room room = new Room();
         RoomService roomService = new RoomService();
 
-        // ターミナル関連 (MAXの値はRandで用いるため、上限+1の数)
+        // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
         private const int MIN_TERMINAL_NUM = 3;
         private const int MAX_TERMINAL_NUM = 7;
         private const int MIN_TERMINAL_ID = 1;
         private const int MAX_TERMINAL_ID = 6;
+
+        // レリック関連定数
+        private const int MAX_DAMAGE = 99999; 
 
         #region 接続・切断処理
         //接続した場合
@@ -655,18 +658,32 @@ namespace StreamingHubs
                 var enemData = this.roomContext.GetEnemyData(enemID);
                 if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
-                // 受け取った情報でダメージ計算をする
-                enemData.State.hp -= (int)((giverATK / 2) - (enemData.State.defence / 4));
+                // レリックステータス取得
+                var statusData = this.roomContext.playerStatusDataList[this.ConnectionId];
+                PlayerRelicStatusData relicStatus = statusData.Item2;   // インスタンス取得
+
+                // 受け取った情報で基礎ダメージ計算をする
+                int damage = (int)((giverATK / 2) - (enemData.State.defence / 4));
+
+                // ダメージにレリック効果適用
+
+                // 「識別AI」効果（デバフ状態の敵に対するダメージ倍率UP）
+                if (roomContext.enemyDataList[enemID].DebuffList.Count != 0) damage = (int)(damage * relicStatus.IdentificationAIRate);
+                // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
+                damage = (LotteryIllegalScript(relicStatus.IllegalScriptRate)) ? MAX_DAMAGE : damage;
+
+                // ダメージ適用
+                enemData.State.hp -= damage;
 
                 // 敵被弾データを新しく作成
                 EnemyDamegeData enemDmgData = new EnemyDamegeData();
 
                 // 作成したデータに各情報を代入
                 enemDmgData.AttackerId = this.ConnectionId; // 攻撃者ID
-                enemDmgData.Damage = (int)((giverATK / 2) - (enemData.State.defence / 4));  // 付与ダメージ
-                enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
-                enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
-                enemDmgData.DebuffList = debuffType;    // 付与デバフ
+                enemDmgData.Damage = damage;                // 付与ダメージ
+                enemDmgData.HitEnemyId = enemID;            // 被弾敵ID
+                enemDmgData.RemainingHp = enemData.State.hp;// HP残量
+                enemDmgData.DebuffList = debuffType;        // 付与デバフ
 
                 // 合計付与ダメージを加算
                 this.roomContext.totalGaveDamage += enemDmgData.Damage;
@@ -696,6 +713,21 @@ namespace StreamingHubs
                 // 自分以外の参加者に受け取ったIDの敵が受け取ったHPになったことを通知
                 this.roomContext.Group.All.OnEnemyHealth(enemDmgData);
             }
+        }
+
+        /// <summary>
+        /// 違法スクリプト適用判定
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private bool LotteryIllegalScript(float value)
+        {
+            Random rand = new Random();
+            var result = rand.Next(0, 100);
+
+            if (result <= value) return true;
+            else return false;
+
         }
 
         /// <summary>
@@ -869,7 +901,7 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// 
+        /// RelicDataをDropRelicDataに変換
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
