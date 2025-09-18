@@ -1190,7 +1190,12 @@ public class UIManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                if (!RoomModel.Instance) GameManager.Instance.ChengScene();
+                if (!RoomModel.Instance)
+                {
+                    var stage = GameManager.Instance.CurrentStage;
+                    stage = stage == STAGE_TYPE.Town ? STAGE_TYPE.Rust : stage++;
+                    GameManager.Instance.ChengScene(stage);
+                }
                 else await RoomModel.Instance.StageClear(true);
 
                 changeGameYesButton.interactable = false;

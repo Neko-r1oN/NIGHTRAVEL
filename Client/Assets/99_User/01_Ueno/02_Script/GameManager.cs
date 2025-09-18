@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     bool isBossDead;            // ボスが死んだかどうか
     bool isGameStart;           // ゲームが開始したかどうか
     GameObject bossTerminal;    // ボス端末
+    STAGE_TYPE currentStage;    // 現在のステージ
     #endregion
 
     #region その他
@@ -56,14 +57,14 @@ public class GameManager : MonoBehaviour
 
     public bool IsGameStart {  get { return isGameStart; } set { isGameStart = value; } }
 
-    private static GameManager instance;
+    public STAGE_TYPE CurrentStage { get { return currentStage; } }
 
-    //public bool IsBossDead { get { return bossFlag; } set { isBossDead = value; } } 
+    private static GameManager instance;
     #endregion
 
-    #region
+    #region ターミナル関連
 
-    // ターミナル関連 (MAXの値はRandで用いるため、上限+1の数)
+    // (MAXの値はRandで用いるため、上限+1の数)
     private const int MIN_TERMINAL_NUM = 3;
     private const int MAX_TERMINAL_NUM = 7;
     private const int MIN_TERMINAL_ID = 1;
@@ -113,15 +114,18 @@ public class GameManager : MonoBehaviour
     {
         if (GameObject.Find("BossTerminal") != null) // ステージに1つのユニークな端末の為、名前で取得
             bossTerminal = GameObject.Find("BossTerminal");
-        
+
+        currentStage = STAGE_TYPE.Rust;
         isBossDead = false;
-        //Debug.Log(LevelManager.Instance.GameLevel.ToString());
         UIManager.Instance.ShowUIAndFadeOut();
 
         if (!RoomModel.Instance) StartGame(LotteryTerminal());
         else
         {
             RoomModel.Instance.OnSameStartSyn += this.StartGame;
+            RoomModel.Instance.OnAdanceNextStageSyn += this.OnAdanceNextStageSyn;
+            RoomModel.Instance.OnGameEndSyn += this.OnGameEnd;
+
             await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
         }
     }
@@ -130,6 +134,8 @@ public class GameManager : MonoBehaviour
     {
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnSameStartSyn -= this.StartGame;
+        RoomModel.Instance.OnAdanceNextStageSyn -= this.OnAdanceNextStageSyn;
+        RoomModel.Instance.OnGameEndSyn -= this.OnGameEnd;
     }
 
     /// <summary>
@@ -182,17 +188,42 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// シーン遷移通知
+    /// </summary>
+    /// <param name="type"></param>
+    void OnAdanceNextStageSyn(STAGE_TYPE type)
+    {
+        ChengScene(type);
+    }
+
+    /// <summary>
     /// シーン遷移
     /// </summary>
-    public void ChengScene()
+    public void ChengScene(STAGE_TYPE type)
     {
-        if (!RoomModel.Instance)
+        currentStage = type;
+        switch (type)
         {
-            // シーン遷移
-            SceneManager.LoadScene("Stage_02");
+            case STAGE_TYPE.Rust:
+                SceneManager.LoadScene("Stage_01");
+                break;
+            case STAGE_TYPE.Industry:
+                SceneManager.LoadScene("Stage_02");
+                break;
+            case STAGE_TYPE.Town:
+                SceneManager.LoadScene("Stage_03");
+                break;
         }
-
         isGameStart = false;
+    }
+
+    /// <summary>
+    /// ゲーム終了通知
+    /// </summary>
+    void OnGameEnd(ResultData resultData)
+    {
+        this.resultData = resultData;
+        CangeResult();
     }
 
     /// <summary>

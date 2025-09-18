@@ -56,7 +56,7 @@ public class TimerDirector : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    async void Update()
     {
         if (GameManager.Instance.IsGameStart)
         {
@@ -84,7 +84,15 @@ public class TimerDirector : MonoBehaviour
                     // ゲームレベルアップリクエスト送信
 
                     // ゲームレベルアップ
-                    LevelManager.Instance.UpGameLevel();
+                    if (RoomModel.Instance)
+                    {
+                        if (RoomModel.Instance.IsMaster) await RoomModel.Instance.AscendDifficultyAsync();
+                        return;
+                    }
+                    else
+                    {
+                        LevelManager.Instance.UpGameLevel();
+                    }
                     ResetTimer();
                 }
             }
