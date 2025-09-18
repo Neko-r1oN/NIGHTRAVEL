@@ -52,8 +52,8 @@ class RelicsTableSeeder extends Seeder
         Relic::create([
             'name' => '冷却ファン',
             'const_effect' => 0,
-            'rate_effect' => 0.15,
-            'max' => 0.15,
+            'rate_effect' => 15,
+            'max' => 100,
             'status_type' => 9,
             'explanation' => '攻撃に凍結効果を付与　15%で発動',
             'rarity' => 1,
@@ -61,8 +61,8 @@ class RelicsTableSeeder extends Seeder
         Relic::create([
             'name' => '加熱ファン',
             'const_effect' => 0,
-            'rate_effect' => 0.15,
-            'max' => 0.15,
+            'rate_effect' => 15,
+            'max' => 100,
             'status_type' => 8,
             'explanation' => '攻撃に炎上効果を付与　15%で発動',
             'rarity' => 1,
@@ -70,8 +70,8 @@ class RelicsTableSeeder extends Seeder
         Relic::create([
             'name' => '液漏れ電池',
             'const_effect' => 0,
-            'rate_effect' => 0.15,
-            'max' => 0.15,
+            'rate_effect' => 15,
+            'max' => 100,
             'status_type' => 10,
             'explanation' => '攻撃に感電効果を付与　15%で発動',
             'rarity' => 1,
