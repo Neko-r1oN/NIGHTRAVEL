@@ -348,19 +348,28 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="rarity"></param>
         /// <returns></returns>
-        List<Status_Enhancement> DrawStatusUpgrateOption(int elementCnt)
+        List<StatusUpgrateOptionData> DrawStatusUpgrateOption(int elementCnt)
         {
             GameDbContext dbContext = new GameDbContext();
             List <STAT_UPGRADE_OPTION> drawIds = new List<STAT_UPGRADE_OPTION>();
-            List<Status_Enhancement> result = new List<Status_Enhancement>();
+            List<StatusUpgrateOptionData> result = new List<StatusUpgrateOptionData>();
 
             // 重複なしで指定個数分のステータス強化の選択肢を取得する
             for (int i = 0; i < elementCnt; i++)
             {
                 var rarity = DrawRarity(false);
                 var option = dbContext.Status_Enhancements.Where(option => !drawIds.Contains((STAT_UPGRADE_OPTION)option.id)).First();
+
+                var createData = new StatusUpgrateOptionData()
+                {
+                    TypeId = (STAT_UPGRADE_OPTION)option.id,
+                    Name = option.name,
+                    Rarity = (RARITY_TYPE)option.rarity,
+                    Explanation = option.explanation,
+                    StatusType = (STATUS_TYPE)option.type
+                };
+                result.Add(createData);
                 drawIds.Add((STAT_UPGRADE_OPTION)option.id);
-                result.Add(option);
             }
 
             return result;
@@ -1258,7 +1267,7 @@ namespace StreamingHubs
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
             // 強化選択肢格納リスト
-            List<Status_Enhancement> statusOptionList = DrawStatusUpgrateOption(3);
+            List<StatusUpgrateOptionData> statusOptionList = DrawStatusUpgrateOption(3);
             Guid optionsKey = Guid.NewGuid();
 
             // 強化後ステータス格納リスト

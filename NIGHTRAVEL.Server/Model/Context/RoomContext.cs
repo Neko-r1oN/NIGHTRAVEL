@@ -159,7 +159,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// key1:ユーザー毎のconnectionId
         /// key2:ユニークid
         /// </summary>
-        public Dictionary<Guid, Dictionary<Guid, List<Status_Enhancement>>> statusOptionList { get; set; } = new Dictionary<Guid, Dictionary<Guid, List<Status_Enhancement>>>();
+        public Dictionary<Guid, Dictionary<Guid, List<StatusUpgrateOptionData>>> statusOptionList { get; set; } = new Dictionary<Guid, Dictionary<Guid, List<StatusUpgrateOptionData>>>();
 
         //[その他、ゲームのルームデータをフィールドに保存]
         #endregion

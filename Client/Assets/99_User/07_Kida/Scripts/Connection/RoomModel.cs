@@ -76,7 +76,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<bool, STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
 
     //レベルアップ通知
-    public Action<int, int, Dictionary<Guid, CharacterStatusData>, List<EnumManager.STAT_UPGRADE_OPTION>> OnLevelUpSyn { get; set; }
+    public Action<int, int, Dictionary<Guid, CharacterStatusData>, Guid, List<StatusUpgrateOptionData>> OnLevelUpSyn { get; set; }
 
     //ステージ進行通知
     public Action OnAdvancedStageSyn { get; set; }
@@ -383,9 +383,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// プレイヤーのレベルアップ通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, Guid optionsKey, List<Status_Enhancement> statusOptionList)
+    public void OnLevelUp(int level, int nowExp, Dictionary<Guid, CharacterStatusData> characterStatusDataList, Guid optionsKey, List<StatusUpgrateOptionData> statusOptionList)
     {
-        // OnLevelUpSyn(level,nowExp,characterStatusDataList,statusOptionList);
+        OnLevelUpSyn(level,nowExp,characterStatusDataList, optionsKey, statusOptionList);
     }
 
     /// <summary>
