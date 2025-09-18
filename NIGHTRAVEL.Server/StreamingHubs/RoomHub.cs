@@ -482,9 +482,6 @@ namespace StreamingHubs
         {
             this.roomContext.NowDifficulty++;
 
-            // リザルトデータを更新
-            this.roomContext.resultDataList[this.ConnectionId].Difficulty = this.roomContext.NowDifficulty;
-
             // 参加者全員に難易度の上昇を通知
             this.roomContext.Group.All.OnAscendDifficulty(this.roomContext.NowDifficulty);
         }
@@ -505,9 +502,6 @@ namespace StreamingHubs
                 // 進行申請を申請済みにするにする
                 this.roomContext.isAdvanceRequest = true;
                 this.roomContext.totalClearStageCount++;
-
-                // リザルトデータを更新
-                this.roomContext.resultDataList[this.ConnectionId].TotalClearStageCount = this.roomContext.totalClearStageCount;
 
                 if (isAdvance)
                 {
@@ -922,7 +916,7 @@ namespace StreamingHubs
                         this.roomContext.relicDataList[this.ConnectionId].Add(relicData);
 
                         // リザルトデータを更新
-                        this.roomContext.resultDataList[this.ConnectionId].GottenRelicList = this.roomContext.relicDataList[this.ConnectionId];
+                        this.roomContext.resultDataList[this.ConnectionId].GottenRelicList.Add((RELIC_TYPE)relicData.id);
 
                         // レリック強化を付与
                         GetStatusWithRelics();
@@ -1258,7 +1252,7 @@ namespace StreamingHubs
             this.roomContext.resultLevel = expManager.Level;
 
             // リザルトデータを更新
-            this.roomContext.resultDataList[this.ConnectionId].MaxLevel = this.roomContext.resultLevel;
+            //this.roomContext.resultDataList[this.ConnectionId].MaxLevel = this.roomContext.resultLevel;
 
             // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
@@ -1307,17 +1301,22 @@ namespace StreamingHubs
                 var playerData = this.roomContext.GetPlayerData(conectionId);
                 var resultData = this.roomContext.resultDataList[conectionId];
 
-                // 必要なデータを代入   
-                resultData.Difficulty = this.roomContext.NowDifficulty;                         // 難易度
-                resultData.Level = this.roomContext.ExpManager.Level;                           // レベル
-                resultData.PlayerClass = playerData.Class;                                      // プレイヤーのクラス
+                // 必要なデータを代入
+                resultData.TotalClearStageCount = this.roomContext.totalClearStageCount;
+                resultData.DifficultyLevel = this.roomContext.NowDifficulty;
                 resultData.AliveTime = DateTime.Now - this.roomContext.startTime;
+
+                // 以下未着手
+                //---------------------
+
+                //resultData.Level = this.roomContext.ExpManager.Level;                           // レベル
+                resultData.PlayerClass = playerData.Class;                                      // プレイヤーのクラス
                 resultData.TotalGottenItem = this.roomContext.gottenItemList.Count;             // 総獲得アイテム数
                 resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;                  // 総付与ダメージ数
                 resultData.EnemyKillCount = this.roomContext.totalKillCount;                    // 総キルカウント
-                resultData.GottenRelicList = this.roomContext.relicDataList[conectionId];       // 獲得レリックリスト
+                //resultData.GottenRelicList = this.roomContext.relicDataList[conectionId];       // 獲得レリックリスト
                 resultData.TotalClearStageCount = this.roomContext.totalClearStageCount;        // 合計クリアステージ数
-                resultData.MaxLevel = this.roomContext.resultLevel;                             // 最終レベル
+                //resultData.MaxLevel = this.roomContext.resultLevel;                             // 最終レベル
 
                 // 合計スコア
                 resultData.TotalScore = (resultData.TotalGottenItem * 10) +
@@ -1325,8 +1324,8 @@ namespace StreamingHubs
                             (resultData.EnemyKillCount * 10) +
                             (resultData.TotalGaveDamage * 2) +
                             (resultData.TotalClearStageCount * 100) +
-                            (resultData.MaxLevel * 10) *
-                            (resultData.Difficulty / 2);
+                            //(resultData.MaxLevel * 10) *
+                            (resultData.DifficultyLevel / 2);
 
                 this.roomContext.Group.Except([conectionId]).OnGameEnd(resultData);
             }
