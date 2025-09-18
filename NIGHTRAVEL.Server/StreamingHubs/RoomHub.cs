@@ -690,7 +690,7 @@ namespace StreamingHubs
                 this.roomContext.totalGaveDamage += enemDmgData.Damage;
 
                 // リザルトデータを更新
-                this.roomContext.resultDataList[this.ConnectionId].TotalGaveDamage += this.roomContext.totalGaveDamage;
+                this.roomContext.resultDataList[this.ConnectionId].TotalGaveDamage += enemDmgData.Damage;
 
                 // 敵のHPが0以下になった場合
                 if (enemDmgData.RemainingHp <= 0)
@@ -705,7 +705,7 @@ namespace StreamingHubs
                     this.roomContext.totalKillCount++;
 
                     // リザルトデータを更新
-                    this.roomContext.resultDataList[this.ConnectionId].EnemyKillCount = this.roomContext.totalKillCount;
+                    this.roomContext.resultDataList[this.ConnectionId].EnemyKillCount++;
 
                     // 所持経験値が必要経験値に満ちた場合
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
@@ -971,7 +971,7 @@ namespace StreamingHubs
                 this.roomContext.gottenItemList.Add(itemID);
 
                 // リザルトデータを更新
-                this.roomContext.resultDataList[this.ConnectionId].TotalGottenItem = this.roomContext.gottenItemList.Count;
+                this.roomContext.resultDataList[this.ConnectionId].TotalGottenItem++;
 
                 // アイテムの獲得を全員に通知
                 this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID);
@@ -1139,36 +1139,43 @@ namespace StreamingHubs
                     switch (relic.status_type)
                     {
                         case (int)STATUS_TYPE.HP:                   // HPの場合
+                            if (status.hp >= relic.max) break;
                             status.hp += relic.const_effect;
                             status.hp += (int)(status.hp * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.Defense:              // 防御力の場合
+                            if (status.defence >= relic.max) break;
                             status.defence += relic.const_effect;
                             status.defence += (int)(status.defence * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.Power:                // 攻撃力の場合
+                            if (status.power >= relic.max) break;
                             status.power += relic.const_effect;
                             status.power += (int)(status.power * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.JumpPower:            // 跳躍力の場合
+                            if (status.jumpPower >= relic.max) break;
                             status.jumpPower += relic.const_effect;
                             status.jumpPower += (int)(status.jumpPower * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.MoveSpeed:            // 移動速度の場合
+                            if (status.moveSpeed >= relic.max) break;
                             status.moveSpeed += relic.const_effect;
                             status.moveSpeed += (int)(status.moveSpeed * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
+                            if (status.attackSpeedFactor >= relic.max) break;
                             status.attackSpeedFactor += relic.const_effect;
                             status.attackSpeedFactor += (int)(status.attackSpeedFactor * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.HealRate:             // 自動回復速度の場合
+                            if (status.healRate >= relic.max) break;
                             status.healRate += relic.const_effect;
                             status.healRate += (int)(status.healRate * relic.rate_effect);
                             break;
@@ -1179,86 +1186,103 @@ namespace StreamingHubs
                     switch (relic.status_type)
                     {
                         case (int)STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
+                            if (relicStatus.ScatterBugCnt >= relic.max) break;
                             relicStatus.ScatterBugCnt += relic.const_effect;
                             relicStatus.ScatterBugCnt += (int)(relicStatus.ScatterBugCnt * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
+                            if (relicStatus.DigitalMeatCnt >= relic.max) break;
                             relicStatus.DigitalMeatCnt += relic.const_effect;
                             relicStatus.DigitalMeatCnt += (int)(relicStatus.DigitalMeatCnt * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
+                            if (relicStatus.BuckupHDMICnt >= relic.max) break;
                             relicStatus.BuckupHDMICnt += relic.const_effect;
                             relicStatus.BuckupHDMICnt += (int)(relicStatus.BuckupHDMICnt * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
+                            if (relicStatus.ChargedCoreCnt >= relic.max) break;
                             relicStatus.ChargedCoreCnt += relic.const_effect;
                             relicStatus.ChargedCoreCnt += (int)(relicStatus.ChargedCoreCnt * relic.rate_effect);
                             break;
 
                         case (int)DEBUFF_TYPE.Burn:                 // 炎上確率の場合
+                            if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.const_effect;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += (int)(relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] * relic.rate_effect);
                             break;
 
                         case (int)DEBUFF_TYPE.Freeze:               // 凍結確率の場合
+                            if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.const_effect;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += (int)(relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] * relic.rate_effect);
                             break;
 
                         case (int)DEBUFF_TYPE.Shock:                // 感電確率の場合
+                            if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.const_effect;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += (int)(relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
+                            if (relicStatus.AddExpRate >= relic.max) break;
                             relicStatus.AddExpRate += relic.const_effect;
                             relicStatus.AddExpRate += (int)(relicStatus.AddExpRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
+                            if (relicStatus.RegainCodeRate >= relic.max) break;
                             relicStatus.RegainCodeRate += relic.const_effect;
                             relicStatus.RegainCodeRate += (int)(relicStatus.RegainCodeRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.HolographicArmorRate: // 回避率の場合
+                            if (relicStatus.HolographicArmorRate >= relic.max) break;
                             relicStatus.HolographicArmorRate += relic.const_effect;
                             relicStatus.HolographicArmorRate += (int)(relicStatus.HolographicArmorRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.MouseRate:            // クールダウン短縮率の場合
+                            if (relicStatus.MouseRate >= relic.max) break;
                             relicStatus.MouseRate += relic.const_effect;
                             relicStatus.MouseRate += (int)(relicStatus.MouseRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
+                            if (relicStatus.FirewallRate >= relic.max) break;
                             relicStatus.FirewallRate += relic.const_effect;
                             relicStatus.FirewallRate += (int)(relicStatus.FirewallRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.LifeScavengerRate:    // キル時HP回復率の場合
+                            if (relicStatus.LifeScavengerRate >= relic.max) break;
                             relicStatus.LifeScavengerRate += relic.const_effect;
                             relicStatus.LifeScavengerRate += (int)(relicStatus.LifeScavengerRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.RugrouterRate:        // DA率の場合
+                            if (relicStatus.RugrouterRate >= relic.max) break;
                             relicStatus.RugrouterRate += relic.const_effect;
                             relicStatus.RugrouterRate += (int)(relicStatus.RugrouterRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
+                            if (relicStatus.IdentificationAIRate >= relic.max) break;
                             relicStatus.IdentificationAIRate += relic.const_effect;
                             relicStatus.IdentificationAIRate += (int)(relicStatus.IdentificationAIRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.DanborDollRate:       // 防御貫通率の場合
+                            if (relicStatus.DanborDollRate >= relic.max) break;
                             relicStatus.DanborDollRate += relic.const_effect;
                             relicStatus.DanborDollRate += (int)(relicStatus.DanborDollRate * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合
+                            if (relicStatus.IllegalScriptRate >= relic.max) break;
                             relicStatus.IllegalScriptRate += relic.const_effect;
                             relicStatus.IllegalScriptRate += (int)(relicStatus.IllegalScriptRate * relic.rate_effect);
                             break;
@@ -1333,26 +1357,14 @@ namespace StreamingHubs
                 resultData.TotalClearStageCount = this.roomContext.totalClearStageCount;
                 resultData.DifficultyLevel = this.roomContext.NowDifficulty;
                 resultData.AliveTime = DateTime.Now - this.roomContext.startTime;
-
-                // 以下未着手
-                //---------------------
-
-                //resultData.Level = this.roomContext.ExpManager.Level;                           // レベル
                 resultData.PlayerClass = playerData.Class;                                      // プレイヤーのクラス
-                resultData.TotalGottenItem = this.roomContext.gottenItemList.Count;             // 総獲得アイテム数
-                resultData.TotalGaveDamage = this.roomContext.totalGaveDamage;                  // 総付与ダメージ数
-                resultData.EnemyKillCount = this.roomContext.totalKillCount;                    // 総キルカウント
-                //resultData.GottenRelicList = this.roomContext.relicDataList[conectionId];       // 獲得レリックリスト
-                resultData.TotalClearStageCount = this.roomContext.totalClearStageCount;        // 合計クリアステージ数
-                //resultData.MaxLevel = this.roomContext.resultLevel;                             // 最終レベル
 
                 // 合計スコア
                 resultData.TotalScore = (resultData.TotalGottenItem * 10) +
                             (resultData.TotalActivedTerminal * 10) +
                             (resultData.EnemyKillCount * 10) +
                             (resultData.TotalGaveDamage * 2) +
-                            (resultData.TotalClearStageCount * 100) +
-                            //(resultData.MaxLevel * 10) *
+                            (resultData.TotalClearStageCount * 100) *
                             (resultData.DifficultyLevel / 2);
 
                 this.roomContext.Group.Except([conectionId]).OnGameEnd(resultData);
