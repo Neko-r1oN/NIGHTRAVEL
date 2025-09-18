@@ -143,7 +143,7 @@ public class StandbyManager : MonoBehaviour
     {
         //ゲーム開始の時の処理を書く
         Debug.Log("ゲームを開始します");
-        SceneManager.LoadScene("Stage Kida");
+        SceneManager.LoadScene("Stage newKida");
     }
 
     public void OnChangedMasterClient()

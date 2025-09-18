@@ -16,7 +16,7 @@ public class Re_RoomManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        isCreater = false;
     }
 
     // Update is called once per frame

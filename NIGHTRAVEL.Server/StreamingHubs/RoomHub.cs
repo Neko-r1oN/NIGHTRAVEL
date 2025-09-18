@@ -144,6 +144,7 @@ namespace StreamingHubs
             lock (roomContextRepository) // 排他制御
             {
                 // Nullチェック入れる
+                if (this.roomContext==null) return;
 
                 GameDbContext context = new GameDbContext();
 
