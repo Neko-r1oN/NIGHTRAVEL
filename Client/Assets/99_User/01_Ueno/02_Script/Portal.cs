@@ -31,14 +31,10 @@ public class Portal : MonoBehaviour
             if (roleType == ROLE_TYPE.Result)
             {
                 UIManager.Instance.DisplayEndGameWindow();
-
-                //GameManager.Instance.CangeResult();
             }
             else
             {
                 UIManager.Instance.DisplayNextStageWindow();
-
-                //GameManager.Instance.ChengScene();
             }
         }
     }
