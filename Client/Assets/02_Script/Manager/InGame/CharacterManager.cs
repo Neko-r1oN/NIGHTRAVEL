@@ -107,7 +107,8 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnEnemyHealthSyn += this.OnHitEnemy;
         RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
         RoomModel.Instance.OnShootedBullet += this.OnShootedBullet;
-        RoomModel.Instance.OnUpdateStatusSyn += OnUpdatePlayerStatus;
+        RoomModel.Instance.OnUpdateStatusSyn += this.OnUpdatePlayerStatus;
+        RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
     }
 
     private void Start()
@@ -128,9 +129,11 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnEnemyHealthSyn -= this.OnHitEnemy;
         RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
         RoomModel.Instance.OnShootedBullet -= this.OnShootedBullet;
-        RoomModel.Instance.OnUpdateStatusSyn -= OnUpdatePlayerStatus;
+        RoomModel.Instance.OnUpdateStatusSyn -= this.OnUpdatePlayerStatus;
+        RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
     }
 
+    #region キャラクター関連
 
     /// <summary>
     /// キャラクターの情報更新呼び出し用コルーチン
@@ -149,6 +152,61 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// キャラクターの情報を更新する
+    /// </summary>
+    /// <param name="characterData"></param>
+    /// <param name="character"></param>
+    void UpdateCharacter(CharacterData characterData, CharacterBase character)
+    {
+        var statusData = characterData.Status;
+        var stateData = characterData.State;
+
+        List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All };
+        if (character.gameObject.tag == "Enemy")
+        {
+            // 敵の場合はHP以外を更新する
+            addStatusTypes = new List<STATUS_TYPE>() {
+                STATUS_TYPE.Defense,
+                STATUS_TYPE.Power,
+                STATUS_TYPE.JumpPower,
+                STATUS_TYPE.MoveSpeed,
+                STATUS_TYPE.AttackSpeedFactor
+            };
+        }
+        character.OverridMaxStatus(statusData, addStatusTypes.ToArray());
+        character.OverridCurrentStatus(stateData, addStatusTypes.ToArray());
+        character.gameObject.SetActive(characterData.IsActiveSelf);
+        character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
+        character.gameObject.transform.localScale = characterData.Scale;
+        character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
+        character.SetAnimId(characterData.AnimationId);
+        character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
+
+        // マスタークライアントの場合、敵が動けるようにする
+        if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            character.enabled = true;
+        }
+        else
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            character.enabled = false;
+        }
+    }
+
+    #region プレイヤー関連
+
+    /// <summary>
+    /// 指定した操作キャラの生存確認
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public bool IsPlayerAlive(Guid id)
+    {
+        return playerObjs.ContainsKey(id) && playerObjs[id] && playerObjs[id].GetComponent<CharacterBase>().HP > 0;
+    }
 
     /// <summary>
     /// 既にシーン上に存在しているプレイヤーを破棄する
@@ -173,7 +231,7 @@ public class CharacterManager : MonoBehaviour
             var point = startPoints[0];
             startPoints.RemoveAt(0);
 
-            if(joinduser.Value.CharacterID == 1)
+            if (joinduser.Value.CharacterID == 1)
             {
                 var playerObj = Instantiate(charaSwordPrefab, point.position, Quaternion.identity);
 
@@ -185,7 +243,7 @@ public class CharacterManager : MonoBehaviour
                     Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
                 }
             }
-            else if(joinduser.Value.CharacterID == 2)
+            else if (joinduser.Value.CharacterID == 2)
             {
                 var playerObj = Instantiate(charaGunnerPrefab, point.position, Quaternion.identity);
 
@@ -202,6 +260,51 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
+    /// プレイヤー情報取得
+    /// </summary>
+    /// <returns></returns>
+    PlayerData GetPlayerData()
+    {
+        if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
+        var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
+        var statusEffectController = player.GetComponent<DebuffController>();
+        return new PlayerData()
+        {
+            IsActiveSelf = player.gameObject.activeInHierarchy,
+            Status = new CharacterStatusData(
+                hp: player.MaxHP,
+                defence: player.MaxDefence,
+                power: player.MaxPower,
+                moveSpeed: player.MaxMoveSpeed,
+                attackSpeedFactor: player.MaxAttackSpeedFactor,
+                jumpPower: player.MaxJumpPower
+                ),
+            State = new CharacterStatusData(
+                hp: player.HP,
+                defence: player.defense,
+                power: player.power,
+                moveSpeed: player.moveSpeed,
+                attackSpeedFactor: player.attackSpeedFactor,
+                jumpPower: player.jumpPower
+                ),
+            Position = player.transform.position,
+            Scale = player.transform.localScale,
+            Rotation = player.transform.rotation,
+            AnimationId = player.GetAnimId(),
+            DebuffList = statusEffectController.GetAppliedStatusEffects(),
+
+            // 以下は専用変数
+            PlayerID = 0,   // ######################################################### とりあえず0固定
+            ConnectionId = RoomModel.Instance.ConnectionId,
+            IsDead = false
+        };
+    }
+
+    #endregion
+
+    #region 敵関連
+
+    /// <summary>
     /// 新たな敵をリストに追加する
     /// </summary>
     /// <param name="newEnemies"></param>
@@ -209,7 +312,7 @@ public class CharacterManager : MonoBehaviour
     {
         foreach (var enemy in newEnemies)
         {
-            if(!enemies.ContainsKey(enemy.UniqueId)) enemies.Add(enemy.UniqueId, enemy);
+            if (!enemies.ContainsKey(enemy.UniqueId)) enemies.Add(enemy.UniqueId, enemy);
         }
     }
 
@@ -269,102 +372,6 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 発射物のプレファブをタイプ事にまとめる
-    /// </summary>
-    public void SetProjectilePrefabsByType()
-    {
-        foreach(var prefab in projectilePrefabs)
-        {
-            projectilePrefabsByType.Add(prefab.GetComponent<ProjectileBase>().TypeId, prefab);
-        }
-    }
-
-    /// <summary>
-    /// キャラクターの情報を更新する
-    /// </summary>
-    /// <param name="characterData"></param>
-    /// <param name="character"></param>
-    void UpdateCharacter(CharacterData characterData, CharacterBase character)
-    {
-        var statusData = characterData.Status;
-        var stateData = characterData.State;
-
-        List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All };
-        if (character.gameObject.tag == "Enemy")
-        {
-            // 敵の場合はHP以外を更新する
-            addStatusTypes = new List<STATUS_TYPE>() {
-                STATUS_TYPE.Defense,
-                STATUS_TYPE.Power,
-                STATUS_TYPE.JumpPower,
-                STATUS_TYPE.MoveSpeed,
-                STATUS_TYPE.AttackSpeedFactor
-            };
-        }
-        character.OverridMaxStatus(statusData, addStatusTypes.ToArray());
-        character.OverridCurrentStatus(stateData, addStatusTypes.ToArray());
-        character.gameObject.SetActive(characterData.IsActiveSelf);
-        character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
-        character.gameObject.transform.localScale = characterData.Scale;
-        character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
-        character.SetAnimId(characterData.AnimationId);
-        character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
-
-        // マスタークライアントの場合、敵が動けるようにする
-        if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
-        {
-            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-            character.enabled = true;
-        }
-        else
-        {
-            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-            character.enabled = false;
-        }
-    }
-
-    /// <summary>
-    /// プレイヤー情報取得
-    /// </summary>
-    /// <returns></returns>
-    PlayerData GetPlayerData()
-    {
-        if (!playerObjs.ContainsKey(RoomModel.Instance.ConnectionId)) return null;
-        var player = playerObjs[RoomModel.Instance.ConnectionId].GetComponent<PlayerBase>();
-        var statusEffectController = player.GetComponent<DebuffController>();
-        return new PlayerData()
-        {
-            IsActiveSelf = player.gameObject.activeInHierarchy,
-            Status = new CharacterStatusData(
-                hp: player.MaxHP,
-                defence: player.MaxDefence,
-                power: player.MaxPower,
-                moveSpeed: player.MaxMoveSpeed,
-                attackSpeedFactor: player.MaxAttackSpeedFactor,
-                jumpPower: player.MaxJumpPower
-                ),
-            State = new CharacterStatusData(
-                hp: player.HP,
-                defence: player.defense,
-                power: player.power,
-                moveSpeed: player.moveSpeed,
-                attackSpeedFactor: player.attackSpeedFactor,
-                jumpPower: player.jumpPower
-                ),
-            Position = player.transform.position,
-            Scale = player.transform.localScale,
-            Rotation = player.transform.rotation,
-            AnimationId = player.GetAnimId(),
-            DebuffList = statusEffectController.GetAppliedStatusEffects(),
-
-            // 以下は専用変数
-            PlayerID = 0,   // ######################################################### とりあえず0固定
-            ConnectionId = RoomModel.Instance.ConnectionId,
-            IsDead = false
-        };
-    }
-
-    /// <summary>
     /// 敵の情報取得
     /// </summary>
     /// <returns></returns>
@@ -387,7 +394,7 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     public EnemyBase GetBossObject()
     {
-        foreach(var enemy in enemies.Values)
+        foreach (var enemy in enemies.Values)
         {
             if (enemy.Enemy.IsBoss)
             {
@@ -397,6 +404,25 @@ public class CharacterManager : MonoBehaviour
 
         return null;
     }
+
+    #endregion
+
+    #endregion
+
+    #region 発射物関連
+
+    /// <summary>
+    /// 発射物のプレファブをタイプ事にまとめる
+    /// </summary>
+    public void SetProjectilePrefabsByType()
+    {
+        foreach (var prefab in projectilePrefabs)
+        {
+            projectilePrefabsByType.Add(prefab.GetComponent<ProjectileBase>().TypeId, prefab);
+        }
+    }
+
+    #endregion
 
     #region 同期処理関連
 
@@ -475,8 +501,11 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnUpdatePlayerStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData)
     {
-        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatus);
-        playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(prsData);
+        if (!playerObjSelf)
+        {
+            playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatus);
+            playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(prsData);
+        }
     }
 
     /// <summary>
@@ -531,9 +560,14 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
-        GameObject? attacker = playerObjs.GetValueOrDefault(damageData.AttackerId);
-        enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
-            playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
+        if (IsPlayerAlive(damageData.AttackerId))
+        {
+            GameObject attacker = playerObjs[damageData.AttackerId];
+            enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
+                playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
+
+            attacker.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+        }
     }
 
     /// <summary>
@@ -551,6 +585,27 @@ public class CharacterManager : MonoBehaviour
             projectile.GetComponent<ProjectileBase>().Shoot(shootBulletData.ShootVec);
         }
     }
+
+    /// <summary>
+    /// レベルアップ通知
+    /// </summary>
+    /// <param name="level"></param>
+    /// <param name="nowExp"></param>
+    /// <param name="characterStatusDataList"></param>
+    /// <param name="optionsKey"></param>
+    /// <param name="statusOptionList"></param>
+    void OnLevelup(int level, int nowExp, CharacterStatusData updatedStatusData, Guid optionsKey, List<StatusUpgrateOptionData> statusOptionList)
+    {
+        if (IsPlayerAlive(RoomModel.Instance.ConnectionId))
+        {
+            var player = playerObjSelf.GetComponent<PlayerBase>();
+            player.NowExp = nowExp;
+            player.NowLv = level;
+            player.OverridMaxStatus(updatedStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
+        }
+        //LevelManager.Instance.Options.Add(optionsKey, statusOptionList);
+    }
+
     #endregion
 
     #endregion

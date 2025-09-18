@@ -667,6 +667,7 @@ namespace StreamingHubs
                 enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
                 enemDmgData.DebuffList = debuffType;    // 付与デバフ
+                enemDmgData.Exp = 0;
 
                 // 合計付与ダメージを加算
                 this.roomContext.totalGaveDamage += enemDmgData.Damage;
@@ -677,8 +678,11 @@ namespace StreamingHubs
                 // 敵のHPが0以下になった場合
                 if (enemDmgData.RemainingHp <= 0)
                 {
-                    float addExpRate = this.roomContext.playerStatusDataList[this.ConnectionId].Item2.AddExpRate;   // 獲得可能経験値倍率
-                    this.roomContext.ExpManager.nowExp += enemData.Exp + (int)(enemData.Exp * addExpRate); // 被弾クラスにExpを代入
+                    // 獲得可能な経験値量を設定
+                    float addExpRate = this.roomContext.playerStatusDataList[this.ConnectionId].Item2.AddExpRate;   // レリックによる獲得可能経験値倍率
+                    enemDmgData.Exp = enemData.Exp + (int)(enemData.Exp * addExpRate);
+                    this.roomContext.ExpManager.nowExp += enemDmgData.Exp;
+
                     // 合計キル数を加算
                     DeleteEnemyData(enemID);
                     this.roomContext.totalKillCount++;
@@ -1261,9 +1265,6 @@ namespace StreamingHubs
             List<StatusUpgrateOptionData> statusOptionList = DrawStatusUpgrateOption(3);
             Guid optionsKey = Guid.NewGuid();
 
-            // 強化後ステータス格納リスト
-            Dictionary<Guid, CharacterStatusData> characterStatusDataList = new Dictionary<Guid, CharacterStatusData>();
-
             // 参加者リストをループ
             foreach (var user in this.roomContext.JoinedUserList)
             {
@@ -1273,20 +1274,15 @@ namespace StreamingHubs
                 // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
                 var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
 
-                // 各最大値を10%増加(仮)
-                playerData.hp = (int)(playerData.hp * 1.1f);
-                playerData.power = (int)(playerData.power * 1.1f);
-                playerData.defence = (int)(playerData.defence * 1.1f);
-                playerData.jumpPower *= 1.1f;
-                playerData.moveSpeed *= 1.1f;
-                playerData.healRate *= 1.1f;
+                // 各最大値を更新
+                const float LEVEL_UP_RATE = 0.05f;
+                playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE);
+                playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE);
+                playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE);
 
-                // 強化後のステータスをGuidをキーにして格納
-                characterStatusDataList.Add(user.Key, playerData);
+                // ユーザー毎にレベルアップ通知
+                this.roomContext.Group.Except([user.Key]).OnLevelUp(expManager.Level, expManager.nowExp, playerData, optionsKey, statusOptionList);
             }
-
-            // 参加者全員にレベルアップしたことを通知
-            this.roomContext.Group.All.OnLevelUp(expManager.Level, expManager.nowExp, characterStatusDataList, optionsKey, statusOptionList);
         }
 
         /// <summary>

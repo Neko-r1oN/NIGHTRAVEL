@@ -43,5 +43,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// 敵へのダメージ量
         /// </summary>
         public int Damage { get; set; }
+
+        [Key(5)]
+        /// <summary>
+        /// 獲得可能経験値量
+        /// </summary>
+        public int Exp { get; set; }
     }
 }

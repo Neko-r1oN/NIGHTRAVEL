@@ -49,6 +49,15 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        if (!RoomModel.Instance)
+        {
+            SetTestData();  // テスト用、不要になり次第削除
+            return;
+        }
+    }
+
+    void SetTestData()
+    {
         List<Status_Enhancement> statusesGroup1 = new List<Status_Enhancement>();
         List<Status_Enhancement> statusesGroup2 = new List<Status_Enhancement>();
 
