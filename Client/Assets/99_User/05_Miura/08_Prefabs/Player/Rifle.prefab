@@ -23,7 +23,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3393145477707759656
 Transform:
   m_ObjectHideFlags: 0
@@ -61,7 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5d212abf86b5a4d8938c938e1d0519, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterId: 0
   baseHp: 300
   baseDefense: 20
   basePower: 100
@@ -10338,7 +10337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 538241e102bc6d0459bef659ae84f024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTfm: {fileID: 0}
+  playerTfm: {fileID: 3393145477707759656}
 --- !u!1 &8532852690879520323
 GameObject:
   m_ObjectHideFlags: 0

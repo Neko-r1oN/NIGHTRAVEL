@@ -11,6 +11,12 @@ using UnityEngine;
 public class SteelDoor : GimmickBase
 {
     [SerializeField] GameObject doorObj;
+
+    //自動ドアが開くSE
+    [SerializeField] AudioSource openSE;
+    //自動ドアが閉じるSE
+    [SerializeField] AudioSource closeSE;
+
     Vector2 initPos = Vector2.zero;//初期位置
     public bool isPowerd;
 
@@ -24,13 +30,27 @@ public class SteelDoor : GimmickBase
     /// <summary>
     /// 鋼鉄製自動ドアを開く処理
     /// </summary>
-    /// <param name="collision">触れたオブジェクト</param>
+    /// <param name="collision">触れているオブジェクト</param>
     private void OnTriggerStay2D(Collider2D collision)
+    {//センサー部分にものが触れている間
+        if (collision.CompareTag("Player") && isPowerd == true)
+        {//「Player」タグが付いたものが触れている間
+            //ドアを開く
+            doorObj.transform.DOMoveY(this.transform.position.y+5, 0.5f);
+        }
+    }
+
+    /// <summary>
+    /// 自動ドアを開いたときのSE再生処理
+    /// 開く処理の中だと遅延が発生するので別の関数
+    /// </summary>
+    /// <param name="collision">触れたオブジェクト</param>
+    private void OnTriggerEnter2D(Collider2D collision)
     {//センサー部分にものが触れたら
         if (collision.CompareTag("Player") && isPowerd == true)
         {//「Player」タグが付いたものが触れたら
-            //ドアを開く
-            doorObj.transform.DOMoveY(this.transform.position.y+5, 0.5f);
+            //ドアを開くSEを再生する
+            openSE.Play();
         }
     }
 
@@ -40,6 +60,9 @@ public class SteelDoor : GimmickBase
         {//「Player」タグが付いたものが離れたら
          //ドアを閉じる
             doorObj.transform.DOMoveY(initPos.y, 0.5f);
+
+            //ドアが閉じるSEを再生する
+            closeSE.Play();
         }
     }
 

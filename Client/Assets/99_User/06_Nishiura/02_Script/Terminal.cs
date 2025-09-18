@@ -180,6 +180,9 @@ public class Terminal : MonoBehaviour
         System.Random rand = new System.Random();
         int rndNum; //敵生成数
 
+        AudioSource terminalSE=GetComponent<AudioSource>();
+        terminalSE.Play(); 
+
         //UIManager.Instance.DisplayTerminalExplanation();
 
         // 端末タイプで処理を分ける
@@ -501,6 +504,4 @@ public class Terminal : MonoBehaviour
         GiveReward();
         //RelicManager.Instance.ShuffleRelic();
     }
-
-    
 }
