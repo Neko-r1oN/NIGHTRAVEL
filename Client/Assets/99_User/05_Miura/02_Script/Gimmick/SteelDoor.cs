@@ -18,7 +18,7 @@ public class SteelDoor : GimmickBase
     private void Start()
     {
         //初期位置を設定
-        initPos = transform.position;
+        initPos = doorObj.transform.position;
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class SteelDoor : GimmickBase
     /// <param name="collision">触れたオブジェクト</param>
     private void OnTriggerStay2D(Collider2D collision)
     {//センサー部分にものが触れたら
-        if (collision.CompareTag("Player") && isPowerd == true)
+        if (collision.CompareTag("Player") && isPowerd == true && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {//「Player」タグが付いたものが触れたら
             //ドアを開く
             doorObj.transform.DOMoveY(this.transform.position.y+5, 0.5f);
@@ -36,7 +36,7 @@ public class SteelDoor : GimmickBase
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && isPowerd == true)
+        if (collision.CompareTag("Player") && isPowerd == true && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {//「Player」タグが付いたものが離れたら
          //ドアを閉じる
             doorObj.transform.DOMoveY(initPos.y, 0.5f);
