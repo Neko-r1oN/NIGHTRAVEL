@@ -807,18 +807,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
-    /// 端末成功処理
-    /// Author:Nishiura
-    /// </summary>
-    /// <param name="termID">端末種別ID</param>
-    /// <param name="result">端末結果</param>
-    /// <returns></returns>
-    public async UniTask TerminalsResultAsync(int termID, bool result)
-    {
-        await roomHub.TerminalsResultAsync(termID, result);
-    }
-
-    /// <summary>
     /// 端末失敗処理
     /// </summary>
     /// <param name="termID"></param>
