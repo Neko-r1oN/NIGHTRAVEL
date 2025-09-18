@@ -853,15 +853,6 @@ namespace StreamingHubs
         }
 
         /// <summary>
-        /// 端末成功同期処理
-        /// </summary>
-        /// <returns></returns>
-        public async Task TerminalsResultAsync(int termID, bool result)
-        {
-
-        }
-
-        /// <summary>
         /// リクエスト者に対してジャンブルの効果適用
         /// </summary>
         /// <param name="connectionId"></param>

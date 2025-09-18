@@ -144,14 +144,6 @@ namespace Shared.Interfaces.StreamingHubs
         /// <returns></returns>
         Task BootTerminalAsync(int termID);
 
-        /// <summary>
-        /// 端末成功処理
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="termID">端末種別ID</param>
-        /// <param name="result">端末結果</param>
-        /// <returns></returns>
-        Task TerminalsResultAsync(int termID, bool result);
         #endregion
         #region ゲーム内UI、仕様関連
 
