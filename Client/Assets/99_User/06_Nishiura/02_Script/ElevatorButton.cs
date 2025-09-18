@@ -68,6 +68,12 @@ public class ElevatorButton : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
+        //エレベーターのボタンのAudioSourceを取得する
+        AudioSource elevatorButtonSE=GetComponent<AudioSource>();
+
+        //エレベーターのボタンのSEを再生する
+        elevatorButtonSE.Play();
+
         elevatorScript.MoveButton(buttonType);
         MoveButton();
     }

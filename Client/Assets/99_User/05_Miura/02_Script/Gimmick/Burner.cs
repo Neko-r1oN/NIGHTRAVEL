@@ -79,6 +79,7 @@ public class Burner : GimmickBase
         {//isFlameがtrueだったら
             //NavMeshObstacleコンポーネントを非アクティブ状態にする
             GetComponent<NavMeshObstacle>().enabled = false;
+            GetComponent<AudioSource>().Stop();
 
             //flameを非アクティブ状態にする
             flame.SetActive(false);
@@ -88,6 +89,7 @@ public class Burner : GimmickBase
         {//isFlameがfalseだったら
          //NavMeshObstacleコンポーネントをアクティブ状態にする
             GetComponent<NavMeshObstacle>().enabled = true;
+            GetComponent<AudioSource>().Play();
 
             //flameをアクティブ状態にする
             flame.SetActive(true); 

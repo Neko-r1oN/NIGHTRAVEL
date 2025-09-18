@@ -11,6 +11,7 @@ public class SawBlade : MonoBehaviour
     // “dŒ¹”»’è
     bool isPowerd;
 
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isPowerd == true && collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)

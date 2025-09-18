@@ -56,9 +56,19 @@ public class SawBladeManager : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
+        AudioSource sawBladeSE=GetComponent<AudioSource>();
+
+        //‰Î‰Ô‚ğU‚ç‚·
         sparkObj.SetActive(true);
+
+        //ŠÛ‚Ì‚±‚ğˆÚ“®‚³‚¹‚é
         MoveBlade();
-        sawBlade.StateRotet();
+
+        //ŠÛ‚Ì‚±‚ğ‰ñ“]‚³‚¹‚é
+        sawBlade.StateRotet(); //SawBladeƒNƒ‰ƒX‚ÌStateRotetŠÖ”‚ğŒÄ‚Ño‚·
+
+        //Ø’f_1‚ğÄ¶‚·‚é
+        sawBladeSE.Play();
     }
 
     /// <summary>

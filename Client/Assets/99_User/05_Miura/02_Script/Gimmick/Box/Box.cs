@@ -54,6 +54,7 @@ public class Box : ObjectBase
 
         //” ‚ð‰ó‚·
         Destroy(this.gameObject);
+        GetComponent<AudioSource>().Play();
     }
 
     override public void DestroyFragment(Transform obj)

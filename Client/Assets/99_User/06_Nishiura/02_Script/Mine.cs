@@ -34,6 +34,8 @@ public class Mine : GimmickBase
 
     public override void TurnOnPower()
     {
+        GetComponent<AudioSource>().Play();
+
         Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
         Destroy(this.gameObject);   // 自身を破壊
     }
