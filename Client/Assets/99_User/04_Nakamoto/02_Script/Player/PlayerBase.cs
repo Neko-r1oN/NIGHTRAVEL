@@ -2,6 +2,7 @@
 // プレイヤー親クラス [ PlayerBase.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MessagePack;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
@@ -993,6 +994,9 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     protected IEnumerator WaitToDead()
     {
+        // プレイヤー死亡したことを同期
+        if (RoomModel.Instance) yield return RoomModel.Instance.PlayerDeadAsync().ToCoroutine();
+
         if (buckupHDMICnt > 0)
         {   // 体力回復 & 残機減少
             hp = maxHp;
@@ -1011,6 +1015,7 @@ abstract public class PlayerBase : CharacterBase
         Camera.main.gameObject.GetComponent<SpectatorModeManager>().FocusCameraOnAlivePlayer();
 
         this.gameObject.SetActive(false);
+
         //Destroy(this.gameObject);
     }
 

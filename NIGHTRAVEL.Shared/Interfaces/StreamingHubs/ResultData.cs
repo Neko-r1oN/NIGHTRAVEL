@@ -24,7 +24,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 取得レリックリスト
         /// </summary>
-        public List<EnumManager.RELIC_TYPE> GottenRelicList { get; set; }
+        public List<EnumManager.RELIC_TYPE> GottenRelicList { get; set; } = new List<EnumManager.RELIC_TYPE>();
 
         [Key(2)]
         /// <summary>
@@ -42,7 +42,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         /// <summary>
         /// 生存時間
         /// </summary>
-        public TimeSpan AliveTime { get; set; }
+        public TimeSpan AliveTime { get; set; } = TimeSpan.Zero;
 
         [Key(5)]
         /// <summary>
