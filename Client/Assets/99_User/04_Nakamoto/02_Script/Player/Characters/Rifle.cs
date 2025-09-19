@@ -10,7 +10,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
-using static Sword;
 
 public class Rifle : PlayerBase
 {
@@ -193,6 +192,10 @@ public class Rifle : PlayerBase
     public void FireBullet()
     {
         var bullet = Instantiate(bulletPrefab, bulletSpawnObj.transform.position, Quaternion.identity);
+        if (!m_FacingRight)
+        {
+            bullet.transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+        }
         bullet.GetComponent<Bullet>().SetPlayer(m_Player);
         bullet.GetComponent<Bullet>().Speed = bulletSpeed;
         bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);

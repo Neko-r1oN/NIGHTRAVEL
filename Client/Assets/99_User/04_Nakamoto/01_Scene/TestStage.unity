@@ -3631,16 +3631,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &420946193 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  m_PrefabInstance: {fileID: 1159229251}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &420946202 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  m_PrefabInstance: {fileID: 1159229251}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &448944410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6039,7 +6029,6 @@ MonoBehaviour:
   - {fileID: 8643065288267570300, guid: 6a611c3b2ba6a8b4ba395c9cd26c3cdb, type: 3}
   - {fileID: 6428287465686674313, guid: a53e831150600ea439782d27134771cd, type: 3}
   emitEnemyTypes: 010000000200000003000000040000000600000005000000
-  bossTerminal: {fileID: 784319157}
   bossId: 14
 --- !u!1 &695427242
 GameObject:
@@ -6750,6 +6739,63 @@ Sprite:
   m_Bones: []
   m_ScriptableObjects: []
   m_SpriteID: 
+--- !u!1001 &743818937
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 597312972180860245, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_Name
+      value: Rifle
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
 --- !u!1001 &757406379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7447,19 +7493,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7beeedca64c765a42b24103e2f47a1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terminalType: 1
-  maxSpawnEnemy: 6
-  limitTime: 0
-  terminalIcon: {fileID: 0}
-  pointList:
-  - {fileID: 2879614684667305126, guid: cbc14981e965cc545b1aa191375c320d, type: 3}
-  - {fileID: 2879614684667305126, guid: cbc14981e965cc545b1aa191375c320d, type: 3}
-  relicSpawnPoints:
-  - {fileID: 838264437}
-  - {fileID: 505433763}
-  - {fileID: 1875869356}
-  - {fileID: 218417137}
-  code: 1
 --- !u!61 &784319162
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -23116,6 +23149,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sword
       objectReference: {fileID: 0}
+    - target: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.14
@@ -31715,9 +31752,9 @@ MonoBehaviour:
   - {fileID: 1782168842}
   - {fileID: 1508921696}
   - {fileID: 519303592}
-  charaSwordPrefab: {fileID: 1965832932378072417, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
-  charaGunnerPrefab: {fileID: 0}
-  playerObjSelf: {fileID: 420946193}
+  charaSwordPrefab: {fileID: 1599242021}
+  charaGunnerPrefab: {fileID: 1599242021}
+  playerObjSelf: {fileID: 1599242021}
   projectilePrefabs: []
 --- !u!1 &1550128473
 GameObject:
@@ -31987,6 +32024,16 @@ Transform:
   - {fileID: 401925214}
   m_Father: {fileID: 722639916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1599242021 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 597312972180860245, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+  m_PrefabInstance: {fileID: 743818937}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1599242030 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3393145477707759656, guid: 15ce0b0dc2dd6ca448ad5dcac33741d5, type: 3}
+  m_PrefabInstance: {fileID: 743818937}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1626203322 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 299402265528012252, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
@@ -34867,7 +34914,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FollowSpeed: 15
-  Target: {fileID: 420946202}
+  Target: {fileID: 1599242030}
   minCameraBounds: {x: 2.25, y: -0.9}
   maxCameraBounds: {x: 90.1, y: 34.6}
   shakeDuration: 0
@@ -82991,6 +83038,7 @@ SceneRoots:
   - {fileID: 814775216}
   - {fileID: 19802146}
   - {fileID: 1079358174}
+  - {fileID: 743818937}
   - {fileID: 1159229251}
   - {fileID: 1650753475}
   - {fileID: 470170401}

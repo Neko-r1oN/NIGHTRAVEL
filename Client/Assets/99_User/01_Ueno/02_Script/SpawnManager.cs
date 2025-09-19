@@ -61,7 +61,7 @@ public class SpawnManager : MonoBehaviour
     #endregion
 
     #region ボス関連
-    [SerializeField] GameObject bossTerminal;
+    GameObject bossTerminal;
     [SerializeField] ENEMY_TYPE bossId;
     bool isSpawnBoss;           // ボスが生成されたかどうか
     public bool IsSpawnBoss { get {  return isSpawnBoss; } set {  isSpawnBoss = value; } }
@@ -662,6 +662,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (!isSpawnBoss)
         {
+            bossTerminal = GameObject.Find("6_BossTerminal");
             int childrenCnt = bossTerminal.transform.childCount;
             List<Transform> children = new List<Transform>();
             for (int i = 0; i < childrenCnt; i++)
