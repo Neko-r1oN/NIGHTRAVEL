@@ -13,12 +13,21 @@ public class Burner : GimmickBase
     PlayerBase player;
     EnemyBase enemy;
     DebuffController statusEffectController;
-    [SerializeField] GameObject flame;
-    bool isFlame;
 
-    // マスタクライアントが自身に切り替わったとき用
+    NavMeshObstacle navMeshObstacle;
+    SpriteRenderer spriteRenderer;
+    BoxCollider2D boxCollider;
+
     const float repeatRate = 3f;
-    float timer = 0;
+    bool isFlame;
+    float timer = 0;        // マスタクライアントが自身に切り替わったとき用
+
+    private void Start()
+    {
+        navMeshObstacle = GetComponent<NavMeshObstacle>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider2D>();
+    }
 
     private void OnEnable()
     {
@@ -76,23 +85,23 @@ public class Burner : GimmickBase
     {
         timer = 0;
         if (isFlame==true)
-        {//isFlameがtrueだったら
-            //NavMeshObstacleコンポーネントを非アクティブ状態にする
-            GetComponent<NavMeshObstacle>().enabled = false;
+        {
             GetComponent<AudioSource>().Stop();
 
-            //flameを非アクティブ状態にする
-            flame.SetActive(false);
+            // 起動停止
+            navMeshObstacle.enabled = false;
+            spriteRenderer.enabled = false;
+            boxCollider.enabled = false;
             isFlame = false;
         }
         else if(isFlame==false)
-        {//isFlameがfalseだったら
-         //NavMeshObstacleコンポーネントをアクティブ状態にする
-            GetComponent<NavMeshObstacle>().enabled = true;
+        {
             GetComponent<AudioSource>().Play();
 
-            //flameをアクティブ状態にする
-            flame.SetActive(true); 
+            // 起動開始
+            navMeshObstacle.enabled = true;
+            spriteRenderer.enabled = true;
+            boxCollider.enabled = true;
             isFlame = true;
         }
     }

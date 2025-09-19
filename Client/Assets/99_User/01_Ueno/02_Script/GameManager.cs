@@ -95,12 +95,6 @@ public class GameManager : MonoBehaviour
         }
 
         isGameStart = false;
-
-        foreach(var player in CharacterManager.Instance.PlayerObjs)
-        {
-            player.Value.gameObject.GetComponent<PlayerBase>().CanMove = false;
-            player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        }
     }
     #endregion
 
@@ -114,6 +108,12 @@ public class GameManager : MonoBehaviour
     {
         if (GameObject.Find("BossTerminal") != null) // ステージに1つのユニークな端末の為、名前で取得
             bossTerminal = GameObject.Find("BossTerminal");
+
+        foreach (var player in CharacterManager.Instance.PlayerObjs)
+        {
+            player.Value.gameObject.GetComponent<PlayerBase>().CanMove = false;
+            player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        }
 
         currentStage = STAGE_TYPE.Rust;
         isBossDead = false;
