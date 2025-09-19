@@ -687,7 +687,8 @@ namespace StreamingHubs
                 enemDmgData.HitEnemyId = enemID;            // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;// HP残量
                 enemDmgData.DebuffList = debuffType;        // 付与デバフ
-                enemDmgData.Exp = 0;
+                enemDmgData.Exp = 100;                      //////////////////////////////////////////////
+                                                            // テスト用に100固定
 
                 // 合計付与ダメージを加算
                 this.roomContext.totalGaveDamage += enemDmgData.Damage;

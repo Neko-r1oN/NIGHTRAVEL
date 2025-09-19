@@ -3,7 +3,6 @@ using DG.Tweening;
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class SawBladeManager : GimmickBase
 {

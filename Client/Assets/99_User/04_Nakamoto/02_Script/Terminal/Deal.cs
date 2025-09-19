@@ -4,7 +4,6 @@
 //--------------------------------------------------------------
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Deal : TerminalBase
 {
