@@ -315,11 +315,7 @@ public class UIManager : MonoBehaviour
         
         if (player == null)
         {
-            // 該当タグが1つしか無い場合はそれを返す
-            var targets = GameObject.FindGameObjectsWithTag("Player");
-
-            //Debug.Log(Camera.main.GetComponent<CameraFollow>().Target.gameObject.GetComponent<PlayerBase>());
-            player = targets[0].gameObject.GetComponent<PlayerBase>();
+            player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
         }
 
         // プレイヤーHPUI
@@ -339,7 +335,7 @@ public class UIManager : MonoBehaviour
             levelUpText.enabled = true;
             lastLevel = player.NowLv;
         }
-        expBar.value = player.NowExp;
+        expBar.value = (float)player.NowExp;
 
         if (SpawnManager.Instance.IsSpawnBoss)
         {// ボスがスポーンした

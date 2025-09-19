@@ -182,14 +182,14 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Nishiura
         /// </summary>
         /// <param name="enemData"></param>
-        public void SetEnemyData(string uniqueId, Enemy enemData)
+        public void SetEnemyData(string uniqueId, Enemy enemData, EnumManager.ENEMY_TYPE type)
         {
             EnemyData setData = new EnemyData();
 
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
             setData.UniqueId = uniqueId;
-            setData.TypeId = (EnumManager.ENEMY_TYPE)enemData.id;
+            setData.TypeId = type;
             setData.isBoss = enemData.isBoss;
 
             // 最大ステータスを現在のステータスに設定
@@ -216,6 +216,27 @@ namespace NIGHTRAVEL.Server.Model.Context
                 // 退出したユーザーを特定して削除
                 JoinedUserList.Remove(guid);
             }
+        }
+
+        /// <summary>
+        /// ユーザー毎でステータス強化の選択肢を格納する
+        /// </summary>
+        /// <param name="connectionId">ユーザーの接続ID</param>
+        /// <param name="optioinsKey">選択肢リストのグループkey</param>
+        /// <param name="options">選択肢リスト</param>
+        public void AddStatusOptions(Guid connectionId, Guid optioinsKey, List<StatusUpgrateOptionData> options)
+        {
+            // 外側キーが存在しない場合は作成
+            if (!statusOptionList.ContainsKey(connectionId))
+            {
+                statusOptionList[connectionId] = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
+            }
+            // 内側キーが存在しない場合は作成
+            if (!statusOptionList[connectionId].ContainsKey(optioinsKey))
+            {
+                statusOptionList[connectionId][optioinsKey] = new List<StatusUpgrateOptionData>();
+            }
+            statusOptionList[connectionId][optioinsKey].AddRange(options);
         }
         #endregion
     }

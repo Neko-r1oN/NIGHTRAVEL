@@ -12,7 +12,6 @@ public class Re_RoomManager : MonoBehaviour
     public static bool IsCreater
     { get { return isCreater; } }
 
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

@@ -4,6 +4,7 @@
 //=============================
 
 #region using一覧
+using Grpc.Core;
 using MagicOnion.Server.Hubs;
 using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
@@ -116,6 +117,7 @@ namespace StreamingHubs
                 // ルームコンテキストに参加ユーザーを保存
                 this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
                 this.roomContext.resultDataList.Add(this.ConnectionId, new ResultData());
+                this.roomContext.relicDataList.Add(this.ConnectionId, new List<Relic>());
 
                 this.roomContext.Group.Add(this.ConnectionId, Client);
                 this.roomContext.Group.Only([this.ConnectionId]).OnRoom();
@@ -379,6 +381,8 @@ namespace StreamingHubs
                 };
                 result.Add(createData);
                 drawIds.Add((STAT_UPGRADE_OPTION)option.id);
+
+                Console.WriteLine((STAT_UPGRADE_OPTION)option.id);
             }
 
             return result;
@@ -452,7 +456,7 @@ namespace StreamingHubs
                     var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemyData[i].TypeId).First();
 
                     // 設定した情報をルームデータに保存
-                    this.roomContext.SetEnemyData(spawnEnemyData[i].UniqueId, enemy);
+                    this.roomContext.SetEnemyData(spawnEnemyData[i].UniqueId, enemy, spawnEnemyData[i].TypeId);
 
                     // 端末IDが設定されている場合は、その端末の生成した敵リストに追加
                     if (spawnEnemyData[i].TerminalID != -1)
@@ -685,7 +689,6 @@ namespace StreamingHubs
                 enemDmgData.HitEnemyId = enemID;            // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;// HP残量
                 enemDmgData.DebuffList = debuffType;        // 付与デバフ
-                enemDmgData.Exp = this.roomContext.enemyMasterDataList[enemData.TypeId].exp;
 
                 // リザルトデータを更新
                 this.roomContext.resultDataList[this.ConnectionId].TotalGaveDamage += enemDmgData.Damage;
@@ -694,6 +697,7 @@ namespace StreamingHubs
                 if (enemDmgData.RemainingHp <= 0)
                 {
                     // 獲得可能な経験値量を設定
+                    enemDmgData.Exp = this.roomContext.enemyMasterDataList[enemData.TypeId].exp;
                     float addExpRate = this.roomContext.playerStatusDataList[this.ConnectionId].Item2.AddExpRate;   // レリックによる獲得可能経験値倍率
                     enemDmgData.Exp = enemDmgData.Exp + (int)(enemDmgData.Exp * addExpRate);
                     this.roomContext.ExpManager.nowExp += enemDmgData.Exp;
@@ -960,6 +964,8 @@ namespace StreamingHubs
                         // DBからレリック情報取得
                         GameDbContext dbContext = new GameDbContext();
                         var relicData = dbContext.Relics.Where(data => data.id == (int)relic.RelicType).First();
+
+                        if (!this.roomContext.relicDataList.ContainsKey(this.ConnectionId)) this.roomContext.relicDataList[this.ConnectionId] = new List<Relic>();
 
                         // 取得したレリックをリストに入れる
                         this.roomContext.relicDataList[this.ConnectionId].Add(relicData);
@@ -1307,7 +1313,7 @@ namespace StreamingHubs
             statusData.Item2 = relicStatus;
 
             // 基のステータスにレリックを適用したステータスをリクエスト者に通知
-            this.roomContext.Group.Except([this.ConnectionId]).OnUpdateStatus(status, relicStatus);
+            this.roomContext.Group.Single(this.ConnectionId).OnUpdateStatus(status, relicStatus);
         }
 
         // <summary>
@@ -1331,7 +1337,7 @@ namespace StreamingHubs
             foreach (var user in this.roomContext.JoinedUserList)
             {
                 // ステータス強化選択肢をルームデータで管理
-                this.roomContext.statusOptionList[user.Key][optionsKey].AddRange(statusOptionList);
+                this.roomContext.AddStatusOptions(user.Key, optionsKey, statusOptionList);
 
                 // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
                 var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
@@ -1343,7 +1349,7 @@ namespace StreamingHubs
                 playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE);
 
                 // ユーザー毎にレベルアップ通知
-                this.roomContext.Group.Except([user.Key]).OnLevelUp(expManager.Level, expManager.nowExp, playerData, optionsKey, statusOptionList);
+                this.roomContext.Group.Single(user.Key).OnLevelUp(expManager.Level, expManager.nowExp, expManager.RequiredExp, playerData, optionsKey, statusOptionList);
             }
         }
 
@@ -1373,7 +1379,7 @@ namespace StreamingHubs
                             (resultData.TotalClearStageCount * 100);
                 resultData.TotalScore *= resultData.DifficultyLevel > 2 ? resultData.DifficultyLevel / 2 : 1;
 
-                this.roomContext.Group.Except([conectionId]).OnGameEnd(resultData);
+                this.roomContext.Group.Single(conectionId).OnGameEnd(resultData);
             }
         }
     }

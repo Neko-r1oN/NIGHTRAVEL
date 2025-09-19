@@ -880,6 +880,7 @@ abstract public class EnemyBase : CharacterBase
         enemyData.EnemyName = this.gameObject.name;
         enemyData.isBoss = this.IsBoss;
         enemyData.IsInvincible = this.isInvincible;
+        enemyData.TypeId = this.EnemyTypeId;
         Exp = this.Exp;
 
         return enemyData;

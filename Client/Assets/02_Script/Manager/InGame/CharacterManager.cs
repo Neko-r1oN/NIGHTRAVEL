@@ -94,8 +94,6 @@ public class CharacterManager : MonoBehaviour
             return;
         }
 
-        
-
         DestroyExistingPlayer();
         GenerateCharacters();
 
@@ -599,13 +597,14 @@ public class CharacterManager : MonoBehaviour
     /// <param name="characterStatusDataList"></param>
     /// <param name="optionsKey"></param>
     /// <param name="statusOptionList"></param>
-    void OnLevelup(int level, int nowExp, CharacterStatusData updatedStatusData, Guid optionsKey, List<StatusUpgrateOptionData> statusOptionList)
+    void OnLevelup(int level, int nowExp, int nextExp, CharacterStatusData updatedStatusData, Guid optionsKey, List<StatusUpgrateOptionData> statusOptionList)
     {
         if (IsPlayerAlive(RoomModel.Instance.ConnectionId))
         {
             var player = playerObjSelf.GetComponent<PlayerBase>();
             player.NowExp = nowExp;
             player.NowLv = level;
+            player.NextLvExp = nextExp;
             player.OverridMaxStatus(updatedStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
         }
         LevelManager.Instance.Options.Add(optionsKey, statusOptionList);

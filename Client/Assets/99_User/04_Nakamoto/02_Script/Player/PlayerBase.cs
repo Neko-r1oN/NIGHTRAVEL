@@ -47,7 +47,7 @@ abstract public class PlayerBase : CharacterBase
     [Foldout("共通ステータス")]
     protected int nowExp = 0;         // 現在の獲得経験値
     [Foldout("共通ステータス")]
-    protected int nextLvExp = 0;      // 次のレベルまでに必要な経験値
+    protected int nextLvExp = 10;      // 次のレベルまでに必要な経験値
 
     [Foldout("共通ステータス")]
     protected int startHp = 0;        // 初期体力
@@ -138,7 +138,7 @@ abstract public class PlayerBase : CharacterBase
     /// <summary>
     /// 次レベルまでの必要経験値
     /// </summary>
-    public int NextLvExp { get { return nextLvExp; } }
+    public int NextLvExp { get { return nextLvExp; } set { nextLvExp = value; } }
 
     /// <summary>
     /// 操作キャラのタイプ
