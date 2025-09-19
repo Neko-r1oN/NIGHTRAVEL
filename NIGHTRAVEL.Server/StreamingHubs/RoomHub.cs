@@ -816,17 +816,27 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="conID">プレイヤーID</param>
         /// <returns></returns>
-        public async Task PlayerDeadAsync()
+        public async Task<PlayerDeathResult> PlayerDeadAsync()
         {
             lock (roomContextRepository) // 排他制御
             {
+                PlayerDeathResult resultData = new PlayerDeathResult() 
+                {
+                    BuckupHDMICnt = 0,
+                    IsDead = true
+                };
+
                 // 蘇生アイテムを持っているかチェック
                 var relicStatusData = this.roomContext.playerStatusDataList[this.ConnectionId].Item2;
                 if (relicStatusData.BuckupHDMICnt > 0)
                 {
+                    // 蘇生アイテムを消費して全回復して復活する
                     relicStatusData.BuckupHDMICnt--;
-                    this.roomContext.characterDataList[this.ConnectionId].State = this.roomContext.characterDataList[this.ConnectionId].Status;
-                    return;
+                    this.roomContext.characterDataList[this.ConnectionId].State.hp = this.roomContext.characterDataList[this.ConnectionId].Status.hp;
+
+                    resultData.BuckupHDMICnt = relicStatusData.BuckupHDMICnt;
+                    resultData.IsDead = false;
+                    return resultData;
                 }
 
                 // 生存時間を登録
@@ -855,6 +865,8 @@ namespace StreamingHubs
                 {
                     Result();
                 }
+
+                return resultData;
             }
         }
 

@@ -647,9 +647,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     /// <param name="playerID"></param>
     /// <returns></returns>
-    public async UniTask PlayerDeadAsync()
+    public async UniTask<PlayerDeathResult> PlayerDeadAsync()
     {
-        await roomHub.PlayerDeadAsync();
+        return await roomHub.PlayerDeadAsync();
     }
 
     /// <summary>

@@ -995,9 +995,22 @@ abstract public class PlayerBase : CharacterBase
     protected IEnumerator WaitToDead()
     {
         // プレイヤー死亡したことを同期
-        if (RoomModel.Instance) yield return RoomModel.Instance.PlayerDeadAsync().ToCoroutine();
+        if (RoomModel.Instance)
+        {
+            PlayerDeathResult result = new PlayerDeathResult();
+            yield return RoomModel.Instance.PlayerDeadAsync().ToCoroutine(r => result = r);
+            buckupHDMICnt = result.BuckupHDMICnt;
 
-        if (buckupHDMICnt > 0)
+            if (!result.IsDead)
+            {
+                hp = maxHp;
+                StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
+                yield break;
+            }
+        }
+
+        // オフライン時の処理
+        if (!RoomModel.Instance && buckupHDMICnt > 0)
         {   // 体力回復 & 残機減少
             hp = maxHp;
             buckupHDMICnt--;

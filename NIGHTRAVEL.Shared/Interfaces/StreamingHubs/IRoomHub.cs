@@ -4,6 +4,7 @@
 //=============================
 
 using MagicOnion;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -64,11 +65,10 @@ namespace Shared.Interfaces.StreamingHubs
 
         /// <summary>
         /// プレイヤー死亡
-        /// Author:Nishiura
+        /// return : 消費した後の蘇生アイテムの残り所持数, 実際に死亡したかどうか
         /// </summary>
-        /// <param name="conID">プレイヤーID</param>
         /// <returns></returns>
-        Task PlayerDeadAsync();
+        Task<PlayerDeathResult> PlayerDeadAsync();
 
         /// <summary>
         /// アイテム獲得
