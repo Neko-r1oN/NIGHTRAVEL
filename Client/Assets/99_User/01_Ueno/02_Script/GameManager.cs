@@ -131,16 +131,6 @@ public class GameManager : MonoBehaviour
 
             await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
         }
-
-        // 現在アクティブなシーンの情報を取得
-        Scene currentScene = SceneManager.GetActiveScene();
-
-        if(currentScene.name != "Stage Ueno")
-        {
-            loader = FindObjectOfType<SceneLoader>();
-
-            loader.ReloadSpecificScene("UIScene");
-        }
     }
 
     private void OnDisable()
