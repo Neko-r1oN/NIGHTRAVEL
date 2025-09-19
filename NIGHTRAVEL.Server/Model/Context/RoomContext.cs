@@ -30,6 +30,12 @@ namespace NIGHTRAVEL.Server.Model.Context
         public string Name { get; }
 
         /// <summary>
+        /// パスワード
+        /// Author:Kida
+        /// </summary>
+        public string PassWord { get; set; }
+
+        /// <summary>
         /// 難易度
         /// Author:Nishiura
         /// </summary>
@@ -165,10 +171,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         #endregion
 
         //RoomContextの定義
-        public RoomContext(IMulticastGroupProvider groupProvider, string roomName)
+        public RoomContext(IMulticastGroupProvider groupProvider, string roomName , string pass)
         {
             Id = Guid.NewGuid();
             Name = roomName;
+            PassWord = pass;
             Group =
                 groupProvider.GetOrAddSynchronousGroup<Guid, IRoomHubReceiver>(roomName);
         }

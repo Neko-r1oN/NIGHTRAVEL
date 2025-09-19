@@ -9,12 +9,13 @@ namespace NIGHTRAVEL.Server.Model.Context
 
         #region ゲームコンテキストを使用するための関数一覧
         //ゲームコンテキストの作成
-        public RoomContext CreateContext(string roomName)
+        public RoomContext CreateContext(string roomName , string pass)
         {
-            var context = new RoomContext(groupProvider, roomName);
+            var context = new RoomContext(groupProvider, roomName,pass);
             contexts[roomName] = context;
             return context;
         }
+
         //ゲームコンテキストの取得
         public RoomContext GetContext(string roomName)
         {

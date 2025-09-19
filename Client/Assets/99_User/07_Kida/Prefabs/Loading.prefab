@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6627919046058971192
+--- !u!1 &5215756807589175744
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,53 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8272423338953050883}
-  - component: {fileID: 1603485897621343949}
+  - component: {fileID: 7198140291933644328}
+  - component: {fileID: 1198541779008983824}
   m_Layer: 0
-  m_Name: MatchingManager
+  m_Name: Loading
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8272423338953050883
+--- !u!4 &7198140291933644328
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6627919046058971192}
+  m_GameObject: {fileID: 5215756807589175744}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 771, y: 955, z: 0}
+  m_LocalPosition: {x: 960, y: 540, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1603485897621343949
+--- !u!114 &1198541779008983824
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6627919046058971192}
+  m_GameObject: {fileID: 5215756807589175744}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f401e095afe38aa4d8a459945e25b086, type: 3}
+  m_Script: {fileID: 11500000, guid: 99c1401df7c5509449297e8334960228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputFieldRoomName: {fileID: 0}
-  inputFieldCreatePassWord: {fileID: 0}
-  inputFieldPassWord: {fileID: 0}
-  roomSerchField: {fileID: 0}
-  userId: 1
-  roomPrefab: {fileID: 6396702796064550122, guid: d4e75308b3893cb4b8097b468e2f4533, type: 3}
-  Content: {fileID: 0}
-  rooms: {fileID: 0}
-  conducter: {fileID: 0}
-  CreateButton: {fileID: 0}
-  PrivateUI: {fileID: 0}
-  ErrorUI: {fileID: 0}
-  fade: {fileID: 0}
-  createdRoomList: []

@@ -14,6 +14,7 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -29,6 +30,7 @@ namespace StreamingHubs
         RoomContextRepository roomContextRepos;
         Room room = new Room();
         RoomService roomService = new RoomService();
+        Dictionary<Guid,JoinedUser> JoinedUsers { get; set; }
 
         // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
         private const int MIN_TERMINAL_NUM = 3;
@@ -63,7 +65,7 @@ namespace StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId)
+        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId, string pass)
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
@@ -77,20 +79,33 @@ namespace StreamingHubs
                 this.roomContext = roomContextRepository.GetContext(roomName);
                 if (this.roomContext == null)
                 { //無かったら生成
-                    this.roomContext = roomContextRepository.CreateContext(roomName);
+                    this.roomContext = roomContextRepository.CreateContext(roomName,pass);
                     //DBに生成
                     room.roomName = roomName;
                     room.userName = user.Name;
-                    roomService.RegistRoom(room.roomName, room.userName);
+                    room.password = pass;
+                    roomService.RegistRoom(room.roomName, room.userName,room.password);
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
                     roomContextRepository.RemoveContext(roomName);                      //ルーム情報を削除
-                    this.roomContext = roomContextRepository.CreateContext(roomName);   //ルームを生成
+                    this.roomContext = roomContextRepository.CreateContext(roomName,pass);   //ルームを生成
                     //DBに生成
                     room.roomName = roomName;
                     room.userName = user.Name;
-                    roomService.RegistRoom(room.roomName, room.userName);
+                    room.password = pass;
+                    roomService.RegistRoom(room.roomName, room.userName, room.password);
+                }
+                this.roomContext.Group.Add(this.ConnectionId, Client);
+
+                if (this.roomContext.PassWord != "")
+                {//パスワードが設定されている場合
+                    if (this.roomContext.PassWord != pass) 
+                    {
+                        //パスワードが違うという通知
+                        this.roomContext.Group.Only([this.ConnectionId]).OnFailedJoin();
+                        return JoinedUsers;
+                    }
                 }
 
                 // グループストレージにユーザーデータを格納
@@ -119,7 +134,6 @@ namespace StreamingHubs
                 
                 
                
-                this.roomContext.Group.Add(this.ConnectionId, Client);
 
                 
                 this.roomContext.Group.Only([this.ConnectionId]).OnRoom();

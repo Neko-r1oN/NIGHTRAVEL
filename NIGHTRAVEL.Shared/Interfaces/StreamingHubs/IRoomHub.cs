@@ -26,7 +26,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId);
+        Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId, string pass);
 
         /// <summary>
         /// ユーザー退室
