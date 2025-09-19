@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Grpc.Core.Metadata;
@@ -72,6 +73,8 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    SceneLoader loader;
+
     #region Instance
     [Header("Instance")]
     public static GameManager Instance
@@ -119,7 +122,7 @@ public class GameManager : MonoBehaviour
         isBossDead = false;
         UIManager.Instance.ShowUIAndFadeOut();
 
-        if (!RoomModel.Instance) StartGame(LotteryTerminal());
+        if (!RoomModel.Instance) StartCoroutine(DelayedCallCoroutine());
         else
         {
             RoomModel.Instance.OnSameStartSyn += this.StartGame;
@@ -127,6 +130,16 @@ public class GameManager : MonoBehaviour
             RoomModel.Instance.OnGameEndSyn += this.OnGameEnd;
 
             await RoomModel.Instance.AdvancedStageAsync();  //遷移完了のリクエスト
+        }
+
+        // 現在アクティブなシーンの情報を取得
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        if(currentScene.name != "Stage Ueno")
+        {
+            loader = FindObjectOfType<SceneLoader>();
+
+            loader.ReloadSpecificScene("UIScene");
         }
     }
 
@@ -298,6 +311,13 @@ public class GameManager : MonoBehaviour
             player.Value.gameObject.GetComponent<PlayerBase>().CanMove = true;
             player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         }
+    }
+
+    private IEnumerator DelayedCallCoroutine()
+    {
+        yield return new WaitForSeconds(5f);
+
+        StartGame(LotteryTerminal());
     }
 
     /// <summary>

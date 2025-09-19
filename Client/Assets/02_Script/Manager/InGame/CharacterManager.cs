@@ -81,8 +81,6 @@ public class CharacterManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        
-
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             if (!playerObjSelf)

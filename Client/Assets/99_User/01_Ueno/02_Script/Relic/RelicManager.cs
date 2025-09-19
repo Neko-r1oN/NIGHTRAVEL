@@ -22,6 +22,7 @@ public class RelicManager : MonoBehaviour
     #region リスト
     [Header("リスト")]
     [SerializeField] List<Sprite> relicSprites = new List<Sprite>();     // レリックのリスト
+    public List<Sprite> RelicSprites { get {  return relicSprites; } }
     [SerializeField] List<RelicData> haveRelicList = new List<RelicData>();     // 所持レリックリスト
     [SerializeField] List<GameObject> relicSpawnPos = new List<GameObject>();
     [SerializeField] GameObject relicPrefab;
