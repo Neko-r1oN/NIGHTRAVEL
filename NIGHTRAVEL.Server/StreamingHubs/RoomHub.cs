@@ -15,9 +15,11 @@ using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Xml;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static Shared.Interfaces.StreamingHubs.IRoomHubReceiver;
+using static System.Net.Mime.MediaTypeNames;
 #endregion
 
 namespace StreamingHubs
@@ -113,21 +115,24 @@ namespace StreamingHubs
 
                 // ルームコンテキストに参加ユーザーを保存
                 this.roomContext.JoinedUserList[this.ConnectionId] = joinedUser;
-
                 this.roomContext.resultDataList.Add(this.ConnectionId, new ResultData());
 
-                
-                
-               
                 this.roomContext.Group.Add(this.ConnectionId, Client);
-
-                
                 this.roomContext.Group.Only([this.ConnectionId]).OnRoom();
                 
                 //　ルームに参加
                 this.roomContext.Group.Except([this.ConnectionId]).Onjoin(roomContext.JoinedUserList[this.ConnectionId]);
 
                 this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
+
+                // マスタデータを取得
+                if(this.roomContext.enemyMasterDataList.Count == 0)
+                {
+                    foreach(var item in dbContext.Enemies.ToList())
+                    {
+                        this.roomContext.enemyMasterDataList.Add((ENEMY_TYPE)item.id, item);
+                    }
+                }
 
                 // 参加中のユーザー情報を返す
                 return this.roomContext.JoinedUserList;
@@ -180,7 +185,7 @@ namespace StreamingHubs
                 roomContext.RemoveUser(this.ConnectionId);
 
                 // ルームデータから自身のデータを削除
-                roomContext.RemoveCharacterData(this.ConnectionId);
+                roomContext.characterDataList.Remove(this.ConnectionId);;
 
             }
         }
@@ -245,7 +250,7 @@ namespace StreamingHubs
                 else // 既に存在している場合
                 {
                     // キャラクターデータを更新
-                    this.roomContext.UpdateCharacterData(this.ConnectionId, playerData);
+                    this.roomContext.characterDataList[this.ConnectionId] = playerData;
                 }
 
                 // ルームの自分以外に、ユーザ情報通知を送信
@@ -301,7 +306,7 @@ namespace StreamingHubs
                 else // 既に存在している場合
                 {
                     // キャラクターデータを更新
-                    this.roomContext.UpdateCharacterData(this.ConnectionId, masterClientData.PlayerData);
+                    this.roomContext.characterDataList[this.ConnectionId] = masterClientData.PlayerData;
                 }
 
                 // ルームの自分以外に、マスタークライアントの状態の更新通知を送信
@@ -526,12 +531,6 @@ namespace StreamingHubs
                     // 獲得したアイテムリストをクリア
                     this.roomContext.gottenItemList.Clear();
 
-                    // 起動した端末リストをクリア
-                    this.roomContext.bootedTerminalList.Clear();
-
-                    // 成功した端末リストをクリア
-                    this.roomContext.succededTerminalList.Clear();
-
                     // 生成した端末リストをクリア
                     this.roomContext.terminalList.Clear();
 
@@ -658,7 +657,7 @@ namespace StreamingHubs
                 // ID指定で敵情報を取得
                 if (!roomContext.enemyDataList.ContainsKey(enemID)) return;
 
-                var enemData = this.roomContext.GetEnemyData(enemID);
+                var enemData = this.roomContext.enemyDataList[enemID];
                 if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
                 // レリックステータス取得
@@ -669,7 +668,6 @@ namespace StreamingHubs
                 int damage = (int)((giverATK / 2) - (enemData.State.defence / 4));
 
                 // ダメージにレリック効果適用
-
                 // 「識別AI」効果（デバフ状態の敵に対するダメージ倍率UP）
                 if (roomContext.enemyDataList[enemID].DebuffList.Count != 0) damage = (int)(damage * relicStatus.IdentificationAIRate);
                 // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
@@ -687,10 +685,7 @@ namespace StreamingHubs
                 enemDmgData.HitEnemyId = enemID;            // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;// HP残量
                 enemDmgData.DebuffList = debuffType;        // 付与デバフ
-                enemDmgData.Exp = 0;
-
-                // 合計付与ダメージを加算
-                this.roomContext.totalGaveDamage += enemDmgData.Damage;
+                enemDmgData.Exp = this.roomContext.enemyMasterDataList[enemData.TypeId].exp;
 
                 // リザルトデータを更新
                 this.roomContext.resultDataList[this.ConnectionId].TotalGaveDamage += enemDmgData.Damage;
@@ -700,12 +695,11 @@ namespace StreamingHubs
                 {
                     // 獲得可能な経験値量を設定
                     float addExpRate = this.roomContext.playerStatusDataList[this.ConnectionId].Item2.AddExpRate;   // レリックによる獲得可能経験値倍率
-                    enemDmgData.Exp = enemData.Exp + (int)(enemData.Exp * addExpRate);
+                    enemDmgData.Exp = enemDmgData.Exp + (int)(enemDmgData.Exp * addExpRate);
                     this.roomContext.ExpManager.nowExp += enemDmgData.Exp;
 
                     // 合計キル数を加算
                     DeleteEnemyData(enemID);
-                    this.roomContext.totalKillCount++;
 
                     // リザルトデータを更新
                     this.roomContext.resultDataList[this.ConnectionId].EnemyKillCount++;
@@ -784,7 +778,7 @@ namespace StreamingHubs
                 EnemyDamegeData enemDmgData = new EnemyDamegeData();
 
                 // ID指定で敵情報を取得
-                var enemData = this.roomContext.GetEnemyData(enemID);
+                var enemData = this.roomContext.enemyDataList[enemID];
                 if (enemData.State.hp <= 0) return;   // すでに対象の敵HPが0の場合は処理しない
 
                 // 現在のHPを受け取ったダメージ量分減算
@@ -793,10 +787,11 @@ namespace StreamingHubs
                 enemDmgData.Damage = dmgAmount;  // 付与ダメージ
                 enemDmgData.HitEnemyId = enemID;    // 被弾敵ID
                 enemDmgData.RemainingHp = enemData.State.hp;    // HP残量
+                enemDmgData.Exp = this.roomContext.enemyMasterDataList[enemData.TypeId].exp;
 
                 if (enemDmgData.RemainingHp <= 0)
                 {
-                    this.roomContext.ExpManager.nowExp += enemData.Exp; // 被弾クラスにExpを代入
+                    this.roomContext.ExpManager.nowExp += enemDmgData.Exp; // 被弾クラスにExpを代入
 
                     // 所持経験値が必要経験値に満ちた場合
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
@@ -845,7 +840,7 @@ namespace StreamingHubs
                 // 全滅判定変数
                 bool isAllDead = true;
                 // ルームデータから接続IDを指定して自身のデータを取得
-                var playerData = this.roomContext.GetPlayerData(this.ConnectionId);
+                var playerData = this.roomContext.characterDataList[this.ConnectionId];
                 playerData.IsDead = true; // 死亡判定をtrueにする
 
                 // 死亡者以外の参加者全員に対象者が死亡したことを通知
@@ -1325,9 +1320,6 @@ namespace StreamingHubs
             expManager.Level++; // 現在のレベルを上げる
             expManager.nowExp = expManager.nowExp - expManager.RequiredExp;    // 超過した分の経験値を現在の経験値量として保管
 
-            // 最終レベルに現在のレベルを代入
-            this.roomContext.resultLevel = expManager.Level;
-
             // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
             expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
@@ -1364,7 +1356,7 @@ namespace StreamingHubs
         {
             foreach (var conectionId in this.roomContext.JoinedUserList.Keys)
             {   
-                var playerData = this.roomContext.GetPlayerData(conectionId);
+                var playerData = this.roomContext.characterDataList[conectionId];
                 var resultData = this.roomContext.resultDataList[conectionId];
 
                 // 必要な残りのデータを代入

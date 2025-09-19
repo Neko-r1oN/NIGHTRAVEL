@@ -905,7 +905,6 @@ abstract public class EnemyBase : CharacterBase
         gameObject.name = enemyData.EnemyName;
         isBoss = enemyData.isBoss;
         isInvincible = enemyData.IsInvincible;
-        exp = enemyData.Exp;
     }
 
     #endregion
