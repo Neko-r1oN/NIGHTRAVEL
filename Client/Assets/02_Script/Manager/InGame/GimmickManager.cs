@@ -84,7 +84,8 @@ public class GimmickManager : MonoBehaviour
     {
         foreach(var data in gimmickDatas)
         {
-            managedGimmicks[data.GimmickID].transform.position = data.Position;
+            if (managedGimmicks.ContainsKey(data.GimmickID))
+                managedGimmicks[data.GimmickID].transform.position = data.Position;
         }
     }
 
