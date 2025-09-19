@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics;
 using System.Numerics;
 using UnityEngine;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 namespace NIGHTRAVEL.Server.Model.Context
 {
@@ -73,9 +74,19 @@ namespace NIGHTRAVEL.Server.Model.Context
         #region マスタデータ
 
         /// <summary>
+        /// マスタデータを読み込み済みかどうか
+        /// </summary>
+        public bool IsLoadMasterDatas { get; private set; } = false;
+
+        /// <summary>
         /// 敵のマスタデータ
         /// </summary>
         public Dictionary<EnumManager.ENEMY_TYPE, Enemy> enemyMasterDataList { get; set; } = new Dictionary<EnumManager.ENEMY_TYPE, Enemy>();
+
+        /// <summary>
+        /// ステータス強化の選択肢の種類
+        /// </summary>
+        public Dictionary<EnumManager.STAT_UPGRADE_OPTION, Status_Enhancement> statusOptionMasterDataList { get; set; } = new Dictionary<EnumManager.STAT_UPGRADE_OPTION, Status_Enhancement>();
 
         #endregion
 
@@ -156,6 +167,24 @@ namespace NIGHTRAVEL.Server.Model.Context
         }
 
         #region 独自関数
+
+        /// <summary>
+        /// 複数のマスタデータをロードする
+        /// </summary>
+        /// <param name="dbContext"></param>
+        public void LoadMasterDataLists(GameDbContext dbContext)
+        {
+            IsLoadMasterDatas = true;
+            foreach (var item in dbContext.Enemies.ToList())
+            {
+                enemyMasterDataList.Add((ENEMY_TYPE)item.id, item);
+            }
+
+            foreach (var item in dbContext.Status_Enhancements.ToList())
+            {
+                statusOptionMasterDataList.Add((STAT_UPGRADE_OPTION)item.id, item);
+            }
+        }
 
         /// <summary>
         /// キャラクターデータ追加処理

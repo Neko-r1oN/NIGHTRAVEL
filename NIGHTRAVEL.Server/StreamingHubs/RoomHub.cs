@@ -15,6 +15,7 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using UnityEngine;
@@ -128,12 +129,9 @@ namespace StreamingHubs
                 this.roomContext.NowStage = EnumManager.STAGE_TYPE.Rust;
 
                 // マスタデータを取得
-                if(this.roomContext.enemyMasterDataList.Count == 0)
+                if (!this.roomContext.IsLoadMasterDatas)
                 {
-                    foreach(var item in dbContext.Enemies.ToList())
-                    {
-                        this.roomContext.enemyMasterDataList.Add((ENEMY_TYPE)item.id, item);
-                    }
+                    this.roomContext.LoadMasterDataLists(dbContext);
                 }
 
                 // 参加中のユーザー情報を返す
@@ -361,16 +359,29 @@ namespace StreamingHubs
         /// <returns></returns>
         List<StatusUpgrateOptionData> DrawStatusUpgrateOption(int elementCnt)
         {
-            GameDbContext dbContext = new GameDbContext();
             List <STAT_UPGRADE_OPTION> drawIds = new List<STAT_UPGRADE_OPTION>();
             List<StatusUpgrateOptionData> result = new List<StatusUpgrateOptionData>();
 
             // 重複なしで指定個数分のステータス強化の選択肢を取得する
             for (int i = 0; i < elementCnt; i++)
             {
-                var rarity = DrawRarity(false);
-                var option = dbContext.Status_Enhancements.Where(option => !drawIds.Contains((STAT_UPGRADE_OPTION)option.id)).First();
+                // 抽選したレアリティのみのリストを作成(抽選済みのものは含まない)
+                List<Status_Enhancement> optionByRarityDatas = new List<Status_Enhancement>();
+                while (true)
+                {
+                    var rarity = DrawRarity(false);
+                    optionByRarityDatas = new List<Status_Enhancement>(this.roomContext.statusOptionMasterDataList.Values);
+                    foreach (var data in this.roomContext.statusOptionMasterDataList.Values)
+                    {
+                        if (rarity != (RARITY_TYPE)data.rarity || drawIds.Contains((STAT_UPGRADE_OPTION)data.id)) optionByRarityDatas.Remove(data);
+                    }
 
+                    if (optionByRarityDatas.Count > 0) break;
+                }
+
+                // ステータス強化選択肢を抽選し、リザルト情報として格納
+                var rndIndex = new Random().Next(0, optionByRarityDatas.Count);
+                var option = optionByRarityDatas[rndIndex];
                 var createData = new StatusUpgrateOptionData()
                 {
                     TypeId = (STAT_UPGRADE_OPTION)option.id,
