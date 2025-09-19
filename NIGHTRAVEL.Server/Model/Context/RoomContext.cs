@@ -54,29 +54,14 @@ namespace NIGHTRAVEL.Server.Model.Context
         public bool isAdvanceRequest;
 
         /// <summary>
-        /// 合計付与ダメージ
-        /// Author:Nishiura
-        /// </summary>
-        public int totalGaveDamage = 0;
-
-        /// <summary>
-        /// 合計キル数
-        /// Author:Nishiura
-        /// </summary>
-        public int totalKillCount = 0;
-
-        /// <summary>
         /// 合計クリアステージ数
         /// Author:Nishiura
         /// </summary>
         public int totalClearStageCount = 0;
 
         /// <summary>
-        /// 最終到達レベル
-        /// Author:Nishiura
+        /// ゲーム開始時の時刻
         /// </summary>
-        public int resultLevel = 0;
-
         public DateTime startTime;
 
         /// <summary>
@@ -84,6 +69,16 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// Author:Kida
         /// </summary>
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; }
+
+        #region マスタデータ
+
+        /// <summary>
+        /// 敵のマスタデータ
+        /// </summary>
+        public Dictionary<EnumManager.ENEMY_TYPE, Enemy> enemyMasterDataList { get; set; } = new Dictionary<EnumManager.ENEMY_TYPE, Enemy>();
+
+        #endregion
+
         #endregion
 
         #region コンテキストに保存する情報のリスト一覧
@@ -132,18 +127,6 @@ namespace NIGHTRAVEL.Server.Model.Context
         public Dictionary<Guid,ResultData> resultDataList { get; }= new Dictionary<Guid, ResultData>();
 
         /// <summary>
-        /// 起動済み端末IDリスト
-        /// Author:Nishiura
-        /// </summary>
-        public List<int> bootedTerminalList { get; } = new List<int>();
-
-        /// <summary>
-        /// 端末結果リスト
-        /// Author:Nishiura
-        /// </summary>
-        public List<int> succededTerminalList { get; } = new List<int>();
-
-        /// <summary>
         /// 端末情報リスト
         /// </summary>
         public List<TerminalData> terminalList { get; set; } = new List<TerminalData>();
@@ -161,7 +144,6 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// </summary>
         public Dictionary<Guid, Dictionary<Guid, List<StatusUpgrateOptionData>>> statusOptionList { get; set; } = new Dictionary<Guid, Dictionary<Guid, List<StatusUpgrateOptionData>>>();
 
-        //[その他、ゲームのルームデータをフィールドに保存]
         #endregion
 
         //RoomContextの定義
@@ -187,50 +169,12 @@ namespace NIGHTRAVEL.Server.Model.Context
         }
 
         /// <summary>
-        /// キャラクターデータ削除
-        /// </summary>
-        public void RemoveCharacterData(Guid conID)
-        {
-            characterDataList.Remove(conID);
-        }
-
-        /// <summary>
-        /// キャラクターデータ更新処理
-        /// </summary>
-        /// <param name="conID"></param>
-        /// <param name="charaData"></param>
-        public void UpdateCharacterData(Guid conID, PlayerData charaData)
-        {
-            characterDataList[conID] = charaData;
-        }
-
-        /// <summary>
         /// グループ退室処理
         /// Author:木田晃輔
         /// </summary>
         public void Dispose()
         {
             Group.Dispose();
-        }
-
-        /// <summary>
-        /// ユーザ情報を渡す関数
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="conID"></param>
-        public PlayerData GetPlayerData(Guid conID)
-        {
-            return characterDataList[conID];
-        }
-
-        /// <summary>
-        /// 敵情報を渡す関数
-        /// Author:Nishiura
-        /// </summary>
-        /// <param name="conID"></param>
-        public EnemyData GetEnemyData(string uniqueId)
-        {
-            return enemyDataList[uniqueId];
         }
 
         /// <summary>
@@ -245,8 +189,8 @@ namespace NIGHTRAVEL.Server.Model.Context
             // 受け取ったデータをエネミーデータに格納
             setData.EnemyName = enemData.name;
             setData.UniqueId = uniqueId;
+            setData.TypeId = (EnumManager.ENEMY_TYPE)enemData.id;
             setData.isBoss = enemData.isBoss;
-            setData.Exp = enemData.exp;
 
             // 最大ステータスを現在のステータスに設定
             setData.Status.hp = (int)enemData.hp;
