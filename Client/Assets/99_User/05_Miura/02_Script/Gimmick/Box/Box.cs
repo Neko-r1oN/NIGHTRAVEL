@@ -7,7 +7,6 @@
 using DG.Tweening;
 using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Box : ObjectBase
 {

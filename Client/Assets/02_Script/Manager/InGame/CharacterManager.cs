@@ -15,7 +15,6 @@ using System.Linq;
 using System.Data;
 using Unity.VisualScripting;
 using UnityEngine.TextCore.Text;
-using static UnityEditor.Experimental.GraphView.GraphView;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using System.Xml;
 using System.Threading.Tasks;
@@ -573,12 +572,11 @@ public class CharacterManager : MonoBehaviour
                 if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
             }
 
-            attacker.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+            playerObjSelf.GetComponent<PlayerBase>().NowExp += damageData.Exp;
         }
     }
 
     /// <summary>
-    /// î≠éÀï®ÇÃê∂ê¨í ím
     /// </summary>
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>

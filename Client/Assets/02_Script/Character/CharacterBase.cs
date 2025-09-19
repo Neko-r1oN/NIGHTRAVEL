@@ -13,7 +13,6 @@ using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
-using static UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty;
 
 abstract public class CharacterBase : MonoBehaviour
 {
