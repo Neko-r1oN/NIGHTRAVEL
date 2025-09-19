@@ -50,7 +50,6 @@ public class TimerDirector : MonoBehaviour
         second = minute * 60;
         initMinute = minute * 60;
         //GameManager.Instance.InvokeRepeating("DecreaseGeneratInterval", 0.1f, 60f);
-
     }
 
 

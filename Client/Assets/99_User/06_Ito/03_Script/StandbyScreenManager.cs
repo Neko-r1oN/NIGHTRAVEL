@@ -51,4 +51,20 @@ public class StandbyScreenManager : MonoBehaviour
     {
         Initiate.Fade("Stage Ueno", Color.black, 1.0f);   // フェード時間1秒
     }
+
+    public void PushDifficultyButton(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                // 難易度easyに設定
+                break;
+            case 1:
+                // 難易度ノーマルに設定
+                break;
+            case 2:
+                // ハードに設定
+                break;
+        }
+    }
 }

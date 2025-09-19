@@ -34,27 +34,37 @@ public class ResultManager : MonoBehaviour
     [Foldout("テキスト")]
     [SerializeField] Text totalScore;               // 総スコア
 
+    [SerializeField] GameObject ItemImage;
+    [SerializeField] Image imagePrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // テストデータ
-        ResultData resultData = new ResultData()
+        if (!RoomModel.Instance)
         {
-            PlayerClass = EnumManager.Player_Type.Sword,
-            GottenRelicList = new List<EnumManager.RELIC_TYPE>() { EnumManager.RELIC_TYPE.Firewall},
-            TotalClearStageCount = 3,
-            DifficultyLevel = 2,
-            AliveTime = new TimeSpan(0, 0, 600),
-            EnemyKillCount = 20,
-            TotalGaveDamage = 50,
-            TotalGottenItem = 2,
-            TotalActivedTerminal = 3,
-            TotalScore = 30000
-        };
+            ResultData resultData = new ResultData()
+            {
+                PlayerClass = EnumManager.Player_Type.Sword,
+                GottenRelicList = new List<EnumManager.RELIC_TYPE>() {
+                EnumManager.RELIC_TYPE.Firewall,
+                EnumManager.RELIC_TYPE.Firewall,
+                EnumManager.RELIC_TYPE.MoveSpeedTip,
+                EnumManager.RELIC_TYPE.Firewall,
+                EnumManager.RELIC_TYPE.CoolingFan},
 
-        DisplayResultData(resultData);
+                TotalClearStageCount = 3,
+                DifficultyLevel = 2,
+                AliveTime = new TimeSpan(0, 0, 600),
+                EnemyKillCount = 20,
+                TotalGaveDamage = 50,
+                TotalGottenItem = 2,
+                TotalActivedTerminal = 3,
+                TotalScore = 30000
+            };
 
-        //DisplayResultData(GameManager.Instance.ResultData);
+            DisplayResultData(resultData);
+        }
     }
 
     // Update is called once per frame
@@ -86,7 +96,25 @@ public class ResultManager : MonoBehaviour
     public void DisplayResultData(ResultData resultData)
     {
         jobText.text = resultData.PlayerClass.ToString();                         // プレイヤーの情報
-        //levelText.text = resultData.Difficulty.ToString();                        // ゲームの難易度
+        levelText.text = resultData.DifficultyLevel.ToString();                   // ゲームの難易度
+
+        List<EnumManager.RELIC_TYPE> relics = new List<EnumManager.RELIC_TYPE>();
+
+        foreach (var item in resultData.GottenRelicList)
+        {
+            if (!relics.Contains(item))
+            {
+                GameObject ChildObj =
+            Instantiate(imagePrefab.gameObject, Vector3.zero, Quaternion.identity, ItemImage.transform);
+
+                ChildObj.transform.localScale = ChildObj.transform.localScale;
+
+                ChildObj.GetComponent<Image>().sprite =
+                RelicManager.Instance.RelicSprites[(int)item];
+                relics.Add(item);
+            }
+        }
+
         stageNumText.text = "3";                                                  // 攻略ステージ数
         arrivalLevelText.text = "ハード";                                         // 到達レベル
         survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間

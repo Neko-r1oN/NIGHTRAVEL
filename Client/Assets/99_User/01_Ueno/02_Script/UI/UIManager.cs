@@ -517,6 +517,8 @@ public class UIManager : MonoBehaviour
         var key = LevelManager.Instance.Options.FirstOrDefault().Key;
         LevelManager.Instance.Options.Remove(key);
 
+        
+
         if (!RoomModel.Instance)
         {// オフライン
             //ステータス変更
@@ -527,8 +529,17 @@ public class UIManager : MonoBehaviour
             await RoomModel.Instance.ChooseUpgrade(key, values[buttonId].TypeId);
         }
 
-        // ステータス強化テキストの更新
-        ChangeUpStatusText();
+        if (LevelManager.Instance.Options.Count == 0)
+        {
+            CloseStatusWindow();
+            isStatusWindow = false;
+            levelUpText.enabled = false;
+        }
+        else
+        {
+            // ステータス強化テキストの更新
+            ChangeUpStatusText();
+        }
 
         // ステータス強化回数の減少
         statusStock--;
@@ -572,7 +583,7 @@ public class UIManager : MonoBehaviour
             statusExplanationsTexts[currentIndex].text = item.Explanation;
 
             currentIndex++;
-        }
+        }   
     }
 
     /// <summary>
