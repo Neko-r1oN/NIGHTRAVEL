@@ -8,19 +8,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
-using System.Drawing;
 using DG.Tweening;
-using UnityEngine.Playables;
-using System.Linq;
-using System.Data;
-using Unity.VisualScripting;
-using UnityEngine.TextCore.Text;
-using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
-using System.Xml;
-using System.Threading.Tasks;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
-using Rewired;
-using Pixeye.Unity;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -497,9 +486,9 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnUpdatePlayerStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData)
     {
-        if (!playerObjSelf)
+        if (playerObjSelf)
         {
-            playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatus);
+            playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatus,STATUS_TYPE.All);
             playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(prsData);
         }
     }

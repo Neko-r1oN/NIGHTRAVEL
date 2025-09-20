@@ -334,11 +334,13 @@ abstract public class CharacterBase : MonoBehaviour
     {
         // 各ステータスの最大値に対する現在値の割合を計算
         float hpRate = (float)hp / (float)maxHp;
-        float defenseRate = (float)defense / (float)maxDefense;
-        float powerRate = (float)power / (float)maxPower;
-        float jumpPowerRate = jumpPower / maxJumpPower;
-        float moveSpeedRate = moveSpeed / maxMoveSpeed;
-        float attackSpeedFactorRate = attackSpeedFactor / maxAttackSpeedFactor;
+        /* 今の所、HP以外MAX値のみ参照しているので割合適用無
+        //float defenseRate = (float)defense / (float)maxDefense;
+        //float powerRate = (float)power / (float)maxPower;
+        //float jumpPowerRate = jumpPower / maxJumpPower;
+        //float moveSpeedRate = moveSpeed / maxMoveSpeed;
+        //float attackSpeedFactorRate = attackSpeedFactor / maxAttackSpeedFactor;
+        */
 
         // 最大値の更新
         maxHp = changeData.hp;
@@ -351,12 +353,11 @@ abstract public class CharacterBase : MonoBehaviour
 
         // 変更後の最大値に応じた現在値の変更
         hp = (int)((float)maxHp * hpRate);
-        defense = (int)((float)maxDefense * defenseRate);
-        power = (int)((float)maxPower * powerRate);
-        jumpPower = maxJumpPower * jumpPowerRate;
-        moveSpeed = maxMoveSpeed * moveSpeedRate;
-        attackSpeedFactor = maxAttackSpeedFactor * attackSpeedFactorRate;
-
+        defense = maxDefense;
+        power = maxPower;
+        jumpPower = maxJumpPower;
+        moveSpeed = maxMoveSpeed;
+        attackSpeedFactor = maxAttackSpeedFactor;
         OverrideAnimaterParam();
     }
 
