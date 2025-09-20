@@ -42,7 +42,7 @@ public class LevelManager : MonoBehaviour
     {
         if (!RoomModel.Instance)
         {
-            SetTestData();  // テスト用、不要になり次第削除
+            //SetTestData();  // テスト用、不要になり次第削除
             return;
         }
         else
