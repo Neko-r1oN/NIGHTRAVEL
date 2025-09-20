@@ -21,31 +21,38 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Unity.Cinemachine.CinemachineSplineRoll;
+using static UnityEditor.ShaderData;
 #endregion
 
 public class MatchingManager : MonoBehaviour
 {
     #region [SerializeField]：木田晃輔
     //[SerializeField] GameObject userPrefab; //ユーザーの情報
-    [SerializeField] Text inputFieldRoomId; //ルームのID(デバッグ用)
+    [SerializeField] Text inputFieldRoomName; //ルームの名前入力フィールド
+    [SerializeField] Text inputFieldCreatePassWord; //パスワードの作成フィールド
+    [SerializeField] Text inputFieldPassWord; //パスワードの入力フィールド
     [SerializeField] Text roomSerchField;   //ルームの名前検索
-    //[SerializeField] Text inputFieldUserId; //ユーザーのID(デバッグ用)
-    //[SerializeField] Text inputFieldCharacterId; //キャラID(デバッグ用)
     [SerializeField] int userId;//新マッチング用のユーザーID
     [SerializeField] GameObject roomPrefab; //ルームのプレハブ
-    [SerializeField] Text roomNameText; //ルームのプレハブ
-    [SerializeField] Text userNameText; //ルームのプレハブ
     [SerializeField] GameObject Content;
     [SerializeField] Transform rooms;
+    [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject CreateButton; //生成ボタン
+    [SerializeField] GameObject PrivateUI;
+    [SerializeField] GameObject ErrorUI;
+    [SerializeField] GameObject fade;
+    #endregion
     public List<GameObject> createdRoomList; //作られたルーム
     EventSystem eventSystem;
-    #endregion
-
     UserModel userModel;                    //ユーザーModel
     JoinedUser joinedUser;                  //このクライアントユーザーの情報
     Text text;
     BaseModel model;
+    Text roomNameText; //ルームの名前
+    Text userNameText; //ユーザーの名前
+    Text passText;      //パスワード
+    string joinRoomName;
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -59,6 +66,7 @@ public class MatchingManager : MonoBehaviour
         await RoomModel.Instance.ConnectAsync();
         RoomModel.Instance.OnSearchedRoom += this.OnSearchedRoom;
         RoomModel.Instance.OnCreatedRoom += this.OnCreatedRoom;
+        RoomModel.Instance.OnFailedJoinSyn += this.OnFailedJoinSyn;
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnJoinedUser += this.OnJoinedUser;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
@@ -73,30 +81,79 @@ public class MatchingManager : MonoBehaviour
     {
         //シーン遷移した場合に通知関数をモデルから解除
         RoomModel.Instance.OnSearchedRoom -= this.OnSearchedRoom;
+        RoomModel.Instance.OnCreatedRoom -= this.OnCreatedRoom;
+        RoomModel.Instance.OnFailedJoinSyn -= this.OnFailedJoinSyn;
+        RoomModel.Instance.OnSearchedRoom -= this.OnSearchedRoom;
         RoomModel.Instance.OnJoinedUser -= this.OnJoinedUser;
+    }
+
+    public void ReturnTitle()
+    {
+        Initiate.Fade("1_TitleScene", Color.black, 1.0f);   // フェード時間1秒
+    }
+
+    public void ErrorClose()
+    {
+        ErrorUI.SetActive(false);
     }
 
     public async void SerchRoom()
     {
         await RoomModel.Instance.SearchRoomAsync();
+        conducter.Loading();
+    }
+
+    private void Loaded()
+    {
+        conducter.Loaded();
     }
 
     #region 同期処理一覧：木田晃輔
+
+    /// <summary>
+    /// ルーム作成
+    /// </summary>
+    public async void CreateRoom()
+    {
+        conducter.Loading();
+
+        if (Re_RoomManager.IsCreater == true)
+        {//ルーム作成の場合
+            passText = inputFieldCreatePassWord;
+            roomNameText = inputFieldRoomName;
+            await RoomModel.Instance.JoinedAsync(roomNameText.text, userId, passText.text);
+        }
+    }
+
     /// <summary>
     /// 入室処理
     /// Aughter:木田晃輔
     /// </summary>
-    public async void JoinRoom(string roomName)
+    public async void JoinRoom(string roomName , bool isPass)
     {
-        if(Re_RoomManager.IsCreater == true)
+        joinRoomName = roomName;
+
+        if (isPass == true)
         {
-            roomNameText = inputFieldRoomId;
-            await RoomModel.Instance.JoinedAsync(roomNameText.text, userId);
+            //パスワード入力パネルオープン
+            PrivateUI.SetActive(true);
         }
         else
         {
-            await RoomModel.Instance.JoinedAsync(roomName, userId);
+            conducter.Loading();
+            await RoomModel.Instance.JoinedAsync(joinRoomName, userId, "");
         }
+    }
+
+    /// <summary>
+    /// プライベートルーム入室
+    /// Aughter:木田晃輔
+    /// </summary>
+    public async void PrivateRoomJoin()
+    {
+        conducter.Loading();
+        string pass = inputFieldPassWord.text;
+        await RoomModel.Instance.JoinedAsync(joinRoomName, userId, pass);
     }
 
     #endregion
@@ -106,7 +163,7 @@ public class MatchingManager : MonoBehaviour
     /// 検索通知
     ///  Aughter:木田晃輔
     /// </summary>
-    public void OnSearchedRoom(List<string> roomNameList, List<string> userNameList)
+    public void OnSearchedRoom(List<string> roomNameList, List<string> userNameList,List<string> passWordList)
     {
 
         foreach(var room in createdRoomList)
@@ -122,6 +179,7 @@ public class MatchingManager : MonoBehaviour
             //RoomDataに格納する
             roomData.roomName = roomNameList[i];
             roomData.userName = userNameList[i];
+            roomData.passWord = passWordList[i];
 
    
             //ルームを表示させる
@@ -133,7 +191,18 @@ public class MatchingManager : MonoBehaviour
             GameObject userN = newGamaObj.transform.Find("UserName").gameObject;
             GameObject button = newGamaObj.transform.Find("Button(Join) (1)").gameObject;
 
-            button.GetComponent<Button>().onClick.AddListener(() => JoinRoom(roomData.roomName));
+            if(roomData.passWord == "")
+            {
+                newGamaObj.transform.Find("Private").gameObject.SetActive(false);
+
+                button.GetComponent<Button>().onClick.AddListener(() => JoinRoom(roomData.roomName,false));
+            }
+            else
+            {
+                newGamaObj.transform.Find("Private").gameObject.SetActive(true);
+
+                button.GetComponent<Button>().onClick.AddListener(() => JoinRoom(roomData.roomName, true));
+            }
 
             //ルーム名を表示させる
             roomNameText = roomN.GetComponent<Text>();
@@ -148,6 +217,14 @@ public class MatchingManager : MonoBehaviour
             i++;
 
         }
+        Invoke("Loaded", 1.0f);
+    }
+
+    public void OnFailedJoinSyn()
+    {
+        PrivateUI.SetActive(false);
+        ErrorUI.SetActive(true);
+        conducter.Loaded();
     }
 
     public void OnCreatedRoom()

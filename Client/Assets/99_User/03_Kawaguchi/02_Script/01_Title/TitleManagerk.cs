@@ -103,5 +103,10 @@ public class TitleManagerk : MonoBehaviour
             Debug.Log("BGMフェードアウト終了");
         });
     }
+
+    public void MultiPlayStart()
+    {
+        Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
+    }
 }
 

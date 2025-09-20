@@ -34,6 +34,12 @@ namespace Shared.Interfaces.StreamingHubs
         void OnRoom();
 
         /// <summary>
+        /// 参加失敗の通知
+        /// Author:Kida
+        /// </summary>
+        void OnFailedJoin();
+
+        /// <summary>
         /// ユーザーの入室通知
         /// Author:Kida
         /// </summary>

@@ -8,9 +8,12 @@ using UnityEngine.UI;
 
 public class StandbyManager : MonoBehaviour
 {
-    [SerializeField] Text setText;
     [SerializeField] int characterId;//新マッチング用のキャラクターID
     [SerializeField] GameObject[] characters;
+    [SerializeField] SceneConducter conducter;
+    [SerializeField] GameObject fade;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,12 +30,6 @@ public class StandbyManager : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnDisable()
     {
         RoomModel.Instance.OnLeavedUser -= this.OnLeavedUser;
@@ -41,10 +38,22 @@ public class StandbyManager : MonoBehaviour
 
     }
 
+    public async void ReturnMaching()
+    {
+        await RoomModel.Instance.LeavedAsync();
+        Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
+    }
+
     public void ChangeCharacter()
     {
         
     }
+
+    private void Loaded()
+    {
+        conducter.Loaded();
+    }
+
 
     /// <summary>
     /// 退室処理
@@ -140,10 +149,13 @@ public class StandbyManager : MonoBehaviour
     /// Aughter:木田晃輔
     /// </summary>
     public void OnStartedGame()
-    {
+    { 
         //ゲーム開始の時の処理を書く
+        conducter.Loading();
         Debug.Log("ゲームを開始します");
         SceneManager.LoadScene("4_Stage_01");
+        Invoke("Loaded", 1.0f);
+
     }
 
     public void OnChangedMasterClient()

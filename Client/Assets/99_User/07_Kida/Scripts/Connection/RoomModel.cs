@@ -49,13 +49,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     #region システム
 
     //ルーム検索通知
-    public Action<List<string>, List<string>> OnSearchedRoom { get; set; }
+    public Action<List<string>, List<string>,List<string>> OnSearchedRoom { get; set; }
 
     //ルーム生成通知
     public Action OnCreatedRoom { get; set; }
 
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
+
+    public Action OnFailedJoinSyn {  get; set; }
 
     //ユーザー退室通知
     public Action<JoinedUser> OnLeavedUser { get; set; }
@@ -267,14 +269,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         List<string> roomNameList = new List<string>();
         List<string> userNameList = new List<string>();
+        List<string> passWordList = new List<string>();
 
         foreach (RoomData roomData in roomDatas)
         {
             roomNameList.Add(roomData.roomName);
             userNameList.Add(roomData.userName);
+            passWordList.Add(roomData.passWord);
         }
 
-        OnSearchedRoom(roomNameList, userNameList);
+        OnSearchedRoom(roomNameList, userNameList,passWordList);
     }
 
     /// <summary>
@@ -302,6 +306,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         //入室通知
         OnJoinedUser(joinedUser);
 
+    }
+
+    public void OnFailedJoin()
+    {
+        OnFailedJoinSyn();
     }
 
     /// <summary>
@@ -568,6 +577,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             roomDataList[i] = new RoomData();
             roomDataList[i].roomName = roomDatas[i].roomName;
             roomDataList[i].userName = roomDatas[i].userName;
+            roomDataList[i].passWord = roomDatas[i].password;
         }
 
         OnSearchRoom(roomDataList);
@@ -580,9 +590,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <returns></returns>
-    public async UniTask JoinedAsync(string roomName, int userId)
+    public async UniTask JoinedAsync(string roomName, int userId , string pass)
     {
-        joinedUserList = await roomHub.JoinedAsync(roomName, userId);
+        joinedUserList = await roomHub.JoinedAsync(roomName, userId, pass);
+        if (joinedUserList == null) return;
         foreach (var user in joinedUserList)
         {
             if (user.Value.UserData.Id == userId)
