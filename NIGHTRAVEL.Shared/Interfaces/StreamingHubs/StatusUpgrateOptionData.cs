@@ -41,7 +41,13 @@ namespace NIGHTRAVEL.Shared.Interfaces.StreamingHubs
         /// 強化するステータスのタイプ
         /// </summary>
         [Key(4)]
-        public EnumManager.STATUS_TYPE StatusType { get; set; }
+        public EnumManager.STATUS_TYPE StatusType1 { get; set; }
+
+        /// <summary>
+        /// 強化するステータスのタイプ
+        /// </summary>
+        [Key(5)]
+        public EnumManager.STATUS_TYPE StatusType2 { get; set; }
 
     }
 }

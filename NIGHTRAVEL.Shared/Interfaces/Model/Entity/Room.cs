@@ -15,7 +15,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
         [Key(2)]
         public string userName { get; set; }        //ルームの説明文
         [Key(3)]
-       public string password { get; set; }        //ルームのパスワード
+        public string password { get; set; }        //ルームのパスワード
         [Key(4)]
         public DateTime Created_at { get; set; }            //生成日時
         [Key(5)]

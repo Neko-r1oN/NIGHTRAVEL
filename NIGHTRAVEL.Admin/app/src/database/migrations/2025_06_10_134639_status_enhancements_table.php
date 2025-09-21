@@ -16,9 +16,10 @@ return new class extends Migration {
             $table->string('name');//nameカラム
             $table->integer('rarity');//rarityカラム
             $table->string('explanation');//explanationカラム
-            $table->integer('type');//typeカラム
+            $table->integer('type1');//type1カラム
             $table->float('const_effect1');//const_effect_aカラム(固定値)
             $table->float('rate_effect1');//rate_effect_aカラム(確率)
+            $table->integer('type2');//type2カラム
             $table->float('const_effect2');//const_effect_bカラム(固定値)
             $table->float('rate_effect2');//rate_effect_bカラム(確率)
             $table->string('enhancement_type'); //enhancement_typeカラム

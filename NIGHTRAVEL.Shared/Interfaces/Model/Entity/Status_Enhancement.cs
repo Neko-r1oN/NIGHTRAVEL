@@ -21,9 +21,10 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
         public string name { get; set; }                    //ステータス強化の名前
         public int rarity { get; set; }                    //ステータス強化のレア度
         public string explanation { get; set; }            //ステータス強化の説明文
-        public int type { get; set; }                      //ステータス強化タイプ
+        public int type1 { get; set; }                     //ステータス強化タイプ1
         public double const_effect1 { get; set; }          //実数値１つ目の効果量
-        public double rate_effect1 { get; set; }          //加算する割合1つ目の効果量
+        public double rate_effect1 { get; set; }           //加算する割合1つ目の効果量
+        public int type2 { get; set; }                     //ステータス強化タイプ2
         public double const_effect2 { get; set; }          //実数値2つ目の効果量
         public double rate_effect2 { get; set; }          //加算する割合2つ目の効果量
         public string enhancement_type { get; set; }       //ステータス強化の識別名

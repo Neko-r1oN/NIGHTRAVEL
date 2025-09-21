@@ -402,7 +402,8 @@ namespace StreamingHubs
                     Name = option.name,
                     Rarity = (RARITY_TYPE)option.rarity,
                     Explanation = option.explanation,
-                    StatusType = (STATUS_TYPE)option.type
+                    StatusType1 = (STATUS_TYPE)option.type1,
+                    StatusType2 = (STATUS_TYPE)option.type2
                 };
                 result.Add(createData);
                 drawIds.Add((STAT_UPGRADE_OPTION)option.id);
@@ -1042,12 +1043,68 @@ namespace StreamingHubs
                 GameDbContext dbContext = new GameDbContext();
                 var upgrade = dbContext.Status_Enhancements.Where(status => status.id == (int)upgradeOpt).First();
 
-                switch (upgrade.type)   // 各強化をタイプで識別
+                switch (upgrade.type1)   // 各強化をタイプで識別
                 {
                     case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
-                                                            // 第1効果
+                        // 第1効果
                         status.hp += (int)upgrade.const_effect1;
                         status.hp *= (int)upgrade.rate_effect1;
+
+                        if (status.hp <= 0) status.hp = 1; // HPが0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
+                        // 第1効果
+                        status.power += (int)upgrade.const_effect1;
+                        status.power *= (int)upgrade.rate_effect1;
+
+                        if (status.power <= 0) status.power = 1; // 攻撃力が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
+                        // 第1効果
+                        status.defence += (int)upgrade.const_effect1;
+                        status.defence *= (int)upgrade.rate_effect1;
+
+                        if (status.defence <= 0) status.defence = 1; // 防御力が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
+                        // 第1効果
+                        status.jumpPower += (int)upgrade.const_effect1;
+                        status.jumpPower *= (int)upgrade.rate_effect1;
+
+                        if (status.jumpPower <= 0) status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
+                        // 第1効果
+                        status.moveSpeed += (int)upgrade.const_effect1;
+                        status.moveSpeed *= (int)upgrade.rate_effect1;
+
+                        if (status.moveSpeed <= 0) status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
+                        // 第1効果
+                        status.healRate += (int)upgrade.const_effect1;
+                        status.healRate *= (int)upgrade.rate_effect1;
+
+                        if (status.healRate <= 0) status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
+                        break;
+
+                    case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
+                        // 第1効果
+                        status.attackSpeedFactor += (int)upgrade.const_effect1;
+                        status.attackSpeedFactor *= (int)upgrade.rate_effect1;
+
+                        if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
+                        break;
+                }
+
+                switch (upgrade.type2)   // 各強化をタイプで識別
+                {
+                    case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
                         // 第2効果
                         status.hp += (int)upgrade.const_effect2;
                         status.hp *= (int)upgrade.rate_effect2;
@@ -1056,9 +1113,6 @@ namespace StreamingHubs
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
-                                                                // 第1効果
-                        status.power += (int)upgrade.const_effect1;
-                        status.power *= (int)upgrade.rate_effect1;
                         // 第2効果
                         status.power += (int)upgrade.const_effect2;
                         status.power *= (int)upgrade.rate_effect2;
@@ -1067,9 +1121,6 @@ namespace StreamingHubs
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
-                                                                // 第1効果
-                        status.defence += (int)upgrade.const_effect1;
-                        status.defence *= (int)upgrade.rate_effect1;
                         // 第2効果
                         status.defence += (int)upgrade.const_effect2;
                         status.defence *= (int)upgrade.rate_effect2;
@@ -1078,9 +1129,6 @@ namespace StreamingHubs
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
-                                                                    // 第1効果
-                        status.jumpPower += (int)upgrade.const_effect1;
-                        status.jumpPower *= (int)upgrade.rate_effect1;
                         // 第2効果
                         status.jumpPower += (int)upgrade.const_effect2;
                         status.jumpPower *= (int)upgrade.rate_effect2;
@@ -1089,9 +1137,6 @@ namespace StreamingHubs
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
-                                                                    // 第1効果
-                        status.moveSpeed += (int)upgrade.const_effect1;
-                        status.moveSpeed *= (int)upgrade.rate_effect1;
                         // 第2効果
                         status.moveSpeed += (int)upgrade.const_effect2;
                         status.moveSpeed *= (int)upgrade.rate_effect2;
@@ -1100,9 +1145,6 @@ namespace StreamingHubs
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
-                                                                // 第1効果
-                        status.healRate += (int)upgrade.const_effect1;
-                        status.healRate *= (int)upgrade.rate_effect1;
                         // 第2効果
                         status.healRate += (int)upgrade.const_effect2;
                         status.healRate *= (int)upgrade.rate_effect2;
@@ -1111,9 +1153,6 @@ namespace StreamingHubs
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                                                                            // 第1効果
-                        status.attackSpeedFactor += (int)upgrade.const_effect1;
-                        status.attackSpeedFactor *= (int)upgrade.rate_effect1;
                         // 第2効果
                         status.attackSpeedFactor += (int)upgrade.const_effect2;
                         status.attackSpeedFactor *= (int)upgrade.rate_effect2;
