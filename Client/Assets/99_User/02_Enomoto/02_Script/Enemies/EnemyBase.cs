@@ -516,7 +516,7 @@ abstract public class EnemyBase : CharacterBase
             else if (RoomModel.Instance.IsMaster)
             {
                 // ギミックや状態異常によるダメージ適用(マスタクライアントのみリクエスト可能)
-                // await RoomModel.Instance.ApplyDamageToEnemyAsync();
+                await RoomModel.Instance.ApplyDamageToEnemyAsync(uniqueId, power);
             }
             return;
         }

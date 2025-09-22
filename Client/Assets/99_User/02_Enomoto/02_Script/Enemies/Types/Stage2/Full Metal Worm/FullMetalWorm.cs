@@ -123,7 +123,16 @@ public class FullMetalWorm : EnemyBase
     public int GeneratedEnemyCnt { get { return generatedEnemyCnt; } set { generatedEnemyCnt = value; } }
     #endregion
 
-    #region その他メンバ変数
+    #region オリジナル
+
+    [SerializeField]
+    [Foldout("移動範囲")]
+    Vector2 maxPos;
+
+    [SerializeField]
+    [Foldout("移動範囲")]
+    Vector2 minPos;
+
     Vector2 targetPos;
     #endregion
 
@@ -424,8 +433,6 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     IEnumerator MoveGraduallyCoroutine(bool isTargetLottery = false)
     {
-        Vector2 maxPos = SpawnManager.Instance.StageMaxPoint.position;
-        Vector2 minPos = SpawnManager.Instance.StageMinPoint.position;
         SetNextTargetPosition(isTargetLottery);
         while (true)
         {
