@@ -24,6 +24,7 @@ public class SteelDoor : GimmickBase
     private void Start()
     {
         //‰ŠúˆÊ’u‚ğİ’è
+        Debug.Log(transform.name);
         initPos = doorObj.transform.position;
     }
 

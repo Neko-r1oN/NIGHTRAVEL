@@ -4,6 +4,7 @@
 // Date:2025/07/01
 //======================
 
+using Shared.Interfaces.StreamingHubs;
 using System;
 using UnityEngine;
 
@@ -59,5 +60,13 @@ abstract public class GimmickBase : MonoBehaviour
     public virtual void Reactivate()
     {
         Debug.Log($"{gameObject.name}が再起動した。");
+    }
+
+    /// <summary>
+    /// [リアルタイム同期用] ギミック更新
+    /// </summary>
+    public virtual void UpdateGimmick(GimmickData gimmickData)
+    {
+        transform.position = gimmickData.Position;
     }
 }

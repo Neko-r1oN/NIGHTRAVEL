@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -75,5 +76,14 @@ public class SawBladeManager : GimmickBase
     {
         transform.position = pos;
         TurnOnPower();
+    }
+
+    /// <summary>
+    /// [リアルタイム同期用] ギミック更新
+    /// </summary>
+    /// <param name="gimmickData"></param>
+    public override void UpdateGimmick(GimmickData gimmickData)
+    {
+        sawBlade.transform.position = gimmickData.Position;
     }
 }
