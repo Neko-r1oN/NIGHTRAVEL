@@ -8,6 +8,7 @@ using UnityEngine;
 public class Mine : GimmickBase
 {
     [SerializeField] GameObject boomEffect; // 爆発エフェクトプレハブ
+    [SerializeField] GameObject mineObj; //地雷プレハブ
 
     Vector2 pos;
 
@@ -34,9 +35,7 @@ public class Mine : GimmickBase
 
     public override void TurnOnPower()
     {
-        GetComponent<AudioSource>().Play();
-
         Instantiate(boomEffect, pos, Quaternion.identity);    // 爆発エフェクトを生成
-        Destroy(this.gameObject);   // 自身を破壊
+        Destroy(mineObj);   // 地雷オブジェクトを破壊
     }
 }

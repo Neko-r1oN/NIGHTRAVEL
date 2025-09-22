@@ -14,6 +14,7 @@ public class PressurePlate : GimmickBase
 
     // 関連付けられたギミックリスト
     [SerializeField] List<GameObject> linkedGimmick = new List<GameObject>();
+    [SerializeField] AudioSource pressSE;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -22,6 +23,7 @@ public class PressurePlate : GimmickBase
         {
             isPushed = true;
             TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+            pressSE.Play();
         }
     }
 
