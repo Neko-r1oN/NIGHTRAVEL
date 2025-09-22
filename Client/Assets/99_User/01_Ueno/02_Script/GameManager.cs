@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     bool isBossDead;            // ボスが死んだかどうか
     bool isGameStart;           // ゲームが開始したかどうか
     GameObject bossTerminal;    // ボス端末
-    STAGE_TYPE currentStage;    // 現在のステージ
+    [SerializeField] STAGE_TYPE nextStage;    // 現在のステージ
     #endregion
 
     #region その他
@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsGameStart {  get { return isGameStart; } set { isGameStart = value; } }
 
-    public STAGE_TYPE CurrentStage { get { return currentStage; } }
+    public STAGE_TYPE NextStage { get { return nextStage; } }
 
     private static GameManager instance;
     #endregion
@@ -118,7 +118,6 @@ public class GameManager : MonoBehaviour
             player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         }
 
-        currentStage = STAGE_TYPE.Rust;
         isBossDead = false;
         UIManager.Instance.ShowUIAndFadeOut();
 
@@ -204,7 +203,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ChengScene(STAGE_TYPE type)
     {
-        currentStage = type;
         switch (type)
         {
             case STAGE_TYPE.Rust:
@@ -273,13 +271,11 @@ public class GameManager : MonoBehaviour
         // 死んだ判定にする
         isBossDead = true;
 
-        GameObject portal;
-
         UIManager.Instance.HideBossUI();
 
         for(int i = 0; i < portals.Count; i++)
         {
-            portal = Instantiate(portals[i], portals[i].transform.position, Quaternion.identity);
+            portals[i].SetActive(true);
         }
 
         //Invoke(nameof(ChengScene), 15f);
