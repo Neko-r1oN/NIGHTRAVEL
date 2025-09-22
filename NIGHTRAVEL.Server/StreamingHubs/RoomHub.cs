@@ -1048,7 +1048,7 @@ namespace StreamingHubs
                     case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
                         // 第1効果
                         status.hp += (int)upgrade.const_effect1;
-                        status.hp *= (int)upgrade.rate_effect1;
+                        status.hp = (int)((float)status.hp * (float)upgrade.rate_effect1);
 
                         if (status.hp <= 0) status.hp = 1; // HPが0を下回った場合、1にする
                         break;
@@ -1056,7 +1056,7 @@ namespace StreamingHubs
                     case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
                         // 第1効果
                         status.power += (int)upgrade.const_effect1;
-                        status.power *= (int)upgrade.rate_effect1;
+                        status.power = (int)((float)status.power * (float)upgrade.rate_effect1);
 
                         if (status.power <= 0) status.power = 1; // 攻撃力が0を下回った場合、1にする
                         break;
@@ -1064,39 +1064,39 @@ namespace StreamingHubs
                     case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
                         // 第1効果
                         status.defence += (int)upgrade.const_effect1;
-                        status.defence *= (int)upgrade.rate_effect1;
+                        status.defence = (int)((float)status.defence * (float)upgrade.rate_effect1);
 
                         if (status.defence <= 0) status.defence = 1; // 防御力が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
                         // 第1効果
-                        status.jumpPower += (int)upgrade.const_effect1;
-                        status.jumpPower *= (int)upgrade.rate_effect1;
+                        status.jumpPower += (float)upgrade.const_effect1;
+                        status.jumpPower = status.jumpPower * (float)upgrade.rate_effect1;
 
                         if (status.jumpPower <= 0) status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
                         // 第1効果
-                        status.moveSpeed += (int)upgrade.const_effect1;
-                        status.moveSpeed *= (int)upgrade.rate_effect1;
+                        status.moveSpeed += (float)upgrade.const_effect1;
+                        status.moveSpeed = status.moveSpeed * (float)upgrade.rate_effect1;
 
                         if (status.moveSpeed <= 0) status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
                         // 第1効果
-                        status.healRate += (int)upgrade.const_effect1;
-                        status.healRate *= (int)upgrade.rate_effect1;
+                        status.healRate += (float)upgrade.const_effect1;
+                        status.healRate = status.healRate * (float)upgrade.rate_effect1;
 
                         if (status.healRate <= 0) status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
                         // 第1効果
-                        status.attackSpeedFactor += (int)upgrade.const_effect1;
-                        status.attackSpeedFactor *= (int)upgrade.rate_effect1;
+                        status.attackSpeedFactor += (float)upgrade.const_effect1;
+                        status.attackSpeedFactor = status.attackSpeedFactor * (float)upgrade.rate_effect1;
 
                         if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
                         break;
@@ -1107,7 +1107,7 @@ namespace StreamingHubs
                     case (int)EnumManager.STATUS_TYPE.HP:   // 体力の場合
                         // 第2効果
                         status.hp += (int)upgrade.const_effect2;
-                        status.hp *= (int)upgrade.rate_effect2;
+                        status.hp = (int)((float)status.hp * (float)upgrade.rate_effect2);
 
                         if (status.hp <= 0) status.hp = 1; // HPが0を下回った場合、1にする
                         break;
@@ -1115,7 +1115,7 @@ namespace StreamingHubs
                     case (int)EnumManager.STATUS_TYPE.Power:    // 攻撃力の場合
                         // 第2効果
                         status.power += (int)upgrade.const_effect2;
-                        status.power *= (int)upgrade.rate_effect2;
+                        status.power = (int)((float)status.power * (float)upgrade.rate_effect2);
 
                         if (status.power <= 0) status.power = 1; // 攻撃力が0を下回った場合、1にする
                         break;
@@ -1123,39 +1123,39 @@ namespace StreamingHubs
                     case (int)EnumManager.STATUS_TYPE.Defense:  // 防御力の場合
                         // 第2効果
                         status.defence += (int)upgrade.const_effect2;
-                        status.defence *= (int)upgrade.rate_effect2;
+                        status.defence = (int)((float)status.defence * (float)upgrade.rate_effect2);
 
                         if (status.defence <= 0) status.defence = 1; // 防御力が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.JumpPower:    // ジャンプ力の場合
                         // 第2効果
-                        status.jumpPower += (int)upgrade.const_effect2;
-                        status.jumpPower *= (int)upgrade.rate_effect2;
+                        status.jumpPower += (float)upgrade.const_effect2;
+                        status.jumpPower = status.jumpPower * (float)upgrade.rate_effect2;
 
                         if (status.jumpPower <= 0) status.jumpPower = 1; // 跳躍力が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.MoveSpeed:    // 移動速度の場合
                         // 第2効果
-                        status.moveSpeed += (int)upgrade.const_effect2;
-                        status.moveSpeed *= (int)upgrade.rate_effect2;
+                        status.moveSpeed += (float)upgrade.const_effect2;
+                        status.moveSpeed = status.moveSpeed * (float)upgrade.rate_effect2;
 
                         if (status.moveSpeed <= 0) status.moveSpeed = 1; // 移動速度が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.HealRate: // 自動回復速度の場合
                         // 第2効果
-                        status.healRate += (int)upgrade.const_effect2;
-                        status.healRate *= (int)upgrade.rate_effect2;
+                        status.healRate += (float)upgrade.const_effect2;
+                        status.healRate = status.healRate * (float)upgrade.rate_effect2;
 
                         if (status.healRate <= 0) status.healRate = 0.001f; // 自動回復速度が0を下回った場合、1にする
                         break;
 
                     case (int)EnumManager.STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
                         // 第2効果
-                        status.attackSpeedFactor += (int)upgrade.const_effect2;
-                        status.attackSpeedFactor *= (int)upgrade.rate_effect2;
+                        status.attackSpeedFactor += (float)upgrade.const_effect2;
+                        status.attackSpeedFactor = status.attackSpeedFactor * (float)upgrade.rate_effect2;
 
                         if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
                         break;
@@ -1242,25 +1242,25 @@ namespace StreamingHubs
                         case (int)STATUS_TYPE.JumpPower:            // 跳躍力の場合
                             if (status.jumpPower >= relic.max) break;
                             status.jumpPower += relic.const_effect;
-                            status.jumpPower += (int)(status.jumpPower * relic.rate_effect);
+                            status.jumpPower += status.jumpPower * relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.MoveSpeed:            // 移動速度の場合
                             if (status.moveSpeed >= relic.max) break;
                             status.moveSpeed += relic.const_effect;
-                            status.moveSpeed += (int)(status.moveSpeed * relic.rate_effect);
+                            status.moveSpeed += status.moveSpeed * relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
                             if (status.attackSpeedFactor >= relic.max) break;
                             status.attackSpeedFactor += relic.const_effect;
-                            status.attackSpeedFactor += (int)(status.attackSpeedFactor * relic.rate_effect);
+                            status.attackSpeedFactor += status.attackSpeedFactor * relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.HealRate:             // 自動回復速度の場合
                             if (status.healRate >= relic.max) break;
                             status.healRate += relic.const_effect;
-                            status.healRate += (int)(status.healRate * relic.rate_effect);
+                            status.healRate += status.healRate * relic.rate_effect;
                             break;
                     }
                 }
@@ -1295,79 +1295,79 @@ namespace StreamingHubs
                         case (int)DEBUFF_TYPE.Burn:                 // 炎上確率の場合
                             if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.const_effect;
-                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += (int)relic.rate_effect;
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.rate_effect;
                             break;
 
                         case (int)DEBUFF_TYPE.Freeze:               // 凍結確率の場合
                             if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.const_effect;
-                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += (int)relic.rate_effect;
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.rate_effect;
                             break;
 
                         case (int)DEBUFF_TYPE.Shock:                // 感電確率の場合
                             if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.const_effect;
-                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += (int)relic.rate_effect;
+                            relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.AddExpRate:           // 付与経験値率の場合
                             if (relicStatus.AddExpRate >= relic.max) break;
                             relicStatus.AddExpRate += relic.const_effect;
-                            relicStatus.AddExpRate += (int)relic.rate_effect;
+                            relicStatus.AddExpRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.RegainCodeRate:       // 与ダメージ回復率の場合
                             if (relicStatus.RegainCodeRate >= relic.max) break;
                             relicStatus.RegainCodeRate += relic.const_effect;
-                            relicStatus.RegainCodeRate += (int)relic.rate_effect;
+                            relicStatus.RegainCodeRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.HolographicArmorRate: // 回避率の場合
                             if (relicStatus.HolographicArmorRate >= relic.max) break;
                             relicStatus.HolographicArmorRate += relic.const_effect;
-                            relicStatus.HolographicArmorRate += (int)relic.rate_effect;
+                            relicStatus.HolographicArmorRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.MouseRate:            // クールダウン短縮率の場合
                             if (relicStatus.MouseRate >= relic.max) break;
                             relicStatus.MouseRate += relic.const_effect;
-                            relicStatus.MouseRate += (int)relic.rate_effect;
+                            relicStatus.MouseRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
                             if (relicStatus.FirewallRate >= relic.max) break;
                             relicStatus.FirewallRate += relic.const_effect;
-                            relicStatus.FirewallRate += (int)relic.rate_effect;
+                            relicStatus.FirewallRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.LifeScavengerRate:    // キル時HP回復率の場合
                             if (relicStatus.LifeScavengerRate >= relic.max) break;
                             relicStatus.LifeScavengerRate += relic.const_effect;
-                            relicStatus.LifeScavengerRate += (int)relic.rate_effect;
+                            relicStatus.LifeScavengerRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.RugrouterRate:        // DA率の場合
                             if (relicStatus.RugrouterRate >= relic.max) break;
                             relicStatus.RugrouterRate += relic.const_effect;
-                            relicStatus.RugrouterRate += (int)relic.rate_effect;
+                            relicStatus.RugrouterRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
                             if (relicStatus.IdentificationAIRate >= relic.max) break;
                             relicStatus.IdentificationAIRate += relic.const_effect;
-                            relicStatus.IdentificationAIRate += (int)relic.rate_effect;
+                            relicStatus.IdentificationAIRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.DanborDollRate:       // 防御貫通率の場合
                             if (relicStatus.DanborDollRate >= relic.max) break;
                             relicStatus.DanborDollRate += relic.const_effect;
-                            relicStatus.DanborDollRate += (int)relic.rate_effect;
+                            relicStatus.DanborDollRate += relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合
                             if (relicStatus.IllegalScriptRate >= relic.max) break;
                             relicStatus.IllegalScriptRate += relic.const_effect;
-                            relicStatus.IllegalScriptRate += (int)relic.rate_effect;
+                            relicStatus.IllegalScriptRate += relic.rate_effect;
                             break;
                     }
                 }

@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->id();                                        //idカラム
             $table->string('roomName');//roomNameカラム
             $table->string('userName');//userNameカラム
+            $table->string('password');//passwordカラム
             $table->timestamps();                           //created_atとupdated_at
             $table->unique('id');
         });
