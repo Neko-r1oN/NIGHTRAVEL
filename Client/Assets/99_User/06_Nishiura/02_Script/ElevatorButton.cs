@@ -13,6 +13,8 @@ public class ElevatorButton : GimmickBase
     //ボタンオブジェクト
     [SerializeField] GameObject buttonObj;
     Elevator elevatorScript;
+
+    [SerializeField] AudioSource elevatorButtonSE;
     
     // ボタンの種別(f:下降t:上昇)
     public bool buttonType;
@@ -68,9 +70,6 @@ public class ElevatorButton : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
-        //エレベーターのボタンのAudioSourceを取得する
-        AudioSource elevatorButtonSE=GetComponent<AudioSource>();
-
         //エレベーターのボタンのSEを再生する
         elevatorButtonSE.Play();
 

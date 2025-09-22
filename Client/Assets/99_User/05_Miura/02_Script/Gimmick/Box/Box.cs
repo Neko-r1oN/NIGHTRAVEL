@@ -13,8 +13,23 @@ public class Box : ObjectBase
     [SerializeField] GameObject BoxPrefab;  //箱プレハブ取得
     [SerializeField] GameObject BoxFragment;　//破片エフェクトを取得
 
+    AudioSource boxBlakeSE;
+
     // 破壊判定
     bool isBroken = false;
+
+    private void Start()
+    {
+        boxBlakeSE = GetComponent<AudioSource>();
+    }
+
+    private void Update()
+    {
+        if(isBroken)
+        {
+            boxBlakeSE.Play();
+        }
+    }
 
     /// <summary>
     /// 箱を消す処理
@@ -53,7 +68,6 @@ public class Box : ObjectBase
 
         //箱を壊す
         Destroy(this.gameObject);
-        GetComponent<AudioSource>().Play();
     }
 
     override public void DestroyFragment(Transform obj)
@@ -84,5 +98,4 @@ public class Box : ObjectBase
         ApplyDamage();
         isBroken = true; // 破壊済みとする
     }
-
 }

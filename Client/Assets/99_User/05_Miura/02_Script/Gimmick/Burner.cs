@@ -13,6 +13,9 @@ public class Burner : GimmickBase
     PlayerBase player;
     EnemyBase enemy;
     DebuffController statusEffectController;
+    [SerializeField] GameObject flame;
+    [SerializeField] AudioSource flameSE;
+    bool isFlame;
 
     NavMeshObstacle navMeshObstacle;
     SpriteRenderer spriteRenderer;
@@ -86,7 +89,7 @@ public class Burner : GimmickBase
         timer = 0;
         if (isFlame==true)
         {
-            GetComponent<AudioSource>().Stop();
+            flameSE.Stop();
 
             // 起動停止
             navMeshObstacle.enabled = false;
@@ -96,7 +99,7 @@ public class Burner : GimmickBase
         }
         else if(isFlame==false)
         {
-            GetComponent<AudioSource>().Play();
+            flameSE.Play();
 
             // 起動開始
             navMeshObstacle.enabled = true;

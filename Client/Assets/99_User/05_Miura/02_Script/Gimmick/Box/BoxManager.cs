@@ -41,7 +41,7 @@ public class BoxManager : MonoBehaviour
         {
             float spawnX = Random.Range(1, 3) == 1 ? leftPosX : rightPosX;
             Vector2 spawnPos = new Vector2(spawnX, posY);
-            SpawnObjectRequest(OBJECT_TYPE.Box, spawnPos);
+            //SpawnObjectRequest(OBJECT_TYPE.Box, spawnPos);
         }
     }
 
@@ -77,16 +77,16 @@ public class BoxManager : MonoBehaviour
     /// </summary>
     /// <param name="item">アイテム情報</param>
     /// <param name="player">獲得しようとしているプレイヤー</param>
-    public async void SpawnObjectRequest(OBJECT_TYPE type, Vector2 spawnPos)
-    {
-        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
-        {
-            await RoomModel.Instance.SpawnObjectAsync(type, spawnPos);
-        }
-        else
-        {
-            // オフライン用
-            SpawnObject(BoxPrefab, spawnPos, GimmickManager.Instance.ManagedGimmicks.Count);
-        }
-    }
+    //public async void SpawnObjectRequest(OBJECT_TYPE type, Vector2 spawnPos)
+    //{
+    //    if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+    //    {
+    //        await RoomModel.Instance.SpawnObjectAsync(type, spawnPos);
+    //    }
+    //    else
+    //    {
+    //        // オフライン用
+    //        SpawnObject(BoxPrefab, spawnPos, GimmickManager.Instance.ManagedGimmicks.Count);
+    //    }
+    //}
 }
