@@ -29,6 +29,7 @@ public class MatchingManager : MonoBehaviour
     #region [SerializeField]：木田晃輔
     //[SerializeField] GameObject userPrefab; //ユーザーの情報
     [SerializeField] Text inputFieldRoomName; //ルームの名前入力フィールド
+    [SerializeField] Text inputFieldSerchRoomName; //ルームの名前入力フィールド
     [SerializeField] Text inputFieldCreatePassWord; //パスワードの作成フィールド
     [SerializeField] Text inputFieldPassWord; //パスワードの入力フィールド
     [SerializeField] Text roomSerchField;   //ルームの名前検索
@@ -52,7 +53,7 @@ public class MatchingManager : MonoBehaviour
     Text userNameText; //ユーザーの名前
     Text passText;      //パスワード
     string joinRoomName;
-
+    string roomSerchName;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -99,6 +100,7 @@ public class MatchingManager : MonoBehaviour
 
     public async void SerchRoom()
     {
+        //roomSerchName = inputFieldSerchRoomName.text;
         await RoomModel.Instance.SearchRoomAsync();
         conducter.Loading();
     }

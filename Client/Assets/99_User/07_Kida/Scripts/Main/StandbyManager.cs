@@ -12,7 +12,7 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] GameObject[] characters;
     [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject fade;
-
+    [SerializeField] Image[] characterImage;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -44,9 +44,9 @@ public class StandbyManager : MonoBehaviour
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
-    public void ChangeCharacter()
+    public void ChangeCharacter(int changeCharacterId)
     {
-        
+        characterImage[characterId].enabled = false;
     }
 
     private void Loaded()
