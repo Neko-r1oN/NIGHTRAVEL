@@ -206,10 +206,10 @@ public class GameManager : MonoBehaviour
         switch (type)
         {
             case STAGE_TYPE.Rust:
-                SceneManager.LoadScene("Stage Ueno");
+                SceneManager.LoadScene("4_Stage_01");
                 break;
             case STAGE_TYPE.Industry:
-                SceneManager.LoadScene("Stage_02");
+                SceneManager.LoadScene("5_Stage_02");
                 break;
             case STAGE_TYPE.Town:
                 SceneManager.LoadScene("Stage_03");

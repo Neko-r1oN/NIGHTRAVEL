@@ -562,7 +562,7 @@ namespace StreamingHubs
                     this.roomContext.gottenItemList.Clear();
 
                     // 生成した端末リストをクリア
-                    this.roomContext.terminalList.Clear();
+                    //this.roomContext.terminalList.Clear();
 
                     // 生成した敵のリストを初期化
                     this.roomContext.enemyDataList.Clear();

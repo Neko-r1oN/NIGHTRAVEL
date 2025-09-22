@@ -766,7 +766,7 @@ public class UIManager : MonoBehaviour
 
         if (isPlayer) ui = Instantiate(playerDmgText);
         else ui = Instantiate(otherDmgText);
-
+        if (ui == null) return;
         ui.GetComponent<Text>().text = dmgVol.ToString();
 
         ui.transform.SetParent(canvas.transform);
