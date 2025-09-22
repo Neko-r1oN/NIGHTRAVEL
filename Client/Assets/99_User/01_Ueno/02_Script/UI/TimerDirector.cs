@@ -78,9 +78,11 @@ public class TimerDirector : MonoBehaviour
                 // タイマー(UI)の更新
                 UpdateTimerDisplay();
 
-                if (elapsedTime > 150)
+                if (elapsedTime > 60)
                 {
                     // ゲームレベルアップリクエスト送信
+
+                    ResetTimer();
 
                     // ゲームレベルアップ
                     if (RoomModel.Instance)
@@ -92,7 +94,6 @@ public class TimerDirector : MonoBehaviour
                     {
                         LevelManager.Instance.UpGameLevel();
                     }
-                    ResetTimer();
                 }
             }
         }
