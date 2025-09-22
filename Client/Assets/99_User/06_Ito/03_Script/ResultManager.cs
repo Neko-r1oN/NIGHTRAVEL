@@ -79,7 +79,7 @@ public class ResultManager : MonoBehaviour
     public void BackTitleButton()
     {
         //SceneManager.LoadScene("TitleScene");
-        Initiate.Fade("Title Ueno", Color.black, 1.0f);   // フェード時間1秒
+        Initiate.Fade("1_TitleScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
     /// <summary>

@@ -254,8 +254,8 @@ public class Sword : PlayerBase
                 else
                 {
                     // ボスの場合はボスエリアに入っているか確認
-                    if(isBossArea)
-                    {
+                    //if(isBossArea)
+                    //{
                         // 二回攻撃の抽選
                         if (LotteryRelic(RELIC_TYPE.Rugrouter))
                         {
@@ -266,7 +266,7 @@ public class Sword : PlayerBase
                         {
                             enemyComponent.ApplyDamageRequest(attackPower, gameObject, true, true, LotteryDebuff());
                         }
-                    }
+                    //}
                 }
 
                     processedEnemies.Add(enemyComponent); // 処理済みリストに追加

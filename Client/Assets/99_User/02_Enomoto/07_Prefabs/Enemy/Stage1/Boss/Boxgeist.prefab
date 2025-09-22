@@ -26358,7 +26358,7 @@ MonoBehaviour:
   attackDist: 5
   hitTime: 0.5
   obstructionMaxTime: 8
-  isBoss: 0
+  isBoss: 1
   isElite: 0
   canPatrol: 0
   canChaseTarget: 1
@@ -26367,10 +26367,10 @@ MonoBehaviour:
   canCancelAttackOnHit: 0
   canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 0
+  spawnWeight: 1
   canDrawRay: 1
   baseExp: 100
   exp: 100
-  spawnWeight: 1
   boxBulletPrefab: {fileID: 3308511046266845085, guid: 0fbdc292197eff840be2f0d176346030, type: 3}
   rangedAttackSpawnPoints:
   - {fileID: 5155594083184622448}

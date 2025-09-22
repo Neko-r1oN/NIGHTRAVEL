@@ -1199,9 +1199,8 @@ public class UIManager : MonoBehaviour
             case 0:
                 if (!RoomModel.Instance)
                 {
-                    var stage = GameManager.Instance.CurrentStage;
-                    stage = stage == STAGE_TYPE.Town ? STAGE_TYPE.Rust : stage++;
-                    GameManager.Instance.ChengScene(stage);
+                    
+                    GameManager.Instance.ChengScene(GameManager.Instance.NextStage);
                 }
                 else await RoomModel.Instance.StageClear(true);
 

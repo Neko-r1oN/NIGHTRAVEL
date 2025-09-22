@@ -37,8 +37,6 @@ public class SpawnManager : MonoBehaviour
     #region ステージ情報
     [SerializeField] Transform stageMin;             // リスポーン範囲A
     [SerializeField] Transform stageMax;             // リスポーン範囲B
-    [SerializeField] Transform minTerminalRespawn;       // ターミナルリスポーン範囲
-    [SerializeField] Transform maxTerminalRespawn;       // ターミナルリスポーン範囲
 
     #region 外部参照
     public Transform StageMinPoint { get { return stageMin; } }
@@ -110,7 +108,7 @@ public class SpawnManager : MonoBehaviour
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(5f));
+        StartCoroutine(WaitAndStartCoroutine(2f));
     }
 
     private void OnDisable()
@@ -155,7 +153,7 @@ public class SpawnManager : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(2);
         }
     }
 
@@ -203,7 +201,7 @@ public class SpawnManager : MonoBehaviour
                 // listの中にない場合、リストにadd
                 enemySpawnPosList.Add(spawnPos);
 
-                LayerMask mask = LayerMask.GetMask("Default");
+                LayerMask mask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
 
                 Vector2 result = (Vector2)pos;
 
