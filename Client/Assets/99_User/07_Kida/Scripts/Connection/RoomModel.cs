@@ -134,10 +134,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     #region ギミック
 
     //ギミックの起動通知
-    public Action<int> OnBootedGimmick { get; set; }
+    public Action<string, bool> OnBootedGimmick { get; set; }
 
     // オブジェクト生成通知
-    public Action<OBJECT_TYPE, Vector2, int> OnSpawnedObjectSyn { get; set; }
+    public Action<OBJECT_TYPE, Vector2, string> OnSpawnedObjectSyn { get; set; }
 
     #endregion
 
@@ -501,9 +501,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="gimmickData"></param>
-    public void OnBootGimmick(int gimmickId)
+    public void OnBootGimmick(string uniqueID, bool triggerOnce)
     {
-        OnBootedGimmick(gimmickId);
+        OnBootedGimmick(uniqueID, triggerOnce);
     }
 
     /// <summary>
@@ -544,7 +544,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnAdvancedStageSyn();
     }
 
-    public void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, int uniqueId)
+    public void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, string uniqueId)
     {
         OnSpawnedObjectSyn(type, spawnPos, uniqueId);
     }
@@ -757,11 +757,11 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// ギミックの起動同期
     ///  Aughter:木田晃輔
     /// </summary>
-    /// <param name="gimID"></param>
+    /// <param name="uniqueID"></param>
     /// <returns></returns>
-    public async UniTask BootGimmickAsync(int gimID, bool triggerOnce)
+    public async UniTask BootGimmickAsync(string uniqueID, bool triggerOnce)
     {
-        await roomHub.BootGimmickAsync(gimID, triggerOnce);
+        await roomHub.BootGimmickAsync(uniqueID, triggerOnce);
     }
 
     /// <summary>

@@ -16,7 +16,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// ギミックID
         /// Author:Nishiura
         /// </summary>
-        public int GimmickID {  get; set; }
+        public string UniqueID {  get; set; }
 
         [Key(2)]
         /// <summary>

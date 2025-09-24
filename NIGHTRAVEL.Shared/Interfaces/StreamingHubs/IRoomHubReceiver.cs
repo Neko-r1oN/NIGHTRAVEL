@@ -172,7 +172,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         /// <param name="gimID">ギミックID</param>
-        void OnBootGimmick(int gimID);
+        void OnBootGimmick(string uniqueID, bool triggerOnce);
 
         /// <summary>
         /// 難易度上昇通知
@@ -194,7 +194,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// オブジェクト生成通知
         /// </summary>
         /// <returns></returns>
-        void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, int uniqueId);
+        void OnSpawnObject(OBJECT_TYPE type, Vector2 spawnPos, string uniqueId);
 
         #endregion
         #endregion

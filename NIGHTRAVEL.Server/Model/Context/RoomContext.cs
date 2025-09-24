@@ -131,7 +131,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// ギミックリスト
         /// Author:Nishiura
         /// </summary>
-        public Dictionary<int, GimmickData> gimmickList { get; } = new Dictionary<int, GimmickData>();
+        public Dictionary<string, GimmickData> gimmickList { get; set; } = new Dictionary<string, GimmickData>();
 
         /// <summary>
         /// レリックの情報リスト
