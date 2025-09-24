@@ -29,7 +29,7 @@ public class SawBladeManager : GimmickBase
         // このゲームオブジェクトのポジションを取得
         pos = this.transform.position;
 
-        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) TurnOnPower();
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
     }
 
     /// <summary>
@@ -106,14 +106,5 @@ public class SawBladeManager : GimmickBase
     {
         transform.position = pos;
         TurnOnPower();
-    }
-
-    /// <summary>
-    /// [リアルタイム同期用] ギミック更新
-    /// </summary>
-    /// <param name="gimmickData"></param>
-    public override void UpdateGimmick(GimmickData gimmickData)
-    {
-        sawBlade.transform.DOMove(gimmickData.Position, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
     }
 }
