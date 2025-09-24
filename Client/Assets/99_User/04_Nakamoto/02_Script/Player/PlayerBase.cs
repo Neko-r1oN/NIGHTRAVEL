@@ -1018,9 +1018,7 @@ abstract public class PlayerBase : CharacterBase
             yield break;
         }
 
-        animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
-        canMove = false;
-        invincible = true;
+        OnDead();
         yield return new WaitForSeconds(0.4f);
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
@@ -1028,8 +1026,16 @@ abstract public class PlayerBase : CharacterBase
         Camera.main.gameObject.GetComponent<SpectatorModeManager>().FocusCameraOnAlivePlayer();
 
         this.gameObject.SetActive(false);
+    }
 
-        //Destroy(this.gameObject);
+    /// <summary>
+    /// éÄñSéûÇ…åƒÇ—èoÇµ
+    /// </summary>
+    public void OnDead()
+    {
+        animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
+        canMove = false;
+        invincible = true;
     }
 
     /// <summary>

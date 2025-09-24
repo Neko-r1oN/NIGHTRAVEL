@@ -95,6 +95,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnShootedBullet += this.OnShootedBullet;
         RoomModel.Instance.OnUpdateStatusSyn += this.OnUpdatePlayerStatus;
         RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
+        RoomModel.Instance.OnPlayerDeadSyn += this.OnPlayerDead;
     }
 
     private void Start()
@@ -118,6 +119,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnShootedBullet -= this.OnShootedBullet;
         RoomModel.Instance.OnUpdateStatusSyn -= this.OnUpdatePlayerStatus;
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
+        RoomModel.Instance.OnPlayerDeadSyn -= this.OnPlayerDead;
     }
 
     #region キャラクター関連
@@ -169,6 +171,8 @@ public class CharacterManager : MonoBehaviour
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
         character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
+
+        if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
         // マスタークライアントの場合、敵が動けるようにする
         if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
@@ -482,6 +486,15 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region 通知処理関連
+
+    /// <summary>
+    /// プレイヤー死亡同期
+    /// </summary>
+    /// <param name="uniqueId"></param>
+    void OnPlayerDead(Guid uniqueId)
+    {
+        playerObjs[uniqueId].GetComponent<PlayerBase>().OnDead();
+    }
 
     /// <summary>
     /// プレイヤーのステータス更新通知

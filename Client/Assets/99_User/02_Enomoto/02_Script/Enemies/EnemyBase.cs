@@ -191,6 +191,8 @@ abstract public class EnemyBase : CharacterBase
 
     public bool IsElite { get { return isElite; } }
 
+    public bool IsStartComp { get { return isStartComp; } }
+
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
 
@@ -219,6 +221,11 @@ abstract public class EnemyBase : CharacterBase
         enemyElite = GetComponent<EnemyElite>();
         isStartComp = true;
         base.Start();
+    }
+
+    public void LoadStart()
+    {
+        if(!isStartComp) LoadStart();
     }
 
     protected virtual void FixedUpdate()
@@ -668,10 +675,15 @@ abstract public class EnemyBase : CharacterBase
     /// <param name="time"></param>
     public void ApplyStun(float time, bool isHit = true)
     {
+        if (isHit) OnHit();
+
         isStun = true;
-        if(isHit) OnHit();
+
+        // スタンのコルーチンを再開始
+        string cooldownKey = "StunTime";
+        RemoveAndStopCoroutineByKey(cooldownKey);
         Coroutine coroutine = StartCoroutine(StunTime(time));
-        managedCoroutines.Add("StunTime", coroutine);
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
