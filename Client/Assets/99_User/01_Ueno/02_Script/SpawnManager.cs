@@ -677,7 +677,6 @@ public class SpawnManager : MonoBehaviour
             if (spawnPos != null)
             {// •Ô‚è’l‚ªnull‚¶‚á‚È‚¢‚Æ‚«
                 var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
-                //Vector3 scale = Vector3.one;    // ˆê’U‚±‚Ì‚Ü‚Ü
 
                 List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
                 {
