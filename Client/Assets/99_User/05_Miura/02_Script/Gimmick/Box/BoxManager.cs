@@ -11,9 +11,10 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 public class BoxManager : MonoBehaviour
 {
     [SerializeField] GameObject BoxPrefab;  //箱プレハブ取得
-    const float leftPosX = 27.09f;
+    [SerializeField] float addPos;
+/*    const float leftPosX = 27.09f;
     const float rightPosX = 28.9f;
-    const float posY = 27f;
+    const float posY = 27f;*/
 
     public float spawnTime;
 
@@ -39,9 +40,10 @@ public class BoxManager : MonoBehaviour
     {
         if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            float spawnX = Random.Range(1, 3) == 1 ? leftPosX : rightPosX;
-            Vector2 spawnPos = new Vector2(spawnX, posY);
-            //SpawnObjectRequest(OBJECT_TYPE.Box, spawnPos);
+            float spawnPosX = Random.Range(1, 3) == 1 ? transform.position.x -addPos : transform.position.x + addPos;
+            float spawnPosY = transform.position.y;
+            Vector2 spawnPos = new Vector2(spawnPosX, spawnPosY);
+            SpawnObjectRequest(OBJECT_TYPE.Box, spawnPos);
         }
     }
 
@@ -73,20 +75,20 @@ public class BoxManager : MonoBehaviour
     }
 
     /// <summary>
-    /// アイテム獲得リクエスト
+    /// オブジェクト生成リクエスト
     /// </summary>
-    /// <param name="item">アイテム情報</param>
-    /// <param name="player">獲得しようとしているプレイヤー</param>
-    //public async void SpawnObjectRequest(OBJECT_TYPE type, Vector2 spawnPos)
-    //{
-    //    if (RoomModel.Instance && RoomModel.Instance.IsMaster)
-    //    {
-    //        await RoomModel.Instance.SpawnObjectAsync(type, spawnPos);
-    //    }
-    //    else
-    //    {
-    //        // オフライン用
-    //        SpawnObject(BoxPrefab, spawnPos, GimmickManager.Instance.ManagedGimmicks.Count);
-    //    }
-    //}
+    /// <param name="type"></param>
+    /// <param name="spawnPos"></param>
+    public async void SpawnObjectRequest(OBJECT_TYPE type, Vector2 spawnPos)
+    {
+        if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
+            await RoomModel.Instance.SpawnObjectAsync(type, spawnPos);
+        }
+        else
+        {
+            // オフライン用
+            SpawnObject(BoxPrefab, spawnPos, GimmickManager.Instance.ManagedGimmicks.Count);
+        }
+    }
 }

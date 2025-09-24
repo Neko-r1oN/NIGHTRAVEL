@@ -7,7 +7,7 @@ public class GimmickManager : MonoBehaviour
 {
     [SerializeField] List<GimmickBase> gimmicks = new List<GimmickBase>();
     Dictionary<int, GimmickBase> managedGimmicks = new Dictionary<int, GimmickBase>();
-    public Dictionary<int, GimmickBase> ManagedGimmicks { get; private set; }
+    public Dictionary<int, GimmickBase> ManagedGimmicks { get { return managedGimmicks; } private set { managedGimmicks = value; } }
 
     static GimmickManager instance;
     public static GimmickManager Instance

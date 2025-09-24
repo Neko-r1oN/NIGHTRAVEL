@@ -301,7 +301,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DelayedCallCoroutine()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(0f);
 
         StartGame(LotteryTerminal());
     }
