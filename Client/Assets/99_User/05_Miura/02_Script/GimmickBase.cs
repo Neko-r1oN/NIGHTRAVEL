@@ -4,6 +4,7 @@
 // Date:2025/07/01
 //======================
 
+using DG.Tweening;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using UnityEngine;
@@ -67,6 +68,6 @@ abstract public class GimmickBase : MonoBehaviour
     /// </summary>
     public virtual void UpdateGimmick(GimmickData gimmickData)
     {
-        transform.position = gimmickData.Position;
+        transform.DOMove(gimmickData.Position, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
     }
 }
