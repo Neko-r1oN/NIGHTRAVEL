@@ -24,12 +24,10 @@ public class SawBladeManager : GimmickBase
 
     void Start()
     {
-        isPowerd = true;
-
         // このゲームオブジェクトのポジションを取得
         pos = this.transform.position;
 
-        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) TurnOnPower();
+        if ((!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) && isPowerd==true) TurnOnPower();
     }
 
     /// <summary>
@@ -55,8 +53,6 @@ public class SawBladeManager : GimmickBase
         {
             sparkObj.SetActive(false);
         }
-
-        Debug.Log(addPower);
     }
 
     /// <summary>
@@ -84,20 +80,8 @@ public class SawBladeManager : GimmickBase
 
             //火花を非表示にする
             sparkObj.SetActive(false);
-
-            //丸のこを移動させる
-            MoveBlade();
         }
     }
-
-    /// <summary>
-    /// ギミック起動リクエスト
-    /// </summary>
-    void RequestActivateGimmick()
-    {
-        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
-    }
-
 
     /// <summary>
     /// ギミック再起動処理

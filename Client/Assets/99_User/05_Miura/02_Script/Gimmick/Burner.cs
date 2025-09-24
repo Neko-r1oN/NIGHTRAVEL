@@ -109,14 +109,6 @@ public class Burner : GimmickBase
     }
 
     /// <summary>
-    /// ギミック起動リクエスト
-    /// </summary>
-    void RequestActivateGimmick()
-    {
-        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
-    }
-
-    /// <summary>
     /// ギミック起動処理
     /// </summary>
     public override void TurnOnPower()

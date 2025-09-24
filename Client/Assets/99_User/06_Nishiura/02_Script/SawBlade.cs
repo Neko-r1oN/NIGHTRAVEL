@@ -6,7 +6,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class SawBlade : MonoBehaviour
+public class SawBlade : GimmickBase
 {
     // “dŒ¹”»’è
     bool isPowerd;
