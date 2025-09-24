@@ -151,10 +151,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// ギミック起動
         /// Author:Nishiura
         /// </summary>
-        /// <param name="gimID">ギミック識別ID</param>
+        /// <param name="uniqueID">ギミック識別ID</param>
         /// <param name="triggerOnce">一度しか起動できないかどうか</param>
         /// <returns></returns>
-        Task BootGimmickAsync(int gimID, bool triggerOnce);
+        Task BootGimmickAsync(string uniqueID, bool triggerOnce);
 
         /// <summary>
         /// 難易度上昇

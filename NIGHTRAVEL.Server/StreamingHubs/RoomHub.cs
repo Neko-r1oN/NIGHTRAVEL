@@ -299,15 +299,15 @@ namespace StreamingHubs
                 foreach (var item in masterClientData.GimmickDatas)
                 {
                     // すでにルームコンテキストにギミックが含まれている場合
-                    if (this.roomContext.gimmickList.ContainsKey(item.GimmickID))
+                    if (this.roomContext.gimmickList.ContainsKey(item.UniqueID))
                     {
                         // そのギミックを更新する
-                        this.roomContext.gimmickList[item.GimmickID] = item;
+                        this.roomContext.gimmickList[item.UniqueID] = item;
                     }
                     else // 含まれていない場合
                     {
                         // そのギミックを追加する
-                        this.roomContext.gimmickList.Add(item.GimmickID, item);
+                        this.roomContext.gimmickList.Add(item.UniqueID, item);
                     }
                 }
 
@@ -503,20 +503,20 @@ namespace StreamingHubs
         /// </summary>
         /// <param name="gimID">ギミック識別ID</param>
         /// <returns></returns>
-        public async Task BootGimmickAsync(int gimID, bool triggerOnce)
+        public async Task BootGimmickAsync(string uniqueID, bool triggerOnce)
         {
             lock (roomContextRepository)
             {
-                // 対象ギミックが存在しているかつ起動可能である場合
-                if (this.roomContext.gimmickList.ContainsKey(gimID))
+                // 対象ギミックが存在している場合
+                if (this.roomContext.gimmickList.ContainsKey(uniqueID))
                 {
                     if (triggerOnce)
                     {
-                        this.roomContext.gimmickList.Remove(gimID);
+                        this.roomContext.gimmickList.Remove(uniqueID);
                     }
 
                     // 参加者全員にギミック情報を通知
-                    this.roomContext.Group.All.OnBootGimmick(gimID);
+                    this.roomContext.Group.All.OnBootGimmick(uniqueID, triggerOnce);
                 }
             }
         }
@@ -627,10 +627,10 @@ namespace StreamingHubs
         {
             lock (roomContextRepository)
             {
-                int uniqueId = this.roomContext.gimmickList.Count;
+                string uniqueId = Guid.NewGuid().ToString();
                 GimmickData gimmickData = new GimmickData()
                 {
-                    GimmickID = this.roomContext.gimmickList.Count,
+                    UniqueID = uniqueId,
                     Position = spawnPos,
                 };
                 this.roomContext.gimmickList.Add(uniqueId, gimmickData);

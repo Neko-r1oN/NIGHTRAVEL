@@ -17,8 +17,8 @@ abstract public class GimmickBase : MonoBehaviour
     bool requiresReactivation;  // マスタクライアントに切り替わったときに、再起動が必要かどうか
 
     // 識別用ID
-    int uniqueId;
-    public int UniqueId {  get { return uniqueId; } set { uniqueId = value; } }
+    string uniqueId;
+    public string UniqueId {  get { return uniqueId; } set { uniqueId = value; } }
 
     // ギミックの状態 (true：ON, false：OFF)
     protected bool isBoot = false;

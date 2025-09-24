@@ -6,8 +6,8 @@ using UnityEngine;
 public class GimmickManager : MonoBehaviour
 {
     [SerializeField] List<GimmickBase> gimmicks = new List<GimmickBase>();
-    Dictionary<int, GimmickBase> managedGimmicks = new Dictionary<int, GimmickBase>();
-    public Dictionary<int, GimmickBase> ManagedGimmicks { get { return managedGimmicks; } private set { managedGimmicks = value; } }
+    Dictionary<string, GimmickBase> managedGimmicks = new Dictionary<string, GimmickBase>();
+    public Dictionary<string, GimmickBase> ManagedGimmicks { get { return managedGimmicks; } private set { managedGimmicks = value; } }
 
     static GimmickManager instance;
     public static GimmickManager Instance
@@ -27,8 +27,8 @@ public class GimmickManager : MonoBehaviour
             // 識別用IDを設定
             for (int i = 0; i < gimmicks.Count; i++)
             {
-                gimmicks[i].UniqueId = i;
-                managedGimmicks.Add(i, gimmicks[i]);
+                gimmicks[i].UniqueId = $"{gimmicks[i].name}_{i}";
+                managedGimmicks.Add(gimmicks[i].UniqueId, gimmicks[i]);
             }
         }
         else
@@ -65,7 +65,7 @@ public class GimmickManager : MonoBehaviour
             {
                 var gimmickData = new GimmickData()
                 {
-                    GimmickID = gimmick.Key,
+                    UniqueID = gimmick.Key,
                     GimmickName = gimmick.Value.name,
                     Position = gimmick.Value.transform.position,
                 };
@@ -84,8 +84,8 @@ public class GimmickManager : MonoBehaviour
     {
         foreach(var data in gimmickDatas)
         {
-            if (managedGimmicks.ContainsKey(data.GimmickID))
-                managedGimmicks[data.GimmickID].UpdateGimmick(data);
+            if (managedGimmicks.ContainsKey(data.UniqueID))
+                managedGimmicks[data.UniqueID].UpdateGimmick(data);
         }
     }
 
@@ -93,11 +93,12 @@ public class GimmickManager : MonoBehaviour
     /// ギミック起動通知
     /// </summary>
     /// <param name="uniqueId"></param>
-    void OnBootGimmick(int uniqueId)
+    void OnBootGimmick(string uniqueId, bool triggerOnce)
     {
         if (managedGimmicks.ContainsKey(uniqueId))
         {
             managedGimmicks[uniqueId].TurnOnPower();
+            if(triggerOnce) managedGimmicks.Remove(uniqueId);
         }
     }
 
@@ -117,7 +118,7 @@ public class GimmickManager : MonoBehaviour
     /// </summary>
     /// <param name="uniqueId"></param>
     /// <param name="gimmick"></param>
-    public void AddGimmickFromList(int uniqueId, GimmickBase gimmick)
+    public void AddGimmickFromList(string uniqueId, GimmickBase gimmick)
     {
         managedGimmicks.Add(uniqueId, gimmick);
     }
