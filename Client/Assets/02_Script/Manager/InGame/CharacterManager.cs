@@ -49,6 +49,8 @@ public class CharacterManager : MonoBehaviour
 
     const float updateSec = 0.1f;
 
+    public float UpdateSec { get { return updateSec; } }
+
     static CharacterManager instance;
     public static CharacterManager Instance
     {

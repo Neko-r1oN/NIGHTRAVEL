@@ -70,6 +70,15 @@ public class SawBladeManager : GimmickBase
     }
 
     /// <summary>
+    /// ギミック起動リクエスト
+    /// </summary>
+    void RequestActivateGimmick()
+    {
+        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+    }
+
+
+    /// <summary>
     /// ギミック再起動処理
     /// </summary>
     public override void Reactivate()
@@ -84,6 +93,6 @@ public class SawBladeManager : GimmickBase
     /// <param name="gimmickData"></param>
     public override void UpdateGimmick(GimmickData gimmickData)
     {
-        sawBlade.transform.position = gimmickData.Position;
+        sawBlade.transform.DOMove(gimmickData.Position, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
     }
 }
