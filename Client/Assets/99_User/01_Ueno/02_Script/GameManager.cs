@@ -206,13 +206,13 @@ public class GameManager : MonoBehaviour
         switch (type)
         {
             case STAGE_TYPE.Rust:
-                SceneManager.LoadScene("4_Stage_01");
+                Initiate.Fade("4_Stage_01", Color.black, 0.5f);
                 break;
             case STAGE_TYPE.Industry:
-                SceneManager.LoadScene("5_Stage_02");
+                Initiate.Fade("5_Stage_02", Color.black, 0.5f);
                 break;
             case STAGE_TYPE.Town:
-                SceneManager.LoadScene("Stage_03");
+                Initiate.Fade("Stage_03", Color.black, 0.5f);
                 break;
         }
         isGameStart = false;
@@ -233,7 +233,8 @@ public class GameManager : MonoBehaviour
     public void CangeResult()
     {
         SceneManager.UnloadSceneAsync("UIScene");
-        SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
+        Initiate.Fade("ResultScene", Color.black, 0.5f);
+        //SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
 
         isGameStart = false;
     }

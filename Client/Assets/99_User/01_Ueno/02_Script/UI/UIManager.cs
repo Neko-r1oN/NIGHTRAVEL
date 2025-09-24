@@ -18,6 +18,7 @@ using Random = UnityEngine.Random;
 using System.Linq;
 using System.Xml.Schema;
 using Cysharp.Threading.Tasks.Triggers;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -302,6 +303,12 @@ public class UIManager : MonoBehaviour
         else
         {
             ChangeSkillUI("Gunner");
+        }
+
+        if(SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            diffText.GetComponent<Transform>().parent.gameObject.SetActive(false);
+            tmText.GetComponent<Transform>().parent.gameObject.SetActive(false);
         }
     }
 
