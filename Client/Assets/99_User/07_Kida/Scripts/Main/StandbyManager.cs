@@ -41,7 +41,7 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnLeavedUser -= this.OnLeavedUser;
         RoomModel.Instance.OnReadySyn -= this.OnReadySyn;
         RoomModel.Instance.OnStartedGame -= this.OnStartedGame;
-
+        RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
     }
 
     public async void ReturnMaching()

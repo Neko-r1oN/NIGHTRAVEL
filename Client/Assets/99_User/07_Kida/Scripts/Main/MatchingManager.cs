@@ -86,6 +86,7 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnFailedJoinSyn -= this.OnFailedJoinSyn;
         RoomModel.Instance.OnSearchedRoom -= this.OnSearchedRoom;
         RoomModel.Instance.OnJoinedUser -= this.OnJoinedUser;
+        RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
     }
 
     public void ReturnTitle()

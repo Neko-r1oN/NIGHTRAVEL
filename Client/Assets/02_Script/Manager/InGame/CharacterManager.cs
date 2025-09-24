@@ -115,7 +115,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser -= this.OnLeave;
         RoomModel.Instance.OnEnemyHealthSyn -= this.OnHitEnemy;
-        RoomModel.Instance.OnChangedMasterClient += this.ActivateAllEnemies;
+        RoomModel.Instance.OnChangedMasterClient -= this.ActivateAllEnemies;
         RoomModel.Instance.OnShootedBullet -= this.OnShootedBullet;
         RoomModel.Instance.OnUpdateStatusSyn -= this.OnUpdatePlayerStatus;
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
@@ -174,17 +174,9 @@ public class CharacterManager : MonoBehaviour
 
         if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
-        // マスタークライアントの場合、敵が動けるようにする
-        if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
-        {
-            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-            character.enabled = true;
-        }
-        else
-        {
-            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-            character.enabled = false;
-        }
+        // 勝手に動かないように設定
+        character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        character.enabled = false;
     }
 
     #region プレイヤー関連
