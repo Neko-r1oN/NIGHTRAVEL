@@ -358,6 +358,7 @@ abstract public class CharacterBase : MonoBehaviour
         jumpPower = maxJumpPower;
         moveSpeed = maxMoveSpeed;
         attackSpeedFactor = maxAttackSpeedFactor;
+        healRate = maxHealRate;
         OverrideAnimaterParam();
     }
 

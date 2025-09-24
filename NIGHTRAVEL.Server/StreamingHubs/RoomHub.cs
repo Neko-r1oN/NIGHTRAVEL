@@ -1222,43 +1222,36 @@ namespace StreamingHubs
                     switch (relic.status_type)
                     {
                         case (int)STATUS_TYPE.HP:                   // HPの場合
-                            if (status.hp >= relic.max) break;
                             status.hp += relic.const_effect;
                             status.hp += (int)(status.hp * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.Defense:              // 防御力の場合
-                            if (status.defence >= relic.max) break;
                             status.defence += relic.const_effect;
                             status.defence += (int)(status.defence * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.Power:                // 攻撃力の場合
-                            if (status.power >= relic.max) break;
                             status.power += relic.const_effect;
                             status.power += (int)(status.power * relic.rate_effect);
                             break;
 
                         case (int)STATUS_TYPE.JumpPower:            // 跳躍力の場合
-                            if (status.jumpPower >= relic.max) break;
                             status.jumpPower += relic.const_effect;
                             status.jumpPower += status.jumpPower * relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.MoveSpeed:            // 移動速度の場合
-                            if (status.moveSpeed >= relic.max) break;
                             status.moveSpeed += relic.const_effect;
                             status.moveSpeed += status.moveSpeed * relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
-                            if (status.attackSpeedFactor >= relic.max) break;
                             status.attackSpeedFactor += relic.const_effect;
                             status.attackSpeedFactor += status.attackSpeedFactor * relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.HealRate:             // 自動回復速度の場合
-                            if (status.healRate >= relic.max) break;
                             status.healRate += relic.const_effect;
                             status.healRate += status.healRate * relic.rate_effect;
                             break;
