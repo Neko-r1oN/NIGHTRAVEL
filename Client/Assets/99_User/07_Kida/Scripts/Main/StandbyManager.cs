@@ -13,6 +13,7 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject fade;
     [SerializeField] Image[] characterImage;
+    [SerializeField] GameObject playerReadyFieldPrehub;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,6 +28,11 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnStartedGame += this.OnStartedGame;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
+
+        for (int i = 0; i < RoomModel.Instance.joinedUserList.Count; i++) 
+        {
+            Instantiate(playerReadyFieldPrehub);
+        }
 
     }
 
