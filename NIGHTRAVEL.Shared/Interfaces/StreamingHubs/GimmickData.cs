@@ -34,8 +34,8 @@ namespace Shared.Interfaces.StreamingHubs
 
         [Key(4)]
         /// <summary>
-        /// 回転
+        /// 向き
         /// </summary>
-        public Quaternion Rotation { get; set; }
+        public Vector2 Direction { get; set; }
     }
 }

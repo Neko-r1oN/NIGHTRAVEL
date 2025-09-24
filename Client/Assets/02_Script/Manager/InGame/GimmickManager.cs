@@ -68,7 +68,7 @@ public class GimmickManager : MonoBehaviour
                     UniqueID = gimmick.Key,
                     GimmickName = gimmick.Value.name,
                     Position = gimmick.Value.transform.position,
-                    Rotation = gimmick.Value.transform.rotation,
+                    Direction = gimmick.Value.transform.localScale,
                 };
 
                 gimmickDatas.Add(gimmickData);

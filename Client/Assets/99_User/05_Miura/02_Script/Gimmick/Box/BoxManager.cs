@@ -56,6 +56,7 @@ public class BoxManager : MonoBehaviour
     void SpawnObject(GameObject prefab, Vector2 spawnPos, string uniqueId)
     {
         var obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+        obj.GetComponent<GimmickBase>().UniqueId = uniqueId;
         GimmickManager.Instance.AddGimmickFromList(uniqueId, obj.GetComponent<GimmickBase>());
     }
 

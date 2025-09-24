@@ -70,6 +70,6 @@ abstract public class GimmickBase : MonoBehaviour
     public virtual void UpdateGimmick(GimmickData gimmickData)
     {
         transform.DOMove(gimmickData.Position, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
-        transform.DORotateQuaternion(gimmickData.Rotation, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
+        transform.localScale = gimmickData.Direction;
     }
 }
