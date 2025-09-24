@@ -26,7 +26,7 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
         public double rate_effect1 { get; set; }           //加算する割合1つ目の効果量
         public int type2 { get; set; }                     //ステータス強化タイプ2
         public double const_effect2 { get; set; }          //実数値2つ目の効果量
-        public double rate_effect2 { get; set; }          //加算する割合2つ目の効果量
+        public double rate_effect2 { get; set; }           //加算する割合2つ目の効果量
         public string enhancement_type { get; set; }       //ステータス強化の識別名
         public bool duplication { get; set; }              //重複の判定
         public DateTime Created_at { get; set; }            //生成日時

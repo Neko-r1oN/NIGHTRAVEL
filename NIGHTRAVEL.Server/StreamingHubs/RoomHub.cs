@@ -756,7 +756,7 @@ namespace StreamingHubs
             Random rand = new Random();
             var result = rand.Next(0, 100);
 
-            if (result <= value) return true;
+            if (result < value) return true;
             else return false;
 
         }
