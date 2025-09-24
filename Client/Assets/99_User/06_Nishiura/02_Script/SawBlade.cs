@@ -11,7 +11,6 @@ public class SawBlade : MonoBehaviour
     // “dŒ¹”»’è
     bool isPowerd;
 
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isPowerd == true && collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
@@ -32,6 +31,6 @@ public class SawBlade : MonoBehaviour
         // ‰ñ“]‚³‚¹‚é
         transform.DOLocalRotate(new Vector3(0, 0, 360f), 0.25f, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear)
-            .SetLoops(-1, LoopType.Restart);
+                        .SetLoops(-1, LoopType.Restart);
     }
 }

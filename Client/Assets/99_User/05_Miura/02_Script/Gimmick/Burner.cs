@@ -20,6 +20,7 @@ public class Burner : GimmickBase
     SpriteRenderer spriteRenderer;
     BoxCollider2D boxCollider;
 
+    bool isFlame;
     const float repeatRate = 3f;
     float timer = 0;        // マスタクライアントが自身に切り替わったとき用
 

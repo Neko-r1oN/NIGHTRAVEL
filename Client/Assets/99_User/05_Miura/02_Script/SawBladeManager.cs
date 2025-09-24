@@ -11,7 +11,7 @@ public class SawBladeManager : GimmickBase
 
     [SerializeField] GameObject sparkObj;
     [SerializeField] SawBlade sawBlade;
-    [SerializeField] AudioSource sawBladeSE;
+    [SerializeField] AudioSource sawBladeSE; //丸のこ稼働SE
 
     // 加力値
     public float addPower;
@@ -50,6 +50,13 @@ public class SawBladeManager : GimmickBase
                         scale.x *= -1;
                         transform.localScale = scale;
                     });
+
+        if(addPower<=0)
+        {
+            sparkObj.SetActive(false);
+        }
+
+        Debug.Log(addPower);
     }
 
     /// <summary>
@@ -57,6 +64,7 @@ public class SawBladeManager : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
+        //丸のこ稼働SEを再生する
         sawBladeSE.Play();
 
         //火花を散らす
@@ -67,6 +75,19 @@ public class SawBladeManager : GimmickBase
 
         //丸のこを回転させる
         sawBlade.StateRotet(); //SawBladeクラスのStateRotet関数を呼び出す
+
+        if(addPower==0)
+        {//addpowerが0か0以下だったら
+
+            //丸のこ稼働SEを再生する
+            sawBladeSE.Play();
+
+            //火花を非表示にする
+            sparkObj.SetActive(false);
+
+            //丸のこを移動させる
+            MoveBlade();
+        }
     }
 
     /// <summary>
