@@ -527,6 +527,7 @@ public class CharacterManager : MonoBehaviour
     /// <param name="masterClientData"></param>
     void OnUpdateMasterClient(MasterClientData masterClientData)
     {
+        if (RoomModel.Instance.IsMaster) return;
         if (!playerObjs.ContainsKey(masterClientData.PlayerData.ConnectionId)) return;
 
         // プレイヤーの情報更新
