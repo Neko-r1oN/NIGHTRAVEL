@@ -31,5 +31,11 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Nishiura
         /// </summary>
         public Vector2 Position { get; set; }
+
+        [Key(4)]
+        /// <summary>
+        /// 回転
+        /// </summary>
+        public Quaternion Rotation { get; set; }
     }
 }

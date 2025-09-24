@@ -68,6 +68,7 @@ public class GimmickManager : MonoBehaviour
                     UniqueID = gimmick.Key,
                     GimmickName = gimmick.Value.name,
                     Position = gimmick.Value.transform.position,
+                    Rotation = gimmick.Value.transform.rotation,
                 };
 
                 gimmickDatas.Add(gimmickData);
@@ -85,7 +86,9 @@ public class GimmickManager : MonoBehaviour
         foreach(var data in gimmickDatas)
         {
             if (managedGimmicks.ContainsKey(data.UniqueID))
+            {
                 managedGimmicks[data.UniqueID].UpdateGimmick(data);
+            }   
         }
     }
 

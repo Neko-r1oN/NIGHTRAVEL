@@ -7,6 +7,7 @@
 using DG.Tweening;
 using Shared.Interfaces.StreamingHubs;
 using System;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 
 abstract public class GimmickBase : MonoBehaviour
@@ -69,5 +70,6 @@ abstract public class GimmickBase : MonoBehaviour
     public virtual void UpdateGimmick(GimmickData gimmickData)
     {
         transform.DOMove(gimmickData.Position, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
+        transform.DORotateQuaternion(gimmickData.Rotation, CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
     }
 }
