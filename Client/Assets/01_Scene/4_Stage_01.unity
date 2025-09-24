@@ -63080,6 +63080,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8482712966869409322, guid: 71ded4628fb1b4644846902ac5d9d494, type: 3}
+      propertyPath: addPower
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8482712966869409322, guid: 71ded4628fb1b4644846902ac5d9d494, type: 3}
+      propertyPath: moveSpeed
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -83738,7 +83746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1913738095
 Transform:
   m_ObjectHideFlags: 0
