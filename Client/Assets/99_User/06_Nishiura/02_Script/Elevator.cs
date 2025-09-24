@@ -51,29 +51,6 @@ public class Elevator : GimmickBase
         }
     }
 
-    private void MoveElevator()
-    {
-        Invoke("MovingCheck", 4f);  //動作チェック
-        if (!isRised)
-        {   //上昇済みでない場合
-            tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
-            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
-
-            //移動SEを再生する
-            movementSE.Play();
-
-        }
-        else
-        {   //上昇済みの場合
-            tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
-            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
-
-            //移動SEを再生する
-            movementSE.Play();
-
-        }
-    }
-
     /// <summary>
     /// 動作確認関数
     /// </summary>
@@ -81,7 +58,6 @@ public class Elevator : GimmickBase
     {
         if (!isRised) 
         {   // 上昇していないと判断された場合
-            isRised=true;       // 上昇済みとする
 
             //到着SEを再生する
             arrivalSE.Play();
@@ -91,7 +67,6 @@ public class Elevator : GimmickBase
         }
         else
         {   // 上昇していると判断された場合
-            isRised = false;    // 下降済みとする
 
             //到着SEを再生する
             arrivalSE.Play();
