@@ -15,7 +15,6 @@ public class Burner : GimmickBase
     DebuffController statusEffectController;
     [SerializeField] GameObject flame;
     [SerializeField] AudioSource flameSE;
-    bool isFlame;
 
     NavMeshObstacle navMeshObstacle;
     SpriteRenderer spriteRenderer;
