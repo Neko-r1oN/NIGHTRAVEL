@@ -29,7 +29,12 @@ public class SawBladeManager : GimmickBase
         // このゲームオブジェクトのポジションを取得
         pos = this.transform.position;
 
-        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) Invoke("Request", 0.5f);
+    }
+
+    public void Request()
+    {
+        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
     }
 
     /// <summary>
@@ -70,8 +75,7 @@ public class SawBladeManager : GimmickBase
         //火花を散らす
         sparkObj.SetActive(true);
 
-        //丸のこを移動させる
-        MoveBlade();
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) MoveBlade();
 
         //丸のこを回転させる
         sawBlade.StateRotet(); //SawBladeクラスのStateRotet関数を呼び出す
