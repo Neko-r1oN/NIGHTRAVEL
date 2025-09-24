@@ -13,7 +13,7 @@ public class PressurePlate : GimmickBase
     private bool isPushed = false;
 
     // 関連付けられたギミックリスト
-    [SerializeField] List<GameObject> linkedGimmick = new List<GameObject>();
+    [SerializeField] List<GimmickBase> linkedGimmick = new List<GimmickBase>();
     [SerializeField] AudioSource pressSE;
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -32,9 +32,10 @@ public class PressurePlate : GimmickBase
         isPushed = true;
         this.transform.DOMoveY((this.gameObject.transform.position.y - 0.19f), 0.2f);
 
-        foreach (GameObject obj in linkedGimmick)
+        foreach (GimmickBase gimmick in linkedGimmick)
         {
-            obj.GetComponent<GimmickBase>().TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
+            var playerSelf = CharacterManager.Instance.PlayerObjSelf;
+            gimmick.TurnOnPowerRequest(playerSelf);
         }
     }
 }
