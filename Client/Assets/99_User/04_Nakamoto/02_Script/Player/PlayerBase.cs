@@ -398,15 +398,6 @@ abstract public class PlayerBase : CharacterBase
                 gameObject.layer = 21;
                 StartCoroutine(ScaffoldDown());
             }
-
-            //-----------------------------
-            // デバッグ用
-
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                // カメラのシェイク処理
-                cam.GetComponent<CameraFollow>().ShakeCamera();
-            }
         }
     }
 
@@ -522,7 +513,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (Ladder())
         {
-            if (Input.GetKey(KeyCode.UpArrow) && canBlink && canSkill && canAttack)
+            if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack)
             {
                 m_IsZipline = true;
                 ziplineSpark.SetActive(true);

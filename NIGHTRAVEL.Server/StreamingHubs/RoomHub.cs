@@ -6,6 +6,7 @@
 #region using一覧
 using Grpc.Core;
 using MagicOnion.Server.Hubs;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.Services;
@@ -15,8 +16,8 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using UnityEngine;
@@ -294,7 +295,21 @@ namespace StreamingHubs
                 }
 
                 // ルームデータから端末情報を取得し、アクティブ状態の端末を更新
-                roomContext.terminalList = masterClientData.TerminalDatas; 
+                if(masterClientData.TerminalDatas != null)
+                {
+                    foreach (var termData in masterClientData.TerminalDatas)
+                    {
+                        if(termData.State == TERMINAL_STATE.Active)
+                        {
+                            var data = roomContext.terminalList.FirstOrDefault(t => t.ID == termData.ID);
+
+                            if (data != null)
+                            {
+                                data.Time = termData.Time;
+                            }
+                        }
+                    }
+                }
 
                 foreach (var item in masterClientData.GimmickDatas)
                 {
@@ -607,7 +622,10 @@ namespace StreamingHubs
                 {
                     // 端末データを抽選・保存
                     var terminals = LotteryTerminal();
-                    roomContext.terminalList = terminals;
+                    foreach (var terminal in terminals)
+                    {
+                        this.roomContext.terminalList.Add(terminal);
+                    }
 
                     // 同期開始通知と共に端末データを送信
                     this.roomContext.Group.All.OnSameStart(terminals);
@@ -767,25 +785,30 @@ namespace StreamingHubs
         /// <param name="uniqueId"></param>
         public void DeleteEnemyData(string uniqueId)
         {
-            this.roomContext.enemyDataList.Remove(uniqueId);
-
-            // 以下に端末生成の敵の処理を記載
-            if (roomContext.terminalList == null) return;
-
-            foreach (var item in roomContext.terminalList)
+            lock (roomContextRepository)
             {
-                if (item.Type == EnumManager.TERMINAL_TYPE.Enemy && item.State == EnumManager.TERMINAL_STATE.Active ||
-                    item.Type == EnumManager.TERMINAL_TYPE.Elite && item.State == EnumManager.TERMINAL_STATE.Active)
-                {   // エネミーかエリートがアクティブになってる場合
-                    foreach (var enemyID in item.EnemyList)
-                    {   // 引数のユニークIDと一致する敵を検索、削除
-                        if (enemyID == uniqueId)
-                        {
-                            item.EnemyList.Remove(uniqueId);
+                this.roomContext.enemyDataList.Remove(uniqueId);
 
-                            if (item.EnemyList.Count == 0)
-                            {   // 端末の敵を全部倒した時
-                                this.roomContext.Group.All.OnTerminalsSuccess(item.ID);
+                // 以下に端末生成の敵の処理を記載
+                if (this.roomContext.terminalList == null) return;
+
+                foreach (var item in this.roomContext.terminalList)
+                {
+                    if (item.Type == EnumManager.TERMINAL_TYPE.Enemy && item.State == EnumManager.TERMINAL_STATE.Active ||
+                        item.Type == EnumManager.TERMINAL_TYPE.Elite && item.State == EnumManager.TERMINAL_STATE.Active)
+                    {   // エネミーかエリートがアクティブになってる場合
+                        foreach (var enemyID in item.EnemyList)
+                        {   // 引数のユニークIDと一致する敵を検索、削除
+                            if (enemyID == uniqueId)
+                            {
+                                item.EnemyList.Remove(uniqueId);
+
+                                if (item.EnemyList.Count == 0)
+                                {   // 端末の敵を全部倒した時
+                                    this.roomContext.Group.All.OnTerminalsSuccess(item.ID);
+                                }
+
+                                break;
                             }
                         }
                     }
@@ -943,7 +966,7 @@ namespace StreamingHubs
 
             for(int i = 0; i < haveCnt; i++)
             {
-                this.roomContext.relicDataList[connectionId].Add(DrawRelic(DrawRarity(true)));
+                this.roomContext.relicDataList[connectionId].Add(DrawRelic(DrawRarity(false)));
             }
         }
 

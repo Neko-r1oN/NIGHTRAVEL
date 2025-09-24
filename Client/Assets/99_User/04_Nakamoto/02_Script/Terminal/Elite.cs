@@ -35,7 +35,7 @@ public class Elite : TerminalBase
         isUsed = true; // 端末使用中にする
 
         if (RoomModel.Instance)
-            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
+            TerminalManager.Instance.TerminalDatas[terminalID-1].State = EnumManager.TERMINAL_STATE.Active;
         else
         {   // オフライン状態
             InvokeRepeating("CountDown", 1, 1);
