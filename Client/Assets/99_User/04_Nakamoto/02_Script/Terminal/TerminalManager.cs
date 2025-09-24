@@ -105,12 +105,25 @@ public class TerminalManager : MonoBehaviour
     {
         terminalDatas = list;
 
-        foreach (var data in list)
+        if(terminalObjs.Count == 0)
         {
-            var terminal = Instantiate(terminalPrefabs[(int)data.Type - 1], generatePos[data.ID - 1].transform.position, Quaternion.identity);
-            terminal.GetComponent<TerminalBase>().TerminalID = data.ID;
-            terminal.GetComponent<TerminalBase>().TerminalType = data.Type;
-            terminalObjs.Add(data.ID, terminal);
+            foreach (var data in list)
+            {
+                var terminal = Instantiate(terminalPrefabs[(int)data.Type - 1], generatePos[data.ID - 1].transform.position, Quaternion.identity);
+
+                if(data.ID == 2)
+                {
+                    terminal.transform.GetChild(0).GetComponent<TerminalBase>().TerminalID = data.ID;
+                    terminal.transform.GetChild(0).GetComponent<TerminalBase>().TerminalType = data.Type;
+                }
+                else
+                {
+                    terminal.GetComponent<TerminalBase>().TerminalID = data.ID;
+                    terminal.GetComponent<TerminalBase>().TerminalType = data.Type;
+                }
+
+                terminalObjs.Add(data.ID, terminal);
+            }
         }
     }
 
@@ -120,7 +133,7 @@ public class TerminalManager : MonoBehaviour
     /// <param name="termID"></param>
     public void DropRelic(int termID)
     {
-        terminalObjs[termID - 1].GetComponent<TerminalBase>().GiveRewardRequest();
+        terminalObjs[termID].GetComponent<TerminalBase>().GiveRewardRequest();
     }
 
     /// <summary>
@@ -130,7 +143,16 @@ public class TerminalManager : MonoBehaviour
     public void OnBootedTerminal(int id)
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Active;
-        terminalObjs[id - 1].GetComponent<TerminalBase>().BootTerminal();
+
+        if(id == 2)
+        {
+            GameObject child = terminalObjs[id].transform.GetChild(0).gameObject;
+            child.GetComponent<TerminalBase>().BootTerminal();
+        }
+        else
+        {
+            terminalObjs[id].GetComponent<TerminalBase>().BootTerminal();
+        }
     }
 
     /// <summary>
@@ -139,8 +161,8 @@ public class TerminalManager : MonoBehaviour
     /// <param name="id"></param>
     public void OnTerminalsSuccessed(int id)
     {
-        terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Success;
-        terminalObjs[id - 1].GetComponent<TerminalBase>().BootTerminal();
+        terminalDatas[id-1].State = EnumManager.TERMINAL_STATE.Success;
+        terminalObjs[id].GetComponent<TerminalBase>().SuccessTerminal();
     }
 
     /// <summary>
@@ -150,7 +172,7 @@ public class TerminalManager : MonoBehaviour
     public void OnTerminalFailured(int id)
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Failure;
-        terminalObjs[id - 1].GetComponent<TerminalBase>().FailureTerminal();
+        terminalObjs[id].GetComponent<TerminalBase>().FailureTerminal();
     }
 
     /// <summary>

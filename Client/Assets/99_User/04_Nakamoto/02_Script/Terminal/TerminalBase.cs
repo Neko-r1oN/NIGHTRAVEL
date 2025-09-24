@@ -37,7 +37,7 @@ public abstract class TerminalBase : MonoBehaviour
     protected int currentTime;
 
     // 敵生成数
-    protected const int SPAWN_ENEMY_NUM = 6;
+    protected const int SPAWN_ENEMY_NUM = 5;
 
     #endregion
 
@@ -67,7 +67,7 @@ public abstract class TerminalBase : MonoBehaviour
     [SerializeField] protected SpriteRenderer iconSprite;
 
     // 制限時間
-    [SerializeField] protected int limitTime = 25;
+    [SerializeField] protected int limitTime = 40;
 
     // レリック生成位置
     [SerializeField] protected Transform[] relicSpawnPoints;
@@ -175,6 +175,12 @@ public abstract class TerminalBase : MonoBehaviour
     /// </summary>
     public virtual async void BootRequest()
     {
+        if(terminalType == EnumManager.TERMINAL_TYPE.Jumble)
+        {
+            Debug.Log("レリックがありません");
+            if (RelicManager.Instance.HaveRelicList.Count == 0) return;
+        }
+
         isUsed = true; // 起動済みにする
 
         // 起動リクエストをサーバーに送信

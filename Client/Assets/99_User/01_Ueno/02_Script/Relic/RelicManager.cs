@@ -27,6 +27,8 @@ public class RelicManager : MonoBehaviour
     [SerializeField] List<GameObject> relicSpawnPos = new List<GameObject>();
     [SerializeField] GameObject relicPrefab;
     [SerializeField] List<Material> rarityMaterial = new List<Material>();
+
+    public List<RelicData> HaveRelicList {  get { return haveRelicList; } }
     #endregion
 
     float elapsedTime;

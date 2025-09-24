@@ -146,7 +146,7 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// <summary>
         /// 端末情報リスト
         /// </summary>
-        public List<TerminalData> terminalList { get; set; } = new List<TerminalData>();
+        public List<TerminalData> terminalList { get; } = new List<TerminalData>();
 
         /// <summary>
         /// 取得アイテムリスト

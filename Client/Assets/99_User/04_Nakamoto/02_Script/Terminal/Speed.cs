@@ -2,6 +2,7 @@
 // スピードランターミナル [ Speed.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using DG.Tweening;
 using KanKikuchi.AudioManager;
 using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
@@ -87,6 +88,12 @@ public class Speed : TerminalBase
             if (pointList.Count <= 0)
             { // リストが空になった場合、報酬を付与する
                 CancelInvoke("CountDown");
+
+                // ターミナル非表示
+                timerText.text = "";
+                terminalSprite.DOFade(0, 2.5f);
+                iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
+
                 GiveRewardRequest();
             }
         }

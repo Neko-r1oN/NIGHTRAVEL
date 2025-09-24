@@ -2,6 +2,7 @@
 // 取引ターミナル [ Deal.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using DG.Tweening;
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 
@@ -47,10 +48,14 @@ public class Deal : TerminalBase
         isUsed = true; // 端末使用中にする
 
         if (RoomModel.Instance)
-            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Success;
+            TerminalManager.Instance.TerminalDatas[terminalID-1].State = EnumManager.TERMINAL_STATE.Success;
 
         // レリック生成リクエスト
         GiveRewardRequest();
+
+        // ターミナル非表示
+        terminalSprite.DOFade(0, 2.5f);
+        iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
     }
 
     /// <summary>
