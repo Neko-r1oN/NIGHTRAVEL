@@ -174,9 +174,17 @@ public class CharacterManager : MonoBehaviour
 
         if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
-        // 勝手に動かないように設定
-        character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        character.enabled = false;
+        // 自身がマスタークライアントの場合、敵が動けるようにする
+        if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            character.enabled = true;
+        }
+        else
+        {
+            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            character.enabled = false;
+        }
     }
 
     #region プレイヤー関連
