@@ -653,6 +653,7 @@ abstract public class EnemyBase : CharacterBase
         // ”ÍˆÍŠO‚É‚Å‚½‚ç”jŠü‚·‚é
         if (!canIgnoreDeadZoneCollision && collision.gameObject.tag == "Gimmick/Abyss")
         {
+            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
             Destroy(gameObject);
         }
     }
