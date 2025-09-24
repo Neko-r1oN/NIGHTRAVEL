@@ -50,7 +50,6 @@ public class PressMachine : GimmickBase
     /// </summary>
     public override void Reactivate()
     {
-        DOTween.Clear(this.transform);
         transform.localPosition = Vector3.zero;
         MovePress();
     }
