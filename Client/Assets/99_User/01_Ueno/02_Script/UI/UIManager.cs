@@ -154,7 +154,9 @@ public class UIManager : MonoBehaviour
     [Foldout("ステータスアイコン関連")]
     [SerializeField] List<Sprite> statusIcons;
     [Foldout("ステータスアイコン関連")]
-    [SerializeField] List<Image> iconImages; 
+    [SerializeField] List<Image> iconImages;
+    [Foldout("ステータスアイコン関連")]
+    [SerializeField] List<Material> rarityMaterials;
 
     private bool isInputGamePad;                         // ゲームパッド入力かどうか
 
@@ -375,20 +377,6 @@ public class UIManager : MonoBehaviour
                 bossHpBar.value = boss.HP;
                 bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
             }
-
-            
-        }
-
-        if (player.HP <= 0)
-        {
-            playerHpBar.value = 0;
-            playerSliderText.text = "0";
-            DisplaySpectatingPlayer();
-
-            if (CheckAllPlayersDead())
-            {
-                GameManager.Instance.CangeResult();
-            }
         }
     }
 
@@ -515,10 +503,13 @@ public class UIManager : MonoBehaviour
             int currentIndex = 0;
             foreach(var item in pair.Value)
             {
+                statusItemText[currentIndex].transform.parent.GetComponent<Image>().material
+                    = rarityMaterials[(int)item.Rarity - 1];
                 statusItemText[currentIndex].text = item.Name;
                 statusExplanationsTexts[currentIndex].text = item.Explanation;
 
                 iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
+                
 
                 currentIndex++;
             }
@@ -597,6 +588,8 @@ public class UIManager : MonoBehaviour
         int currentIndex = 0;
         foreach (var item in data)
         {
+            statusItemText[currentIndex].transform.parent.GetComponent<Image>().material
+                    = rarityMaterials[(int)item.Rarity - 1];
             statusItemText[currentIndex].text = item.Name;
             statusExplanationsTexts[currentIndex].text = item.Explanation;
 
@@ -951,6 +944,18 @@ public class UIManager : MonoBehaviour
         foreach (Image relic in relicImages)
         {
             relic.enabled = false;
+        }
+    }
+
+    public void OnDeadPlayer()
+    {
+        playerHpBar.value = 0;
+        playerSliderText.text = "0";
+        DisplaySpectatingPlayer();
+
+        if (!RoomModel.Instance && CheckAllPlayersDead())
+        {
+            GameManager.Instance.CangeResult();
         }
     }
 
