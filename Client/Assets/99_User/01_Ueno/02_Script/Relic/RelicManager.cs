@@ -84,7 +84,7 @@ public class RelicManager : MonoBehaviour
         }
         else
         {
-            UIManager.Instance.DisplayRelic(relicSprites[(int)relic.ID]);
+            UIManager.Instance.DisplayRelic(relicSprites[(int)relic.ID - 1],relic);
         }
 
         haveRelicList.Add(relic);
@@ -104,7 +104,7 @@ public class RelicManager : MonoBehaviour
             relic.GetComponent<Item>().UniqueId = data.Key;
 
             relic.GetComponent<Relic>().RelicData = 
-                new RelicData(data.Value.RelicType,data.Value.RarityType,data.Value.Name);
+                new RelicData(data.Value.RelicType,data.Value.RarityType,data.Value.Name,data.Value.ExplanationText);
 
             SpriteRenderer spriteRenderer = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
             SpriteRenderer sr = relic.transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -164,8 +164,7 @@ public class RelicManager : MonoBehaviour
         foreach(var relic in relics)
         {
             // レリックデータの作成
-            var data = new RelicData(relic.RelicType, relic.RarityType,relic.Name);
-            data.Name = relic.Name;
+            var data = new RelicData(relic.RelicType, relic.RarityType,relic.Name,relic.ExplanationText);
 
             AddRelic(data);
         }

@@ -21,6 +21,7 @@ public class SinglePlayManager : MonoBehaviour
     public void BackTitleButton()
     {
         //SceneManager.LoadScene("TitleScene");
+        Initiate.DoneFading();
         Initiate.Fade("TitleScene", Color.black, 1.0f);   // フェード時間1秒
     }
 

@@ -3,6 +3,7 @@
 // Author:木田晃輔
 //=============================
 using MessagePack;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
@@ -201,7 +202,7 @@ namespace Shared.Interfaces.StreamingHubs
             MoveSpeed,
             AttackSpeedFactor,
             HealRate,
-
+            
             // レリックステータス (PlayerRelicStatusDataのプロパティ参照)
             BurningRate,
             CoolingRate,

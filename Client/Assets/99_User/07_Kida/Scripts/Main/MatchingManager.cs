@@ -90,6 +90,7 @@ public class MatchingManager : MonoBehaviour
 
     public void ReturnTitle()
     {
+        Initiate.DoneFading();
         Initiate.Fade("1_TitleScene", Color.black, 1.0f);   // フェード時間1秒
     }
 

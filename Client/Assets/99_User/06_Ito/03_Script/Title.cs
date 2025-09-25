@@ -21,6 +21,7 @@ public class Title : MonoBehaviour
     public void SinglePlayButton()
     {
         //SceneManager.LoadScene("SinglePlayScene");
+        Initiate.DoneFading();
         Initiate.Fade("SinglePlayScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
@@ -30,6 +31,7 @@ public class Title : MonoBehaviour
     public void OnlineButton()
     {
         //SceneManager.LoadScene("OnlineMultiScene");
+        Initiate.DoneFading();
         Initiate.Fade("OnlineMultiScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
@@ -39,6 +41,7 @@ public class Title : MonoBehaviour
     public void DataListButton()
     {
         //SceneManager.LoadScene("DataListScene");
+        Initiate.DoneFading();
         Initiate.Fade("DataListScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
@@ -48,6 +51,7 @@ public class Title : MonoBehaviour
     public void SettingButton()
     {
         //SceneManager.LoadScene("SettingScene");
+        Initiate.DoneFading();
         Initiate.Fade("SettingScene", Color.black, 1.0f);   // フェード時間1秒
     }
 }

@@ -106,6 +106,7 @@ public class TitleManagerk : MonoBehaviour
 
     public void MultiPlayStart()
     {
+        Initiate.DoneFading();
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 }
