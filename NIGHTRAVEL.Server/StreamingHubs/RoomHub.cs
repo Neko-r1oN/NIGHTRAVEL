@@ -94,6 +94,8 @@ namespace StreamingHubs
                     room.password = pass;
                     room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName,room.password);
+
+                    this.roomContext.IsStartGame = false;
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
@@ -105,11 +107,13 @@ namespace StreamingHubs
                     room.password = pass;
                     room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName, room.password);
+
+                    this.roomContext.IsStartGame = false;
                 }
                 this.roomContext.Group.Add(this.ConnectionId, Client);
 
-                if (this.roomContext.JoinedUserList.Count >= MAX_JOINABLE_PLAYERS)
-                {//参加人数が満員の場合
+                if (this.roomContext.JoinedUserList.Count >= MAX_JOINABLE_PLAYERS || this.roomContext.IsStartGame)
+                {//参加人数が満員の場合 or 既にゲーム開始している場合 は参加できないようにする
                     this.roomContext.Group.Only([this.ConnectionId]).OnFailedJoin(0);
                     this.roomContext.Group.Remove(this.ConnectionId);
                     return JoinedUsers;
@@ -253,6 +257,8 @@ namespace StreamingHubs
                 if (canStartGame)
                 {
                     this.roomContext.Group.All.OnStartGame();
+
+                    this.roomContext.IsStartGame = true;
 
                     // 現在時刻を代入
                     this.roomContext.startTime = DateTime.Now;
