@@ -982,9 +982,10 @@ namespace StreamingHubs
             foreach (var rel in list)
             {
                 var data = new DropRelicData();
-                data.uniqueId = rel.id.ToString();
+                data.RelicType = (EnumManager.RELIC_TYPE)rel.id;
                 data.RarityType = (RARITY_TYPE)rel.rarity;
                 data.Name = rel.name;
+                data.ExplanationText = rel.explanation;
                 relicList.Add(data);
             }
 
