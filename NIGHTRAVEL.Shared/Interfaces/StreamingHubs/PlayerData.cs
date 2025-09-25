@@ -22,18 +22,11 @@ namespace Shared.Interfaces.StreamingHubs
 
         [Key(9)]
         /// <summary>
-        /// プレイヤーID
-        /// Author:Nishiura
-        /// </summary>
-        public int PlayerID { get; set; }
-
-        [Key(10)]
-        /// <summary>
         /// 死亡判定
         /// </summary>
         public bool IsDead { get; set; } = false;
 
-        [Key(11)]
+        [Key(10)]
         /// <summary>
         /// キャラクターのクラス
         /// </summary>
