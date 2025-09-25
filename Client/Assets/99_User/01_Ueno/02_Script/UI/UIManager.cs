@@ -150,7 +150,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image[] gunIconImages;              // 銃アイコン画像一覧
     [Foldout("ACTアイコンUI")]                           
     [SerializeField] GameObject gunSkillLockObj;         // ブリンククールダウン
-                                                         
+
+    [Foldout("ステータスアイコン関連")]
+    [SerializeField] List<Sprite> statusIcons;
+    [Foldout("ステータスアイコン関連")]
+    [SerializeField] List<Image> iconImages; 
+
     private bool isInputGamePad;                         // ゲームパッド入力かどうか
 
     public bool IsInputGamePad { get { return isInputGamePad; } }
@@ -511,6 +516,8 @@ public class UIManager : MonoBehaviour
                 statusItemText[currentIndex].text = item.Name;
                 statusExplanationsTexts[currentIndex].text = item.Explanation;
 
+                iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
+
                 currentIndex++;
             }
         }
@@ -590,6 +597,8 @@ public class UIManager : MonoBehaviour
         {
             statusItemText[currentIndex].text = item.Name;
             statusExplanationsTexts[currentIndex].text = item.Explanation;
+
+            iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
 
             currentIndex++;
         }   
