@@ -88,7 +88,6 @@ public class RelicManager : MonoBehaviour
         }
 
         haveRelicList.Add(relic);
-        //Debug.Log(haveRelicList[haveRelicList.Count - 1]);
     }
 
     /// <summary>
@@ -98,8 +97,6 @@ public class RelicManager : MonoBehaviour
     {
         foreach (var data in relicDatas)
         {
-            //RARITY_TYPE randomRarity = DrawRarity(false);
-
             relic = Instantiate(relicPrefab, data.Value.SpawnPos, Quaternion.identity);
             relic.GetComponent<Item>().UniqueId = data.Key;
 
