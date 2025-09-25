@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using DG.Tweening;                   //DOTweenを使うときはこのusingを入れる
 using KanKikuchi.AudioManager;
+using Unity.VisualScripting;
 
 public class TitleManagerk : MonoBehaviour
 {
@@ -59,6 +60,9 @@ public class TitleManagerk : MonoBehaviour
         BGMManager.Instance.FadeIn(1.0f);
         //全てのSEをフェードイン
         SEManager.Instance.FadeIn(13.0f);
+
+        //ルームモデルがあるなら削除
+        Destroy(GameObject.Find("RoomModel"));
     }
 
     public void OpenOptionButton()
