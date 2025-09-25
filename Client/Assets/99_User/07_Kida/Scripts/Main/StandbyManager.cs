@@ -26,8 +26,6 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnReadySyn += this.OnReadySyn;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnStartedGame += this.OnStartedGame;
-        //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
-        RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
 
         for (int i = 0; i < RoomModel.Instance.joinedUserList.Count; i++) 
         {
@@ -38,15 +36,16 @@ public class StandbyManager : MonoBehaviour
 
     private void OnDisable()
     {
+        RoomModel.Instance.OnJoinedUser -= OnJoinedUser;
         RoomModel.Instance.OnLeavedUser -= this.OnLeavedUser;
         RoomModel.Instance.OnReadySyn -= this.OnReadySyn;
         RoomModel.Instance.OnStartedGame -= this.OnStartedGame;
-        RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
     }
 
     public async void ReturnMaching()
     {
         await RoomModel.Instance.LeavedAsync();
+        Initiate.DoneFading();
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
@@ -164,13 +163,4 @@ public class StandbyManager : MonoBehaviour
         Invoke("Loaded", 1.0f);
 
     }
-
-    public void OnChangedMasterClient()
-    {
-        Debug.Log("あなたがマスタークライアントになりました。");
-        RoomModel.Instance.IsMaster = true;
-        //SpawnManager.Instance.SpawnCnt = CharacterManager.Instance.Enemies.Count;
-    }
-
-
 }

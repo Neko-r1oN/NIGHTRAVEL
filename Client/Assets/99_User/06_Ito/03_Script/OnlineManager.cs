@@ -21,6 +21,7 @@ public class OnlineManager : MonoBehaviour
     public void BackTitleButton()
     {
         //SceneManager.LoadScene("TitleScene");
+        Initiate.DoneFading();
         Initiate.Fade("Title Ueno", Color.black, 1.0f);   // フェード時間1秒
     }
 }

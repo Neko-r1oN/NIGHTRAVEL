@@ -1284,43 +1284,19 @@ namespace StreamingHubs
                 {
                     switch (relic.status_type)
                     {
-                        case (int)STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
-                            if (relicStatus.ScatterBugCnt >= relic.max) break;
-                            relicStatus.ScatterBugCnt += relic.const_effect;
-                            relicStatus.ScatterBugCnt += (int)relic.rate_effect;
-                            break;
-
-                        case (int)STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
-                            if (relicStatus.DigitalMeatCnt >= relic.max) break;
-                            relicStatus.DigitalMeatCnt += relic.const_effect;
-                            relicStatus.DigitalMeatCnt += (int)relic.rate_effect;
-                            break;
-
-                        case (int)STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
-                            //if (relicStatus.BuckupHDMICnt >= relic.max) break;
-                            relicStatus.BuckupHDMICnt += relic.const_effect;
-                            relicStatus.BuckupHDMICnt += (int)relic.rate_effect;
-                            break;
-
-                        case (int)STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
-                            if (relicStatus.ChargedCoreCnt >= relic.max) break;
-                            relicStatus.ChargedCoreCnt += relic.const_effect;
-                            relicStatus.ChargedCoreCnt += (int)relic.rate_effect;
-                            break;
-
-                        case (int)DEBUFF_TYPE.Burn:                 // 炎上確率の場合
+                        case (int)STATUS_TYPE.BurningRate:                 // 炎上確率の場合
                             if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.const_effect;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Burn] += relic.rate_effect;
                             break;
 
-                        case (int)DEBUFF_TYPE.Freeze:               // 凍結確率の場合
+                        case (int)STATUS_TYPE.CoolingRate:               // 凍結確率の場合
                             if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.const_effect;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Freeze] += relic.rate_effect;
                             break;
 
-                        case (int)DEBUFF_TYPE.Shock:                // 感電確率の場合
+                        case (int)STATUS_TYPE.ShokingRate:                // 感電確率の場合
                             if (relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] >= relic.max) break;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.const_effect;
                             relicStatus.GiveDebuffRates[DEBUFF_TYPE.Shock] += relic.rate_effect;
@@ -1338,6 +1314,12 @@ namespace StreamingHubs
                             relicStatus.RegainCodeRate += relic.rate_effect;
                             break;
 
+                        case (int)STATUS_TYPE.ScatterBugCnt:    //スキャッターバグの場合
+                            if (relicStatus.ScatterBugCnt >= relic.max) break;
+                            relicStatus.ScatterBugCnt += relic.const_effect;
+                            relicStatus.ScatterBugCnt += (int)relic.rate_effect;
+                            break;
+
                         case (int)STATUS_TYPE.HolographicArmorRate: // 回避率の場合
                             if (relicStatus.HolographicArmorRate >= relic.max) break;
                             relicStatus.HolographicArmorRate += relic.const_effect;
@@ -1348,6 +1330,12 @@ namespace StreamingHubs
                             if (relicStatus.MouseRate >= relic.max) break;
                             relicStatus.MouseRate += relic.const_effect;
                             relicStatus.MouseRate += relic.rate_effect;
+                            break;
+
+                        case (int)STATUS_TYPE.DigitalMeatCnt:   // デジタルミートの場合
+                            if (relicStatus.DigitalMeatCnt >= relic.max) break;
+                            relicStatus.DigitalMeatCnt += relic.const_effect;
+                            relicStatus.DigitalMeatCnt += (int)relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.FirewallRate:         // 被ダメ軽減率の場合
@@ -1368,6 +1356,12 @@ namespace StreamingHubs
                             relicStatus.RugrouterRate += relic.rate_effect;
                             break;
 
+                        case (int)STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
+                            //if (relicStatus.BuckupHDMICnt >= relic.max) break;
+                            relicStatus.BuckupHDMICnt += relic.const_effect;
+                            relicStatus.BuckupHDMICnt += (int)relic.rate_effect;
+                            break;
+
                         case (int)STATUS_TYPE.IdentificationAIRate: // デバフ的に対するダメUP率の場合
                             if (relicStatus.IdentificationAIRate >= relic.max) break;
                             relicStatus.IdentificationAIRate += relic.const_effect;
@@ -1378,6 +1372,12 @@ namespace StreamingHubs
                             if (relicStatus.DanborDollRate >= relic.max) break;
                             relicStatus.DanborDollRate += relic.const_effect;
                             relicStatus.DanborDollRate += relic.rate_effect;
+                            break;
+
+                        case (int)STATUS_TYPE.ChargedCoreCnt:   // 感電オーブの場合
+                            if (relicStatus.ChargedCoreCnt >= relic.max) break;
+                            relicStatus.ChargedCoreCnt += relic.const_effect;
+                            relicStatus.ChargedCoreCnt += (int)relic.rate_effect;
                             break;
 
                         case (int)STATUS_TYPE.IllegalScriptRate:    // クリティカルオーバーキル発生率の場合

@@ -90,9 +90,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     #region プレイヤー・マスタクライアント
 
-    //マスタークライアント譲渡
-    public Action<JoinedUser> OnMasteredClient { get; set; }
-
     //マスタークライアントの変更通知
     public Action OnChangedMasterClient { get; set; }
 
@@ -358,6 +355,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnChangeMasterClient()
     {
         OnChangedMasterClient();
+        Debug.Log("あなたがマスタークライアントになりました");
+        IsMaster = true;
     }
 
     /// <summary>

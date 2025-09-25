@@ -70,8 +70,6 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnFailedJoinSyn += this.OnFailedJoinSyn;
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnJoinedUser += this.OnJoinedUser;
-        //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
-        RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
         #endregion
 
         SerchRoom();
@@ -84,13 +82,12 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnSearchedRoom -= this.OnSearchedRoom;
         RoomModel.Instance.OnCreatedRoom -= this.OnCreatedRoom;
         RoomModel.Instance.OnFailedJoinSyn -= this.OnFailedJoinSyn;
-        RoomModel.Instance.OnSearchedRoom -= this.OnSearchedRoom;
         RoomModel.Instance.OnJoinedUser -= this.OnJoinedUser;
-        RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
     }
 
     public void ReturnTitle()
     {
+        Initiate.DoneFading();
         Initiate.Fade("1_TitleScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
@@ -247,13 +244,6 @@ public class MatchingManager : MonoBehaviour
             Debug.Log(data.UserData.Name + "が入室しました。");
 
         }     
-    }
-
-    public void OnChangedMasterClient()
-    {
-        Debug.Log("あなたがマスタークライアントになりました。");
-        RoomModel.Instance.IsMaster = true;
-        //SpawnManager.Instance.SpawnCnt = CharacterManager.Instance.Enemies.Count;
     }
     #endregion
 }

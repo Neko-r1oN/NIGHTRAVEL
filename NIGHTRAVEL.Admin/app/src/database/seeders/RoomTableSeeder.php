@@ -13,9 +13,6 @@ class RoomTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Room::create([
-            'roomName' => 'sample',
-            'userName' => 'sample_name'
-        ]);
+
     }
 }
