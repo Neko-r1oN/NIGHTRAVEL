@@ -17,7 +17,7 @@ public class menu : MonoBehaviour
         isClick = false;
 
         // ボタンコンポーネントの取得
-        button = GameObject.Find("/Canvas/Buttons/Button(Solo)").GetComponent<Button>();
+        button = GameObject.Find("/Camera/Canvas/Buttons/Button(Solo)").GetComponent<Button>();
 
         // 最初に選択状態にしたいボタンの設定
         //cube.Select();
