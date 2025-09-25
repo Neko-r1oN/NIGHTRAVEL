@@ -14,8 +14,8 @@ public class BaseModel : MonoBehaviour
 {
 #if DEBUG
     //localhost‚©Azure‚ÌURL‚ð“ü‚ê‚é
-    public const string ServerURL = "http://localhost:5244";
-    //public const string ServerURL = "http://car-boom-crash.japaneast.cloudapp.azure.com:5244";
+    //public const string ServerURL = "http://localhost:5244";
+    public const string ServerURL = "http://car-boom-crash.japaneast.cloudapp.azure.com:5244";
 #else
     public const string ServerURL = "http://car-boom-crash.japaneast.cloudapp.azure.com:5244";
 #endif
