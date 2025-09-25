@@ -219,7 +219,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: e8a3012562af92541b37f90eb1310999, type: 3}
   m_Resource: {fileID: 8300000, guid: e8a3012562af92541b37f90eb1310999, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -584,6 +584,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f9eb759882493419104399da508f4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pressUP: {fileID: 0}
+  pressDown: {fileID: 0}
 --- !u!61 &2000036924250238618
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -895,7 +897,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 250a6bba0729f324f9ae24a1ab7c7f1a, type: 3}
   m_Resource: {fileID: 8300000, guid: 250a6bba0729f324f9ae24a1ab7c7f1a, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1557,6 +1559,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f9eb759882493419104399da508f4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pressUP: {fileID: 0}
+  pressDown: {fileID: 0}
 --- !u!1 &6235900635244208750
 GameObject:
   m_ObjectHideFlags: 0
