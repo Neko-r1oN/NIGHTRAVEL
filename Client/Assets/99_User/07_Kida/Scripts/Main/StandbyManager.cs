@@ -12,8 +12,10 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] GameObject[] characters;
     [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject fade;
-    [SerializeField] Image[] characterImage;
+    [SerializeField] GameObject[] characterImage;
     [SerializeField] GameObject playerReadyFieldPrehub;
+    [SerializeField] GameObject readyButton;
+    [SerializeField] Text characterNameText;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -51,7 +53,11 @@ public class StandbyManager : MonoBehaviour
 
     public void ChangeCharacter(int changeCharacterId)
     {
-        characterImage[characterId].enabled = false;
+        readyButton.SetActive(true);
+        characterImage[characterId].SetActive(false);
+        characterImage[changeCharacterId].SetActive(true);
+        characterId = changeCharacterId;
+        characterNameText.text = characterImage[characterId].name;
     }
 
     private void Loaded()

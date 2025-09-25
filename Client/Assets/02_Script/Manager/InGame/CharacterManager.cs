@@ -285,7 +285,6 @@ public class CharacterManager : MonoBehaviour
             DebuffList = statusEffectController.GetAppliedStatusEffects(),
 
             // ˆÈ‰º‚Íê—p•Ï”
-            PlayerID = 0,   // ######################################################### ‚Æ‚è‚ ‚¦‚¸0ŒÅ’è
             ConnectionId = RoomModel.Instance.ConnectionId,
             IsDead = false
         };
