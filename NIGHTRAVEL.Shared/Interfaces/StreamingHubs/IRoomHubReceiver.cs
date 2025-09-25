@@ -37,7 +37,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// 参加失敗の通知
         /// Author:Kida
         /// </summary>
-        void OnFailedJoin();
+        void OnFailedJoin(int errorId);
 
         /// <summary>
         /// ユーザーの入室通知

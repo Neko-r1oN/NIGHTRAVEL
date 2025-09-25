@@ -40,7 +40,7 @@ public class MatchingManager : MonoBehaviour
     [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject CreateButton; //生成ボタン
     [SerializeField] GameObject PrivateUI;
-    [SerializeField] GameObject ErrorUI;
+    [SerializeField] GameObject[] ErrorUI;
     [SerializeField] GameObject fade;
     #endregion
     public List<GameObject> createdRoomList; //作られたルーム
@@ -54,6 +54,7 @@ public class MatchingManager : MonoBehaviour
     Text passText;      //パスワード
     string joinRoomName;
     string roomSerchName;
+    int errorId;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -93,7 +94,7 @@ public class MatchingManager : MonoBehaviour
 
     public void ErrorClose()
     {
-        ErrorUI.SetActive(false);
+        ErrorUI[errorId].SetActive(false);
     }
 
     public async void SerchRoom()
@@ -220,11 +221,20 @@ public class MatchingManager : MonoBehaviour
         Invoke("Loaded", 1.0f);
     }
 
-    public void OnFailedJoinSyn()
+    public void OnFailedJoinSyn(int errorId)
     {
-        PrivateUI.SetActive(false);
-        ErrorUI.SetActive(true);
-        conducter.Loaded();
+        this.errorId = errorId;
+        if(this.errorId == 0) 
+        {
+            ErrorUI[this.errorId].SetActive(true);
+            conducter.Loaded();
+        }
+        if(this.errorId == 1)
+        {
+            PrivateUI.SetActive(false);
+            ErrorUI[this.errorId].SetActive(true);
+            conducter.Loaded();
+        }
     }
 
     public void OnCreatedRoom()

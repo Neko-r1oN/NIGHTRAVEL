@@ -34,7 +34,7 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Kida
         /// </summary>
         /// <returns></returns>
-        Task LeavedAsync();
+        Task LeavedAsync(bool isEnd);
 
         /// <summary>
         /// 準備完了

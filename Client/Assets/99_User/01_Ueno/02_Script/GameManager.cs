@@ -226,6 +226,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void OnGameEnd(ResultData resultData)
     {
+        UIManager.Instance.OnDeadPlayer();
         this.resultData = resultData;
         CangeResult();
     }
@@ -238,7 +239,8 @@ public class GameManager : MonoBehaviour
         Initiate.DoneFading();
         SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
         //Initiate.Fade("ResultScene", Color.black, 0.5f);
-        SceneManager.UnloadSceneAsync("UIScene");
+        //SceneManager.UnloadSceneAsync("UIScene");
+        UIManager.Instance.HideCanvas();
 
         isGameStart = false;
     }

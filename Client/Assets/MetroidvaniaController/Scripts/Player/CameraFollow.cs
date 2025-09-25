@@ -63,6 +63,7 @@ public class CameraFollow : MonoBehaviour
 
     private void LateUpdate()
     {
+		if(Target == null) return;
         Vector3 newPosition = Target.position;
 
         // カメラの位置をステージの範囲内に制限
