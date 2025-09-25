@@ -42,7 +42,7 @@ public class LevelManager : MonoBehaviour
     {
         if (!RoomModel.Instance)
         {
-            //SetTestData();  // テスト用、不要になり次第削除
+            SetTestData();  // テスト用、不要になり次第削除
             return;
         }
         else
@@ -62,13 +62,13 @@ public class LevelManager : MonoBehaviour
         List<StatusUpgrateOptionData> statusesGroup1 = new List<StatusUpgrateOptionData>();
         List<StatusUpgrateOptionData> statusesGroup2 = new List<StatusUpgrateOptionData>();
 
-        statusesGroup1.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_Attack, Name = "攻撃", Explanation = "攻撃が上がる" });
-        statusesGroup1.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_MovementSpeed, Name = "スピード", Explanation = "スピード上がる" });
-        statusesGroup1.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_Deffence, Name = "防御", Explanation = "防御上がる" });
+        statusesGroup1.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_Attack, Name = "攻撃", Explanation = "攻撃が上がる",StatusType1 = STATUS_TYPE.Power });
+        statusesGroup1.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_MovementSpeed, Name = "スピード", Explanation = "スピード上がる" , StatusType1 = STATUS_TYPE.MoveSpeed});
+        statusesGroup1.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_Deffence, Name = "防御", Explanation = "防御上がる", StatusType1 = STATUS_TYPE.Defense });
 
-        statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_HP, Name = "適当", Explanation = "適当に上がる" });
-        statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_JumpingPower, Name = "a", Explanation = "適当に上がる" });
-        statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Legend_AutomaticRecovery, Name = "b", Explanation = "適当に上がる" });
+        statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_HP, Name = "適当", Explanation = "適当に上がる" , StatusType1 = STATUS_TYPE.AttackSpeedFactor });
+        statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_JumpingPower, Name = "a", Explanation = "適当に上がる", StatusType1 = STATUS_TYPE.JumpPower });
+        statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Legend_AutomaticRecovery, Name = "b", Explanation = "適当に上がる" , StatusType1 = STATUS_TYPE.HealRate});
 
         options.Add(Guid.NewGuid(), statusesGroup1);
         options.Add(Guid.NewGuid(), statusesGroup2);
