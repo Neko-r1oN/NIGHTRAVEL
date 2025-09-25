@@ -9,15 +9,18 @@ public class Press : MonoBehaviour
 {
     PlayerBase playerBase;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // プレイヤーがつぶしエリアに入った場合
-        if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
-        {
-            playerBase = collision.gameObject.GetComponent<PlayerBase>();   // つぶされ対象からPlayerBaseを取得
-            bool isGround =  playerBase.GetGrounded();  // PlayerBaseから接地判定変数を取得
+    [SerializeField] PressCheck pressUP;
+    [SerializeField] PressCheck pressDown;
 
-            if (!isGround) return;  // 接地していない場合、処理しない
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        bool isPressUP = pressUP.gameObject.GetComponent<PressCheck>().isToutch;
+        bool isPressDown = pressDown.gameObject.GetComponent<PressCheck>().isToutch;
+
+        // プレイヤーがつぶしエリアに入った場合
+        if (collision.gameObject.CompareTag("Player") && isPressUP == true || isPressDown==true)
+        {
+            playerBase = collision.gameObject.GetComponent<PlayerBase>();   // つぶされ対象からPlayerBaseを取得                         
 
             // プレイヤーの最大HP70%相当のダメージに設定
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.7f);
