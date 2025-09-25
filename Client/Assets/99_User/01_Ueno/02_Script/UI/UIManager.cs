@@ -376,16 +376,18 @@ public class UIManager : MonoBehaviour
                 bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
             }
 
-            if (player.HP <= 0)
-            {
-                playerHpBar.value = 0;
-                playerSliderText.text = "0";
-                DisplaySpectatingPlayer();
+            
+        }
 
-                if (CheckAllPlayersDead())
-                {
-                    GameManager.Instance.CangeResult();
-                }
+        if (player.HP <= 0)
+        {
+            playerHpBar.value = 0;
+            playerSliderText.text = "0";
+            DisplaySpectatingPlayer();
+
+            if (CheckAllPlayersDead())
+            {
+                GameManager.Instance.CangeResult();
             }
         }
     }
