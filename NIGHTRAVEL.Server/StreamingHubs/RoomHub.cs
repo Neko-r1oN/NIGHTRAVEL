@@ -37,6 +37,9 @@ namespace StreamingHubs
         RoomService roomService = new RoomService();
         Dictionary<Guid,JoinedUser> JoinedUsers { get; set; }
 
+        // 参加可能人数
+        private const int MAX_JOINABLE_PLAYERS = 3;
+
         // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
         private const int MIN_TERMINAL_NUM = 3;
         private const int MAX_TERMINAL_NUM = 7;
@@ -58,7 +61,7 @@ namespace StreamingHubs
         protected override ValueTask OnDisconnected()
         {
             // 退室処理を実行
-            LeavedAsync(); return CompletedTask;
+            LeavedAsync(false); return CompletedTask;
         }
         #endregion
 
@@ -89,6 +92,7 @@ namespace StreamingHubs
                     room.roomName = roomName;
                     room.userName = user.Name;
                     room.password = pass;
+                    room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName,room.password);
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
@@ -99,19 +103,29 @@ namespace StreamingHubs
                     room.roomName = roomName;
                     room.userName = user.Name;
                     room.password = pass;
+                    room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName, room.password);
                 }
                 this.roomContext.Group.Add(this.ConnectionId, Client);
 
+                if (this.roomContext.JoinedUserList.Count >= MAX_JOINABLE_PLAYERS)
+                {//参加人数が満員の場合
+                    this.roomContext.Group.Only([this.ConnectionId]).OnFailedJoin(0);
+                    this.roomContext.Group.Remove(this.ConnectionId);
+                    return JoinedUsers;
+                }
                 if (this.roomContext.PassWord != "")
                 {//パスワードが設定されている場合
-                    if (this.roomContext.PassWord != pass) 
+                    if (this.roomContext.PassWord != pass)
                     {
                         //パスワードが違うという通知
-                        this.roomContext.Group.Only([this.ConnectionId]).OnFailedJoin();
+                        this.roomContext.Group.Only([this.ConnectionId]).OnFailedJoin(1);
+                        this.roomContext.Group.Remove(this.ConnectionId);
                         return JoinedUsers;
                     }
                 }
+
+
 
                 // グループストレージにユーザーデータを格納
                 var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
@@ -159,7 +173,7 @@ namespace StreamingHubs
         /// Author:Kida
         /// </summary>
         /// <returns></returns>
-        public async Task LeavedAsync()
+        public async Task LeavedAsync(bool isEnd)
         {
             lock (roomContextRepository) // 排他制御
             {
@@ -171,21 +185,25 @@ namespace StreamingHubs
                 //　退室するユーザーを取得
                 var joinedUser = this.roomContext.JoinedUserList[this.ConnectionId];
 
-                ////マスタークライアントだったら次の人に譲渡する
-                if (joinedUser.IsMaster == true)
+                if(isEnd == false)
                 {
-                    MasterLostAsync(this.ConnectionId);
-                    foreach (var user in this.roomContext.JoinedUserList)
+                    ////マスタークライアントだったら次の人に譲渡する
+                    if (joinedUser.IsMaster == true)
                     {
-                        if (user.Value.IsMaster == true)
+                        MasterLostAsync(this.ConnectionId);
+                        foreach (var user in this.roomContext.JoinedUserList)
                         {
-                            this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
+                            if (user.Value.IsMaster == true)
+                            {
+                                this.roomContext.Group.Only([user.Key]).OnChangeMasterClient();
+                            }
                         }
                     }
+
                 }
 
                 //最後の1人の場合ルームを削除
-                if(this.roomContext.JoinedUserList.Count == 1)
+                if (this.roomContext.JoinedUserList.Count == 1)
                 {
                     roomService.RemoveRoom(this.roomContext.Name);
                 }
@@ -893,11 +911,8 @@ namespace StreamingHubs
                 // 全滅判定変数
                 bool isAllDead = true;
                 // ルームデータから接続IDを指定して自身のデータを取得
-                var playerData = this.roomContext.characterDataList[this.ConnectionId];
-                playerData.IsDead = true; // 死亡判定をtrueにする
+                var playerData = this.roomContext.characterDataList[this.ConnectionId].IsDead = true;
 
-                // 死亡者以外の参加者全員に対象者が死亡したことを通知
-                this.roomContext.Group.Except([this.ConnectionId]).OnPlayerDead(this.ConnectionId);
 
                 foreach (var player in this.roomContext.characterDataList)
                 {
@@ -907,6 +922,10 @@ namespace StreamingHubs
                         break;
                     }
                 }
+
+                // 死亡者以外の参加者全員に対象者が死亡したことを通知
+                this.roomContext.Group.Except([this.ConnectionId]).OnPlayerDead(this.ConnectionId);
+
 
                 // 全滅した場合、ゲーム終了通知を全員に出す
                 if (isAllDead)

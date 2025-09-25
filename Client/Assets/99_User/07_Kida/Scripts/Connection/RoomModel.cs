@@ -57,7 +57,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
 
-    public Action OnFailedJoinSyn {  get; set; }
+    public Action<int> OnFailedJoinSyn {  get; set; }
 
     //ユーザー退室通知
     public Action<JoinedUser> OnLeavedUser { get; set; }
@@ -249,9 +249,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// ゲーム終了通知
     /// </summary>
     /// <param name="result"></param>
-    public void OnGameEnd(ResultData result)
+    public async void OnGameEnd(ResultData result)
     {
         OnGameEndSyn(result);
+        await roomHub.LeavedAsync(true);
     }
 
     #region 入室・退室・準備完了通知
@@ -305,9 +306,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     }
 
-    public void OnFailedJoin()
+    public void OnFailedJoin(int errorId)
     {
-        OnFailedJoinSyn();
+        OnFailedJoinSyn(errorId);
     }
 
     /// <summary>
@@ -611,7 +612,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask LeavedAsync()
     {
-        await roomHub.LeavedAsync();
+        await roomHub.LeavedAsync(false);
         this.IsMaster = false;
         //自分をリストから消す
         joinedUserList.Clear();

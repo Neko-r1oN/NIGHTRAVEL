@@ -333,8 +333,12 @@ public class UIManager : MonoBehaviour
         
         if (player == null)
         {
-            player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
+            if(CharacterManager.Instance.PlayerObjSelf != null)
+            {
+                player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
+            }
         }
+        if (player == null) return;
 
         // ÉvÉåÉCÉÑÅ[HPUI
         playerHpBar.maxValue = player.MaxHP;
@@ -1242,5 +1246,10 @@ public class UIManager : MonoBehaviour
 
                 break;
         }
+    }
+
+    public void HideCanvas()
+    {
+        canvas.SetActive(false);
     }
 }

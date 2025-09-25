@@ -286,7 +286,7 @@ public class CharacterManager : MonoBehaviour
 
             // ˆÈ‰º‚Íê—p•Ï”
             ConnectionId = RoomModel.Instance.ConnectionId,
-            IsDead = false
+            IsDead = player.IsDead
         };
     }
 

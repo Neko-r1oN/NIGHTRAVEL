@@ -17,8 +17,10 @@ namespace NIGHTRAVEL.Shared.Interfaces.Model.Entity
         [Key(3)]
         public string password { get; set; }        //ルームのパスワード
         [Key(4)]
-        public DateTime Created_at { get; set; }            //生成日時
+        public bool is_started { get; set; }        //ルームがゲーム開始しているか
         [Key(5)]
+        public DateTime Created_at { get; set; }            //生成日時
+        [Key(6)]
         public DateTime Updated_at { get; set; }            //更新日時
     }
 }

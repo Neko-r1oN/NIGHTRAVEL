@@ -259,6 +259,11 @@ abstract public class PlayerBase : CharacterBase
     protected bool canSkill = true;   // スキル使用可能フラグ
     protected bool isRegene = true;
     protected bool isBossArea = false;  
+    protected bool isDead = false;
+    #endregion
+
+    #region 動作フラグ関連外部参照用
+    public bool IsDead { get { return isDead; } private set { isDead = value; } }
     #endregion
 
     #region プレイヤーに関する定数
@@ -985,40 +990,38 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     protected IEnumerator WaitToDead()
     {
-        // プレイヤー死亡したことを同期
-        if (RoomModel.Instance)
+        if (isDead) yield break ;
+        isDead = true;
+        if (CharacterManager.Instance.PlayerObjSelf == gameObject)
         {
-            PlayerDeathResult result = new PlayerDeathResult();
-            yield return RoomModel.Instance.PlayerDeadAsync().ToCoroutine(r => result = r);
-            buckupHDMICnt = result.BuckupHDMICnt;
-
-            if (!result.IsDead)
+            // プレイヤー死亡したことを同期
+            if (RoomModel.Instance)
             {
+                PlayerDeathResult result = new PlayerDeathResult();
+                yield return RoomModel.Instance.PlayerDeadAsync().ToCoroutine(r => result = r);
+                buckupHDMICnt = result.BuckupHDMICnt;
+                if (!result.IsDead)
+                {
+                    hp = maxHp;
+                    StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
+                    yield break;
+                }
+            }
+            // オフライン時の処理
+            if (!RoomModel.Instance && buckupHDMICnt > 0)
+            {   // 体力回復 & 残機減少
                 hp = maxHp;
+                buckupHDMICnt--;
                 StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
                 yield break;
             }
-            
         }
-
-        // オフライン時の処理
-        if (!RoomModel.Instance && buckupHDMICnt > 0)
-        {   // 体力回復 & 残機減少
-            hp = maxHp;
-            buckupHDMICnt--;
-            StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
-            yield break;
-        }
-
-        if(CharacterManager.Instance.PlayerObjSelf == gameObject) UIManager.Instance.OnDeadPlayer();
-
+        if (!RoomModel.Instance) UIManager.Instance.OnDeadPlayer();
         OnDead();
         yield return new WaitForSeconds(0.4f);
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
-
         Camera.main.gameObject.GetComponent<SpectatorModeManager>().FocusCameraOnAlivePlayer();
-
         this.gameObject.SetActive(false);
     }
 

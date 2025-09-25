@@ -225,7 +225,7 @@ abstract public class EnemyBase : CharacterBase
 
     public void LoadStart()
     {
-        if(!isStartComp) LoadStart();
+        if(!isStartComp) Start();
     }
 
     protected virtual void FixedUpdate()
