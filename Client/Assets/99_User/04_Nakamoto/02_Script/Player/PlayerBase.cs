@@ -998,6 +998,7 @@ abstract public class PlayerBase : CharacterBase
                 StartCoroutine(MakeInvincible(1.5f)); // –³“GŠÔ
                 yield break;
             }
+            
         }
 
         // ƒIƒtƒ‰ƒCƒ“‚Ìˆ—
@@ -1008,6 +1009,8 @@ abstract public class PlayerBase : CharacterBase
             StartCoroutine(MakeInvincible(1.5f)); // –³“GŠÔ
             yield break;
         }
+
+        if(CharacterManager.Instance.PlayerObjSelf == gameObject) UIManager.Instance.OnDeadPlayer();
 
         OnDead();
         yield return new WaitForSeconds(0.4f);
