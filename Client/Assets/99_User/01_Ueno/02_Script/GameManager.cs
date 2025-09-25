@@ -235,11 +235,11 @@ public class GameManager : MonoBehaviour
     /// リザルトのシーンを読み込み
     /// </summary>
     public void CangeResult()
-    {
-        SceneManager.UnloadSceneAsync("UIScene");
+    {   
         Initiate.DoneFading();
-        Initiate.Fade("ResultScene", Color.black, 0.5f);
-        //SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
+        SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
+        //Initiate.Fade("ResultScene", Color.black, 0.5f);
+        SceneManager.UnloadSceneAsync("UIScene");
 
         isGameStart = false;
     }
@@ -293,9 +293,9 @@ public class GameManager : MonoBehaviour
     /// <param name="list"></param>
     public void StartGame(List<TerminalData> list)
     {
-        // 端末情報をステージに反映
-        if(list != null)
-            TerminalManager.Instance.SetTerminal(list);
+        //// 端末情報をステージに反映
+        //if(list != null)
+        //    TerminalManager.Instance.SetTerminal(list);
 
         isGameStart = true;
         Debug.Log("同時開始！！");
