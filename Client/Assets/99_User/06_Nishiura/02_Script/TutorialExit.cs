@@ -7,6 +7,7 @@ public class TutorialExit : MonoBehaviour
     {
         if (collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
+            Initiate.DoneFading();
             Initiate.Fade("1_TitleScene", Color.black,0.5f);
         }
     }

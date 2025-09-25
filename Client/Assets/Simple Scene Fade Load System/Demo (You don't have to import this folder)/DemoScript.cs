@@ -8,6 +8,7 @@ public class DemoScript : MonoBehaviour {
 	
 	public void GoFade()
     {
+        Initiate.DoneFading();
         Initiate.Fade(scene, loadToColor, 1.0f);
     }
 }

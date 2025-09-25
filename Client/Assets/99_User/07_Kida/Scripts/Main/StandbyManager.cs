@@ -45,6 +45,7 @@ public class StandbyManager : MonoBehaviour
     public async void ReturnMaching()
     {
         await RoomModel.Instance.LeavedAsync();
+        Initiate.DoneFading();
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 

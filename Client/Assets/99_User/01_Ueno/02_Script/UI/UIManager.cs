@@ -115,6 +115,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] List<Image> relicImages;
     [Foldout("レリック関連")]
     [SerializeField] Image relicImg;                     // レリックのイメージ
+    [Foldout("レリック関連")]
+    [SerializeField] Text relicNameText;                 // レリック名テキスト
+    [Foldout("レリック関連")]
+    [SerializeField] Text relicExplanationText;          // レリックの説明
 
     [Foldout("その他")]
     [SerializeField] List<GameObject> playerStatus;      // 自分以外のプレイヤーのステータス
@@ -416,7 +420,7 @@ public class UIManager : MonoBehaviour
     /// 取得したレリックを表示する関数
     /// </summary>
     /// <param name="relicSprite"></param>
-    public void DisplayRelic(Sprite relicSprite)
+    public void DisplayRelic(Sprite relicSprite,RelicData data)
     {
         foreach (Image image in relicImages)
         {
@@ -424,6 +428,8 @@ public class UIManager : MonoBehaviour
             {
                 if (image.sprite == null)
                 {
+                    relicNameText.text = data.Name;
+                    relicExplanationText.text = data.ExplanationText;
                     image.enabled = true;
                     image.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                     image.sprite = relicSprite;

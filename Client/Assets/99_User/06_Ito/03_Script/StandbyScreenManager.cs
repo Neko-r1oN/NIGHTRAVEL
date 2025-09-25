@@ -27,10 +27,12 @@ public class StandbyScreenManager : MonoBehaviour
         //SceneManager.LoadScene("OnlineMultiScene");
         if (CharacterManager.Instance.PlayerObjs.Values.Count > 1)
         {
+            Initiate.DoneFading();
             Initiate.Fade("OnlineMultiScene", Color.black, 1.0f);   // フェード時間1秒
         }
         else
         {
+            Initiate.DoneFading();
             Initiate.Fade("Title Ueno", Color.black, 1.0f);   // フェード時間1秒
         }
     }
@@ -49,6 +51,7 @@ public class StandbyScreenManager : MonoBehaviour
 
     public void ChangeScene()
     {
+        Initiate.DoneFading();
         Initiate.Fade("Stage Ueno", Color.black, 1.0f);   // フェード時間1秒
     }
 

@@ -207,12 +207,15 @@ public class GameManager : MonoBehaviour
         switch (type)
         {
             case STAGE_TYPE.Rust:
+                Initiate.DoneFading();
                 Initiate.Fade("4_Stage_01", Color.black, 0.5f);
                 break;
             case STAGE_TYPE.Industry:
+                Initiate.DoneFading();
                 Initiate.Fade("5_Stage_02", Color.black, 0.5f);
                 break;
             case STAGE_TYPE.Town:
+                Initiate.DoneFading();
                 Initiate.Fade("Stage_03", Color.black, 0.5f);
                 break;
         }
@@ -234,6 +237,7 @@ public class GameManager : MonoBehaviour
     public void CangeResult()
     {
         SceneManager.UnloadSceneAsync("UIScene");
+        Initiate.DoneFading();
         Initiate.Fade("ResultScene", Color.black, 0.5f);
         //SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
 

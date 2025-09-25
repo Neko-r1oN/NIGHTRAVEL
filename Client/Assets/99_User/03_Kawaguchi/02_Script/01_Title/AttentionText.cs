@@ -70,6 +70,7 @@ public class AttentionText : MonoBehaviour
     {
         // ƒV[ƒ“‘JˆÚ
         //SceneManager.LoadScene("TitleScene");
+        Initiate.DoneFading();
         Initiate.Fade("Title Ueno", new Color(0, 0, 0, 0), 2.0f);
     }
 }

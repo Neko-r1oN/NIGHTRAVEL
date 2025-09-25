@@ -102,19 +102,19 @@ abstract public class PlayerBase : CharacterBase
             { DEBUFF_TYPE.Freeze, 0f },
             { DEBUFF_TYPE.Shock, 0f },
         };  // 状態異常付与率◎
-    protected float regainCodeRate = 0f;        // ◎与ダメ回復率
-    protected int scatterBugCnt = 0;            // （保留）ボム所持数
-    protected float holographicArmorRate = 0;   // ◎回避率
-    protected float mouseRate = 0;              // ◎クールダウン短縮率
-    protected int digitalMeatCnt = 0;           // ◎回復肉所持数
-    protected float firewallRate = 0;           // ◎被ダメージ軽減率
-    protected float lifeScavengerRate = 0;      // ◎キル時HP回復率
-    protected float rugrouterRate = 0;          // ◎ダブルアタック率
-    protected int buckupHDMICnt = 0;            // ◎リバイブ回数
-    protected float identificationAIRate = 0;   // ◎状態異常ダメージ倍率
-    protected float danborDollRate = 0;         // ◎防御貫通率◎
-    protected int chargedCoreCnt = 0;           // （保留）感電オーブ所持数
-    protected float illegalScriptRate = 0;      // ◎クリティカルオーバーキル発生率
+    public float regainCodeRate = 0f;        // ◎与ダメ回復率
+    public int scatterBugCnt = 0;            // （保留）ボム所持数
+    public float holographicArmorRate = 0;   // ◎回避率
+    public float mouseRate = 0;              // ◎クールダウン短縮率
+    public int digitalMeatCnt = 0;           // ◎回復肉所持数
+    public float firewallRate = 0;           // ◎被ダメージ軽減率
+    public float lifeScavengerRate = 0;      // ◎キル時HP回復率
+    public float rugrouterRate = 0;          // ◎ダブルアタック率
+    public int buckupHDMICnt = 0;            // ◎リバイブ回数
+    public float identificationAIRate = 0;   // ◎状態異常ダメージ倍率
+    public float danborDollRate = 0;         // ◎防御貫通率◎
+    public int chargedCoreCnt = 0;           // （保留）感電オーブ所持数
+    public float illegalScriptRate = 0;      // ◎クリティカルオーバーキル発生率
 
     #endregion
 

@@ -660,7 +660,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (!isSpawnBoss)
         {
-            bossTerminal = GameObject.Find("6_BossTerminal");
+            bossTerminal = GameObject.Find("6_BossTerminal(Clone)");
             int childrenCnt = bossTerminal.transform.childCount;
             List<Transform> children = new List<Transform>();
             for (int i = 0; i < childrenCnt; i++)
