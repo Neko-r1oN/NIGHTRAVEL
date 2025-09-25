@@ -87,8 +87,12 @@ public class Elevator : GimmickBase
         if (!isRised)
         {   //上昇済みでない場合
             isRised = true;       // 上昇済みとする
-            tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
-            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
+
+            if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+            {
+                tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
+                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
+            }
 
             //移動SEを再生する
             movementSE.Play();
@@ -96,8 +100,12 @@ public class Elevator : GimmickBase
         else
         {   //上昇済みの場合
             isRised = false;    // 下降済みとする
-            tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
-            if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
+
+            if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+            {
+                tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
+                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
+            }
 
             //移動SEを再生する
             movementSE.Play();
@@ -120,8 +128,12 @@ public class Elevator : GimmickBase
             if (isRised)
             {   //上昇済みの場合
                 isRised = false;    // 下降済みとする
-                tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
-                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
+
+                if(RoomModel.Instance && RoomModel.Instance.IsMaster)
+                {
+                    tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
+                    if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
+                }
 
                 //移動SEを再生する
                 movementSE.Play();
@@ -133,8 +145,12 @@ public class Elevator : GimmickBase
             if (!isRised)
             {   //上昇済みでない場合
                 isRised = true;       // 上昇済みとする
-                tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
-                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
+
+                if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+                {
+                    tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
+                    if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
+                }
 
                 //移動SEを再生する
                 movementSE.Play();
