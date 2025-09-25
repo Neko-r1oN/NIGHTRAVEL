@@ -503,13 +503,17 @@ public class UIManager : MonoBehaviour
             int currentIndex = 0;
             foreach(var item in pair.Value)
             {
+                // ボタンのマテリアルをレア度ごとに変更
                 statusItemText[currentIndex].transform.parent.GetComponent<Image>().material
                     = rarityMaterials[(int)item.Rarity - 1];
+                
+                // ステータスアップ名・説明の変更
                 statusItemText[currentIndex].text = item.Name;
                 statusExplanationsTexts[currentIndex].text = item.Explanation;
 
+                // ステータスアップ用の画像・マテリアル変更
                 iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
-                
+                iconImages[currentIndex].material = rarityMaterials[(int)item.Rarity - 1];
 
                 currentIndex++;
             }
@@ -525,8 +529,6 @@ public class UIManager : MonoBehaviour
         var values = LevelManager.Instance.Options.FirstOrDefault().Value;
         var key = LevelManager.Instance.Options.FirstOrDefault().Key;
         LevelManager.Instance.Options.Remove(key);
-
-        
 
         if (!RoomModel.Instance)
         {// オフライン
@@ -588,12 +590,17 @@ public class UIManager : MonoBehaviour
         int currentIndex = 0;
         foreach (var item in data)
         {
+            // ボタンのマテリアルをレア度ごとに変更
             statusItemText[currentIndex].transform.parent.GetComponent<Image>().material
                     = rarityMaterials[(int)item.Rarity - 1];
+
+            // ステータスアップ名・説明の変更
             statusItemText[currentIndex].text = item.Name;
             statusExplanationsTexts[currentIndex].text = item.Explanation;
 
+            // ステータスアップ用の画像・マテリアル変更
             iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
+            iconImages[currentIndex].material = rarityMaterials[(int)item.Rarity - 1];
 
             currentIndex++;
         }   
