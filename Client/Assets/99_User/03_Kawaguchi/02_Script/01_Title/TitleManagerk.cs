@@ -19,7 +19,7 @@ public class TitleManagerk : MonoBehaviour
     void Start()
     {
         fade.SetActive(true);               //フェードを有効化
-      //  menu.SetActive(false);              //メニューを非表示
+      //  menu.SetActive(false);            //メニューを非表示
         isMenuFlag = false;                 //メニューフラグを無効化
 
         //ローカルのユーザーデータを取得

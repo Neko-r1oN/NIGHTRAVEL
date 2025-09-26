@@ -784,7 +784,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (collision.gameObject.tag == "Heal")
         {
-            int healVol = (int)(MaxHP * MEATHEAL_RATE) * DigitalMeatCnt;
+            int healVol = (int)((float)MaxHP * MEATHEAL_RATE);
 
             if(HP < MaxHP)
             {
