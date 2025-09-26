@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Timeline;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class Gurdbot : EnemyBase
@@ -69,6 +70,14 @@ public class Gurdbot : EnemyBase
 
     #region ターゲットと離す距離
     readonly float disToTargetMin = 0.25f;
+    #endregion
+
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioAttack;
+
     #endregion
 
     protected override void Start()
@@ -139,9 +148,10 @@ public class Gurdbot : EnemyBase
     /// <summary>
     /// [Animationイベントからの呼び出し] 近接攻撃処理
     /// </summary>
-
     public override void OnAttackAnimEvent()
     {
+        audioAttack.Play();
+
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 

@@ -88,6 +88,14 @@ public class NodeCore : EnemyBase
     Vector2? startPatorolPoint = null;
     #endregion
 
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    List<AudioSource> audioAttackList = new List<AudioSource>();
+
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -288,6 +296,8 @@ public class NodeCore : EnemyBase
                 bulletObj.GetComponent<ProjectileBase>().Init(debuffs, power);
                 bulletObj.GetComponent<ProjectileBase>().Shoot(shootVec);
             }
+
+            audioAttackList[lastNodeBulletIndex].Play();
         }
     }
 

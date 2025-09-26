@@ -11,8 +11,11 @@ public class ProjectileBase : MonoBehaviour
     public PROJECTILE_TYPE TypeId { get { return typeId; } }
     #endregion
 
+    [SerializeField]
+    protected AudioSource audioBullet;    // ”­ŽËŽž‚ÌSE
+
     [SerializeField] 
-    protected bool isDestructible;
+    protected bool isDestructible;  // ”j‰ó‰Â”\‚©‚Ç‚¤‚©
 
     protected List<DEBUFF_TYPE> debuffs = new List<DEBUFF_TYPE>();
     protected int power;
@@ -28,6 +31,8 @@ public class ProjectileBase : MonoBehaviour
         var rb2d = GetComponent<Rigidbody2D>();
         if (typeId == PROJECTILE_TYPE.BoxBullet_Big) rb2d.linearVelocity = shootVec;
         else rb2d.AddForce(shootVec, ForceMode2D.Impulse);
+
+        if(audioBullet != null) audioBullet.Play();
     }
 
     public void ApplyDamage()
