@@ -76,6 +76,14 @@ public class CyberDog : EnemyBase
     List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
     #endregion
 
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioAttack;
+
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -156,6 +164,8 @@ public class CyberDog : EnemyBase
         Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
         hitPlayers.Clear();
+
+        audioAttack.Play();
 
         // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
         string attackKey = COROUTINE.MeleeAttack.ToString();

@@ -136,6 +136,14 @@ public class FullMetalWorm : EnemyBase
     Vector2 targetPos;
     #endregion
 
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioMove;
+
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -404,6 +412,7 @@ public class FullMetalWorm : EnemyBase
         SetNextTargetPosition(true);
         float currentSpeed = moveSpeed;
         bool isTargetPos = false;
+        audioMove.Play();
 
         while (true)
         {

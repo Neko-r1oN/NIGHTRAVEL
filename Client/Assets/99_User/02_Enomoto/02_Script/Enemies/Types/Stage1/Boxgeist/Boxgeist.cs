@@ -110,6 +110,21 @@ public class Boxgeist : EnemyBase
     bool endDecision;
     #endregion
 
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioCharge;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioGolem;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioFallBlock;
+    #endregion
+
     #region オリジナル
 
     [SerializeField]
@@ -508,6 +523,8 @@ public class Boxgeist : EnemyBase
 
         isInvincible = true;
         SetAnimId((int)ANIM_ID.Attack_Golem);
+        audioCharge.Play();
+
         yield return new WaitForSeconds(0.45f);     // ゴーレムに形態変化が完了する時間
 
         // ターゲットのいる方向にテクスチャを反転
@@ -527,6 +544,7 @@ public class Boxgeist : EnemyBase
     {
         const float forcePower = 30;
         m_rb2d.AddForce(new Vector2(TransformUtils.GetFacingDirection(transform) * forcePower, 0), ForceMode2D.Impulse);
+        audioGolem.Play();
     }
 
     /// <summary>
@@ -579,6 +597,7 @@ public class Boxgeist : EnemyBase
         m_rb2d.linearVelocity = Vector2.zero;
         m_rb2d.bodyType = RigidbodyType2D.Static;
         SetAnimId((int)ANIM_ID.Attack_FallBlock);
+        audioCharge.Play();
 
         // ブロックの向きを正しくする
         Vector2 direction = transform.localScale;
@@ -586,6 +605,14 @@ public class Boxgeist : EnemyBase
         transform.localScale = new Vector2(Mathf.Abs(direction.x), Mathf.Abs(direction.y));
 
         onFinished?.Invoke();
+    }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] 着地音再生
+    /// </summary>
+    public override void OnEndAttackAnim4Event()
+    {
+        audioFallBlock.Play();
     }
 
     #endregion
