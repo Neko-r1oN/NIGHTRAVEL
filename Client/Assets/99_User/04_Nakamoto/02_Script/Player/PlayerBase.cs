@@ -282,7 +282,7 @@ abstract public class PlayerBase : CharacterBase
     protected const float KB_BIG = 20f;         // ノックバック力（大）
 
     protected const float STUN_TIME = 0.15f;        // スタン時間
-    protected const float INVINCIBLE_TIME = 0.22f;  // 無敵時間
+    protected const float INVINCIBLE_TIME = 0.4f;   // 無敵時間
 
     protected const float SMOKE_SCALE = 0.25f; // 土煙のスケール
     #endregion
@@ -1102,6 +1102,10 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     public void MoveCheckPoint()
     {
+        // HPの5%ダメージ
+        hp = (int)((float)hp * 0.05);  
+
+        // 移動
         playerPos.position = FetchNearObjectWithTag("Gimmick/ChecKPoint").position;
     }
 
