@@ -334,6 +334,17 @@ public class CharacterManager : MonoBehaviour
     #region 敵関連
 
     /// <summary>
+    /// 難易度を基に全ての敵のステータスを上昇させる
+    /// </summary>
+    public void ApplyDifficultyToAllEnemies()
+    {
+        foreach(var enemy in Enemies)
+        {
+            enemy.Value.Enemy.ApplyDifficultyBasedStatusBoost();
+        }
+    }
+
+    /// <summary>
     /// 新たな敵をリストに追加する
     /// </summary>
     /// <param name="newEnemies"></param>

@@ -13,8 +13,10 @@ public class LevelManager : MonoBehaviour
     Dictionary<Guid, List<StatusUpgrateOptionData>> options = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
     public Dictionary<Guid, List<StatusUpgrateOptionData>> Options { get { return options; } set { options = value; } }
 
-    int gameLevel;
-    public int GameLevel { get { return gameLevel; } }
+    /// <summary>
+    /// åªç›ÇÃÉQÅ[ÉÄìÔà’ìx
+    /// </summary>
+    static public int GameLevel { get; set; }
 
     readonly public int LevelHellId = 5;
 
@@ -49,6 +51,8 @@ public class LevelManager : MonoBehaviour
         {
             RoomModel.Instance.OnAscendDifficultySyn += this.OnAscendDifficulty;
         }
+
+        if(GameLevel > 0) UIManager.Instance.UpGameLevelText();
     }
 
     private void OnDisable()
@@ -84,25 +88,16 @@ public class LevelManager : MonoBehaviour
         {DIFFICULTY_TYPE.Hell,"ÉwÉã" }
     };
 
-    public void InitLevel(int level)
-    {
-        gameLevel = level;
-    }
-
     [ContextMenu("UpGameLevel")]
-    public void UpGameLevel(int? targetLevel = null)
+    public void UpGameLevel(int? setLevel = null)
     {
-        if (targetLevel == null) gameLevel++;
-        else gameLevel = (int)targetLevel;
+        if (setLevel == null) GameLevel++;
+        else GameLevel = (int)setLevel;
 
-        foreach (var enemy in CharacterManager.Instance.Enemies.Values)
-        {
-            enemy.Enemy.ApplyMaxStatusModifierByRate(0.1f, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
-        }
-
+        CharacterManager.Instance.ApplyDifficultyToAllEnemies();
         UIManager.Instance.UpGameLevelText();
 
-        Debug.Log(gameLevel.ToString());
+        Debug.Log(GameLevel.ToString());
     }
 
     /// <summary>

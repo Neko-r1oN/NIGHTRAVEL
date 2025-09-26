@@ -221,6 +221,7 @@ abstract public class EnemyBase : CharacterBase
         enemyElite = GetComponent<EnemyElite>();
         isStartComp = true;
         base.Start();
+        ApplyDifficultyBasedStatusBoost();
     }
 
     public void LoadStart()
@@ -313,6 +314,35 @@ abstract public class EnemyBase : CharacterBase
         doOnceDecision = true;
         onFinished?.Invoke();
     }
+
+    #region ステータス関連
+
+    /// <summary>
+    /// 現在の難易度を基にステータスを上昇させる
+    /// </summary>
+    public void ApplyDifficultyBasedStatusBoost()
+    {
+        // レベル1毎にHP,Defence,Powerが15%上昇
+        const float rate = 0.15f;
+        float applyRate = rate * LevelManager.GameLevel;
+        int addHp = (int)(baseHp * applyRate) == 0 ? 1 : (int)(baseHp * applyRate);
+        int addDef = (int)(baseDefense * applyRate) == 0 ? 1 : (int)(baseDefense * applyRate);
+        int addPower = (int)(basePower * applyRate) == 0 ? 1 : (int)(basePower * applyRate);
+
+        CharacterStatusData characterStatusData = new CharacterStatusData()
+        {
+            hp = baseHp + addHp,
+            defence = baseDefense + addDef,
+            power = basePower + addPower,
+            jumpPower = maxJumpPower,
+            moveSpeed = maxMoveSpeed,
+            attackSpeedFactor = maxAttackSpeedFactor,
+            healRate = maxHealRate,
+        };
+        ChangeAccordingStatusToMaximumValue(characterStatusData);
+    }
+
+    #endregion
 
     #region プレイヤー・ターゲット関連
 
