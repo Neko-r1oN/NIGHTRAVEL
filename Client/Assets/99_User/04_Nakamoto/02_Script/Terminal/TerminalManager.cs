@@ -151,6 +151,7 @@ public class TerminalManager : MonoBehaviour
         }
         else
         {
+            if (terminalObjs[id] != null)
             terminalObjs[id].GetComponent<TerminalBase>().BootTerminal();
         }
     }
