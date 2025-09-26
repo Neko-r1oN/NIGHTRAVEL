@@ -357,7 +357,7 @@ public class Boxgeist : EnemyBase
 
             ShootBulletData shootBulletData = new ShootBulletData()
             {
-                Type = PROJECTILE_TYPE.BoxBullet,
+                Type = PROJECTILE_TYPE.BoxBullet_Big,
                 Debuffs = debuffs,
                 Power = power,
                 SpawnPos = spawnPoint,
