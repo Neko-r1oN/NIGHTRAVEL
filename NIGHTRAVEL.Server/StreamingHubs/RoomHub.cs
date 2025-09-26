@@ -99,8 +99,8 @@ namespace StreamingHubs
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
-                    roomContextRepository.RemoveContext(roomName);                      //ルーム情報を削除
-                    this.roomContext = roomContextRepository.CreateContext(roomName,pass);   //ルームを生成
+                    roomContextRepository.RemoveContext(roomName);                          //ルーム情報を削除
+                    this.roomContext = roomContextRepository.CreateContext(roomName,pass);  //ルームを生成
                     //DBに生成
                     room.roomName = roomName;
                     room.userName = user.Name;
@@ -696,7 +696,8 @@ namespace StreamingHubs
 
             // 3以降は抽選
             Random rand = new Random();
-            int terminalCount = rand.Next(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
+            int terminalCount = 6;
+            // rand.Next(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
 
             for(int i = 3; i <= terminalCount; i++ )
             {

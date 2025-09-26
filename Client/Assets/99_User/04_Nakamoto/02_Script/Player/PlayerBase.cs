@@ -269,7 +269,7 @@ abstract public class PlayerBase : CharacterBase
     #region プレイヤーに関する定数
     protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
     protected const float REGENE_STOP_TIME = 3.5f;      // 自動回復停止時間
-    protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
+    protected const float REGENE_MAGNIFICATION = 0.03f; // 自動回復倍率
     protected const float HEAL_GENERATE_TIME = 20f;     // 回復肉生成間隔
     protected const float MEATHEAL_RATE = 0.03f;        // 回復肉回復量
 
@@ -284,7 +284,7 @@ abstract public class PlayerBase : CharacterBase
     protected const float STUN_TIME = 0.15f;        // スタン時間
     protected const float INVINCIBLE_TIME = 0.4f;   // 無敵時間
 
-    protected const float SMOKE_SCALE = 0.25f; // 土煙のスケール
+    protected const float SMOKE_SCALE = 0.22f; // 土煙のスケール
     #endregion
 
     //--------------------
