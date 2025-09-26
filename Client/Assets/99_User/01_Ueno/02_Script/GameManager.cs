@@ -295,8 +295,8 @@ public class GameManager : MonoBehaviour
     public void StartGame(List<TerminalData> list)
     {
         //// 端末情報をステージに反映
-        //if(list != null)
-        //    TerminalManager.Instance.SetTerminal(list);
+        if (list != null)
+            TerminalManager.Instance.SetTerminal(list);
 
         isGameStart = true;
         Debug.Log("同時開始！！");
