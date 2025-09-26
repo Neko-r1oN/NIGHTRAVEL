@@ -52,7 +52,10 @@ public class LevelManager : MonoBehaviour
             RoomModel.Instance.OnAscendDifficultySyn += this.OnAscendDifficulty;
         }
 
-        if(GameLevel > 0) UIManager.Instance.UpGameLevelText();
+        if (GameLevel > 0)
+        {
+            UIManager.Instance.UpGameLevelText();
+        }
     }
 
     private void OnDisable()

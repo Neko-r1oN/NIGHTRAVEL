@@ -1120,6 +1120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
+  blazeTrapSpawnPosY: -0.5
 --- !u!114 &5017863411811983485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1184,10 +1185,10 @@ MonoBehaviour:
   canCancelAttackOnHit: 0
   canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 1.5
+  spawnWeight: 20
   canDrawRay: 1
   baseExp: 100
   exp: 100
-  spawnWeight: 20
   aimTransform: {fileID: 3212924761432693944}
   missileBulletPrefab: {fileID: 8984535176473800557, guid: 59976e335e9771a4cb2c6860845c2c56, type: 3}
   shootSpeed: 10

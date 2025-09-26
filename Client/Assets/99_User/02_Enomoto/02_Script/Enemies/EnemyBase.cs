@@ -214,13 +214,16 @@ abstract public class EnemyBase : CharacterBase
     protected override void Start()
     {
         characterManager = CharacterManager.Instance;
-        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
+        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick") | LayerMask.GetMask("Scaffold");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
         enemyElite = GetComponent<EnemyElite>();
         isStartComp = true;
         base.Start();
+
+        PromoteToElite(ENEMY_ELITE_TYPE.Blaze);
+
         ApplyDifficultyBasedStatusBoost();
     }
 
@@ -322,12 +325,25 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     public void ApplyDifficultyBasedStatusBoost()
     {
+        if (LevelManager.GameLevel == 0) return;
+
         // レベル1毎にHP,Defence,Powerが15%上昇
         const float rate = 0.15f;
         float applyRate = rate * LevelManager.GameLevel;
         int addHp = (int)(baseHp * applyRate) == 0 ? 1 : (int)(baseHp * applyRate);
         int addDef = (int)(baseDefense * applyRate) == 0 ? 1 : (int)(baseDefense * applyRate);
         int addPower = (int)(basePower * applyRate) == 0 ? 1 : (int)(basePower * applyRate);
+        float addMoveSpeed = 0;
+
+        // エリートの場合も考慮する
+        if (isElite)
+        {
+            // HP・攻撃力が50%増し、防御力・移動速度・移動速度係数が25%増しにする
+            addHp += (int)(baseHp * 0.5f);
+            addPower += (int)(basePower * 0.5f);
+            addDef += (int)(baseDefense * 0.25f);
+            addMoveSpeed += (enemyElite.EliteType == ENEMY_ELITE_TYPE.Thunder) ? baseMoveSpeed : baseMoveSpeed * 0.25f; // エリートタイプがThunderの場合は2倍上がる
+        }
 
         CharacterStatusData characterStatusData = new CharacterStatusData()
         {
@@ -335,7 +351,7 @@ abstract public class EnemyBase : CharacterBase
             defence = baseDefense + addDef,
             power = basePower + addPower,
             jumpPower = maxJumpPower,
-            moveSpeed = maxMoveSpeed,
+            moveSpeed = maxMoveSpeed + addMoveSpeed,
             attackSpeedFactor = maxAttackSpeedFactor,
             healRate = maxHealRate,
         };
@@ -448,7 +464,7 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// エリート個体にする処理
     /// </summary>
-    public void PromoteToElite(EnumManager.ENEMY_ELITE_TYPE type)
+    public void PromoteToElite(ENEMY_ELITE_TYPE type)
     {
         if (!isElite && type != ENEMY_ELITE_TYPE.None)
         {
