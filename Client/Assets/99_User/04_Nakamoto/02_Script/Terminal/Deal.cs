@@ -14,7 +14,7 @@ public class Deal : TerminalBase
     /// <summary>
     /// ダメージ割合
     /// </summary>
-    private const float DEAL_RATE = 0.5f;
+    private const float DEAL_RATE = 0.3f;
 
     //--------------------------------
     // メソッド
@@ -35,9 +35,11 @@ public class Deal : TerminalBase
     /// </summary>
     public override async void BootRequest()
     {
-        base.BootRequest();
+        int damage = (int)((float)CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().MaxHP * DEAL_RATE);
+        if (CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().hp - damage <= 0) return;
+        DealDamage(damage);
 
-        DealDamage();
+        base.BootRequest();
     }
 
     /// <summary>
@@ -61,12 +63,9 @@ public class Deal : TerminalBase
     /// <summary>
     /// 取引ダメージ
     /// </summary>
-    private void DealDamage()
+    private void DealDamage(int damage)
     {
         // 最大体力割合のダメージを受ける
-        int damage = (int)(CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().MaxHP * DEAL_RATE);
-        damage = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().hp - damage <= 0 ? 1 : damage;
-
         CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().hp -= damage;
         UIManager.Instance.PopDamageUI(damage, CharacterManager.Instance.PlayerObjSelf.transform.position, true);
     }

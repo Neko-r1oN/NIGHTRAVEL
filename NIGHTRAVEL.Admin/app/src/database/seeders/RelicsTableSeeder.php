@@ -122,7 +122,7 @@ class RelicsTableSeeder extends Seeder
             'rarity' => 2,
         ]);
         Relic::create([
-            'name' => 'デジタルミート',
+            'name' => 'ヒールボックス',
             'const_effect' => 1,
             'rate_effect' => 0,
             'max' => 99,
