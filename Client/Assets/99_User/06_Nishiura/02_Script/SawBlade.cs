@@ -16,8 +16,8 @@ public class SawBlade : MonoBehaviour
         if (isPowerd == true && collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             var playerBase = collision.gameObject.GetComponent<PlayerBase>();
-            // プレイヤーの最大HP30%相当のダメージに設定
-            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.30f);
+            // プレイヤーの最大HP10%相当のダメージに設定
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.10f);
             playerBase.ApplyDamage(damage);
         }
     }

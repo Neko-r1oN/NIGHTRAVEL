@@ -19,8 +19,8 @@ public class Press : MonoBehaviour
 
             if (!isGround) return;  // 接地していない場合、処理しない
 
-            // プレイヤーの最大HP70%相当のダメージに設定
-            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.7f);
+            // プレイヤーの最大HP20%相当のダメージに設定
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.2f);
             playerBase.ApplyDamage(damage);
             playerBase.MoveCheckPoint();    // つぶれたプレイヤーをチェックポイントへ戻す
 
