@@ -518,7 +518,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (Ladder())
         {
-            if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack)
+            if (Input.GetKey(KeyCode.UpArrow) && canBlink && canSkill && canAttack || Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack)
             {
                 m_IsZipline = true;
                 ziplineSpark.SetActive(true);

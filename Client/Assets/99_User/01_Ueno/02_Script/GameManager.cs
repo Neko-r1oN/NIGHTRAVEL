@@ -294,8 +294,8 @@ public class GameManager : MonoBehaviour
     /// <param name="list"></param>
     public void StartGame(List<TerminalData> list)
     {
-        //// 端末情報をステージに反映
-        if (list != null)
+        // 端末情報をステージに反映
+        if (list != null && SceneManager.GetActiveScene().name != "Tutorial")
             TerminalManager.Instance.SetTerminal(list);
 
         isGameStart = true;
