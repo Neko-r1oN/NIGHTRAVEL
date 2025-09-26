@@ -34,8 +34,6 @@ public class BoomEffect : MonoBehaviour
             // プレイヤーの最大HP15%相当のダメージに設定
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.15f);
             playerBase.ApplyDamage(damage, pos);
-
-
         }
         else if(collision.transform.tag =="Enemy")
         {

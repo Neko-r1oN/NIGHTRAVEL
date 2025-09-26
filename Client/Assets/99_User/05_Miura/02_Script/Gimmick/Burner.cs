@@ -67,7 +67,6 @@ public class Burner : GimmickBase
                 statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
 
                 statusEffectController.ApplyStatusEffect(DEBUFF_TYPE.Burn); //プレイヤーに炎上状態を付与
-                Debug.Log("プレイヤーに炎上状態を付与");
             }
         }
 
@@ -79,8 +78,6 @@ public class Burner : GimmickBase
             {
                 enemy = GetComponent<EnemyBase>();
                 statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerを取得する
-
-                Debug.Log("敵に炎上状態を付与");
             }
         }
     }

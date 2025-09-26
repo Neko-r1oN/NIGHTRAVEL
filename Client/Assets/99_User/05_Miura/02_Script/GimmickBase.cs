@@ -60,7 +60,7 @@ abstract public class GimmickBase : MonoBehaviour
     /// </summary>
     public virtual void Reactivate()
     {
-        Debug.Log($"{gameObject.name}‚ªÄ‹N“®‚µ‚½B");
+
     }
 
     /// <summary>

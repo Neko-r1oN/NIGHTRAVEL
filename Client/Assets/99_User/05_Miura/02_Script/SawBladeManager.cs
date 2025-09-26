@@ -59,8 +59,6 @@ public class SawBladeManager : GimmickBase
         {
             sparkObj.SetActive(false);
         }
-
-        Debug.Log(addPower);
     }
 
     /// <summary>
@@ -86,15 +84,6 @@ public class SawBladeManager : GimmickBase
             MoveBlade();
         }
     }
-
-    /// <summary>
-    /// ギミック起動リクエスト
-    /// </summary>
-    void RequestActivateGimmick()
-    {
-        TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
-    }
-
 
     /// <summary>
     /// ギミック再起動処理
