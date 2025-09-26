@@ -113,5 +113,12 @@ public class TitleManagerk : MonoBehaviour
         Initiate.DoneFading();
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
+
+
+    public void TutorialPlayStart()
+    {
+        Initiate.DoneFading();
+        Initiate.Fade("Tutorial", Color.black, 1.0f);   // フェード時間1秒
+    }
 }
 
