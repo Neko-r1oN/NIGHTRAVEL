@@ -3,6 +3,7 @@
 // Author : Souma Ueno
 //----------------------------------------------------
 using JetBrains.Annotations;
+using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -130,6 +131,8 @@ public class GameManager : MonoBehaviour
             //遷移完了のリクエスト (TerminalManagerにて呼び出し)
             //await RoomModel.Instance.AdvancedStageAsync();  
         }
+
+        
     }
 
     private void OnDisable()
