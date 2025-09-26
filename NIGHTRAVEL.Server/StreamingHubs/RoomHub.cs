@@ -1061,6 +1061,12 @@ namespace StreamingHubs
                         break;
                 }
 
+                // 所持経験値が必要経験値に満ちた場合
+                if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
+                {
+                    LevelUp(roomContext.ExpManager); // レベルアップ処理
+                }
+
                 // 取得済みアイテムリストに入れる
                 this.roomContext.gottenItemList.Add(itemID);
 
@@ -1068,7 +1074,8 @@ namespace StreamingHubs
                 this.roomContext.resultDataList[this.ConnectionId].TotalGottenItem++;
 
                 // アイテムの獲得を全員に通知
-                this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID);
+                ExpManager expManager = this.roomContext.ExpManager;
+                this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID, expManager.Level, expManager.nowExp, expManager.RequiredExp);
             }
         }
 
