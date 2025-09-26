@@ -23,12 +23,10 @@ public class SawBladeManager : GimmickBase
 
     void Start()
     {
-        isPowerd = true;
-
         // このゲームオブジェクトのポジションを取得
         pos = this.transform.position;
 
-        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster) Invoke("Request", 0.5f);
+        if (isPowerd && (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)) Invoke("Request", 0.5f);
     }
 
     public void Request()
