@@ -83,7 +83,7 @@ public class ShortCircuit : MonoBehaviour
             InvokeRepeating("HitPlayerDamage", 0.1f,0.5f);
             shortCircuitSE.Play();
         }
-        if (collision.gameObject.CompareTag("Enemy") && !RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+        if (collision.gameObject.CompareTag("Enemy") && (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster))
         {//「Enemy」タグが付いたオブジェクトが触れたら
             enemyBase = collision.gameObject.GetComponent<EnemyBase>();
 
