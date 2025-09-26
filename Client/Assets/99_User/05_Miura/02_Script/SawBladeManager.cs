@@ -11,7 +11,6 @@ public class SawBladeManager : GimmickBase
 
     [SerializeField] GameObject sparkObj;
     [SerializeField] SawBlade sawBlade;
-    [SerializeField] AudioSource sawBladeSE; //ŠÛ‚Ì‚±‰Ò“­SE
 
     // ‰Á—Í’l
     public float addPower;
@@ -69,9 +68,6 @@ public class SawBladeManager : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
-        //ŠÛ‚Ì‚±‰Ò“­SE‚ğÄ¶‚·‚é
-        sawBladeSE.Play();
-
         //‰Î‰Ô‚ğU‚ç‚·
         sparkObj.SetActive(true);
 
@@ -82,9 +78,6 @@ public class SawBladeManager : GimmickBase
 
         if(addPower==0)
         {//addpower‚ª0‚©0ˆÈ‰º‚¾‚Á‚½‚ç
-
-            //ŠÛ‚Ì‚±‰Ò“­SE‚ğÄ¶‚·‚é
-            sawBladeSE.Play();
 
             //‰Î‰Ô‚ğ”ñ•\¦‚É‚·‚é
             sparkObj.SetActive(false);

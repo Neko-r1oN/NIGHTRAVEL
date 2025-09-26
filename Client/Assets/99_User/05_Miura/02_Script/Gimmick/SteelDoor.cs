@@ -17,12 +17,18 @@ public class SteelDoor : GimmickBase
     //自動ドアが閉じるSE
     [SerializeField] AudioSource closeSE;
 
+
+    [SerializeField] AudioClip openDoorSE;
+    [SerializeField] AudioClip closeDoorSE;
+    AudioSource audioSource;
+
     Vector2 initPos = Vector2.zero;//初期位置
     public bool isPowerd;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         //初期位置を設定
         Debug.Log(transform.name);
         initPos = doorObj.transform.position;
@@ -51,7 +57,8 @@ public class SteelDoor : GimmickBase
         if (collision.CompareTag("Player") && isPowerd == true && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {//「Player」タグが付いたものが触れたら
             //ドアを開くSEを再生する
-            openSE.Play();
+            //openSE.Play();
+            audioSource.PlayOneShot(openDoorSE);
         }
     }
 
@@ -63,7 +70,8 @@ public class SteelDoor : GimmickBase
             doorObj.transform.DOMoveY(initPos.y, 0.5f);
 
             //ドアが閉じるSEを再生する
-            closeSE.Play();
+            //closeSE.Play();
+            audioSource.PlayOneShot(closeDoorSE);
         }
     }
 

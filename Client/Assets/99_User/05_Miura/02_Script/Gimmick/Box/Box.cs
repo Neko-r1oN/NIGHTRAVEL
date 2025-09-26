@@ -13,23 +13,8 @@ public class Box : ObjectBase
     [SerializeField] GameObject BoxPrefab;  //箱プレハブ取得
     [SerializeField] GameObject BoxFragment;　//破片エフェクトを取得
 
-    AudioSource boxBlakeSE;
-
     // 破壊判定
     bool isBroken = false;
-
-    private void Start()
-    {
-        boxBlakeSE = GetComponent<AudioSource>();
-    }
-
-    private void Update()
-    {
-        if(isBroken)
-        {
-            boxBlakeSE.Play();
-        }
-    }
 
     /// <summary>
     /// 箱を消す処理

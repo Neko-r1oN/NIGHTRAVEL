@@ -10,10 +10,16 @@ public class BoomEffect : MonoBehaviour
     PlayerBase playerBase;
     EnemyBase enemyBase;
 
+
+    [SerializeField] AudioClip boomSE;
+    AudioSource audioSource;
+
+
     Vector2 pos;
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         // このゲームオブジェクトのポジションを取得
         pos = this.gameObject.transform.position;
     }
@@ -22,6 +28,7 @@ public class BoomEffect : MonoBehaviour
     {
         if (collision.transform.tag == "Player")
         { 
+            audioSource.PlayOneShot(boomSE);
             Invoke("DeleteThis", 0.6f);
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
             // プレイヤーの最大HP15%相当のダメージに設定
