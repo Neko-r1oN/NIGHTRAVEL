@@ -55059,7 +55059,7 @@ MonoBehaviour:
   attackDist: 10
   hitTime: 1
   obstructionMaxTime: 3
-  isBoss: 0
+  isBoss: 1
   isElite: 0
   canPatrol: 0
   canChaseTarget: 1
@@ -55068,10 +55068,10 @@ MonoBehaviour:
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
   spawnGroundOffset: 1.4
+  spawnWeight: 20
   canDrawRay: 1
   baseExp: 100
   exp: 100
-  spawnWeight: 20
   aimTransform: {fileID: 1661107894370850979}
   meleeAttackCheck: {fileID: 4256352376181952109}
   meleeAttackRange: 2
