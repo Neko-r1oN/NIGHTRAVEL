@@ -593,7 +593,11 @@ public class SpawnManager : MonoBehaviour
         }
         #endregion
 
-        if(enemy.GetComponent<EnemyBase>().IsBoss) UIManager.Instance.DisplayBossUI();
+        if (enemy.GetComponent<EnemyBase>().IsBoss)
+        {
+            GameManager.Instance.PlayBossBGM();
+            UIManager.Instance.DisplayBossUI();
+        }
 
         return enemyObj;
     }
