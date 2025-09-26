@@ -66802,8 +66802,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnRange: {x: 5.45, y: 7.29}
   spawnRangeOffset: 5.7
-  maxSpawnCnt: 10
-  knockTermsNum: 5
+  maxSpawnCnt: 70
+  knockTermsNum: 50
   spawnProbability: 0.05
   stageMin: {fileID: 2032298648}
   stageMax: {fileID: 1105730915}
@@ -99893,6 +99893,8 @@ MonoBehaviour:
   portals:
   - {fileID: 2091817623}
   - {fileID: 951236776}
+  bossBGM: {fileID: 8300000, guid: e5412c7dcd9e8544887ac389900ea269, type: 3}
+  normalBGM: {fileID: 8300000, guid: e307dc19eb33db54b8ba8b9ce5a7466c, type: 3}
 --- !u!4 &2102152737
 Transform:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -42,6 +43,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] float distMinSpawnPos;    // 生成しない範囲
     [SerializeField] int knockTermsNum;        // エネミーの撃破数条件
     [SerializeField] List<GameObject> portals; // 遷移用ポータル
+    [SerializeField] AudioResource bossBGM;      // ボスBGM
+    [SerializeField] AudioResource normalBGM;
 
     float elapsedTime;
 
@@ -131,8 +134,6 @@ public class GameManager : MonoBehaviour
             //遷移完了のリクエスト (TerminalManagerにて呼び出し)
             //await RoomModel.Instance.AdvancedStageAsync();  
         }
-
-        
     }
 
     private void OnDisable()
@@ -281,6 +282,9 @@ public class GameManager : MonoBehaviour
         // 死んだ判定にする
         isBossDead = true;
 
+        this.GetComponent<AudioSource>().resource = normalBGM;
+        this.GetComponent<AudioSource>().Play();
+
         UIManager.Instance.HideBossUI();
 
         for(int i = 0; i < portals.Count; i++)
@@ -347,5 +351,11 @@ public class GameManager : MonoBehaviour
         }
 
         return terminals;
+    }
+
+    public void PlayBossBGM()
+    {
+        this.GetComponent<AudioSource>().resource = bossBGM;
+        this.GetComponent<AudioSource>().Play();
     }
 }
