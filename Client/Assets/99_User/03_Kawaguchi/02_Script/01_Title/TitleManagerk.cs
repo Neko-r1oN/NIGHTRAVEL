@@ -108,6 +108,12 @@ public class TitleManagerk : MonoBehaviour
         });
     }
 
+    public void SinglePlayStart()
+    {
+        Initiate.DoneFading();
+        Initiate.Fade("3_StandbyRoom", Color.black, 1.0f);   // フェード時間1秒
+    }
+
     public void MultiPlayStart()
     {
         Initiate.DoneFading();
