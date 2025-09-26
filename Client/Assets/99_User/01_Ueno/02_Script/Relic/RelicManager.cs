@@ -23,12 +23,13 @@ public class RelicManager : MonoBehaviour
     [Header("リスト")]
     [SerializeField] List<Sprite> relicSprites = new List<Sprite>();     // レリックのリスト
     public List<Sprite> RelicSprites { get {  return relicSprites; } }
-    [SerializeField] List<RelicData> haveRelicList = new List<RelicData>();     // 所持レリックリスト
     [SerializeField] List<GameObject> relicSpawnPos = new List<GameObject>();
     [SerializeField] GameObject relicPrefab;
     [SerializeField] List<Material> rarityMaterial = new List<Material>();
 
-    public List<RelicData> HaveRelicList {  get { return haveRelicList; } }
+    // 現在所持しているレリックのリスト
+    static public List<RelicData> HaveRelicList { get; set; }
+
     #endregion
 
     float elapsedTime;
@@ -62,6 +63,8 @@ public class RelicManager : MonoBehaviour
 
     private void Start()
     {
+        ApplyHaveRelicsUI();
+
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
         RoomModel.Instance.OnTerminalJumbled += this.OnTerminalJumbled;
@@ -78,7 +81,7 @@ public class RelicManager : MonoBehaviour
     /// </summary>
     public void AddRelic(RelicData relic)
     {
-        if (haveRelicList.Find(X => X.ID == relic.ID) != null)
+        if (HaveRelicList.Find(X => X.ID == relic.ID) != null)
         {
             CountRelic(relic.ID);
         }
@@ -87,7 +90,18 @@ public class RelicManager : MonoBehaviour
             UIManager.Instance.DisplayRelic(relicSprites[(int)relic.ID - 1],relic);
         }
 
-        haveRelicList.Add(relic);
+        HaveRelicList.Add(relic);
+    }
+
+    /// <summary>
+    /// 現在所持しているレリックをUIに適用させる
+    /// </summary>
+    void ApplyHaveRelicsUI()
+    {
+        foreach(var relic in HaveRelicList)
+        {
+            UIManager.Instance.DisplayRelic(relicSprites[(int)relic.ID - 1], relic);
+        }
     }
 
     /// <summary>
@@ -154,7 +168,7 @@ public class RelicManager : MonoBehaviour
     public void OnTerminalJumbled (List<DropRelicData> relics)
     {
         // レリック消去
-        haveRelicList.Clear();
+        HaveRelicList.Clear();
         UIManager.Instance.ClearRelic();
 
         // 受け取ったレリックデータを適用
@@ -175,7 +189,7 @@ public class RelicManager : MonoBehaviour
     {
         int relicCnt = 0;
 
-        foreach (RelicData rlc in haveRelicList)
+        foreach (RelicData rlc in HaveRelicList)
         {
             if (id == rlc.ID)
             {

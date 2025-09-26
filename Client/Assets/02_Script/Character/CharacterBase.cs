@@ -285,6 +285,24 @@ abstract public class CharacterBase : MonoBehaviour
         healRate = Mathf.Clamp(healRate, 0f, maxHealRate);
     }
 
+    /// <summary>
+    /// 現在の最大ステータスを取得する
+    /// </summary>
+    /// <returns></returns>
+    public CharacterStatusData GetCurrentMaxStatusData()
+    {
+        return new CharacterStatusData()
+        {
+            hp = maxHp,
+            defence = maxDefense,
+            power = maxPower,
+            moveSpeed = maxMoveSpeed,
+            jumpPower = maxJumpPower,
+            attackSpeedFactor = maxAttackSpeedFactor,
+            healRate = maxHealRate
+        };
+    }
+
     #region ステータスを上書きする
 
     /// <summary>

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -1216,5 +1217,33 @@ abstract public class PlayerBase : CharacterBase
     {
         HP += (int)(MaxHP * lifeScavengerRate);
     }
+
+    /// <summary>
+    /// 現在のレリックステータスデータを取得する
+    /// </summary>
+    /// <returns></returns>
+    public PlayerRelicStatusData GetPlayerRelicStatusData()
+    {
+        // AddExpRateなし
+        //+++++++++++++++++++++++++++++
+        return new PlayerRelicStatusData()
+        {
+            GiveDebuffRates = giveDebuffRates,
+            RegainCodeRate = regainCodeRate,
+            ScatterBugCnt = scatterBugCnt,
+            HolographicArmorRate = holographicArmorRate,
+            MouseRate = mouseRate,
+            DigitalMeatCnt = DigitalMeatCnt,
+            FirewallRate = firewallRate,
+            LifeScavengerRate = lifeScavengerRate,
+            RugrouterRate = rugrouterRate,
+            BuckupHDMICnt = buckupHDMICnt,
+            IdentificationAIRate = identificationAIRate,
+            DanborDollRate = danborDollRate,
+            ChargedCoreCnt = chargedCoreCnt,
+            IllegalScriptRate = illegalScriptRate,
+        };
+    }
+
     #endregion
 }

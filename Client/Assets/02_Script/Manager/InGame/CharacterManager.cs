@@ -10,6 +10,8 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using UnityEngine.TextCore.Text;
+using Unity.VisualScripting.FullSerializer;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -17,8 +19,14 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] List<Transform> startPoints = new List<Transform>();   // 各プレイヤーの初期位置
     [SerializeField] GameObject charaSwordPrefab;
     [SerializeField] GameObject charaGunnerPrefab;
+
     [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
+
+    /// <summary>
+    /// 自身のキャラクターデータ(シーン遷移したときの引継ぎ用)
+    /// </summary>
+    static public PlayerStatusData SelfPlayerStatusData { get; set; } = null;
 
     /// <summary>
     /// 自分の操作キャラ
@@ -80,6 +88,9 @@ public class CharacterManager : MonoBehaviour
             }
             playerObjs.Add(Guid.Empty, playerObjSelf);
 
+            if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();   // 初回のみ
+            else ApplySelfPlayerStatusData();
+
             return;
         }
 
@@ -123,6 +134,34 @@ public class CharacterManager : MonoBehaviour
     }
 
     #region キャラクター関連
+
+    /// <summary>
+    /// マネージャーで保持しているプレイヤーのステータスデータを更新する
+    /// </summary>
+    public void UpdateSelfSelfPlayerStatusData()
+    {
+        SelfPlayerStatusData = new PlayerStatusData()
+        {
+            NowLevel = playerObjSelf.GetComponent<PlayerBase>().NowLv,
+            NowExp = playerObjSelf.GetComponent<PlayerBase>().NowExp,
+            NextLevelExp = playerObjSelf.GetComponent<PlayerBase>().NextLvExp,
+            CharacterMaxStatusData = playerObjSelf.GetComponent<CharacterBase>().GetCurrentMaxStatusData(),
+            PlayerRelicStatusData = playerObjSelf.GetComponent<PlayerBase>().GetPlayerRelicStatusData(),
+        };
+    }
+
+    /// <summary>
+    /// マネージャーで保持しているプレイヤーのステータスデータを適用させる
+    /// </summary>
+    public void ApplySelfPlayerStatusData()
+    {
+        playerObjSelf.GetComponent<PlayerBase>().NowExp = SelfPlayerStatusData.NowExp;
+        playerObjSelf.GetComponent<PlayerBase>().NowLv = SelfPlayerStatusData.NowLevel;
+        playerObjSelf.GetComponent<PlayerBase>().NextLvExp = SelfPlayerStatusData.NextLevelExp;
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(SelfPlayerStatusData.CharacterMaxStatusData, STATUS_TYPE.All);
+        playerObjSelf.GetComponent<CharacterBase>().OverridCurrentStatus(SelfPlayerStatusData.CharacterMaxStatusData, STATUS_TYPE.All);
+        playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(SelfPlayerStatusData.PlayerRelicStatusData);
+    }
 
     /// <summary>
     /// キャラクターの情報更新呼び出し用コルーチン
@@ -577,6 +616,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 弾の発射通知
     /// </summary>
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>

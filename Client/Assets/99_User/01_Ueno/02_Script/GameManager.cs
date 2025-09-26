@@ -207,6 +207,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ChengScene(STAGE_TYPE type)
     {
+        CharacterManager.Instance.UpdateSelfSelfPlayerStatusData(); // 遷移する前のプレイヤーのステータスを保持
         switch (type)
         {
             case STAGE_TYPE.Rust:
@@ -242,9 +243,11 @@ public class GameManager : MonoBehaviour
     {   
         Initiate.DoneFading();
         SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
-        //Initiate.Fade("ResultScene", Color.black, 0.5f);
-        //SceneManager.UnloadSceneAsync("UIScene");
         UIManager.Instance.HideCanvas();
+
+        // 保持していた各データをリセットする
+        CharacterManager.SelfPlayerStatusData = null;
+        RelicManager.HaveRelicList = new List<RelicData>();
 
         isGameStart = false;
     }
