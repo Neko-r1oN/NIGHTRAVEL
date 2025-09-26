@@ -78,7 +78,7 @@ public class ItemManager : MonoBehaviour
     /// <summary>
     /// アイテム獲得通知
     /// </summary>
-    public void OnGetItem(Guid conId, string itemID)
+    public void OnGetItem(Guid conId, string itemID, int nowLevel, int nowExp, int nextLevelExp)
     {
         if (managedItems.ContainsKey(itemID))
         {
@@ -86,6 +86,11 @@ public class ItemManager : MonoBehaviour
             if(RoomModel.Instance) isSelfAcquired = RoomModel.Instance.ConnectionId == conId;
             managedItems[itemID].OnGetItem(isSelfAcquired);
             managedItems.Remove(itemID);
+
+            var player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
+            player.NowLv = nowLevel;
+            player.NowExp = nowExp;
+            player.NextLvExp = nextLevelExp;
         }
     }
 
