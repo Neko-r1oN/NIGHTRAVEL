@@ -77,6 +77,11 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// </summary>
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; }
 
+        /// <summary>
+        /// ゲームスタート
+        /// </summary>
+        public bool IsStartGame { get; set; } = false;
+
         #region マスタデータ
 
         /// <summary>

@@ -1103,7 +1103,12 @@ abstract public class PlayerBase : CharacterBase
     public void MoveCheckPoint()
     {
         // HP‚Ì5%ƒ_ƒ[ƒW
-        hp = (int)((float)hp * 0.05);  
+        var damage = (int)((float)hp * 0.05);
+
+        if (hp - damage <= 0) 
+            hp = 1;
+        else
+            hp -= damage;
 
         // ˆÚ“®
         playerPos.position = FetchNearObjectWithTag("Gimmick/ChecKPoint").position;
