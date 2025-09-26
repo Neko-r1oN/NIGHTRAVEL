@@ -7,7 +7,6 @@
 using DG.Tweening;
 using Shared.Interfaces.StreamingHubs;
 using System;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 
 abstract public class GimmickBase : MonoBehaviour
