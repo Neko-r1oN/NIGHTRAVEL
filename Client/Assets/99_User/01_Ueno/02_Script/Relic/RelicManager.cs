@@ -28,7 +28,7 @@ public class RelicManager : MonoBehaviour
     [SerializeField] List<Material> rarityMaterial = new List<Material>();
 
     // 現在所持しているレリックのリスト
-    static public List<RelicData> HaveRelicList { get; set; }
+    static public List<RelicData> HaveRelicList { get; set; } = new List<RelicData>();
 
     #endregion
 

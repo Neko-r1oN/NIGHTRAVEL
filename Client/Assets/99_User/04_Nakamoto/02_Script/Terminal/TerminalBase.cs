@@ -178,7 +178,7 @@ public abstract class TerminalBase : MonoBehaviour
         if(terminalType == EnumManager.TERMINAL_TYPE.Jumble)
         {
             Debug.Log("ƒŒƒŠƒbƒN‚ª‚ ‚è‚Ü‚¹‚ñ");
-            if (RelicManager.Instance.HaveRelicList.Count == 0) return;
+            if (RelicManager.HaveRelicList.Count == 0) return;
         }
 
         isUsed = true; // ‹N“®Ï‚İ‚É‚·‚é
