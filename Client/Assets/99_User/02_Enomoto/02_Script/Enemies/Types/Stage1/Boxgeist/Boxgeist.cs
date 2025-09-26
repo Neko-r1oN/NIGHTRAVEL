@@ -320,8 +320,7 @@ public class Boxgeist : EnemyBase
         const float waitSec = 0.1f;
         float currentSec = 0;
         Vector2 targetPos = target.transform.position;
-        while (Vector2.Distance(targetPos, transform.position) < attackDist * 2 || 
-            Vector2.Distance(targetPos, transform.position) < attackDist * 2 && currentSec <= maxMoveTime)
+        while (Vector2.Distance(targetPos, transform.position) < attackDist * 2 && currentSec <= maxMoveTime)
         {
             BackOff(targetPos);
             yield return new WaitForSeconds(waitSec);
@@ -411,8 +410,7 @@ public class Boxgeist : EnemyBase
     {
         const float waitSec = 0.1f;
         float currentSec = 0;
-        while (currentSec <= minMoveTime && disToTarget > attackDist ||
-            disToTarget > attackDist && currentSec <= maxMoveTime)
+        while (disToTarget > attackDist && currentSec <= maxMoveTime)
         {
             CloseIn();
             yield return new WaitForSeconds(waitSec);
@@ -513,8 +511,7 @@ public class Boxgeist : EnemyBase
     {
         const float waitSec = 0.1f;
         float currentSec = 0;
-        while (currentSec <= minMoveTime && disToTargetX > attackDist ||
-            currentSec <= maxMoveTime && disToTargetX > attackDist)
+        while (disToTargetX > attackDist && currentSec <= maxMoveTime)
         {
             CloseIn();
             yield return new WaitForSeconds(waitSec);
@@ -586,7 +583,8 @@ public class Boxgeist : EnemyBase
     IEnumerator AttackFakkBlockCoroutine(Action onFinished)
     {
         const float targetDist = 0.5f;
-        while (disToTargetX > targetDist)
+        float currentSec = 0;
+        while (disToTargetX > targetDist && currentSec <= maxMoveTime)
         {
             CloseIn();
             yield return null;
