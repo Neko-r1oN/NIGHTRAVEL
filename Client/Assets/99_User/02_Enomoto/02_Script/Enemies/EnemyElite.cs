@@ -5,9 +5,12 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class EnemyElite : MonoBehaviour
 {
-    #region プレファブ
+    #region 炎のトラップ関係
     [SerializeField]
     GameObject blazeTrap;
+
+    [SerializeField]
+    float blazeTrapSpawnPosY;
     #endregion
 
     #region 特殊効果が発動する間隔
@@ -16,8 +19,8 @@ public class EnemyElite : MonoBehaviour
 
     float timer;
 
-    EnumManager.ENEMY_ELITE_TYPE eliteType = EnumManager.ENEMY_ELITE_TYPE.None;
-    public EnumManager.ENEMY_ELITE_TYPE EliteType { get { return eliteType; } }
+    ENEMY_ELITE_TYPE eliteType = EnumManager.ENEMY_ELITE_TYPE.None;
+    public ENEMY_ELITE_TYPE EliteType { get { return eliteType; } }
 
     /// <summary>
     /// 付与する状態異常の種類
@@ -39,19 +42,19 @@ public class EnemyElite : MonoBehaviour
         Color outlineColor = new Color();
         Action action = type switch
         {
-            EnumManager.ENEMY_ELITE_TYPE.Blaze => () =>
+            ENEMY_ELITE_TYPE.Blaze => () =>
             {
                 // カラーコード FF0000(赤色)
                 outlineColor = new Color32(0xFF, 0x00, 0x00, 0xFF);
             }
             ,
-            EnumManager.ENEMY_ELITE_TYPE.Frost => () =>
+            ENEMY_ELITE_TYPE.Frost => () =>
             {
                 // カラーコード 00FFEA(水色)
                 outlineColor = new Color32(0x00, 0xFF, 0xEF, 0xFF);
             }
             ,
-            EnumManager.ENEMY_ELITE_TYPE.Thunder => () =>
+            ENEMY_ELITE_TYPE.Thunder => () =>
             {
                 // カラーコード E100FF(紫色)
                 outlineColor = new Color32(0xE1, 0x00, 0xFF, 0xFF);
@@ -97,7 +100,7 @@ public class EnemyElite : MonoBehaviour
     /// </summary>
     public void ActivateBlazeEffect()
     {
-        GameObject trap = Instantiate(blazeTrap, transform.position, Quaternion.identity);
+        GameObject trap = Instantiate(blazeTrap, transform.position + Vector3.up * blazeTrapSpawnPosY, Quaternion.identity);
         trap.GetComponent<BlazeTrap>().InitializeBlazeTrap(gameObject);
     }
 

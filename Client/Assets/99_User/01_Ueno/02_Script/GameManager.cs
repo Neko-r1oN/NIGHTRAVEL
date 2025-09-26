@@ -149,8 +149,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+#if UNITY_EDITOR
         // ポーズ処理(仮)
-        if(Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             Time.timeScale = 0;
         }
@@ -160,10 +161,9 @@ public class GameManager : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.L))
         {// 20倍速(デバック用)
-#if UNITY_EDITOR
             Time.timeScale = 20;
-#endif
         }
+#endif
 
         //Escが押された時
         if (Input.GetKey(KeyCode.Escape))
@@ -248,6 +248,7 @@ public class GameManager : MonoBehaviour
         // 保持していた各データをリセットする
         CharacterManager.SelfPlayerStatusData = null;
         RelicManager.HaveRelicList = new List<RelicData>();
+        LevelManager.GameLevel = 0;
 
         isGameStart = false;
     }

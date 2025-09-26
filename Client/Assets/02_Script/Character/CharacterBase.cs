@@ -388,12 +388,13 @@ abstract public class CharacterBase : MonoBehaviour
         List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
         if (statusList.Contains(STATUS_TYPE.All)) statusList = GetAllStatusType();
 
+        int hp = maxHp;
         foreach (STATUS_TYPE type in statusList)
         {
             switch (type)
             {
                 case STATUS_TYPE.HP:
-                    maxHp = statusData.hp;
+                    hp = statusData.hp;
                     break;
                 case STATUS_TYPE.Defense:
                     maxDefense = statusData.defence;
@@ -417,7 +418,7 @@ abstract public class CharacterBase : MonoBehaviour
         }
 
         CharacterStatusData changeData = new CharacterStatusData(
-            hp: maxHp,
+            hp: hp,
             defence: maxDefense,
             power: maxPower,
             moveSpeed: maxMoveSpeed,
@@ -445,12 +446,13 @@ abstract public class CharacterBase : MonoBehaviour
         List<STATUS_TYPE> statusList = new List<STATUS_TYPE>(types);
         if (statusList.Contains(STATUS_TYPE.All)) statusList = GetAllStatusType();
 
+        int hp = maxHp;
         foreach (STATUS_TYPE type in statusList)
         {
             switch (type)
             {
                 case STATUS_TYPE.HP:
-                    maxHp += (int)(baseHp * rate);
+                    hp += (int)(baseHp * rate);
                     break;
                 case STATUS_TYPE.Defense:
                     maxDefense += (int)(baseDefense * rate);
@@ -473,7 +475,7 @@ abstract public class CharacterBase : MonoBehaviour
             }
         }
         CharacterStatusData changeData = new CharacterStatusData(
-            hp: maxHp,
+            hp: hp,
             defence: maxDefense,
             power: maxPower,
             moveSpeed: maxMoveSpeed,

@@ -17,12 +17,15 @@ public class BlazeTrap : MonoBehaviour
     float aliveTime = 1.0f;
     float timer;
 
+    GameObject owner;
+
     /// <summary>
     /// èâä˙âªèàóù
     /// </summary>
     /// <param name="owner"></param>
     public void InitializeBlazeTrap(GameObject owner)
     {
+        this.owner = owner;
         var ownerCollider = owner.GetComponent<CapsuleCollider2D>();
         var radius = ownerCollider.bounds.size.x / 2;
         transform.localScale = owner.transform.localScale;
@@ -70,6 +73,8 @@ public class BlazeTrap : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (owner == null || owner == collision.gameObject) return;
+
         string tag = collision.gameObject.tag;
         if (tag == "Player")
         {

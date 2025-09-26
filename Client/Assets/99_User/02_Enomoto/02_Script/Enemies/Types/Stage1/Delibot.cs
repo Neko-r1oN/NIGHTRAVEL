@@ -225,6 +225,7 @@ public class Delibot : EnemyBase
     public override void OnEndSpawnAnimEvent()
     {
         base.OnEndSpawnAnimEvent();
+        if (!chaseAI) chaseAI = GetComponent<EnemyChaseAI>();
         chaseAI.Stop();
         ApplyStun(0.5f, false);
     }

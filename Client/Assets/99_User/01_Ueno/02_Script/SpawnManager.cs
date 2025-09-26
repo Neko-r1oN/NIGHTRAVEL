@@ -566,10 +566,6 @@ public class SpawnManager : MonoBehaviour
         var scale = spawnEnemyData.Scale;
         var eliteType = spawnEnemyData.EliteType;
         GameObject enemyObj = Instantiate(prefab, position, Quaternion.identity);
-        //if (LevelManager.Instance.GameLevel > 0)
-        //{
-        //    enemyObj.GetComponent<CharacterBase>().ApplyStatusModifierByRate(10 * ((int)LevelManager.Instance.GameLevel));
-        //}
         enemyObj.transform.localScale = scale;
         EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
         enemy.PromoteToElite(eliteType);

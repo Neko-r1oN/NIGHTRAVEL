@@ -288,7 +288,7 @@ public class UIManager : MonoBehaviour
 
         level = LevelManager.Instance;
 
-        diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+        diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
         colorCode = "#ffc0cb";
 
         if(ColorUtility.TryParseHtmlString(colorCode,out color))
@@ -853,19 +853,19 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpGameLevelText()
     {
-        if(level.GameLevel > level.LevelHellId)
+        if(LevelManager.GameLevel > level.LevelHellId)
         {
             return;
         }
              
-        diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+        diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
 
         // textÇÃêFïœçX
-        switch (level.GameLevel)
+        switch (LevelManager.GameLevel)
         {// BabyÇÕstartÇ≈ê›íËçœÇ›ÇÃÇΩÇﬂè»Ç≠
 
             case (int)DIFFICULTY_TYPE.Easy:
-                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
                 colorCode = "#00ffff";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -877,7 +877,7 @@ public class UIManager : MonoBehaviour
 
             case (int)DIFFICULTY_TYPE.Normal:
 
-                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
                 colorCode = "#66cdaa";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -889,7 +889,7 @@ public class UIManager : MonoBehaviour
 
             case (int)DIFFICULTY_TYPE.Hard:
 
-                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
 
                 diffText.color = Color.red;
 
@@ -897,7 +897,7 @@ public class UIManager : MonoBehaviour
 
             case (int)DIFFICULTY_TYPE.VeryHard:
 
-                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
                 colorCode = "#b22222";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -909,7 +909,7 @@ public class UIManager : MonoBehaviour
 
             case (int)DIFFICULTY_TYPE.Hell:
 
-                diffText.text = level.LevelName[(DIFFICULTY_TYPE)level.GameLevel].ToString();
+                diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
                 colorCode = "#ff00ff";
 
                 if (ColorUtility.TryParseHtmlString(colorCode, out color))
