@@ -23,8 +23,6 @@ public class Press : MonoBehaviour
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.2f);
             playerBase.ApplyDamage(damage);
             playerBase.MoveCheckPoint();    // つぶれたプレイヤーをチェックポイントへ戻す
-
-            Debug.Log("You Pancaked");
         }
     }
 }

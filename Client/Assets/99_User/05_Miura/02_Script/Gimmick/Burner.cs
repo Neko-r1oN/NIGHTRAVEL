@@ -5,6 +5,7 @@
 //===================
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
@@ -14,7 +15,9 @@ public class Burner : GimmickBase
     EnemyBase enemy;
     DebuffController statusEffectController;
     [SerializeField] GameObject flame;
-    [SerializeField] AudioSource flameSE;
+
+    [SerializeField] AudioClip burnSE;
+    AudioSource audioSource;
 
     NavMeshObstacle navMeshObstacle;
     SpriteRenderer spriteRenderer;
@@ -26,6 +29,7 @@ public class Burner : GimmickBase
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         navMeshObstacle = GetComponent<NavMeshObstacle>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -58,11 +62,11 @@ public class Burner : GimmickBase
             // ダメージを適用させる対象が自分の操作キャラの場合
             if(collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
             {
+                audioSource.PlayOneShot(burnSE);
                 player = GetComponent<PlayerBase>();
                 statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerをGetComponentする
 
                 statusEffectController.ApplyStatusEffect(DEBUFF_TYPE.Burn); //プレイヤーに炎上状態を付与
-                Debug.Log("プレイヤーに炎上状態を付与");
             }
         }
 
@@ -74,8 +78,6 @@ public class Burner : GimmickBase
             {
                 enemy = GetComponent<EnemyBase>();
                 statusEffectController = collision.gameObject.GetComponent<DebuffController>(); //触れたオブジェクトのStatusEffectControllerを取得する
-
-                Debug.Log("敵に炎上状態を付与");
             }
         }
     }
@@ -88,8 +90,6 @@ public class Burner : GimmickBase
         timer = 0;
         if (isFlame==true)
         {
-            flameSE.Stop();
-
             // 起動停止
             navMeshObstacle.enabled = false;
             spriteRenderer.enabled = false;
@@ -98,8 +98,6 @@ public class Burner : GimmickBase
         }
         else if(isFlame==false)
         {
-            flameSE.Play();
-
             // 起動開始
             navMeshObstacle.enabled = true;
             spriteRenderer.enabled = true;

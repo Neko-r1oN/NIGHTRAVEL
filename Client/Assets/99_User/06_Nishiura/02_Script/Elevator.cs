@@ -5,6 +5,7 @@
 //===================
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Audio;
 public class Elevator : GimmickBase
 {
     // 電源判定
@@ -28,6 +29,16 @@ public class Elevator : GimmickBase
     //　エレベーター到着SE
     [SerializeField] AudioSource arrivalSE;
     Tweener tweener;
+
+    [SerializeField] AudioClip moveSE;
+    [SerializeField] AudioClip arrivedSE;
+
+    AudioSource audioSource;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     private void Update()
     {
         if (isBroken)
@@ -79,7 +90,8 @@ public class Elevator : GimmickBase
         if (!isRised)
         {   // 上昇していないと判断された場合
             //到着SEを再生する
-            arrivalSE.Play();
+            //arrivalSE.Play();
+            audioSource.PlayOneShot(arrivedSE);
             //移動SEの再生を停止する
             movementSE.Stop();
         }
