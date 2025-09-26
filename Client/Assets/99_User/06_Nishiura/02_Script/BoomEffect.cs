@@ -24,8 +24,8 @@ public class BoomEffect : MonoBehaviour
         { 
             Invoke("DeleteThis", 0.6f);
             playerBase = collision.gameObject.GetComponent<PlayerBase>();
-            // プレイヤーの最大HP30%相当のダメージに設定
-            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.3f);
+            // プレイヤーの最大HP15%相当のダメージに設定
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.15f);
             playerBase.ApplyDamage(damage, pos);
 
 
@@ -34,8 +34,8 @@ public class BoomEffect : MonoBehaviour
         {
             enemyBase = collision.gameObject.GetComponent<EnemyBase>();
 
-            // 敵の最大HP30%相当のダメージに設定
-            int damage = Mathf.FloorToInt(enemyBase.MaxHP * 0.3f);
+            // 敵の最大HP15%相当のダメージに設定
+            int damage = Mathf.FloorToInt(enemyBase.MaxHP * 0.15f);
             enemyBase.ApplyDamageRequest(damage);
 
             Invoke("DeleteThis", 0.6f);
