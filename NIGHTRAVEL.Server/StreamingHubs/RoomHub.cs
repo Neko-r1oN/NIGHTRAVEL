@@ -601,7 +601,7 @@ namespace StreamingHubs
                     this.roomContext.gottenItemList.Clear();
 
                     // 生成した端末リストをクリア
-                    //this.roomContext.terminalList.Clear();
+                    this.roomContext.terminalList.Clear();
 
                     // 生成した敵のリストを初期化
                     this.roomContext.enemyDataList.Clear();
@@ -742,9 +742,10 @@ namespace StreamingHubs
 
                 // ダメージにレリック効果適用
                 // 「識別AI」効果（デバフ状態の敵に対するダメージ倍率UP）
-                if (roomContext.enemyDataList[enemID].DebuffList.Count != 0) damage = (int)(damage * relicStatus.IdentificationAIRate);
+                if (roomContext.enemyDataList[enemID].DebuffList.Count != 0) damage += (int)(damage * relicStatus.IdentificationAIRate);
                 // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
-                damage = (LotteryIllegalScript(relicStatus.IllegalScriptRate)) ? MAX_DAMAGE : damage;
+                if(!enemData.isBoss)
+                    damage = (LotteryIllegalScript(relicStatus.IllegalScriptRate)) ? MAX_DAMAGE : damage;
 
                 // ダメージ適用
                 enemData.State.hp -= damage;
@@ -1016,6 +1017,31 @@ namespace StreamingHubs
             }
 
             return relicList;
+        }
+
+        /// <summary>
+        /// 端末失敗処理
+        /// </summary>
+        /// <param name="termID"></param>
+        /// <returns></returns>
+        public async Task TerminalFailureAsync(int termID)
+        {
+            // 端末の状態を失敗状態
+            var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
+            terminal.State = TERMINAL_STATE.Failure;
+
+            // 失敗したので生成された敵を削除
+            if(terminal.Type == TERMINAL_TYPE.Elite || terminal.Type == TERMINAL_TYPE.Enemy)
+            {
+                foreach (var enemyID in terminal.EnemyList)
+                {
+                    this.roomContext.enemyDataList.Remove(enemyID);
+                }
+                terminal.EnemyList.Clear();
+            }
+
+            // 全員に失敗したことを通知
+            this.roomContext.Group.All.OnTerminalFailure(termID);
         }
 
         /// <summary>

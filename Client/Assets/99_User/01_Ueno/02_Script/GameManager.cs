@@ -245,12 +245,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
         UIManager.Instance.HideCanvas();
 
-        // 保持していた各データをリセットする
-        CharacterManager.SelfPlayerStatusData = null;
-        RelicManager.HaveRelicList = new List<RelicData>();
-        LevelManager.GameLevel = 0;
-        LevelManager.Options = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
-
         isGameStart = false;
     }
 
@@ -278,10 +272,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void DeathBoss()
     {
-        //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
-
-        //RelicManager.Instance.GenerateRelicTest();
-
         // 死んだ判定にする
         isBossDead = true;
 
@@ -289,7 +279,7 @@ public class GameManager : MonoBehaviour
         this.GetComponent<AudioSource>().Play();
 
         // ボス撃破時にレリックをドロップ
-        TerminalManager.Instance.DropRelic(1);
+        TerminalManager.Instance.OnTerminalsSuccessed(1);
 
         UIManager.Instance.HideBossUI();
 
@@ -297,8 +287,6 @@ public class GameManager : MonoBehaviour
         {
             portals[i].SetActive(true);
         }
-
-        //Invoke(nameof(ChengScene), 15f);
     }
 
     /// <summary>
