@@ -523,8 +523,7 @@ public class Slade : EnemyBase
         transform.position = teleportPos;
 
         // ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚­
-        if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-            || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        LookAtTarget();
 
         isInvincible = false;
     }

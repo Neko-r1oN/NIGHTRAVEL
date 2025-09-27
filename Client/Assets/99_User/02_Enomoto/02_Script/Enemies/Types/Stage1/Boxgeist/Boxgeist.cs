@@ -525,11 +525,7 @@ public class Boxgeist : EnemyBase
         yield return new WaitForSeconds(0.45f);     // ゴーレムに形態変化が完了する時間
 
         // ターゲットのいる方向にテクスチャを反転
-        if (canChaseTarget)
-        {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-        }
+        LookAtTarget();
 
         onFinished?.Invoke();
     }
@@ -641,8 +637,7 @@ public class Boxgeist : EnemyBase
         // ターゲットのいる方向にテクスチャを反転
         if (canChaseTarget)
         {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+            LookAtTarget();
         }
 
         isInvincible = false;
