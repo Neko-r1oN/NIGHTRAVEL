@@ -269,6 +269,9 @@ public class Rifle : PlayerBase
 
             if (hp <= 0)
             {   // Ž€–Sˆ—
+                hp = 0;
+                canMove = false;
+                isRegene = false;
                 m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                 StartCoroutine(WaitToDead());
             }

@@ -64,10 +64,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 300
   baseDefense: 20
-  basePower: 100
+  basePower: 80
   baseJumpPower: 10
   baseMoveSpeed: 50
-  baseHealRate: 0.001
+  baseHealRate: 0.01
   hp: 0
   defense: 0
   power: 0
@@ -89,6 +89,19 @@ MonoBehaviour:
   m_MovementSmoothing: 0.05
   invincible: 0
   healObjectPrefab: {fileID: 3137824796714772433, guid: bcabd7eeb2088c34583ee0b99ddbbf3b, type: 3}
+  regainCodeRate: 0
+  scatterBugCnt: 0
+  holographicArmorRate: 0
+  mouseRate: 0
+  digitalMeatCnt: 0
+  firewallRate: 0
+  lifeScavengerRate: 0
+  rugrouterRate: 0
+  buckupHDMICnt: 0
+  identificationAIRate: 0
+  danborDollRate: 0
+  chargedCoreCnt: 0
+  illegalScriptRate: 0
   enemyLayer: 6
   m_WhatIsGround:
     serializedVersion: 2
@@ -109,7 +122,7 @@ MonoBehaviour:
   - {fileID: 4249578791139060025, guid: 91bcf8dfedfa76c44a5e5198cec2ebd9, type: 3}
   - {fileID: 1622727937493990531, guid: b58036db173295744ba4bb4317f15737, type: 3}
   groundSmoke: {fileID: 8148750585739687520}
-  skillCoolDown: 3
+  skillCoolDown: 8
   firePoint: {fileID: 3568435395602818575}
   maxDistance: 75
   beamRadius: 0.45
@@ -117,7 +130,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   duration: 2.5
-  damageInterval: 0.2
+  damageInterval: 0.4
   beamEffect: {fileID: 4908541653046174117}
   bulletSpeed: 20
   bulletPrefab: {fileID: 11297972727251665, guid: 9276c139e5f7ddd4fb92a69ca2b6356d, type: 3}
@@ -180,7 +193,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 4723107735738678597, guid: f390d792b293b9842aab42f4326f2849, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -15104,7 +15117,7 @@ Transform:
   m_GameObject: {fileID: 6847081428597114609}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.2952118, y: 0.49154672, z: 0}
+  m_LocalPosition: {x: 0, y: 0.49154672, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []

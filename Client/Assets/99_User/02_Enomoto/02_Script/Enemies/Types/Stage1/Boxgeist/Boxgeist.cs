@@ -110,6 +110,21 @@ public class Boxgeist : EnemyBase
     bool endDecision;
     #endregion
 
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioCharge;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioGolem;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioFallBlock;
+    #endregion
+
     #region オリジナル
 
     [SerializeField]
@@ -305,8 +320,7 @@ public class Boxgeist : EnemyBase
         const float waitSec = 0.1f;
         float currentSec = 0;
         Vector2 targetPos = target.transform.position;
-        while (Vector2.Distance(targetPos, transform.position) < attackDist * 2 || 
-            Vector2.Distance(targetPos, transform.position) < attackDist * 2 && currentSec <= maxMoveTime)
+        while (Vector2.Distance(targetPos, transform.position) < attackDist * 2 && currentSec <= maxMoveTime)
         {
             BackOff(targetPos);
             yield return new WaitForSeconds(waitSec);
@@ -343,7 +357,7 @@ public class Boxgeist : EnemyBase
 
             ShootBulletData shootBulletData = new ShootBulletData()
             {
-                Type = PROJECTILE_TYPE.BoxBullet,
+                Type = PROJECTILE_TYPE.BoxBullet_Big,
                 Debuffs = debuffs,
                 Power = power,
                 SpawnPos = spawnPoint,
@@ -396,8 +410,7 @@ public class Boxgeist : EnemyBase
     {
         const float waitSec = 0.1f;
         float currentSec = 0;
-        while (currentSec <= minMoveTime && disToTarget > attackDist ||
-            disToTarget > attackDist && currentSec <= maxMoveTime)
+        while (disToTarget > attackDist && currentSec <= maxMoveTime)
         {
             CloseIn();
             yield return new WaitForSeconds(waitSec);
@@ -498,8 +511,7 @@ public class Boxgeist : EnemyBase
     {
         const float waitSec = 0.1f;
         float currentSec = 0;
-        while (currentSec <= minMoveTime && disToTargetX > attackDist ||
-            currentSec <= maxMoveTime && disToTargetX > attackDist)
+        while (disToTargetX > attackDist && currentSec <= maxMoveTime)
         {
             CloseIn();
             yield return new WaitForSeconds(waitSec);
@@ -508,14 +520,12 @@ public class Boxgeist : EnemyBase
 
         isInvincible = true;
         SetAnimId((int)ANIM_ID.Attack_Golem);
+        audioCharge.Play();
+
         yield return new WaitForSeconds(0.45f);     // ゴーレムに形態変化が完了する時間
 
         // ターゲットのいる方向にテクスチャを反転
-        if (canChaseTarget)
-        {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-        }
+        LookAtTarget();
 
         onFinished?.Invoke();
     }
@@ -527,6 +537,7 @@ public class Boxgeist : EnemyBase
     {
         const float forcePower = 30;
         m_rb2d.AddForce(new Vector2(TransformUtils.GetFacingDirection(transform) * forcePower, 0), ForceMode2D.Impulse);
+        audioGolem.Play();
     }
 
     /// <summary>
@@ -568,7 +579,8 @@ public class Boxgeist : EnemyBase
     IEnumerator AttackFakkBlockCoroutine(Action onFinished)
     {
         const float targetDist = 0.5f;
-        while (disToTargetX > targetDist)
+        float currentSec = 0;
+        while (disToTargetX > targetDist && currentSec <= maxMoveTime)
         {
             CloseIn();
             yield return null;
@@ -579,6 +591,7 @@ public class Boxgeist : EnemyBase
         m_rb2d.linearVelocity = Vector2.zero;
         m_rb2d.bodyType = RigidbodyType2D.Static;
         SetAnimId((int)ANIM_ID.Attack_FallBlock);
+        audioCharge.Play();
 
         // ブロックの向きを正しくする
         Vector2 direction = transform.localScale;
@@ -586,6 +599,14 @@ public class Boxgeist : EnemyBase
         transform.localScale = new Vector2(Mathf.Abs(direction.x), Mathf.Abs(direction.y));
 
         onFinished?.Invoke();
+    }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] 着地音再生
+    /// </summary>
+    public override void OnEndAttackAnim4Event()
+    {
+        audioFallBlock.Play();
     }
 
     #endregion
@@ -616,8 +637,7 @@ public class Boxgeist : EnemyBase
         // ターゲットのいる方向にテクスチャを反転
         if (canChaseTarget)
         {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+            LookAtTarget();
         }
 
         isInvincible = false;

@@ -74,6 +74,14 @@ public class FullMetalBody : EnemyBase
     [SerializeField] Animator selfJointAnimator;    // 自身に付いている歯車のAnimator
     #endregion
 
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioDoor;
+
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -226,6 +234,8 @@ public class FullMetalBody : EnemyBase
     IEnumerator GenerateEnemeiesCoroutine(int maxEnemies, Action onFinished)
     {
         SetAnimId((int)ANIM_ID.Open);  // ハッチが開くアニメーション
+        audioDoor.Play();
+
         List<SpawnEnemyData> spawnDatas = new List<SpawnEnemyData>();
         for (int i = 0; i < maxEnemies; i++)
         {
@@ -373,7 +383,8 @@ public class FullMetalBody : EnemyBase
         EnemyData enemyData = new EnemyData();
         foreach (var item in aimTransformList)
         {
-            enemyData.Quatarnions.Add(item.localRotation);
+            if(item.localRotation != null)
+                enemyData.Quatarnions.Add(item.localRotation);
         }
         return SetEnemyData(enemyData);
     }

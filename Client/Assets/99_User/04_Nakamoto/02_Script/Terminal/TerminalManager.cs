@@ -103,6 +103,9 @@ public class TerminalManager : MonoBehaviour
     /// <param name="list"></param>
     public void SetTerminal(List<TerminalData> list)
     {
+        terminalDatas.Clear();
+        terminalObjs.Clear();
+
         terminalDatas = list;
 
         if(terminalObjs.Count == 0)
@@ -146,12 +149,13 @@ public class TerminalManager : MonoBehaviour
 
         if(id == 2)
         {
-            GameObject child = terminalObjs[id].transform.GetChild(0).gameObject;
-            child.GetComponent<TerminalBase>().BootTerminal();
+            if (terminalObjs[id] != null)
+                terminalObjs[id].transform.GetChild(0).GetComponent<TerminalBase>().BootTerminal();
         }
         else
         {
-            terminalObjs[id].GetComponent<TerminalBase>().BootTerminal();
+            if (terminalObjs[id] != null)
+                terminalObjs[id].GetComponent<TerminalBase>().BootTerminal();
         }
     }
 

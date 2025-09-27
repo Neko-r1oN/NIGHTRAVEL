@@ -5,6 +5,7 @@
 //===================
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Audio;
 public class Elevator : GimmickBase
 {
     // 電源判定
@@ -28,6 +29,30 @@ public class Elevator : GimmickBase
     //　エレベーター到着SE
     [SerializeField] AudioSource arrivalSE;
     Tweener tweener;
+
+    [SerializeField] AudioClip moveSE;
+    [SerializeField] AudioClip arrivedSE;
+
+    AudioSource audioSource;
+
+    // エレベーターの目標地点
+    Vector2 riseEndPos;
+    Vector2 descentEndPos;
+
+    // ワイヤーの目標地点
+    Vector2 riseEndWirePos;
+    Vector2 descentEndWirePos;
+
+    private void Start()
+    {
+        // 下降済みの状態から始まるのを想定した目標地点を設定
+        riseEndPos = transform.position + Vector3.up * risePow;
+        descentEndPos = transform.position;
+        riseEndWirePos = wire.transform.position + Vector3.up * risePow;
+        descentEndWirePos = wire.transform.position;
+
+        audioSource = GetComponent<AudioSource>();
+    }
     private void Update()
     {
         if (isBroken)
@@ -35,7 +60,8 @@ public class Elevator : GimmickBase
             tweener.Kill();
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // エレベーターに乗っているキャラクターを子オブジェクトに設定
         var obj = collision.transform.gameObject;
@@ -79,7 +105,8 @@ public class Elevator : GimmickBase
         if (!isRised)
         {   // 上昇していないと判断された場合
             //到着SEを再生する
-            arrivalSE.Play();
+            //arrivalSE.Play();
+            audioSource.PlayOneShot(arrivedSE);
             //移動SEの再生を停止する
             movementSE.Stop();
         }
@@ -92,71 +119,80 @@ public class Elevator : GimmickBase
         }
         isMoving = false;   // 動作完了にする
     }
+
+    /// <summary>
+    /// 上昇する
+    /// </summary>
+    void MoveUp()
+    {
+        if (isRised || (Vector2)transform.position == riseEndPos) return;
+        Invoke("MovingCheck", moveSpeed);  //動作チェック
+        isRised = true;       // 上昇済みとする
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
+            tweener = this.transform.DOMove(riseEndPos, moveSpeed);
+            if (wire) wire.transform.DOMove(riseEndWirePos, moveSpeed);
+        }
+        //移動SEを再生する
+        movementSE.Play();
+    }
+
+    /// <summary>
+    /// 下降する
+    /// </summary>
+    void MoveDown()
+    {
+        if (!isRised || (Vector2)transform.position == descentEndPos) return;
+        Invoke("MovingCheck", moveSpeed);  //動作チェック
+        isRised = false;    // 下降済みとする
+        isMoving = true;    // 動作中にする
+
+        if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
+        {
+            tweener = this.transform.DOMove(descentEndPos, moveSpeed);
+            if (wire) wire.transform.DOMove(descentEndWirePos, moveSpeed);
+        }
+        //移動SEを再生する
+        movementSE.Play();
+    }
+
     /// <summary>
     /// 電源オン関数
     /// </summary>
     public override void TurnOnPower()
     {
-        Invoke("MovingCheck", 4f);  //動作チェック
-        if (!isRised)
-        {   //上昇済みでない場合
-            isRised = true;       // 上昇済みとする
-            if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
-            {
-                tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
-                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
-            }
-            //移動SEを再生する
-            movementSE.Play();
-        }
-        else
-        {   //上昇済みの場合
-            isRised = false;    // 下降済みとする
-            if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
-            {
-                tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
-                if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
-            }
-            //移動SEを再生する
-            movementSE.Play();
-        }
+        if (!isRised) MoveUp();
+        else MoveDown();
     }
+
     /// <summary>
     /// 昇降ボタン処理
     /// </summary>
     public void MoveButton(bool type)
     {
         if (isBroken == true || isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
-        isMoving = true;    // 動作中にする
-        if (type == false)
+
+        if (type == false) MoveDown();
+        else MoveUp();
+    }
+
+    /// <summary>
+    /// マスタ切り替え時の再起動処理
+    /// </summary>
+    public override void Reactivate()
+    {
+        CancelInvoke("MovingCheck");
+
+        if (isRised)
         {
-            Invoke("MovingCheck", 4f);  //動作チェック
-            if (isRised)
-            {   //上昇済みの場合
-                isRised = false;    // 下降済みとする
-                if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
-                {
-                    tweener = this.transform.DOMoveY((this.gameObject.transform.position.y - descentPow), moveSpeed); //下降する
-                    if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y - descentPow), moveSpeed); //ワイヤーも下降する
-                }
-                //移動SEを再生する
-                movementSE.Play();
-            }
+            transform.position = riseEndPos;
+            if (wire) wire.transform.position = riseEndWirePos;
         }
         else
         {
-            Invoke("MovingCheck", 4f);  //動作チェック
-            if (!isRised)
-            {   //上昇済みでない場合
-                isRised = true;       // 上昇済みとする
-                if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
-                {
-                    tweener = this.transform.DOMoveY((this.gameObject.transform.position.y + risePow), moveSpeed);    //上昇する
-                    if (wire != null) wire.transform.DOMoveY((wire.gameObject.transform.position.y + risePow), moveSpeed);    //ワイヤー上昇する
-                }
-                //移動SEを再生する
-                movementSE.Play();
-            }
+            transform.position = descentEndPos;
+            if (wire) wire.transform.position = descentEndWirePos;
         }
+        isMoving = false;
     }
 }

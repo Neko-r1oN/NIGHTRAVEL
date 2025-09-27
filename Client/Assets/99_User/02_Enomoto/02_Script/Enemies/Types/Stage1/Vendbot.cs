@@ -74,6 +74,12 @@ public class Vendbot : EnemyBase
     List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
     #endregion
 
+    #region オーディオ関連
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audio;
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -140,6 +146,8 @@ public class Vendbot : EnemyBase
         Vector2 jumpVec = new Vector2(moveSpeed * 2f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
         hitPlayers.Clear();
+
+        audio.Play();
 
         // 実行していなければ、近接攻撃のコルーチンを開始
         string cooldownKey = COROUTINE.MeleeAttack.ToString();

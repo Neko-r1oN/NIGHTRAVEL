@@ -3,6 +3,7 @@
 // Author : Souma Ueno
 //----------------------------------------------------
 using JetBrains.Annotations;
+using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -10,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -41,6 +43,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] float distMinSpawnPos;    // 生成しない範囲
     [SerializeField] int knockTermsNum;        // エネミーの撃破数条件
     [SerializeField] List<GameObject> portals; // 遷移用ポータル
+    [SerializeField] AudioResource bossBGM;      // ボスBGM
+    [SerializeField] AudioResource normalBGM;
 
     float elapsedTime;
 
@@ -145,8 +149,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+#if UNITY_EDITOR
         // ポーズ処理(仮)
-        if(Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             Time.timeScale = 0;
         }
@@ -156,10 +161,9 @@ public class GameManager : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.L))
         {// 20倍速(デバック用)
-#if UNITY_EDITOR
             Time.timeScale = 20;
-#endif
         }
+#endif
 
         //Escが押された時
         if (Input.GetKey(KeyCode.Escape))
@@ -203,6 +207,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ChengScene(STAGE_TYPE type)
     {
+        CharacterManager.Instance.UpdateSelfSelfPlayerStatusData(); // 遷移する前のプレイヤーのステータスを保持
         switch (type)
         {
             case STAGE_TYPE.Rust:
@@ -238,8 +243,6 @@ public class GameManager : MonoBehaviour
     {   
         Initiate.DoneFading();
         SceneManager.LoadScene("ResultScene", LoadSceneMode.Additive);
-        //Initiate.Fade("ResultScene", Color.black, 0.5f);
-        //SceneManager.UnloadSceneAsync("UIScene");
         UIManager.Instance.HideCanvas();
 
         isGameStart = false;
@@ -269,14 +272,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void DeathBoss()
     {
-        //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
-
-        //RelicManager.Instance.GenerateRelic(bossTerminal);
-
-        //RelicManager.Instance.GenerateRelicTest();
-
         // 死んだ判定にする
         isBossDead = true;
+
+        this.GetComponent<AudioSource>().resource = normalBGM;
+        this.GetComponent<AudioSource>().Play();
+
+        // ボス撃破時にレリックをドロップ
+        TerminalManager.Instance.OnTerminalsSuccessed(1);
 
         UIManager.Instance.HideBossUI();
 
@@ -284,8 +287,6 @@ public class GameManager : MonoBehaviour
         {
             portals[i].SetActive(true);
         }
-
-        //Invoke(nameof(ChengScene), 15f);
     }
 
     /// <summary>
@@ -294,9 +295,9 @@ public class GameManager : MonoBehaviour
     /// <param name="list"></param>
     public void StartGame(List<TerminalData> list)
     {
-        //// 端末情報をステージに反映
-        //if(list != null)
-        //    TerminalManager.Instance.SetTerminal(list);
+        // 端末情報をステージに反映
+        if (list != null && SceneManager.GetActiveScene().name != "Tutorial")
+            TerminalManager.Instance.SetTerminal(list);
 
         isGameStart = true;
         Debug.Log("同時開始！！");
@@ -344,5 +345,11 @@ public class GameManager : MonoBehaviour
         }
 
         return terminals;
+    }
+
+    public void PlayBossBGM()
+    {
+        this.GetComponent<AudioSource>().resource = bossBGM;
+        this.GetComponent<AudioSource>().Play();
     }
 }

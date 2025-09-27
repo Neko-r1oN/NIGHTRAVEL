@@ -10,6 +10,8 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Shared.Interfaces.StreamingHubs;
 using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using UnityEngine.TextCore.Text;
+using Unity.VisualScripting.FullSerializer;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -17,8 +19,14 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] List<Transform> startPoints = new List<Transform>();   // 各プレイヤーの初期位置
     [SerializeField] GameObject charaSwordPrefab;
     [SerializeField] GameObject charaGunnerPrefab;
+
     [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
+
+    /// <summary>
+    /// 自身のキャラクターデータ(シーン遷移したときの引継ぎ用)
+    /// </summary>
+    static public PlayerStatusData SelfPlayerStatusData { get; set; } = null;
 
     /// <summary>
     /// 自分の操作キャラ
@@ -72,6 +80,7 @@ public class CharacterManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // オフライン用
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             if (!playerObjSelf)
@@ -80,11 +89,20 @@ public class CharacterManager : MonoBehaviour
             }
             playerObjs.Add(Guid.Empty, playerObjSelf);
 
+            // プレイヤーのステータス引継ぎ設定
+            if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
+            else ApplySelfPlayerStatusData();
+
             return;
         }
 
+        // 既にステージに配置されているプレイヤーを削除し、参加人数分プレイヤー生成
         DestroyExistingPlayer();
         GenerateCharacters();
+
+        // プレイヤーのステータス引継ぎ設定
+        if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
+        else ApplySelfPlayerStatusData();
 
         // 通知処理を登録
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
@@ -123,6 +141,34 @@ public class CharacterManager : MonoBehaviour
     }
 
     #region キャラクター関連
+
+    /// <summary>
+    /// マネージャーで保持しているプレイヤーのステータスデータを更新する
+    /// </summary>
+    public void UpdateSelfSelfPlayerStatusData()
+    {
+        SelfPlayerStatusData = new PlayerStatusData()
+        {
+            NowLevel = playerObjSelf.GetComponent<PlayerBase>().NowLv,
+            NowExp = playerObjSelf.GetComponent<PlayerBase>().NowExp,
+            NextLevelExp = playerObjSelf.GetComponent<PlayerBase>().NextLvExp,
+            CharacterMaxStatusData = playerObjSelf.GetComponent<CharacterBase>().GetCurrentMaxStatusData(),
+            PlayerRelicStatusData = playerObjSelf.GetComponent<PlayerBase>().GetPlayerRelicStatusData(),
+        };
+    }
+
+    /// <summary>
+    /// マネージャーで保持しているプレイヤーのステータスデータを適用させる
+    /// </summary>
+    public void ApplySelfPlayerStatusData()
+    {
+        playerObjSelf.GetComponent<PlayerBase>().NowExp = SelfPlayerStatusData.NowExp;
+        playerObjSelf.GetComponent<PlayerBase>().NowLv = SelfPlayerStatusData.NowLevel;
+        playerObjSelf.GetComponent<PlayerBase>().NextLvExp = SelfPlayerStatusData.NextLevelExp;
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(SelfPlayerStatusData.CharacterMaxStatusData, STATUS_TYPE.All);
+        playerObjSelf.GetComponent<CharacterBase>().OverridCurrentStatus(SelfPlayerStatusData.CharacterMaxStatusData, STATUS_TYPE.All);
+        playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(SelfPlayerStatusData.PlayerRelicStatusData);
+    }
 
     /// <summary>
     /// キャラクターの情報更新呼び出し用コルーチン
@@ -293,6 +339,17 @@ public class CharacterManager : MonoBehaviour
     #endregion
 
     #region 敵関連
+
+    /// <summary>
+    /// 難易度を基に全ての敵のステータスを上昇させる
+    /// </summary>
+    public void ApplyDifficultyToAllEnemies()
+    {
+        foreach(var enemy in Enemies)
+        {
+            enemy.Value.Enemy.ApplyDifficultyBasedStatusBoost();
+        }
+    }
 
     /// <summary>
     /// 新たな敵をリストに追加する
@@ -577,6 +634,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 弾の発射通知
     /// </summary>
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>
@@ -609,7 +667,7 @@ public class CharacterManager : MonoBehaviour
             player.NextLvExp = nextExp;
             player.OverridMaxStatus(updatedStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
         }
-        LevelManager.Instance.Options.Add(optionsKey, statusOptionList);
+        LevelManager.Options.Add(optionsKey, statusOptionList);
     }
 
     #endregion

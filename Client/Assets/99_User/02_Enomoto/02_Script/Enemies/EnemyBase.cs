@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shared.Interfaces.StreamingHubs;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using System.Linq;
 
 abstract public class EnemyBase : CharacterBase
 {
@@ -214,13 +215,14 @@ abstract public class EnemyBase : CharacterBase
     protected override void Start()
     {
         characterManager = CharacterManager.Instance;
-        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
+        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick") | LayerMask.GetMask("Scaffold");
         m_rb2d = GetComponent<Rigidbody2D>();
         sightChecker = GetComponent<EnemySightChecker>();
         chaseAI = GetComponent<EnemyChaseAI>();
         enemyElite = GetComponent<EnemyElite>();
         isStartComp = true;
         base.Start();
+        ApplyDifficultyBasedStatusBoost();
     }
 
     public void LoadStart()
@@ -271,12 +273,7 @@ abstract public class EnemyBase : CharacterBase
         }
 
         // ターゲットのいる方向にテクスチャを反転
-        if (canChaseTarget)
-        {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-        }
-
+        LookAtTarget();
         DecideBehavior();
     }
 
@@ -291,9 +288,21 @@ abstract public class EnemyBase : CharacterBase
     protected virtual void Idle() { }
 
     /// <summary>
+    /// ターゲットのいる方向に向かせる
+    /// </summary>
+    protected void LookAtTarget()
+    {
+        if (canChaseTarget)
+        {
+            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        }
+    }
+
+    /// <summary>
     /// 方向転換
     /// </summary>
-    public void Flip()
+    protected void Flip()
     {
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
@@ -314,7 +323,73 @@ abstract public class EnemyBase : CharacterBase
         onFinished?.Invoke();
     }
 
+    #region ステータス関連
+
+    /// <summary>
+    /// 現在の難易度を基にステータスを上昇させる
+    /// </summary>
+    public void ApplyDifficultyBasedStatusBoost()
+    {
+        if (LevelManager.GameLevel == 0) return;
+
+        // レベル1毎にHP,Defence,Powerが15%上昇
+        const float rate = 0.15f;
+        float applyRate = rate * LevelManager.GameLevel;
+        int addHp = (int)(baseHp * applyRate) == 0 ? 1 : (int)(baseHp * applyRate);
+        int addDef = (int)(baseDefense * applyRate) == 0 ? 1 : (int)(baseDefense * applyRate);
+        int addPower = (int)(basePower * applyRate) == 0 ? 1 : (int)(basePower * applyRate);
+        float addMoveSpeed = 0;
+
+        // エリートの場合も考慮する
+        if (isElite)
+        {
+            // HP・攻撃力が50%増し、防御力・移動速度・移動速度係数が25%増しにする
+            addHp += (int)(baseHp * 0.5f);
+            addPower += (int)(basePower * 0.5f);
+            addDef += (int)(baseDefense * 0.25f);
+            addMoveSpeed += (enemyElite.EliteType == ENEMY_ELITE_TYPE.Thunder) ? baseMoveSpeed : baseMoveSpeed * 0.25f; // エリートタイプがThunderの場合は2倍上がる
+        }
+
+        CharacterStatusData characterStatusData = new CharacterStatusData()
+        {
+            hp = baseHp + addHp,
+            defence = baseDefense + addDef,
+            power = basePower + addPower,
+            jumpPower = maxJumpPower,
+            moveSpeed = maxMoveSpeed + addMoveSpeed,
+            attackSpeedFactor = maxAttackSpeedFactor,
+            healRate = maxHealRate,
+        };
+        ChangeAccordingStatusToMaximumValue(characterStatusData);
+    }
+
+    #endregion
+
     #region プレイヤー・ターゲット関連
+
+    /// <summary>
+    /// ボス部屋にいるプレイヤーの中から新しくターゲットを決める
+    /// </summary>
+    protected bool SelectNewTargetInBossRoom()
+    {
+        bool isSucsess = false;
+        var players = CharacterManager.Instance.PlayerObjs.Values.ToList();
+        players = players.OrderBy(a => Guid.NewGuid()).ToList();
+
+        foreach (var player in players)
+        {
+            if (player && player.GetComponent<PlayerBase>().HP > 0 && player.GetComponent<PlayerBase>().IsBossArea)
+            {
+                target = player;
+                isSucsess = true;
+                break;
+            }
+        }
+
+        if(!isSucsess) target = null;
+
+        return isSucsess;
+    }
 
     /// <summary>
     /// ターゲットとの間に遮蔽物があるかを監視し続けるコルーチン
@@ -330,14 +405,33 @@ abstract public class EnemyBase : CharacterBase
         {
             yield return new WaitForSeconds(waitSec);
 
-            if (sightChecker.IsObstructed() || !sightChecker.IsTargetVisible())
+            if (isBoss)
             {
-                currentTime += waitSec;
+                // 新しくターゲットを探す必要があるかどうかチェック
+                bool needNewTarget = false;
+                if (target)
+                {
+                    var player = target.GetComponent<PlayerBase>();
+                    if (player.hp <= 0 || !player.IsBossArea) needNewTarget = true;
+                }
+                else needNewTarget = true;
+
+                if(needNewTarget) SelectNewTargetInBossRoom();
+
+                // ボス部屋からプレイヤーがいなくなったら見失ったことにする
+                if (!target) break;
             }
             else
             {
-                currentTime = 0;
-            }        
+                if (sightChecker.IsObstructed() || !sightChecker.IsTargetVisible())
+                {
+                    currentTime += waitSec;
+                }
+                else
+                {
+                    currentTime = 0;
+                }
+            }     
         }
 
         if (target && currentTime >= obstructionMaxTime)
@@ -418,7 +512,7 @@ abstract public class EnemyBase : CharacterBase
     /// <summary>
     /// エリート個体にする処理
     /// </summary>
-    public void PromoteToElite(EnumManager.ENEMY_ELITE_TYPE type)
+    public void PromoteToElite(ENEMY_ELITE_TYPE type)
     {
         if (!isElite && type != ENEMY_ELITE_TYPE.None)
         {

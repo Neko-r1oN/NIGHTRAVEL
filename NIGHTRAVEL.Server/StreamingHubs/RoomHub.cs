@@ -94,22 +94,26 @@ namespace StreamingHubs
                     room.password = pass;
                     room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName,room.password);
+
+                    this.roomContext.IsStartGame = false;
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
-                    roomContextRepository.RemoveContext(roomName);                      //ルーム情報を削除
-                    this.roomContext = roomContextRepository.CreateContext(roomName,pass);   //ルームを生成
+                    roomContextRepository.RemoveContext(roomName);                          //ルーム情報を削除
+                    this.roomContext = roomContextRepository.CreateContext(roomName,pass);  //ルームを生成
                     //DBに生成
                     room.roomName = roomName;
                     room.userName = user.Name;
                     room.password = pass;
                     room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName, room.password);
+
+                    this.roomContext.IsStartGame = false;
                 }
                 this.roomContext.Group.Add(this.ConnectionId, Client);
 
-                if (this.roomContext.JoinedUserList.Count >= MAX_JOINABLE_PLAYERS)
-                {//参加人数が満員の場合
+                if (this.roomContext.JoinedUserList.Count >= MAX_JOINABLE_PLAYERS || this.roomContext.IsStartGame)
+                {//参加人数が満員の場合 or 既にゲーム開始している場合 は参加できないようにする
                     this.roomContext.Group.Only([this.ConnectionId]).OnFailedJoin(0);
                     this.roomContext.Group.Remove(this.ConnectionId);
                     return JoinedUsers;
@@ -253,6 +257,8 @@ namespace StreamingHubs
                 if (canStartGame)
                 {
                     this.roomContext.Group.All.OnStartGame();
+
+                    this.roomContext.IsStartGame = true;
 
                     // 現在時刻を代入
                     this.roomContext.startTime = DateTime.Now;
@@ -595,7 +601,7 @@ namespace StreamingHubs
                     this.roomContext.gottenItemList.Clear();
 
                     // 生成した端末リストをクリア
-                    //this.roomContext.terminalList.Clear();
+                    this.roomContext.terminalList.Clear();
 
                     // 生成した敵のリストを初期化
                     this.roomContext.enemyDataList.Clear();
@@ -690,7 +696,8 @@ namespace StreamingHubs
 
             // 3以降は抽選
             Random rand = new Random();
-            int terminalCount = rand.Next(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
+            int terminalCount = 6;
+            // rand.Next(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
 
             for(int i = 3; i <= terminalCount; i++ )
             {
@@ -735,9 +742,10 @@ namespace StreamingHubs
 
                 // ダメージにレリック効果適用
                 // 「識別AI」効果（デバフ状態の敵に対するダメージ倍率UP）
-                if (roomContext.enemyDataList[enemID].DebuffList.Count != 0) damage = (int)(damage * relicStatus.IdentificationAIRate);
+                if (roomContext.enemyDataList[enemID].DebuffList.Count != 0) damage += (int)(damage * relicStatus.IdentificationAIRate);
                 // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
-                damage = (LotteryIllegalScript(relicStatus.IllegalScriptRate)) ? MAX_DAMAGE : damage;
+                if(!enemData.isBoss)
+                    damage = (LotteryIllegalScript(relicStatus.IllegalScriptRate)) ? MAX_DAMAGE : damage;
 
                 // ダメージ適用
                 enemData.State.hp -= damage;
@@ -1012,6 +1020,31 @@ namespace StreamingHubs
         }
 
         /// <summary>
+        /// 端末失敗処理
+        /// </summary>
+        /// <param name="termID"></param>
+        /// <returns></returns>
+        public async Task TerminalFailureAsync(int termID)
+        {
+            // 端末の状態を失敗状態
+            var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
+            terminal.State = TERMINAL_STATE.Failure;
+
+            // 失敗したので生成された敵を削除
+            if(terminal.Type == TERMINAL_TYPE.Elite || terminal.Type == TERMINAL_TYPE.Enemy)
+            {
+                foreach (var enemyID in terminal.EnemyList)
+                {
+                    this.roomContext.enemyDataList.Remove(enemyID);
+                }
+                terminal.EnemyList.Clear();
+            }
+
+            // 全員に失敗したことを通知
+            this.roomContext.Group.All.OnTerminalFailure(termID);
+        }
+
+        /// <summary>
         /// アイテム獲得同期処理
         /// Author:Nishiura
         /// </summary>
@@ -1055,6 +1088,12 @@ namespace StreamingHubs
                         break;
                 }
 
+                // 所持経験値が必要経験値に満ちた場合
+                if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)
+                {
+                    LevelUp(roomContext.ExpManager); // レベルアップ処理
+                }
+
                 // 取得済みアイテムリストに入れる
                 this.roomContext.gottenItemList.Add(itemID);
 
@@ -1062,7 +1101,8 @@ namespace StreamingHubs
                 this.roomContext.resultDataList[this.ConnectionId].TotalGottenItem++;
 
                 // アイテムの獲得を全員に通知
-                this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID);
+                ExpManager expManager = this.roomContext.ExpManager;
+                this.roomContext.Group.All.OnGetItem(this.ConnectionId, itemID, expManager.Level, expManager.nowExp, expManager.RequiredExp);
             }
         }
 

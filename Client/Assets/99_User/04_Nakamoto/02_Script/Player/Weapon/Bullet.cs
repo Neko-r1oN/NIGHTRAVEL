@@ -51,7 +51,7 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.tag == "Enemy")
         {
             // ƒ{ƒX‚©‚Ç‚¤‚©”»’è
-            if (collision.gameObject.GetComponent<EnemyBase>().IsBoss)
+            if (!collision.gameObject.GetComponent<EnemyBase>().IsBoss)
             {
                 // “ñ‰ñUŒ‚‚Ì’Š‘I
                 if (player.LotteryRelic(RELIC_TYPE.Rugrouter))

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -83,7 +84,6 @@ abstract public class PlayerBase : CharacterBase
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     protected Player_Type playerType;                   // プレイヤータイプ
-    protected float horizontalMove = 0f;                // 速度用変数
     protected float gravity;                            // 重力
 
     private float regeneTimer;              //  オートリジェネタイマー
@@ -251,6 +251,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
     protected float prevVelocityX = 0f;
     protected bool canCheck = false;          // For check if player is wallsliding
+    protected float horizontalMove = 0f;      // 速度用変数
     protected float verticalMove = 0f;
     protected float jumpWallStartX = 0;
     protected float jumpWallDistX = 0;        // プレイヤーと壁の距離
@@ -268,8 +269,8 @@ abstract public class PlayerBase : CharacterBase
 
     #region プレイヤーに関する定数
     protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
-    protected const float REGENE_STOP_TIME = 3.5f;      // 自動回復停止時間
-    protected const float REGENE_MAGNIFICATION = 0.01f; // 自動回復倍率
+    protected const float REGENE_STOP_TIME = 1.5f;      // 自動回復停止時間
+    protected const float REGENE_MAGNIFICATION = 0.03f; // 自動回復倍率
     protected const float HEAL_GENERATE_TIME = 20f;     // 回復肉生成間隔
     protected const float MEATHEAL_RATE = 0.03f;        // 回復肉回復量
 
@@ -282,9 +283,11 @@ abstract public class PlayerBase : CharacterBase
     protected const float KB_BIG = 20f;         // ノックバック力（大）
 
     protected const float STUN_TIME = 0.15f;        // スタン時間
-    protected const float INVINCIBLE_TIME = 0.22f;  // 無敵時間
+    protected const float INVINCIBLE_TIME = 0.4f;   // 無敵時間
 
-    protected const float SMOKE_SCALE = 0.25f; // 土煙のスケール
+    protected const float SMOKE_SCALE = 0.22f; // 土煙のスケール
+
+    protected const float STICK_DEAD_ZONE = 0.3f; // スティックのデッドゾーン
     #endregion
 
     //--------------------
@@ -330,12 +333,13 @@ abstract public class PlayerBase : CharacterBase
         regeneTimer += Time.deltaTime;
         healGenerateTimer += Time.deltaTime;
 
-        // 毎秒最大HPの0.1% を基礎値とし、1秒毎に基礎値分回復する
+        // 毎秒最大HPの1% を基礎値とし、1秒毎に基礎値分回復する
         if (regeneTimer >= REGENE_TIME)
         {
             if (HP < MaxHP)
             {
-                if(isRegene) hp += (int)(MaxHP * maxHealRate);
+                if(isRegene) 
+                    hp += (int)(MaxHP * maxHealRate);
 
                 if (HP >= MaxHP)
                 {
@@ -360,7 +364,7 @@ abstract public class PlayerBase : CharacterBase
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
 
         // 走っている時に土煙を起こす
-        if(animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
+        if (animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
             groundSmoke.Play();
         else
             groundSmoke.Stop();
@@ -369,14 +373,14 @@ abstract public class PlayerBase : CharacterBase
 
         if(m_IsZipline)
         {
-            if(Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetAxisRaw("Horizontal") >= STICK_DEAD_ZONE)
             {
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_IsZipline = false;
                 ziplineSpark.SetActive(false);
                 m_Rigidbody2D.AddForce(new Vector2(-m_ZipJumpForceX,m_ZipJumpForceY));
             }
-            else if(Input.GetKeyDown(KeyCode.D))
+            else if(Input.GetKeyDown(KeyCode.D) || Input.GetAxisRaw("Horizontal") <= -STICK_DEAD_ZONE)
             {
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_IsZipline = false;
@@ -398,7 +402,7 @@ abstract public class PlayerBase : CharacterBase
                     gameObject.layer = 21;
             }
 
-            if (m_IsScaffold && Input.GetKeyDown(KeyCode.S))
+            if (m_IsScaffold && Input.GetKeyDown(KeyCode.S) || m_IsScaffold && Input.GetAxisRaw("Vertical") <= -STICK_DEAD_ZONE)
             {
                 gameObject.layer = 21;
                 StartCoroutine(ScaffoldDown());
@@ -518,7 +522,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (Ladder())
         {
-            if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack)
+            if (Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack || Input.GetAxisRaw("Vertical") >= STICK_DEAD_ZONE && canBlink && canSkill && canAttack)
             {
                 m_IsZipline = true;
                 ziplineSpark.SetActive(true);
@@ -784,7 +788,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (collision.gameObject.tag == "Heal")
         {
-            int healVol = (int)(MaxHP * MEATHEAL_RATE) * DigitalMeatCnt;
+            int healVol = (int)((float)MaxHP * MEATHEAL_RATE);
 
             if(HP < MaxHP)
             {
@@ -1102,6 +1106,15 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     public void MoveCheckPoint()
     {
+        // HPの5%ダメージ
+        var damage = (int)((float)hp * 0.05);
+
+        if (hp - damage <= 0) 
+            hp = 1;
+        else
+            hp -= damage;
+
+        // 移動
         playerPos.position = FetchNearObjectWithTag("Gimmick/ChecKPoint").position;
     }
 
@@ -1207,5 +1220,33 @@ abstract public class PlayerBase : CharacterBase
     {
         HP += (int)(MaxHP * lifeScavengerRate);
     }
+
+    /// <summary>
+    /// 現在のレリックステータスデータを取得する
+    /// </summary>
+    /// <returns></returns>
+    public PlayerRelicStatusData GetPlayerRelicStatusData()
+    {
+        // AddExpRateなし
+        //+++++++++++++++++++++++++++++
+        return new PlayerRelicStatusData()
+        {
+            GiveDebuffRates = giveDebuffRates,
+            RegainCodeRate = regainCodeRate,
+            ScatterBugCnt = scatterBugCnt,
+            HolographicArmorRate = holographicArmorRate,
+            MouseRate = mouseRate,
+            DigitalMeatCnt = DigitalMeatCnt,
+            FirewallRate = firewallRate,
+            LifeScavengerRate = lifeScavengerRate,
+            RugrouterRate = rugrouterRate,
+            BuckupHDMICnt = buckupHDMICnt,
+            IdentificationAIRate = identificationAIRate,
+            DanborDollRate = danborDollRate,
+            ChargedCoreCnt = chargedCoreCnt,
+            IllegalScriptRate = illegalScriptRate,
+        };
+    }
+
     #endregion
 }

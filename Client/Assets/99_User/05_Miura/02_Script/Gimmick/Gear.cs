@@ -19,10 +19,4 @@ public class Gear : MonoBehaviour
         .SetLoops(-1, LoopType.Restart);
 
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

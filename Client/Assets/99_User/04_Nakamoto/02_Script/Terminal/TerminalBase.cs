@@ -5,6 +5,7 @@
 using DG.Tweening;
 using DG.Tweening.Core.Easing;
 using KanKikuchi.AudioManager;
+using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.PlayerLoop;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public abstract class TerminalBase : MonoBehaviour
@@ -111,7 +113,7 @@ public abstract class TerminalBase : MonoBehaviour
     protected void Update()
     {
         // Eキー入力かつプレイヤーが端末に触れている場合かつその端末が未使用である場合、端末を起動
-        if (Input.GetKeyDown(KeyCode.E) && isUsed == false && isPlayerIn == true)
+        if (Input.GetKeyDown(KeyCode.E) && isUsed == false && isPlayerIn == true || Input.GetButtonDown("Interract") && isUsed == false && isPlayerIn == true)
         {
             Debug.Log("Terminal Booted");
             BootRequest(); // 端末を起動
@@ -178,7 +180,7 @@ public abstract class TerminalBase : MonoBehaviour
         if(terminalType == EnumManager.TERMINAL_TYPE.Jumble)
         {
             Debug.Log("レリックがありません");
-            if (RelicManager.Instance.HaveRelicList.Count == 0) return;
+            if (RelicManager.HaveRelicList.Count == 0) return;
         }
 
         isUsed = true; // 起動済みにする
@@ -199,6 +201,8 @@ public abstract class TerminalBase : MonoBehaviour
     /// </summary>
     public void GiveRewardRequest()
     {
+        if (SceneManager.GetActiveScene().name == "Tutorial") return;
+
         Stack<Vector2> posStack = new Stack<Vector2>();
 
         foreach (var point in relicSpawnPoints)
@@ -215,6 +219,9 @@ public abstract class TerminalBase : MonoBehaviour
     /// </summary>
     public async void SuccessTerminal()
     {
+        //カウントダウンを停止する
+        CancelInvoke("CountDown");
+
         // ターミナル非表示
         terminalSprite.DOFade(0, 2.5f);
         iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });

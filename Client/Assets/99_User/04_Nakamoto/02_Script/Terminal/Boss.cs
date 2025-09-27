@@ -2,6 +2,7 @@
 // ボス出現ターミナル [ Jumble.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using DG.Tweening;
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 

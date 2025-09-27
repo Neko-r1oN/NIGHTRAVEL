@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Timeline;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class Slade : EnemyBase
@@ -80,6 +81,22 @@ public class Slade : EnemyBase
     [SerializeField]
     CapsuleCollider2D terrainCollider;
     List<GameObject> hitPlayers = new List<GameObject>();
+    #endregion
+
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioAttack;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioChargeAttack;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioTeleport;
+
     #endregion
 
     protected override void Start()
@@ -253,6 +270,8 @@ public class Slade : EnemyBase
     /// </summary>
     public override void OnAttackAnimEvent()
     {
+        audioAttack.Play();
+
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
@@ -308,6 +327,8 @@ public class Slade : EnemyBase
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
+        audioChargeAttack.Play();
+
         while (true)
         {
             // 移動処理
@@ -360,6 +381,8 @@ public class Slade : EnemyBase
         const float addForcePower = 40f;
         bool isHitTarget = false;
 
+        audioAttack.Play();
+
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
@@ -401,6 +424,8 @@ public class Slade : EnemyBase
     public override void OnAttackAnim4Event()
     {
         const float addForcePower = 100f;
+
+        audioAttack.Play();
 
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
@@ -488,6 +513,8 @@ public class Slade : EnemyBase
     /// </summary>
     public override void OnEndMoveAnimEvent()
     {
+        audioTeleport.Play();
+
         Vector2 teleportPos = transform.position;
 
         // プレイヤーの背後にテレポート
@@ -496,8 +523,7 @@ public class Slade : EnemyBase
         transform.position = teleportPos;
 
         // プレイヤーの方向を向く
-        if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-            || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        LookAtTarget();
 
         isInvincible = false;
     }

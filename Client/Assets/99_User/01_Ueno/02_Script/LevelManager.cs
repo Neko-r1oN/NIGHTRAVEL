@@ -10,11 +10,12 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 
 public class LevelManager : MonoBehaviour
 {
-    Dictionary<Guid, List<StatusUpgrateOptionData>> options = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
-    public Dictionary<Guid, List<StatusUpgrateOptionData>> Options { get { return options; } set { options = value; } }
+    static public Dictionary<Guid, List<StatusUpgrateOptionData>> Options { get; set; } = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
 
-    int gameLevel;
-    public int GameLevel { get { return gameLevel; } }
+    /// <summary>
+    /// 現在のゲーム難易度
+    /// </summary>
+    static public int GameLevel { get; set; }
 
     readonly public int LevelHellId = 5;
 
@@ -40,14 +41,18 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        if (!RoomModel.Instance)
+        if (!RoomModel.Instance && Options.Count == 0)
         {
             SetTestData();  // テスト用、不要になり次第削除
-            return;
         }
-        else
+        if(RoomModel.Instance)
         {
             RoomModel.Instance.OnAscendDifficultySyn += this.OnAscendDifficulty;
+        }
+
+        if (GameLevel > 0)
+        {
+            UIManager.Instance.UpGameLevelText();
         }
     }
 
@@ -70,8 +75,8 @@ public class LevelManager : MonoBehaviour
         statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Common_JumpingPower, Name = "a", Explanation = "適当に上がる", StatusType1 = STATUS_TYPE.JumpPower, Rarity = RARITY_TYPE.Legend });
         statusesGroup2.Add(new StatusUpgrateOptionData() { TypeId = STAT_UPGRADE_OPTION.Legend_AutomaticRecovery, Name = "b", Explanation = "適当に上がる" , StatusType1 = STATUS_TYPE.HealRate, Rarity = RARITY_TYPE.Common });
 
-        options.Add(Guid.NewGuid(), statusesGroup1);
-        options.Add(Guid.NewGuid(), statusesGroup2);
+        Options.Add(Guid.NewGuid(), statusesGroup1);
+        Options.Add(Guid.NewGuid(), statusesGroup2);
     }
 
     public Dictionary<DIFFICULTY_TYPE, string> LevelName = new Dictionary<DIFFICULTY_TYPE, string>
@@ -84,25 +89,16 @@ public class LevelManager : MonoBehaviour
         {DIFFICULTY_TYPE.Hell,"ヘル" }
     };
 
-    public void InitLevel(int level)
-    {
-        gameLevel = level;
-    }
-
     [ContextMenu("UpGameLevel")]
-    public void UpGameLevel(int? targetLevel = null)
+    public void UpGameLevel(int? setLevel = null)
     {
-        if (targetLevel == null) gameLevel++;
-        else gameLevel = (int)targetLevel;
+        if (setLevel == null) GameLevel++;
+        else GameLevel = (int)setLevel;
 
-        foreach (var enemy in CharacterManager.Instance.Enemies.Values)
-        {
-            enemy.Enemy.ApplyMaxStatusModifierByRate(0.1f, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
-        }
-
+        CharacterManager.Instance.ApplyDifficultyToAllEnemies();
         UIManager.Instance.UpGameLevelText();
 
-        Debug.Log(gameLevel.ToString());
+        Debug.Log(GameLevel.ToString());
     }
 
     /// <summary>

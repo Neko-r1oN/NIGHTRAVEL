@@ -124,7 +124,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<Dictionary<string, DropRelicData>> OnDropedRelic { get; set; }
 
     //アイテム獲得通知
-    public Action<Guid, string> OnGetItemSyn { get; set; }
+    public Action<Guid, string, int, int, int> OnGetItemSyn { get; set; }
 
     #endregion
 
@@ -510,9 +510,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// アイテム獲得通知
     /// Author:木田晃輔
     /// </summary>
-    public void OnGetItem(Guid conId, string itemID)
+    public void OnGetItem(Guid conId, string itemID, int nowLevel, int nowExp, int nextLevelExp)
     {
-        OnGetItemSyn(conId, itemID);
+        OnGetItemSyn(conId, itemID, nowLevel, nowExp, nextLevelExp);
     }
 
     /// <summary>

@@ -105,6 +105,23 @@ public class Blaze : EnemyBase
     EnemyProjectileChecker projectileChecker;
     #endregion
 
+
+    #region オーディオ関連
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioPunch;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioFlash;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioLaser;
+
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -249,15 +266,7 @@ public class Blaze : EnemyBase
 
     #region 攻撃処理関連
 
-    /// <summary>
-    /// レーザーによる攻撃処理開始
-    /// </summary>
-    void AttackLaser()
-    {
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_Laser);
-    }
+    #region パンチ
 
     /// <summary>
     /// パンチによる攻撃処理開始
@@ -274,6 +283,8 @@ public class Blaze : EnemyBase
     /// </summary>
     public override void OnAttackAnim2Event()
     {
+        audioPunch.Play();
+
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
@@ -286,6 +297,40 @@ public class Blaze : EnemyBase
             }
         }
     }
+
+    #endregion
+
+    #region レーザー
+
+    /// <summary>
+    /// レーザーによる攻撃処理開始
+    /// </summary>
+    void AttackLaser()
+    {
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_Laser);
+
+        audioFlash.Play();
+    }
+
+    /// <summary>
+    /// [アニメーションイベントから呼び出し] フラッシュ音
+    /// </summary>
+    public override void OnAttackAnim3Event()
+    {
+        audioFlash.Play();
+    }
+
+    /// <summary>
+    /// [アニメーションイベントから呼び出し] レーザー音
+    /// </summary>
+    public override void OnAttackAnim4Event()
+    {
+        audioLaser.Play();
+    }
+
+    #endregion
 
     /// <summary>
     /// [Animationイベントからの呼び出し] 攻撃クールダウン処理

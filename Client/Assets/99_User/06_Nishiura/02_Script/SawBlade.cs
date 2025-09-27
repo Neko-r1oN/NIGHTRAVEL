@@ -11,13 +11,23 @@ public class SawBlade : MonoBehaviour
     // 電源判定
     bool isPowerd;
 
+
+    [SerializeField] AudioClip hitSE;
+    AudioSource audioSource;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isPowerd == true && collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
+            audioSource.PlayOneShot(hitSE);
             var playerBase = collision.gameObject.GetComponent<PlayerBase>();
-            // プレイヤーの最大HP30%相当のダメージに設定
-            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.30f);
+            // プレイヤーの最大HP10%相当のダメージに設定
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.10f);
             playerBase.ApplyDamage(damage);
         }
     }

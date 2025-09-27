@@ -209,8 +209,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// <summary>
         /// アイテム獲得通知
         /// </summary>
-        /// <param name="itemID">アイテム識別ID(文字列)</param>
-        void OnGetItem(Guid conId, string itemID);
+        /// <param name="conId">獲得したユーザーの接続ID</param>
+        /// <param name="itemID">アイテムの識別用ID</param>
+        /// <param name="nowLevel">現在の経験値</param>
+        /// <param name="nowExp">現在のEXP</param>
+        /// <param name="nextLevelExp">レベルアップに必要なEXP</param>
+        void OnGetItem(Guid conId, string itemID, int nowLevel, int nowExp, int nextLevelExp);
 
         #region 不要になりそうなAPI
 
