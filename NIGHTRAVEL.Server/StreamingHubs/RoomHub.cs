@@ -462,7 +462,16 @@ namespace StreamingHubs
         {
             GameDbContext dbContext = new GameDbContext();
             List<Relic> ralics = dbContext.Relics.Where(relic => relic.rarity == (int)rarity).ToList();
-            return ralics[new Random().Next(0, ralics.Count)];
+            int no = 0;
+
+            while (true)
+            {
+                no = new Random().Next(0, ralics.Count);
+                if (no != (int)RELIC_TYPE.ScatterBug || no != (int)RELIC_TYPE.ChargedCore || no != (int)RELIC_TYPE.BuckupHDMI)
+                    break;
+            }
+
+            return ralics[no];
         }
 
         /// <summary>
