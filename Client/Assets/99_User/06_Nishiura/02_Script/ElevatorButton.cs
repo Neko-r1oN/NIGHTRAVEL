@@ -4,6 +4,7 @@
 // Date:2025/07/04
 //===================
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ElevatorButton : GimmickBase
@@ -20,6 +21,8 @@ public class ElevatorButton : GimmickBase
     public bool buttonType;
     bool isEnterd = false;
 
+    bool isCoolDown = false;
+
     void Start()
     {
         elevatorScript = targetElevator.GetComponent<Elevator>();
@@ -27,10 +30,20 @@ public class ElevatorButton : GimmickBase
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && isEnterd && !elevatorScript.isMoving)
+        if (Input.GetKeyDown(KeyCode.E) && isEnterd && !elevatorScript.isMoving && !isCoolDown)
         {
+            isCoolDown = true;
+            Invoke("InvoeCoolTime", 2f);
             TurnOnPowerRequest(CharacterManager.Instance.PlayerObjSelf);
         }
+    }
+
+    /// <summary>
+    /// 連続して押されないようにクールタイムを設ける
+    /// </summary>
+    void InvoeCoolTime()
+    {
+        isCoolDown = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -70,6 +83,12 @@ public class ElevatorButton : GimmickBase
     /// </summary>
     public override void TurnOnPower()
     {
+        if (!isCoolDown)
+        {
+            isCoolDown = true;
+            Invoke("InvoeCoolTime", 2f);
+        }
+
         //エレベーターのボタンのSEを再生する
         elevatorButtonSE.Play();
 
