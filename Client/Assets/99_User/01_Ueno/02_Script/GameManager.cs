@@ -280,8 +280,6 @@ public class GameManager : MonoBehaviour
     {
         //RelicManager.Instance.GenerateRelic(SpawnManager.Instance.Boss.transform.position);
 
-        //RelicManager.Instance.GenerateRelic(bossTerminal);
-
         //RelicManager.Instance.GenerateRelicTest();
 
         // 死んだ判定にする
@@ -289,6 +287,9 @@ public class GameManager : MonoBehaviour
 
         this.GetComponent<AudioSource>().resource = normalBGM;
         this.GetComponent<AudioSource>().Play();
+
+        // ボス撃破時にレリックをドロップ
+        TerminalManager.Instance.DropRelic(1);
 
         UIManager.Instance.HideBossUI();
 

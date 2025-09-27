@@ -2,6 +2,7 @@
 // ボス出現ターミナル [ Jumble.cs ]
 // Author：Kenta Nakamoto
 //--------------------------------------------------------------
+using DG.Tweening;
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 
@@ -37,5 +38,9 @@ public class Boss : TerminalBase
 
         // ボス生成処理
         SpawnManager.Instance.SpawnBoss();
+
+        // ターミナル非表示
+        terminalSprite.DOFade(0, 2.5f);
+        iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
     }
 }
