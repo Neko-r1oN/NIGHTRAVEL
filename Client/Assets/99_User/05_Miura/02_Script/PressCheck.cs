@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class PressCheck : MonoBehaviour
 {
+    Press press;
+    PlayerBase playerBase;
     public bool isToutch = false;
 
     public bool ObjectPressCheck() { return isToutch; }
@@ -27,8 +29,18 @@ public class PressCheck : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {//プレイヤーが触れたら
             isToutch = true; //触れたことにする
+
+            playerBase = collision.gameObject.GetComponent<PlayerBase>();   // つぶされ対象からPlayerBaseを取得
+
+            if (!isToutch) return;  // 接地していない場合、処理しない
+
+            // プレイヤーの最大HP20%相当のダメージに設定
+            int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.2f);
+            playerBase.ApplyDamage(damage);
+            playerBase.MoveCheckPoint();    // つぶれたプレイヤーをチェックポイントへ戻す
+
         }
-        if(collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {//敵が触れたら
             isToutch = true; //触れたことにする
         }

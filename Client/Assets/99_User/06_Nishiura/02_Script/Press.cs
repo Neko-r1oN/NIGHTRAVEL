@@ -8,6 +8,7 @@ using UnityEngine;
 public class Press : MonoBehaviour
 {
     PlayerBase playerBase;
+    PressCheck pressCheck;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
