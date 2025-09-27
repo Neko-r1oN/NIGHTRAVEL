@@ -222,8 +222,6 @@ abstract public class EnemyBase : CharacterBase
         isStartComp = true;
         base.Start();
 
-        PromoteToElite(ENEMY_ELITE_TYPE.Blaze);
-
         ApplyDifficultyBasedStatusBoost();
     }
 
