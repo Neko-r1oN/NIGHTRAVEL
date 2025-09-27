@@ -219,6 +219,9 @@ public abstract class TerminalBase : MonoBehaviour
     /// </summary>
     public async void SuccessTerminal()
     {
+        //カウントダウンを停止する
+        CancelInvoke("CountDown");
+
         // ターミナル非表示
         terminalSprite.DOFade(0, 2.5f);
         iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });

@@ -853,7 +853,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpGameLevelText()
     {
-        if(LevelManager.GameLevel > level.LevelHellId)
+        level = LevelManager.Instance;
+        if (LevelManager.GameLevel > level.LevelHellId)
         {
             return;
         }

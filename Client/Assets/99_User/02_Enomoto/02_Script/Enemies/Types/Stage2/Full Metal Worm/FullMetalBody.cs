@@ -383,7 +383,8 @@ public class FullMetalBody : EnemyBase
         EnemyData enemyData = new EnemyData();
         foreach (var item in aimTransformList)
         {
-            enemyData.Quatarnions.Add(item.localRotation);
+            if(item.localRotation != null)
+                enemyData.Quatarnions.Add(item.localRotation);
         }
         return SetEnemyData(enemyData);
     }
