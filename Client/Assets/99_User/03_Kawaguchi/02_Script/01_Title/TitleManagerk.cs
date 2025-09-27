@@ -1,10 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using DG.Tweening;                   //DOTweenを使うときはこのusingを入れる
 using KanKikuchi.AudioManager;
+using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TitleManagerk : MonoBehaviour
 {
@@ -63,6 +65,12 @@ public class TitleManagerk : MonoBehaviour
 
         //ルームモデルがあるなら削除
         Destroy(GameObject.Find("RoomModel"));
+
+        // 保持していた各データをリセットする
+        CharacterManager.SelfPlayerStatusData = null;
+        RelicManager.HaveRelicList = new List<RelicData>();
+        LevelManager.GameLevel = 0;
+        LevelManager.Options = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
     }
 
     public void OpenOptionButton()

@@ -38,9 +38,5 @@ public class Boss : TerminalBase
 
         // ボス生成処理
         SpawnManager.Instance.SpawnBoss();
-
-        // ターミナル非表示
-        terminalSprite.DOFade(0, 2.5f);
-        iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
     }
 }
