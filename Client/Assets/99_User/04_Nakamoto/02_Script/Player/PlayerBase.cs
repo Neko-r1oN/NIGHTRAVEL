@@ -269,7 +269,7 @@ abstract public class PlayerBase : CharacterBase
 
     #region ƒvƒŒƒCƒ„[‚ÉŠÖ‚·‚é’è”
     protected const float REGENE_TIME = 1.0f;           // Ž©“®‰ñ•œŠÔŠu
-    protected const float REGENE_STOP_TIME = 3.5f;      // Ž©“®‰ñ•œ’âŽ~ŽžŠÔ
+    protected const float REGENE_STOP_TIME = 1.5f;      // Ž©“®‰ñ•œ’âŽ~ŽžŠÔ
     protected const float REGENE_MAGNIFICATION = 0.03f; // Ž©“®‰ñ•œ”{—¦
     protected const float HEAL_GENERATE_TIME = 20f;     // ‰ñ•œ“÷¶¬ŠÔŠu
     protected const float MEATHEAL_RATE = 0.03f;        // ‰ñ•œ“÷‰ñ•œ—Ê
@@ -333,12 +333,13 @@ abstract public class PlayerBase : CharacterBase
         regeneTimer += Time.deltaTime;
         healGenerateTimer += Time.deltaTime;
 
-        // –ˆ•bÅ‘åHP‚Ì0.1% ‚ðŠî‘b’l‚Æ‚µA1•b–ˆ‚ÉŠî‘b’l•ª‰ñ•œ‚·‚é
+        // –ˆ•bÅ‘åHP‚Ì1% ‚ðŠî‘b’l‚Æ‚µA1•b–ˆ‚ÉŠî‘b’l•ª‰ñ•œ‚·‚é
         if (regeneTimer >= REGENE_TIME)
         {
             if (HP < MaxHP)
             {
-                if(isRegene) hp += (int)(MaxHP * maxHealRate);
+                if(isRegene) 
+                    hp += (int)(MaxHP * maxHealRate);
 
                 if (HP >= MaxHP)
                 {
