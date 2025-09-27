@@ -129,6 +129,7 @@ public class Valcus : EnemyBase
     {
         if (doOnceDecision)
         {
+            m_rb2d.gravityScale = 5;
             doOnceDecision = false;
 
             switch (nextDecide)
@@ -159,7 +160,6 @@ public class Valcus : EnemyBase
     protected override void Idle()
     {
         SetAnimId((int)ANIM_ID.Idle);
-        m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
     #region 抽選処理関連
@@ -263,6 +263,8 @@ public class Valcus : EnemyBase
     /// </summary>
     public override void OnAttackAnimEvent()
     {
+        m_rb2d.gravityScale = 5;
+
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
@@ -327,6 +329,7 @@ public class Valcus : EnemyBase
     {
         if (targetPos != null)
         {
+            m_rb2d.gravityScale = 0;
             LookAtTarget();
 
             Vector2 addVec = new Vector2(-targetPosOffsetX * TransformUtils.GetFacingDirection(transform), targetPosOffsetY);
@@ -371,10 +374,6 @@ public class Valcus : EnemyBase
         if (!isHit)
         {
             AttackSmash2();
-        }
-        else
-        {
-            OnEndAttackAnimEvent();
         }
     }
 

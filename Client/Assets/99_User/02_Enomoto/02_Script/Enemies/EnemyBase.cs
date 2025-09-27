@@ -323,6 +323,27 @@ abstract public class EnemyBase : CharacterBase
         onFinished?.Invoke();
     }
 
+    #region ボス関連
+
+    /// <summary>
+    /// 初期位置に戻る関数
+    /// </summary>
+    void ReturnToStartPosition()
+    {
+
+    }
+
+    /// <summary>
+    /// スプライトを徐々に透けさせて開始位置に戻る
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ReturnToStartPositionCoroutine()
+    {
+        yield return new WaitForSeconds(0);
+    }
+
+    #endregion
+
     #region ステータス関連
 
     /// <summary>
