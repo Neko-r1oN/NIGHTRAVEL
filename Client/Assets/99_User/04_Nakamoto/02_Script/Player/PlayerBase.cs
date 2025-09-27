@@ -84,7 +84,6 @@ abstract public class PlayerBase : CharacterBase
     public bool invincible = false; // プレイヤーの死亡制御フラグ
 
     protected Player_Type playerType;                   // プレイヤータイプ
-    protected float horizontalMove = 0f;                // 速度用変数
     protected float gravity;                            // 重力
 
     private float regeneTimer;              //  オートリジェネタイマー
@@ -252,6 +251,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool oldWallSlidding = false;   // If player is sliding in a wall in the previous frame
     protected float prevVelocityX = 0f;
     protected bool canCheck = false;          // For check if player is wallsliding
+    protected float horizontalMove = 0f;      // 速度用変数
     protected float verticalMove = 0f;
     protected float jumpWallStartX = 0;
     protected float jumpWallDistX = 0;        // プレイヤーと壁の距離
@@ -286,6 +286,8 @@ abstract public class PlayerBase : CharacterBase
     protected const float INVINCIBLE_TIME = 0.4f;   // 無敵時間
 
     protected const float SMOKE_SCALE = 0.22f; // 土煙のスケール
+
+    protected const float STICK_DEAD_ZONE = 0.3f; // スティックのデッドゾーン
     #endregion
 
     //--------------------
@@ -361,7 +363,7 @@ abstract public class PlayerBase : CharacterBase
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
 
         // 走っている時に土煙を起こす
-        if(animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
+        if (animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
             groundSmoke.Play();
         else
             groundSmoke.Stop();
@@ -370,14 +372,14 @@ abstract public class PlayerBase : CharacterBase
 
         if(m_IsZipline)
         {
-            if(Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetAxisRaw("Horizontal") >= STICK_DEAD_ZONE)
             {
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_IsZipline = false;
                 ziplineSpark.SetActive(false);
                 m_Rigidbody2D.AddForce(new Vector2(-m_ZipJumpForceX,m_ZipJumpForceY));
             }
-            else if(Input.GetKeyDown(KeyCode.D))
+            else if(Input.GetKeyDown(KeyCode.D) || Input.GetAxisRaw("Horizontal") <= -STICK_DEAD_ZONE)
             {
                 animator.SetInteger("animation_id", (int)ANIM_ID.Fall);
                 m_IsZipline = false;
@@ -399,7 +401,7 @@ abstract public class PlayerBase : CharacterBase
                     gameObject.layer = 21;
             }
 
-            if (m_IsScaffold && Input.GetKeyDown(KeyCode.S))
+            if (m_IsScaffold && Input.GetKeyDown(KeyCode.S) || m_IsScaffold && Input.GetAxisRaw("Vertical") <= -STICK_DEAD_ZONE)
             {
                 gameObject.layer = 21;
                 StartCoroutine(ScaffoldDown());
@@ -519,7 +521,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (Ladder())
         {
-            if (Input.GetKey(KeyCode.UpArrow) && canBlink && canSkill && canAttack || Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack)
+            if (Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack || Input.GetAxisRaw("Vertical") >= STICK_DEAD_ZONE && canBlink && canSkill && canAttack)
             {
                 m_IsZipline = true;
                 ziplineSpark.SetActive(true);

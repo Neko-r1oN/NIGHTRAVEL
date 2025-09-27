@@ -12,19 +12,19 @@ public class DebuffController : MonoBehaviour
     Dictionary<DEBUFF_TYPE, float> currentEffects = new Dictionary<DEBUFF_TYPE, float>();
 
     #region 各状態異常の効果時間
-    readonly float maxBurnDuration = 6f;    // 炎上
+    readonly float maxBurnDuration = 5f;    // 炎上
     readonly float maxFreezeDuration = 5f; // 霜焼け
     readonly float maxShockDuration = 1f; // 感電
     #endregion
 
     #region 各状態異常の効果値
-    readonly float burnEffect = 0.05f;
+    readonly float burnEffect = 0.02f;
     readonly float freezeEffect = 0.2f;
     readonly float shockEffect = 0.5f;
     #endregion
 
     #region 状態異常の効果が発動する間隔
-    readonly float burnTickInterval = 0.5f; // 炎上
+    readonly float burnTickInterval = 0.7f; // 炎上
     #endregion
 
     #region  各状態異常を適用させた効果割合
