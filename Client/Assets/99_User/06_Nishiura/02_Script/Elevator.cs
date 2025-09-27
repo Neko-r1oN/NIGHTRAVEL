@@ -175,4 +175,24 @@ public class Elevator : GimmickBase
         if (type == false) MoveDown();
         else MoveUp();
     }
+
+    /// <summary>
+    /// マスタ切り替え時の再起動処理
+    /// </summary>
+    public override void Reactivate()
+    {
+        CancelInvoke("MovingCheck");
+
+        if (isRised)
+        {
+            transform.position = riseEndPos;
+            if (wire) wire.transform.position = riseEndWirePos;
+        }
+        else
+        {
+            transform.position = descentEndPos;
+            if (wire) wire.transform.position = descentEndWirePos;
+        }
+        isMoving = false;
+    }
 }
