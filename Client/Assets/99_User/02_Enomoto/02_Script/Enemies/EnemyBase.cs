@@ -575,6 +575,8 @@ abstract public class EnemyBase : CharacterBase
 
         // 以降はローカル || ギミック用
 
+        if(RoomModel.Instance) return; // RoomModelがある場合はここで処理終了 
+
         PlayerBase plBase = null;
         int damage = 0;
 
