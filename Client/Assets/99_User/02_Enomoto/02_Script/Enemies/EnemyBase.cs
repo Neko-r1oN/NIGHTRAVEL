@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shared.Interfaces.StreamingHubs;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using System.Linq;
 
 abstract public class EnemyBase : CharacterBase
 {
@@ -221,9 +222,6 @@ abstract public class EnemyBase : CharacterBase
         enemyElite = GetComponent<EnemyElite>();
         isStartComp = true;
         base.Start();
-
-        PromoteToElite(ENEMY_ELITE_TYPE.Blaze);
-
         ApplyDifficultyBasedStatusBoost();
     }
 
@@ -275,12 +273,7 @@ abstract public class EnemyBase : CharacterBase
         }
 
         // ターゲットのいる方向にテクスチャを反転
-        if (canChaseTarget)
-        {
-            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
-        }
-
+        LookAtTarget();
         DecideBehavior();
     }
 
@@ -295,9 +288,21 @@ abstract public class EnemyBase : CharacterBase
     protected virtual void Idle() { }
 
     /// <summary>
+    /// ターゲットのいる方向に向かせる
+    /// </summary>
+    protected void LookAtTarget()
+    {
+        if (canChaseTarget)
+        {
+            if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
+                || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+        }
+    }
+
+    /// <summary>
     /// 方向転換
     /// </summary>
-    public void Flip()
+    protected void Flip()
     {
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
@@ -363,6 +368,27 @@ abstract public class EnemyBase : CharacterBase
     #region プレイヤー・ターゲット関連
 
     /// <summary>
+    /// ボス部屋にいるプレイヤーの中から新しくターゲットを決める
+    /// </summary>
+    protected bool SelectNewTargetInBossRoom()
+    {
+        bool isSucsess = false;
+        var players = CharacterManager.Instance.PlayerObjs.Values.ToList();
+        players = players.OrderBy(a => Guid.NewGuid()).ToList();
+
+        foreach (var player in players)
+        {
+            if (player && player.GetComponent<PlayerBase>().HP > 0 && player.GetComponent<PlayerBase>().IsBossArea)
+            {
+                target = player;
+                isSucsess = true;
+                break;
+            }
+        }
+        return isSucsess;
+    }
+
+    /// <summary>
     /// ターゲットとの間に遮蔽物があるかを監視し続けるコルーチン
     /// </summary>
     /// <returns></returns>
@@ -376,14 +402,33 @@ abstract public class EnemyBase : CharacterBase
         {
             yield return new WaitForSeconds(waitSec);
 
-            if (sightChecker.IsObstructed() || !sightChecker.IsTargetVisible())
+            if (isBoss)
             {
-                currentTime += waitSec;
+                // 新しくターゲットを探す必要があるかどうかチェック
+                bool needNewTarget = false;
+                if (target)
+                {
+                    var player = target.GetComponent<PlayerBase>();
+                    if (player.hp > 0 || !player.IsBossArea) needNewTarget = true;
+                }
+                else needNewTarget = true;
+
+                if(needNewTarget) SelectNewTargetInBossRoom();
+
+                // ボス部屋からプレイヤーがいなくなったら見失ったことにする
+                if (!target) break;
             }
             else
             {
-                currentTime = 0;
-            }        
+                if (sightChecker.IsObstructed() || !sightChecker.IsTargetVisible())
+                {
+                    currentTime += waitSec;
+                }
+                else
+                {
+                    currentTime = 0;
+                }
+            }     
         }
 
         if (target && currentTime >= obstructionMaxTime)

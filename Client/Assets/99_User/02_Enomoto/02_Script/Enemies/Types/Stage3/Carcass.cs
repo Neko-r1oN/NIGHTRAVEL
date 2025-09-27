@@ -281,8 +281,7 @@ public class Carcass : EnemyBase
             if (target)
             {
                 // ターゲットのいる方向を向く
-                if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
-                    || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
+                LookAtTarget();
             }
 
             currentSec += Time.deltaTime;
