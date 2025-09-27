@@ -65,6 +65,7 @@ public class ResultManager : MonoBehaviour
 
             DisplayResultData(resultData);
         }
+        DisplayResultData(GameManager.Instance.ResultData);
     }
 
     // Update is called once per frame
