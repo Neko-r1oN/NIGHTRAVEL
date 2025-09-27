@@ -338,12 +338,12 @@ abstract public class PlayerBase : CharacterBase
         {
             if (HP < MaxHP)
             {
-                if(isRegene) 
-                    hp += (int)(MaxHP * maxHealRate);
+                if(isRegene)
+                    HP += (int)(MaxHP * maxHealRate);
 
                 if (HP >= MaxHP)
                 {
-                    hp = MaxHP;
+                    HP = MaxHP;
                 }
             }
 

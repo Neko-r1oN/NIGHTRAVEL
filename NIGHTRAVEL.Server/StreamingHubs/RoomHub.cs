@@ -467,7 +467,7 @@ namespace StreamingHubs
             while (true)
             {
                 no = new Random().Next(0, ralics.Count);
-                if (no != (int)RELIC_TYPE.ScatterBug || no != (int)RELIC_TYPE.ChargedCore || no != (int)RELIC_TYPE.BuckupHDMI)
+                if (no != (int)RELIC_TYPE.ScatterBug && no != (int)RELIC_TYPE.ChargedCore && no != (int)RELIC_TYPE.BuckupHDMI)
                     break;
             }
 
@@ -930,7 +930,6 @@ namespace StreamingHubs
                 // ルームデータから接続IDを指定して自身のデータを取得
                 var playerData = this.roomContext.characterDataList[this.ConnectionId].IsDead = true;
 
-
                 foreach (var player in this.roomContext.characterDataList)
                 {
                     if (player.Value.IsDead == false) // もし誰かが生きていた場合
@@ -942,7 +941,6 @@ namespace StreamingHubs
 
                 // 死亡者以外の参加者全員に対象者が死亡したことを通知
                 this.roomContext.Group.Except([this.ConnectionId]).OnPlayerDead(this.ConnectionId);
-
 
                 // 全滅した場合、ゲーム終了通知を全員に出す
                 if (isAllDead)
