@@ -50,6 +50,7 @@ public class Valcus : EnemyBase
     public enum COROUTINE
     {
         NextDecision,
+        MeleeAttack,
         AttackCombo,
         AttackCooldown,
         Tracking,
@@ -100,17 +101,22 @@ public class Valcus : EnemyBase
     bool endDecision;
     #endregion
 
+    #region 追従関連
+    const float disToTargetMin = 0.5f;  // プレイヤーとの最低距離
+    #endregion
+
     #region 攻撃関連
+    
+    List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
+
+    #region コンボ技
+
+    // 飛び跳ねるときの着地地点
     Vector2? targetPos;
     const float targetPosOffsetY = 3.5f;
     const float targetPosOffsetX = 2.5f;
-    bool isHit = false;
 
-    [SerializeField]
-    float endValue1;
-
-    [SerializeField]
-    float endValue2;
+    #endregion
 
     #endregion
 
@@ -130,6 +136,7 @@ public class Valcus : EnemyBase
         if (doOnceDecision)
         {
             m_rb2d.gravityScale = 5;
+            hitPlayers = new List<GameObject>();
             doOnceDecision = false;
 
             switch (nextDecide)
@@ -265,24 +272,51 @@ public class Valcus : EnemyBase
     {
         m_rb2d.gravityScale = 5;
 
-        // 自身がエリート個体の場合、付与する状態異常の種類を取得する
-        DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
-
-        Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
-        for (int i = 0; i < collidersEnemies.Length; i++)
+        // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
+        string attackKey = COROUTINE.MeleeAttack.ToString();
+        if (!ContaintsManagedCoroutine(attackKey))
         {
-            if (collidersEnemies[i].gameObject.tag == "Player")
+            Coroutine coroutine = StartCoroutine(MeleeAttack());
+            managedCoroutines.Add(attackKey, coroutine);
+        }
+    }
+
+    /// <summary>
+    /// [Animationイベントからの呼び出し] 攻撃の判定処理を終了
+    /// </summary>
+    public override void OnEndAttackAnimEvent()
+    {
+        RemoveAndStopCoroutineByKey(COROUTINE.MeleeAttack.ToString());
+    }
+
+    /// <summary>
+    /// 近接攻撃の判定を繰り返す
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator MeleeAttack()
+    {
+        while (true)
+        {
+            // 自身がエリート個体の場合、付与する状態異常の種類を取得する
+            DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
+
+            Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
+            for (int i = 0; i < collidersEnemies.Length; i++)
             {
-                collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Big, applyEffect);
-                isHit = true;
+                if (collidersEnemies[i].gameObject.tag == "Player" && !hitPlayers.Contains(collidersEnemies[i].gameObject))
+                {
+                    hitPlayers.Add(collidersEnemies[i].gameObject);
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
+                }
             }
+            yield return null;
         }
     }
 
     /// <summary>
     /// [Animationイベントからの呼び出し] 攻撃クールダウン処理
     /// </summary>
-    public override void OnEndAttackAnimEvent()
+    public override void OnEndAttackAnim2Event()
     {
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
@@ -312,6 +346,10 @@ public class Valcus : EnemyBase
     #endregion
 
     #region 通常攻撃
+
+    /// <summary>
+    /// 踏みつける攻撃
+    /// </summary>
     void AttackNormal()
     {
         isAttacking = true;
@@ -325,7 +363,7 @@ public class Valcus : EnemyBase
     /// <summary>
     /// 目標座標に向かってジャンプする
     /// </summary>
-    void JumpToTargetPosition(float endValue)
+    void JumpToTargetPosition(float duration)
     {
         if (targetPos != null)
         {
@@ -333,7 +371,7 @@ public class Valcus : EnemyBase
             LookAtTarget();
 
             Vector2 addVec = new Vector2(-targetPosOffsetX * TransformUtils.GetFacingDirection(transform), targetPosOffsetY);
-            transform.DOJump((Vector2)targetPos + addVec, jumpPower, 1, endValue).SetEase(Ease.InOutSine);
+            transform.DOJump((Vector2)targetPos + addVec, jumpPower, 1, duration).SetEase(Ease.InOutQuad);
         }
     }
 
@@ -342,7 +380,6 @@ public class Valcus : EnemyBase
     /// </summary>
     void AttackSmash1()
     {
-        isHit = false;
         targetPos = GetGroundPointFrom(target);
         if(targetPos == null)
         {
@@ -358,21 +395,26 @@ public class Valcus : EnemyBase
     /// <summary>
     /// [Animationからの呼び出し] 目標地点に向かってジャンプを開始
     /// </summary>
-    public override void OnAttackAnim2Event()
+    public override void OnAttackAnim3Event()
     {
+        const float duration = 0.9f;
         var endValue = GetGroundPointFrom(target);
         if (endValue != null) targetPos = endValue;
-        JumpToTargetPosition(endValue1);
+        JumpToTargetPosition(duration);
     }
 
     /// <summary>
     /// [Animationからの呼び出し] Smash1が完了後、攻撃が命中しなかったらAttackSmash2を実行する
     /// </summary>
-    public override void OnEndAttackAnim2Event()
+    public override void OnEndAttackAnim3Event()
     {
-        // 攻撃が命中しなかったらAttackSmash2を実行する
-        if (!isHit)
+        if (!target)
         {
+            SelectNewTargetInBossRoom();
+        }
+        else if(!hitPlayers.Contains(target))
+        {
+            // 攻撃が現在のターゲットに命中しなかったらAttackSmash2を実行する
             AttackSmash2();
         }
     }
@@ -386,6 +428,7 @@ public class Valcus : EnemyBase
     /// </summary>
     void AttackSmash2()
     {
+        hitPlayers = new List<GameObject>();
         targetPos = GetGroundPointFrom(target);
         if (targetPos == null)
         {
@@ -396,16 +439,18 @@ public class Valcus : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Smash2);
+        LookAtTarget();
     }
 
     /// <summary>
     /// [Animationからの呼び出し] 目標地点に向かってジャンプを開始
     /// </summary>
-    public override void OnAttackAnim3Event()
+    public override void OnAttackAnim4Event()
     {
+        const float duration = 0.6f;
         var endValue = GetGroundPointFrom(target);
         if (endValue != null) targetPos = endValue;
-        JumpToTargetPosition(endValue1);
+        JumpToTargetPosition(duration);
     }
 
     #endregion
@@ -414,8 +459,9 @@ public class Valcus : EnemyBase
 
     #region 移動処理関連
 
-    #region
-
+    /// <summary>
+    ///  追従開始
+    /// </summary>
     void StartTracking()
     {
         string cooldownKey = COROUTINE.Tracking.ToString();
@@ -436,11 +482,14 @@ public class Valcus : EnemyBase
     IEnumerator TrackingCoroutine(Action onFinished)
     {
         const float waitSec = 0.1f;
-        float trackingTime = 3f;
+        float trackingTime = 2f;
         bool isNormakAttack = false;
 
-        while (trackingTime < 0)
+        while (trackingTime > 0)
         {
+            // 途中でターゲットを見失う || ターゲットと最低距離まで近づいたら強制終了
+            if (!target || disToTargetX <= disToTargetMin) break;
+
             trackingTime -=waitSec;
             Tracking();
 
@@ -495,14 +544,12 @@ public class Valcus : EnemyBase
         m_rb2d.linearVelocity = speedVec;
     }
 
-    #endregion
-
     /// <summary>
     /// BackOffCoroutineを呼び出す
     /// </summary>
     void StartBackOff()
     {
-        float coroutineTime = 0.5f;
+        float coroutineTime = 0.3f;
 
         string cooldownKey = COROUTINE.BackOff.ToString();
         if (!ContaintsManagedCoroutine(cooldownKey))
@@ -548,7 +595,7 @@ public class Valcus : EnemyBase
         else
         {
             float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -4, m_rb2d.linearVelocity.y);
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -2, m_rb2d.linearVelocity.y);
         }
         m_rb2d.linearVelocity = speedVec;
     }

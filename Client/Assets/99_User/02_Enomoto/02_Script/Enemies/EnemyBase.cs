@@ -323,27 +323,6 @@ abstract public class EnemyBase : CharacterBase
         onFinished?.Invoke();
     }
 
-    #region ボス関連
-
-    /// <summary>
-    /// 初期位置に戻る関数
-    /// </summary>
-    void ReturnToStartPosition()
-    {
-
-    }
-
-    /// <summary>
-    /// スプライトを徐々に透けさせて開始位置に戻る
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator ReturnToStartPositionCoroutine()
-    {
-        yield return new WaitForSeconds(0);
-    }
-
-    #endregion
-
     #region ステータス関連
 
     /// <summary>
@@ -406,6 +385,9 @@ abstract public class EnemyBase : CharacterBase
                 break;
             }
         }
+
+        if(!isSucsess) target = null;
+
         return isSucsess;
     }
 
@@ -430,7 +412,7 @@ abstract public class EnemyBase : CharacterBase
                 if (target)
                 {
                     var player = target.GetComponent<PlayerBase>();
-                    if (player.hp > 0 || !player.IsBossArea) needNewTarget = true;
+                    if (player.hp <= 0 || !player.IsBossArea) needNewTarget = true;
                 }
                 else needNewTarget = true;
 
