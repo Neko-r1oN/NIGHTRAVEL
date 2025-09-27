@@ -41,12 +41,11 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        if (!RoomModel.Instance)
+        if (!RoomModel.Instance && Options.Count == 0)
         {
             SetTestData();  // テスト用、不要になり次第削除
-            return;
         }
-        else
+        if(RoomModel.Instance)
         {
             RoomModel.Instance.OnAscendDifficultySyn += this.OnAscendDifficulty;
         }

@@ -80,6 +80,7 @@ public class CharacterManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // オフライン用
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             if (!playerObjSelf)
@@ -88,14 +89,20 @@ public class CharacterManager : MonoBehaviour
             }
             playerObjs.Add(Guid.Empty, playerObjSelf);
 
-            if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();   // 初回のみ
+            // プレイヤーのステータス引継ぎ設定
+            if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
             else ApplySelfPlayerStatusData();
 
             return;
         }
 
+        // 既にステージに配置されているプレイヤーを削除し、参加人数分プレイヤー生成
         DestroyExistingPlayer();
         GenerateCharacters();
+
+        // プレイヤーのステータス引継ぎ設定
+        if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
+        else ApplySelfPlayerStatusData();
 
         // 通知処理を登録
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
