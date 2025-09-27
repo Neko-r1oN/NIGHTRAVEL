@@ -249,6 +249,7 @@ public class GameManager : MonoBehaviour
         CharacterManager.SelfPlayerStatusData = null;
         RelicManager.HaveRelicList = new List<RelicData>();
         LevelManager.GameLevel = 0;
+        LevelManager.Options = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
 
         isGameStart = false;
     }

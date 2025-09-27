@@ -502,7 +502,7 @@ public class UIManager : MonoBehaviour
         {
             statusUpWindow.SetActive(true);
 
-            var pair = LevelManager.Instance.Options.FirstOrDefault();
+            var pair = LevelManager.Options.FirstOrDefault();
 
             int currentIndex = 0;
             foreach(var item in pair.Value)
@@ -530,9 +530,9 @@ public class UIManager : MonoBehaviour
     public async void UpPlayerStatus(int buttonId)
     {
         // 選択したステータス強化選択肢を取得して削除
-        var values = LevelManager.Instance.Options.FirstOrDefault().Value;
-        var key = LevelManager.Instance.Options.FirstOrDefault().Key;
-        LevelManager.Instance.Options.Remove(key);
+        var values = LevelManager.Options.FirstOrDefault().Value;
+        var key = LevelManager.Options.FirstOrDefault().Key;
+        LevelManager.Options.Remove(key);
 
         if (!RoomModel.Instance)
         {// オフライン
@@ -544,7 +544,7 @@ public class UIManager : MonoBehaviour
             await RoomModel.Instance.ChooseUpgrade(key, values[buttonId].TypeId);
         }
 
-        if (LevelManager.Instance.Options.Count == 0)
+        if (LevelManager.Options.Count == 0)
         {
             CloseStatusWindow();
             isStatusWindow = false;
@@ -588,7 +588,7 @@ public class UIManager : MonoBehaviour
 
     public void ChangeUpStatusText()
     {
-        var pair = LevelManager.Instance.Options.First();
+        var pair = LevelManager.Options.First();
         var data = pair.Value;
 
         int currentIndex = 0;
