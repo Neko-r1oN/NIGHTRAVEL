@@ -1,5 +1,5 @@
 //----------------------------------------------------
-// UIŠÇ—ƒNƒ‰ƒX
+// UIç®¡ç†ã‚¯ãƒ©ã‚¹
 // Author : Souma Ueno
 //----------------------------------------------------
 using DG.Tweening;
@@ -19,6 +19,7 @@ using System.Linq;
 using System.Xml.Schema;
 using Cysharp.Threading.Tasks.Triggers;
 using TMPro;
+using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -26,173 +27,175 @@ public class UIManager : MonoBehaviour
     EnemyBase boss;
     LevelManager level;
 
-    #region ŠeUI
-    [Foldout("ƒLƒƒƒ“ƒoƒX")]
-    [SerializeField] GameObject canvas;              // ƒLƒƒƒ“ƒoƒX
+    #region å„UI
+    [Foldout("ã‚­ãƒ£ãƒ³ãƒã‚¹")]
+    [SerializeField] GameObject canvas;              // ã‚­ãƒ£ãƒ³ãƒã‚¹
                                                      
-    [Foldout("ƒvƒŒƒCƒ„[ƒXƒe[ƒ^ƒXŠÖ˜A")]            
-    [SerializeField] Slider playerHpBar;             // ƒvƒŒƒCƒ„[‚ÌHPƒo[
-    [Foldout("ƒvƒŒƒCƒ„[ƒXƒe[ƒ^ƒXŠÖ˜A")]            
-    [SerializeField] Slider expBar;                  // ŒoŒ±’lƒo[
+    [Foldout("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹é–¢é€£")]            
+    [SerializeField] Slider playerHpBar;             // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPãƒãƒ¼
+    [Foldout("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹é–¢é€£")]            
+    [SerializeField] Slider expBar;                  // çµŒé¨“å€¤ãƒãƒ¼
                                                      
-    [Foldout("ƒeƒLƒXƒg")]                            
-    [SerializeField] Text playerSliderText;              // ƒvƒŒƒCƒ„[‚ÌÅ‘åHPƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                 
-    [SerializeField] Text bossSliderText;                // ƒ{ƒX‚ÌÅ‘åHPƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                 
-    [SerializeField] Text levelText;                     // ƒŒƒxƒ‹ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                 
-    [SerializeField] Text pointText;                     // ƒ|ƒCƒ“ƒgƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                 
-    [SerializeField] List<Text> relicCntText;            // ƒŒƒŠƒbƒN‚ğ‚Á‚Ä‚é”‚ğ•\¦‚·‚éƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]
-    [SerializeField] List<Text> statusItemText;          // ƒXƒe[ƒ^ƒXƒAƒbƒvà–¾ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]
-    [SerializeField] List<Text> statusExplanationsTexts; // ƒXƒe[ƒ^ƒXƒAƒbƒvà–¾ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]
-    [SerializeField] Text levelUpStock;                  // ƒŒƒxƒ‹ƒAƒbƒvƒXƒgƒbƒNƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text levelUpText;                   // ‹­‰»‰Â”\ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text clashNumText;                  // Œ‚”j”ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text tmText;                        // ƒNƒŠƒAğŒƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] GameObject playerDmgText;           // ƒvƒŒƒCƒ„[ƒ_ƒ[ƒW•\‹L
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] GameObject otherDmgText;            // ‚»‚Ì‘¼ƒ_ƒ[ƒW•\‹L
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text relicName;                     // ƒŒƒŠƒbƒN–¼ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text diffText;                      // “ïˆÕ“xƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text terminalExplanationText;       // ƒ^[ƒ~ƒiƒ‹à–¾ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] Text spectatingNameText;            // ŠÏí’†ƒvƒŒƒCƒ„[–¼ƒeƒLƒXƒg
-    [Foldout("ƒeƒLƒXƒg")]                                
-    [SerializeField] GameObject healText;                // ‚»‚Ì‘¼ƒ_ƒ[ƒW•\‹L
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                            
+    [SerializeField] Text playerSliderText;              // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€å¤§HPãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                 
+    [SerializeField] Text bossSliderText;                // ãƒœã‚¹ã®æœ€å¤§HPãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                 
+    [SerializeField] Text levelText;                     // ãƒ¬ãƒ™ãƒ«ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                 
+    [SerializeField] Text pointText;                     // ãƒã‚¤ãƒ³ãƒˆãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                 
+    [SerializeField] List<Text> relicCntText;            // ãƒ¬ãƒªãƒƒã‚¯ã‚’æŒã£ã¦ã‚‹æ•°ã‚’è¡¨ç¤ºã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]
+    [SerializeField] List<Text> statusItemText;          // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—èª¬æ˜ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]
+    [SerializeField] List<Text> statusExplanationsTexts; // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—èª¬æ˜ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]
+    [SerializeField] Text levelUpStock;                  // ãƒ¬ãƒ™ãƒ«ã‚¢ãƒƒãƒ—ã‚¹ãƒˆãƒƒã‚¯ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text levelUpText;                   // å¼·åŒ–å¯èƒ½ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text clashNumText;                  // æ’ƒç ´æ•°ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text tmText;                        // ã‚¯ãƒªã‚¢æ¡ä»¶ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] GameObject playerDmgText;           // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨è¨˜
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] GameObject otherDmgText;            // ãã®ä»–ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨è¨˜
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text relicName;                     // ãƒ¬ãƒªãƒƒã‚¯åãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text diffText;                      // é›£æ˜“åº¦ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text terminalExplanationText;       // ã‚¿ãƒ¼ãƒŸãƒŠãƒ«èª¬æ˜ãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] Text spectatingNameText;            // è¦³æˆ¦ä¸­ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ†ã‚­ã‚¹ãƒˆ")]                                
+    [SerializeField] GameObject healText;                // ãã®ä»–ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨è¨˜
 
-    [Foldout("ƒtƒF[ƒhƒAƒEƒg")]                      
-    [SerializeField] Canvas parentCanvas;                // ƒeƒLƒXƒg‚ª•\¦‚³‚ê‚éƒLƒƒƒ“ƒoƒX‚ğŠ„‚è“–‚Ä‚Ä‚­‚¾‚³‚¢
-    [Foldout("ƒtƒF[ƒhƒAƒEƒg")]                          
-    [SerializeField] float fadeDuration = 2f;            // ƒeƒLƒXƒg‚ªƒtƒF[ƒhƒAƒEƒg‚É‚©‚©‚éŠÔi•bj
-    [Foldout("ƒtƒF[ƒhƒAƒEƒg")]                          
-    [SerializeField] float displayDuration = 1f;         // ƒeƒLƒXƒg‚ªŠ®‘S‚É•\¦‚³‚ê‚éŠÔiƒtƒF[ƒhŠJn‚Ü‚Åj
+    [Foldout("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ")]                      
+    [SerializeField] Canvas parentCanvas;                // ãƒ†ã‚­ã‚¹ãƒˆãŒè¡¨ç¤ºã•ã‚Œã‚‹ã‚­ãƒ£ãƒ³ãƒã‚¹ã‚’å‰²ã‚Šå½“ã¦ã¦ãã ã•ã„
+    [Foldout("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ")]                          
+    [SerializeField] float fadeDuration = 2f;            // ãƒ†ã‚­ã‚¹ãƒˆãŒãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã«ã‹ã‹ã‚‹æ™‚é–“ï¼ˆç§’ï¼‰
+    [Foldout("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ")]                          
+    [SerializeField] float displayDuration = 1f;         // ãƒ†ã‚­ã‚¹ãƒˆãŒå®Œå…¨ã«è¡¨ç¤ºã•ã‚Œã‚‹æ™‚é–“ï¼ˆãƒ•ã‚§ãƒ¼ãƒ‰é–‹å§‹ã¾ã§ï¼‰
                                                          
-    [Foldout("ƒ{ƒXŠÖ˜A")]                                
-    [SerializeField] Slider bossHpBar;                   // ƒ{ƒX‚ÌHPƒo[
-    [Foldout("ƒ{ƒXŠÖ˜A")]                                
-    [SerializeField] GameObject bossStatus;              // ƒ{ƒX‚ÌƒXƒe[ƒ^ƒX
+    [Foldout("ãƒœã‚¹é–¢é€£")]                                
+    [SerializeField] Slider bossHpBar;                   // ãƒœã‚¹ã®HPãƒãƒ¼
+    [Foldout("ãƒœã‚¹é–¢é€£")]                                
+    [SerializeField] GameObject bossStatus;              // ãƒœã‚¹ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
+    [Foldout("ãƒœã‚¹é–¢é€£")]
+    [SerializeField] Text bossName;
                                                          
-    [Foldout("ƒEƒBƒ“ƒhƒEŠÖŒW")]                          
-    [SerializeField] GameObject statusUpWindow;          // ƒXƒe[ƒ^ƒX‹­‰»ƒEƒBƒ“ƒhƒE
-    [Foldout("ƒEƒBƒ“ƒhƒEŠÖŒW")]                          
-    [SerializeField] float windowTime;                   // ƒEƒBƒ“ƒhƒE‚ª•\¦‚³‚ê‚é•b”
-    [Foldout("ƒEƒBƒ“ƒhƒEŠÖŒW")]                          
-    [SerializeField] GameObject endWindow;               // I—¹‚ÌƒEƒBƒ“ƒhƒE
-    [Foldout("ƒEƒBƒ“ƒhƒEŠÖŒW")]                          
-    [SerializeField] GameObject spectatingWindow;        // ŠÏíƒEƒBƒ“ƒhƒE
-    [Foldout("ƒEƒBƒ“ƒhƒEŠÖŒW")]                          
-    [SerializeField] GameObject nextStageWindow;         // ƒXƒe[ƒW‘JˆÚƒEƒBƒ“ƒhƒE
+    [Foldout("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–¢ä¿‚")]                          
+    [SerializeField] GameObject statusUpWindow;          // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼·åŒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+    [Foldout("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–¢ä¿‚")]                          
+    [SerializeField] float windowTime;                   // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¡¨ç¤ºã•ã‚Œã‚‹ç§’æ•°
+    [Foldout("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–¢ä¿‚")]                          
+    [SerializeField] GameObject endWindow;               // çµ‚äº†ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+    [Foldout("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–¢ä¿‚")]                          
+    [SerializeField] GameObject spectatingWindow;        // è¦³æˆ¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+    [Foldout("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–¢ä¿‚")]                          
+    [SerializeField] GameObject nextStageWindow;         // ã‚¹ãƒ†ãƒ¼ã‚¸é·ç§»ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 
-    [Foldout("ƒ{ƒ^ƒ“")]
+    [Foldout("ãƒœã‚¿ãƒ³")]
     [SerializeField] Button resultYesButton;
-    [Foldout("ƒ{ƒ^ƒ“")]
+    [Foldout("ãƒœã‚¿ãƒ³")]
     [SerializeField] Button resultNoButton;
-    [Foldout("ƒ{ƒ^ƒ“")]
+    [Foldout("ãƒœã‚¿ãƒ³")]
     [SerializeField] Button changeGameYesButton;
-    [Foldout("ƒ{ƒ^ƒ“")]
+    [Foldout("ãƒœã‚¿ãƒ³")]
     [SerializeField] Button changeGameNoButton;
 
-    [Foldout("ƒoƒi[ŠÖŒW")]                              
-    [SerializeField] GameObject bossWindow;              // ƒ{ƒXoŒ»UI
-    [Foldout("ƒoƒi[ŠÖŒW")]                              
-    [SerializeField] GameObject termsBanner;             // ƒNƒŠƒAğŒƒoƒi[
-    [Foldout("ƒoƒi[ŠÖŒW")]                              
-    [SerializeField] GameObject relicBanner;             // æ“¾‚µ‚½ƒŒƒŠƒbƒNƒoƒi[
+    [Foldout("ãƒãƒŠãƒ¼é–¢ä¿‚")]                              
+    [SerializeField] GameObject bossWindow;              // ãƒœã‚¹å‡ºç¾UI
+    [Foldout("ãƒãƒŠãƒ¼é–¢ä¿‚")]                              
+    [SerializeField] GameObject termsBanner;             // ã‚¯ãƒªã‚¢æ¡ä»¶ãƒãƒŠãƒ¼
+    [Foldout("ãƒãƒŠãƒ¼é–¢ä¿‚")]                              
+    [SerializeField] GameObject relicBanner;             // å–å¾—ã—ãŸãƒ¬ãƒªãƒƒã‚¯ãƒãƒŠãƒ¼
 
-    [Foldout("ƒŒƒŠƒbƒNŠÖ˜A")]
+    [Foldout("ãƒ¬ãƒªãƒƒã‚¯é–¢é€£")]
     [SerializeField] List<Image> relicImages;
-    [Foldout("ƒŒƒŠƒbƒNŠÖ˜A")]
-    [SerializeField] Image relicImg;                     // ƒŒƒŠƒbƒN‚ÌƒCƒ[ƒW
-    [Foldout("ƒŒƒŠƒbƒNŠÖ˜A")]
-    [SerializeField] Text relicNameText;                 // ƒŒƒŠƒbƒN–¼ƒeƒLƒXƒg
-    [Foldout("ƒŒƒŠƒbƒNŠÖ˜A")]
-    [SerializeField] Text relicExplanationText;          // ƒŒƒŠƒbƒN‚Ìà–¾
+    [Foldout("ãƒ¬ãƒªãƒƒã‚¯é–¢é€£")]
+    [SerializeField] Image relicImg;                     // ãƒ¬ãƒªãƒƒã‚¯ã®ã‚¤ãƒ¡ãƒ¼ã‚¸
+    [Foldout("ãƒ¬ãƒªãƒƒã‚¯é–¢é€£")]
+    [SerializeField] Text relicNameText;                 // ãƒ¬ãƒªãƒƒã‚¯åãƒ†ã‚­ã‚¹ãƒˆ
+    [Foldout("ãƒ¬ãƒªãƒƒã‚¯é–¢é€£")]
+    [SerializeField] Text relicExplanationText;          // ãƒ¬ãƒªãƒƒã‚¯ã®èª¬æ˜
 
-    [Foldout("‚»‚Ì‘¼")]
-    [SerializeField] List<GameObject> playerStatus;      // ©•ªˆÈŠO‚ÌƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒ^ƒX
-    [Foldout("‚»‚Ì‘¼")]
-    [SerializeField] GameObject terminalExplanationObj;  // ƒ^[ƒ~ƒiƒ‹à–¾—pƒIƒuƒWƒFƒNƒg
-    [Foldout("‚»‚Ì‘¼")]                                  
-    [SerializeField] GameObject statusUpButton;          // ƒXƒe[ƒ^ƒXƒAƒbƒvƒ{ƒ^ƒ“
+    [Foldout("ãã®ä»–")]
+    [SerializeField] List<GameObject> playerStatus;      // è‡ªåˆ†ä»¥å¤–ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
+    [Foldout("ãã®ä»–")]
+    [SerializeField] GameObject terminalExplanationObj;  // ã‚¿ãƒ¼ãƒŸãƒŠãƒ«èª¬æ˜ç”¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+    [Foldout("ãã®ä»–")]                                  
+    [SerializeField] GameObject statusUpButton;          // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—ãƒœã‚¿ãƒ³
 
-    [Foldout("ŠeŠÂ‹«—pUI")]
-    [SerializeField] GameObject gamePadUI;               // ƒpƒbƒh‘€ìUI
-    [Foldout("ŠeŠÂ‹«—pUI")]                              
-    [SerializeField] GameObject keyBoardUI;              // ƒL[ƒ{[ƒh‘€ìUI
-    [Foldout("ŠeŠÂ‹«—pUI")]                              
-    [SerializeField] GameObject swordSkillUI;            // Œ•mƒXƒLƒ‹UI
-    [Foldout("ŠeŠÂ‹«—pUI")]                              
-    [SerializeField] GameObject gunnerSkillUI;           // ƒKƒ“ƒi[ƒXƒLƒ‹UI
+    [Foldout("å„ç’°å¢ƒç”¨UI")]
+    [SerializeField] GameObject gamePadUI;               // ãƒ‘ãƒƒãƒ‰æ“ä½œUI
+    [Foldout("å„ç’°å¢ƒç”¨UI")]                              
+    [SerializeField] GameObject keyBoardUI;              // ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æ“ä½œUI
+    [Foldout("å„ç’°å¢ƒç”¨UI")]                              
+    [SerializeField] GameObject swordSkillUI;            // å‰£å£«ã‚¹ã‚­ãƒ«UI
+    [Foldout("å„ç’°å¢ƒç”¨UI")]                              
+    [SerializeField] GameObject gunnerSkillUI;           // ã‚¬ãƒ³ãƒŠãƒ¼ã‚¹ã‚­ãƒ«UI
                                                          
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] Image skillCoolDownImage;           // ƒXƒLƒ‹ƒN[ƒ‹ƒ_ƒEƒ“
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] Image blinkCoolDownImage;           // ƒuƒŠƒ“ƒNƒN[ƒ‹ƒ_ƒEƒ“
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] RectTransform[] swordIconObjs;      // Œ•ƒAƒCƒRƒ“ƒIƒuƒWƒFˆê——
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] Image[] swordIconImages;            // Œ•ƒAƒCƒRƒ“‰æ‘œˆê——
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] RectTransform[] gunIconObjs;        // eƒAƒCƒRƒ“ƒIƒuƒWƒFˆê——
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] Image[] gunIconImages;              // eƒAƒCƒRƒ“‰æ‘œˆê——
-    [Foldout("ACTƒAƒCƒRƒ“UI")]                           
-    [SerializeField] GameObject gunSkillLockObj;         // ƒuƒŠƒ“ƒNƒN[ƒ‹ƒ_ƒEƒ“
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] Image skillCoolDownImage;           // ã‚¹ã‚­ãƒ«ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] Image blinkCoolDownImage;           // ãƒ–ãƒªãƒ³ã‚¯ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] RectTransform[] swordIconObjs;      // å‰£ã‚¢ã‚¤ã‚³ãƒ³ã‚ªãƒ–ã‚¸ã‚§ä¸€è¦§
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] Image[] swordIconImages;            // å‰£ã‚¢ã‚¤ã‚³ãƒ³ç”»åƒä¸€è¦§
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] RectTransform[] gunIconObjs;        // éŠƒã‚¢ã‚¤ã‚³ãƒ³ã‚ªãƒ–ã‚¸ã‚§ä¸€è¦§
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] Image[] gunIconImages;              // éŠƒã‚¢ã‚¤ã‚³ãƒ³ç”»åƒä¸€è¦§
+    [Foldout("ACTã‚¢ã‚¤ã‚³ãƒ³UI")]                           
+    [SerializeField] GameObject gunSkillLockObj;         // ãƒ–ãƒªãƒ³ã‚¯ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³
 
-    [Foldout("ƒXƒe[ƒ^ƒXƒAƒCƒRƒ“ŠÖ˜A")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ã‚¤ã‚³ãƒ³é–¢é€£")]
     [SerializeField] List<Sprite> statusIcons;
-    [Foldout("ƒXƒe[ƒ^ƒXƒAƒCƒRƒ“ŠÖ˜A")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ã‚¤ã‚³ãƒ³é–¢é€£")]
     [SerializeField] List<Image> iconImages;
-    [Foldout("ƒXƒe[ƒ^ƒXƒAƒCƒRƒ“ŠÖ˜A")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ã‚¤ã‚³ãƒ³é–¢é€£")]
     [SerializeField] List<Material> rarityMaterials;
 
-    private bool isInputGamePad;                         // ƒQ[ƒ€ƒpƒbƒh“ü—Í‚©‚Ç‚¤‚©
+    private bool isInputGamePad;                         // ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰å…¥åŠ›ã‹ã©ã†ã‹
 
     public bool IsInputGamePad { get { return isInputGamePad; } }
 
     #endregion
 
-    // ’è”
-    private const float pushIconScale = 0.98f; // ƒL[‰Ÿ‰º‚ÌƒAƒCƒRƒ“k¬—¦
-    private const float pushIconColor = 0.8f;  // ƒL[‰Ÿ‰º‚ÌƒAƒCƒRƒ“F•Ï‰»—¦
+    // å®šæ•°
+    private const float pushIconScale = 0.98f; // ã‚­ãƒ¼æŠ¼ä¸‹æ™‚ã®ã‚¢ã‚¤ã‚³ãƒ³ç¸®å°ç‡
+    private const float pushIconColor = 0.8f;  // ã‚­ãƒ¼æŠ¼ä¸‹æ™‚ã®ã‚¢ã‚¤ã‚³ãƒ³è‰²å¤‰åŒ–ç‡
 
-    int windowCnt = 0;   // ƒEƒBƒ“ƒhƒE‚ª•\¦‚Å‚«‚éƒJƒEƒ“ƒg(ˆê“x‚¾‚¯g‚¤)
-    int lastLevel = 0;   // ƒŒƒxƒ‹ƒAƒbƒv‘O‚ÌƒŒƒxƒ‹
-    int statusStock = 0; // ƒŒƒxƒ‹ƒAƒbƒvƒXƒgƒbƒN”
-    bool isStatusWindow; // ƒXƒe[ƒ^ƒXƒEƒBƒ“ƒhƒE‚ªŠJ‚¯‚é‚©‚Ç‚¤‚©
-    bool isHold;         // ƒXƒe[ƒ^ƒXƒEƒBƒ“ƒhƒEƒƒbƒN—p
-    string colorCode;    // ƒJƒ‰[ƒR[ƒh
+    int windowCnt = 0;   // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¡¨ç¤ºã§ãã‚‹ã‚«ã‚¦ãƒ³ãƒˆ(ä¸€åº¦ã ã‘ä½¿ã†)
+    int lastLevel = 0;   // ãƒ¬ãƒ™ãƒ«ã‚¢ãƒƒãƒ—å‰ã®ãƒ¬ãƒ™ãƒ«
+    int statusStock = 0; // ãƒ¬ãƒ™ãƒ«ã‚¢ãƒƒãƒ—ã‚¹ãƒˆãƒƒã‚¯æ•°
+    bool isStatusWindow; // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒé–‹ã‘ã‚‹ã‹ã©ã†ã‹
+    bool isHold;         // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ­ãƒƒã‚¯ç”¨
+    string colorCode;    // ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
     Color color;
-    private Renderer[] childRenderers; // qƒIƒuƒWƒFƒNƒg‚ÌRenderer‚ğ•¡”‘Î‰
-    private Text[] childTexts; // qƒIƒuƒWƒFƒNƒg‚Ì•W€UI.Text‚ğ•¡”‘Î‰
-    // ŠeRenderer‚ÆText‚Ì‰ŠúF‚ğ•Û‘¶‚·‚é‚½‚ß‚ÌƒŠƒXƒg
-    // ƒtƒF[ƒhƒCƒ“‚ÉŒ³‚Ì•s“§–¾‚Èó‘Ô‚É–ß‚·‚½‚ß‚É•K—v
+    private Renderer[] childRenderers; // å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®Rendererã‚’è¤‡æ•°å¯¾å¿œ
+    private Text[] childTexts; // å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ¨™æº–UI.Textã‚’è¤‡æ•°å¯¾å¿œ
+    // å„Rendererã¨Textã®åˆæœŸè‰²ã‚’ä¿å­˜ã™ã‚‹ãŸã‚ã®ãƒªã‚¹ãƒˆ
+    // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³æ™‚ã«å…ƒã®ä¸é€æ˜ãªçŠ¶æ…‹ã«æˆ»ã™ãŸã‚ã«å¿…è¦
     private System.Collections.Generic.List<Color> initialRendererColors = new System.Collections.Generic.List<Color>();
     private System.Collections.Generic.List<Color> initialTextColors = new System.Collections.Generic.List<Color>();
 
     bool isRelicGet;
 
-    // ƒ^[ƒ~ƒiƒ‹‹N“®‚Ì’èŒ^•¶
+    // ã‚¿ãƒ¼ãƒŸãƒŠãƒ«èµ·å‹•æ™‚ã®å®šå‹æ–‡
     private Dictionary<TERMINAL_TYPE, string> terminalExplanation = new Dictionary<TERMINAL_TYPE, string>
     {
         {TERMINAL_TYPE.None,""},
-        {TERMINAL_TYPE.Enemy,"oŒ»‚µ‚½“G‚ğ‘S‚Ä“|‚¹" },
-        {TERMINAL_TYPE.Speed,"oŒ»‚µ‚½ƒQ[ƒg‚ğ‘S‚Ä’Ê‚ê" },
+        {TERMINAL_TYPE.Enemy,"å‡ºç¾ã—ãŸæ•µã‚’å…¨ã¦å€’ã›" },
+        {TERMINAL_TYPE.Speed,"å‡ºç¾ã—ãŸã‚²ãƒ¼ãƒˆã‚’å…¨ã¦é€šã‚Œ" },
         {TERMINAL_TYPE.Deal,"" },
         {TERMINAL_TYPE.Jumble,"" },
-        {TERMINAL_TYPE.Elite,"oŒ»‚µ‚½ƒGƒŠ[ƒg“G‚ğ‘S‚Ä“|‚¹" },
+        {TERMINAL_TYPE.Elite,"å‡ºç¾ã—ãŸã‚¨ãƒªãƒ¼ãƒˆæ•µã‚’å…¨ã¦å€’ã›" },
         {TERMINAL_TYPE.Boss,"" }
     };
 
@@ -214,16 +217,16 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            // ƒCƒ“ƒXƒ^ƒ“ƒX‚ª•¡”‘¶İ‚µ‚È‚¢‚æ‚¤‚ÉAŠù‚É‘¶İ‚µ‚Ä‚¢‚½‚ç©g‚ğÁ‹‚·‚é
+            // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒè¤‡æ•°å­˜åœ¨ã—ãªã„ã‚ˆã†ã«ã€æ—¢ã«å­˜åœ¨ã—ã¦ã„ãŸã‚‰è‡ªèº«ã‚’æ¶ˆå»ã™ã‚‹
             Destroy(gameObject);
         }
 
-        // eƒIƒuƒWƒFƒNƒg‚Æ‚»‚Ìq‚©‚çRenderer‚ğ‚·‚×‚Äæ“¾
+        // è¦ªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ãã®å­ã‹ã‚‰Rendererã‚’ã™ã¹ã¦å–å¾—
         childRenderers = termsBanner.GetComponentsInChildren<Renderer>(true);
-        // eƒIƒuƒWƒFƒNƒg‚Æ‚»‚Ìq‚©‚ç•W€UI.Text‚ğ‚·‚×‚Äæ“¾
+        // è¦ªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ãã®å­ã‹ã‚‰æ¨™æº–UI.Textã‚’ã™ã¹ã¦å–å¾—
         childTexts = termsBanner.GetComponentsInChildren<Text>(true);
 
-        // ŠeRenderer‚Ìƒ}ƒeƒŠƒAƒ‹İ’è‚Æ‰ŠúF‚Ì•Û‘¶
+        // å„Rendererã®ãƒãƒ†ãƒªã‚¢ãƒ«è¨­å®šã¨åˆæœŸè‰²ã®ä¿å­˜
         foreach (Renderer renderer in childRenderers)
         {
             if (renderer != null)
@@ -233,7 +236,7 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        // ŠeText‚Ì‰ŠúF‚Ì•Û‘¶
+        // å„Textã®åˆæœŸè‰²ã®ä¿å­˜
         foreach (Text text in childTexts)
         {
             if (text != null)
@@ -244,7 +247,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ‰Šúİ’è
+    /// åˆæœŸè¨­å®š
     /// </summary>
     void Start()
     {
@@ -281,17 +284,17 @@ public class UIManager : MonoBehaviour
             playerStatus[i].SetActive(false);
         }
 
-        clashNumText.text = "ğŒ:0/" + SpawnManager.Instance.KnockTermsNum;
+        clashNumText.text = "æ¡ä»¶:0/" + SpawnManager.Instance.KnockTermsNum;
 
-        tmText.text = "ƒNƒŠƒAğŒF5•ªŠÔ¶‚«c‚é or “G"
-            + SpawnManager.Instance.KnockTermsNum + "‘Ì“|‚¹";
+        tmText.text = "ã‚¯ãƒªã‚¢æ¡ä»¶ï¼š5åˆ†é–“ç”Ÿãæ®‹ã‚‹ or æ•µ"
+            + SpawnManager.Instance.KnockTermsNum + "ä½“å€’ã›";
 
         level = LevelManager.Instance;
 
         diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
         colorCode = "#ffc0cb";
 
-        if(ColorUtility.TryParseHtmlString(colorCode,out color))
+        if (ColorUtility.TryParseHtmlString(colorCode, out color))
         {
             diffText.color = color;
         }
@@ -306,8 +309,8 @@ public class UIManager : MonoBehaviour
             relic.enabled = false;
         }
 
-        // ƒLƒƒƒ‰‚ÌƒWƒ‡ƒu–ˆ‚ÉUI‚ğ•ÏX
-        if(player.PlayerType == Player_Type.Sword)
+        // ã‚­ãƒ£ãƒ©ã®ã‚¸ãƒ§ãƒ–æ¯ã«UIã‚’å¤‰æ›´
+        if (player.PlayerType == Player_Type.Sword)
         {
             ChangeSkillUI("Sword");
         }
@@ -316,19 +319,37 @@ public class UIManager : MonoBehaviour
             ChangeSkillUI("Gunner");
         }
 
-        if(SceneManager.GetActiveScene().name == "Tutorial")
+        if (SceneManager.GetActiveScene().name == "Tutorial")
         {
             diffText.GetComponent<Transform>().parent.gameObject.SetActive(false);
             tmText.GetComponent<Transform>().parent.gameObject.SetActive(false);
         }
+
+        // è‡ªåˆ†ä»¥å¤–ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’è¡¨ç¤º
+        int count = 0;
+        var players = CharacterManager.Instance.GetPlayersExceptSelf();
+
+        foreach (var p in players)
+        {
+            if (p != null && !playerStatus[count].activeSelf)
+            {
+                playerStatus[count].SetActive(true);
+                // åå‰åæ˜ 
+                playerStatus[count].transform.Find("Text(Name)").GetComponent<Text>().text
+                    = "player" + count;
+                // HPåæ˜ 
+                playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().value
+                   = p.HP;
+            }
+        }
     }
 
     /// <summary>
-    /// XVˆ—
+    /// æ›´æ–°å‡¦ç†
     /// </summary>
     void Update()
     {
-        // ‘€ìUI•ÏXˆ—
+        // æ“ä½œUIå¤‰æ›´å‡¦ç†
         InputChangeUI();
         
         if (player == null)
@@ -340,29 +361,10 @@ public class UIManager : MonoBehaviour
         }
         if (player == null) return;
 
-        // ƒvƒŒƒCƒ„[HPUI
-        playerHpBar.maxValue = player.MaxHP;
-        playerHpBar.value = player.HP;
-        playerSliderText.text = player.HP + "/" + playerHpBar.maxValue;
-
-        // ŒoŒ±’lEƒŒƒxƒ‹UI
-        expBar.maxValue = player.NextLvExp;
-        levelText.text = "LV." + player.NowLv;
-        if (player.NowLv > lastLevel)
-        {
-            isStatusWindow = true;
-            statusStock += player.NowLv - lastLevel;
-            levelUpStock.text = "c‚è‹­‰»”F" + statusStock;
-
-            levelUpText.enabled = true;
-            lastLevel = player.NowLv;
-        }
-        expBar.value = (float)player.NowExp;
-
         if (SpawnManager.Instance.IsSpawnBoss)
-        {// ƒ{ƒX‚ªƒXƒ|[ƒ“‚µ‚½
+        {// ãƒœã‚¹ãŒã‚¹ãƒãƒ¼ãƒ³ã—ãŸ
             if (windowCnt <= 0)
-            {// ƒEƒBƒ“ƒhƒE‚ªˆê‰ñ‚ào‚Ä‚¢‚È‚¢‚Æ‚«
+            {// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒä¸€å›ã‚‚å‡ºã¦ã„ãªã„ã¨ã
                 windowTime -= Time.deltaTime;
 
                 if (windowTime <= 0)
@@ -375,28 +377,70 @@ public class UIManager : MonoBehaviour
                     bossWindow.SetActive(true);
                 }
             }
+        }
+    }
 
-            if (boss != null)
+    public void UpdatePlayerStatus()
+    {
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼HPUI
+        playerHpBar.maxValue = player.MaxHP;
+        playerHpBar.value = player.HP;
+        playerSliderText.text = player.HP + "/" + playerHpBar.maxValue;
+
+        int count = 0;
+        var players = CharacterManager.Instance.GetPlayersExceptSelf();
+
+        foreach (var p in players)
+        {
+            if(p == null)
             {
-                bossHpBar.value = boss.HP;
-                bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
+                playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().value = 0;
+                count++;
+                return;
             }
+            else if (p != null)
+            {
+                playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().value
+                    = p.HP;
+            }
+            count++;
         }
     }
 
     /// <summary>
-    /// ƒ{ƒXUI•\¦
+    /// çµŒé¨“å€¤ãƒ»ãƒ¬ãƒ™ãƒ«æ›´æ–°
+    /// </summary>
+    public void UpdateExperienceAndLevel()
+    {
+        // çµŒé¨“å€¤ãƒ»ãƒ¬ãƒ™ãƒ«UI
+        expBar.maxValue = player.NextLvExp;
+        levelText.text = "LV." + player.NowLv;
+        if (player.NowLv > lastLevel)
+        {
+            isStatusWindow = true;
+            statusStock += player.NowLv - lastLevel;
+            levelUpStock.text = "æ®‹ã‚Šå¼·åŒ–æ•°ï¼š" + statusStock;
+
+            levelUpText.enabled = true;
+            lastLevel = player.NowLv;
+        }
+        expBar.value = (float)player.NowExp;
+    }
+
+    /// <summary>
+    /// ãƒœã‚¹UIè¡¨ç¤º
     /// </summary>
     public void DisplayBossUI()
-    {// ƒ{ƒX‚ªƒXƒ|[ƒ“‚µ‚½
+    {// ãƒœã‚¹ãŒã‚¹ãƒãƒ¼ãƒ³ã—ãŸ
         boss = CharacterManager.Instance.GetBossObject();
-        // ƒ{ƒXƒXƒe[ƒ^ƒXUI
+        // ãƒœã‚¹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹UI
         bossHpBar.maxValue = boss.BaseHP;
         bossHpBar.value = boss.BaseHP;
         bossSliderText.text = "" + bossHpBar.maxValue;
+        bossName.text = "" + boss.name;
 
         //if (boss.HP <= 0)
-        //{// ƒ{ƒX‚ÌHP•\¦‚ªƒ}ƒCƒiƒX‚É‚È‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+        //{// ãƒœã‚¹ã®HPè¡¨ç¤ºãŒãƒã‚¤ãƒŠã‚¹ã«ãªã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹
         //    bossHpBar.value = 0;
         //}
 
@@ -408,7 +452,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ{ƒXUI”ñ•\¦
+    /// ãƒœã‚¹UIéè¡¨ç¤º
     /// </summary>
     public void HideBossUI()
     {
@@ -416,7 +460,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// æ“¾‚µ‚½ƒŒƒŠƒbƒN‚ğ•\¦‚·‚éŠÖ”
+    /// å–å¾—ã—ãŸãƒ¬ãƒªãƒƒã‚¯ã‚’è¡¨ç¤ºã™ã‚‹é–¢æ•°
     /// </summary>
     /// <param name="relicSprite"></param>
     public void DisplayRelic(Sprite relicSprite,RelicData data)
@@ -442,7 +486,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒŒƒŠƒbƒN“ü‚ê‘Ö‚¦‚ÌÛ‚É‚Á‚Ä‚¢‚éƒŒƒŠƒbƒNUI‚ğƒŠƒZƒbƒg‚·‚éŠÖ”
+    /// ãƒ¬ãƒªãƒƒã‚¯å…¥ã‚Œæ›¿ãˆã®éš›ã«æŒã£ã¦ã„ã‚‹ãƒ¬ãƒªãƒƒã‚¯UIã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹é–¢æ•°
     /// </summary>
     public void ClearRelic()
     {
@@ -467,7 +511,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// “¯ƒŒƒŠƒbƒN‚ÌŠ”XV
+    /// åŒãƒ¬ãƒªãƒƒã‚¯ã®æ‰€æŒæ•°æ›´æ–°
     /// </summary>
     /// <param name="relicSprite"></param>
     /// <param name="num"></param>
@@ -483,7 +527,7 @@ public class UIManager : MonoBehaviour
                     if (num > 1)
                     {
                         relicCntText[count].enabled = true;
-                        relicCntText[count].text = "~" + num;
+                        relicCntText[count].text = "Ã—" + num;
                     }
                 }
             }
@@ -494,7 +538,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒXƒe[ƒ^ƒX‹­‰»ƒEƒBƒ“ƒhƒE•\¦
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼·åŒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤º
     /// </summary>
     public void OpenStatusWindow()
     {
@@ -507,15 +551,15 @@ public class UIManager : MonoBehaviour
             int currentIndex = 0;
             foreach(var item in pair.Value)
             {
-                // ƒ{ƒ^ƒ“‚Ìƒ}ƒeƒŠƒAƒ‹‚ğƒŒƒA“x‚²‚Æ‚É•ÏX
+                // ãƒœã‚¿ãƒ³ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ãƒ¬ã‚¢åº¦ã”ã¨ã«å¤‰æ›´
                 statusItemText[currentIndex].transform.parent.GetComponent<Image>().material
                     = rarityMaterials[(int)item.Rarity - 1];
                 
-                // ƒXƒe[ƒ^ƒXƒAƒbƒv–¼Eà–¾‚Ì•ÏX
+                // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—åãƒ»èª¬æ˜ã®å¤‰æ›´
                 statusItemText[currentIndex].text = item.Name;
                 statusExplanationsTexts[currentIndex].text = item.Explanation;
 
-                // ƒXƒe[ƒ^ƒXƒAƒbƒv—p‚Ì‰æ‘œEƒ}ƒeƒŠƒAƒ‹•ÏX
+                // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—ç”¨ã®ç”»åƒãƒ»ãƒãƒ†ãƒªã‚¢ãƒ«å¤‰æ›´
                 iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
                 iconImages[currentIndex].material = rarityMaterials[(int)item.Rarity - 1];
 
@@ -525,22 +569,22 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒXƒe[ƒ^ƒX‚Ì‹­‰»
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®å¼·åŒ–
     /// </summary>
     public async void UpPlayerStatus(int buttonId)
     {
-        // ‘I‘ğ‚µ‚½ƒXƒe[ƒ^ƒX‹­‰»‘I‘ğˆ‚ğæ“¾‚µ‚Äíœ
+        // é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼·åŒ–é¸æŠè‚¢ã‚’å–å¾—ã—ã¦å‰Šé™¤
         var values = LevelManager.Options.FirstOrDefault().Value;
         var key = LevelManager.Options.FirstOrDefault().Key;
         LevelManager.Options.Remove(key);
 
         if (!RoomModel.Instance)
-        {// ƒIƒtƒ‰ƒCƒ“
-            //ƒXƒe[ƒ^ƒX•ÏX
+        {// ã‚ªãƒ•ãƒ©ã‚¤ãƒ³
+            //ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¤‰æ›´
             UpStatusChange();
         }
         else
-        {// ƒIƒ“ƒ‰ƒCƒ“
+        {// ã‚ªãƒ³ãƒ©ã‚¤ãƒ³
             await RoomModel.Instance.ChooseUpgrade(key, values[buttonId].TypeId);
         }
 
@@ -552,17 +596,17 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            // ƒXƒe[ƒ^ƒX‹­‰»ƒeƒLƒXƒg‚ÌXV
+            // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼·åŒ–ãƒ†ã‚­ã‚¹ãƒˆã®æ›´æ–°
             ChangeUpStatusText();
         }
 
-        // ƒXƒe[ƒ^ƒX‹­‰»‰ñ”‚ÌŒ¸­
+        // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼·åŒ–å›æ•°ã®æ¸›å°‘
         statusStock--;
 
-        levelUpStock.text = "c‚è‹­‰»”F" + statusStock;
+        levelUpStock.text = "æ®‹ã‚Šå¼·åŒ–æ•°ï¼š" + statusStock;
 
         if (statusStock <= 0)
-        {// ‹­‰»ƒXƒgƒbƒN‚ª0‚Ìê‡
+        {// å¼·åŒ–ã‚¹ãƒˆãƒƒã‚¯ãŒ0ã®å ´åˆ
             CloseStatusWindow();
             isStatusWindow = false;
             levelUpText.enabled = false;
@@ -571,7 +615,7 @@ public class UIManager : MonoBehaviour
 
     [ContextMenu("UpStatusChange")]
     /// <summary>
-    /// ƒXƒe[ƒ^ƒX•ÏX€–Ú‚ğ•ÏX
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¤‰æ›´é …ç›®ã‚’å¤‰æ›´
     /// </summary>
     public void UpStatusChange()
     {
@@ -594,15 +638,15 @@ public class UIManager : MonoBehaviour
         int currentIndex = 0;
         foreach (var item in data)
         {
-            // ƒ{ƒ^ƒ“‚Ìƒ}ƒeƒŠƒAƒ‹‚ğƒŒƒA“x‚²‚Æ‚É•ÏX
+            // ãƒœã‚¿ãƒ³ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ãƒ¬ã‚¢åº¦ã”ã¨ã«å¤‰æ›´
             statusItemText[currentIndex].transform.parent.GetComponent<Image>().material
                     = rarityMaterials[(int)item.Rarity - 1];
 
-            // ƒXƒe[ƒ^ƒXƒAƒbƒv–¼Eà–¾‚Ì•ÏX
+            // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—åãƒ»èª¬æ˜ã®å¤‰æ›´
             statusItemText[currentIndex].text = item.Name;
             statusExplanationsTexts[currentIndex].text = item.Explanation;
 
-            // ƒXƒe[ƒ^ƒXƒAƒbƒv—p‚Ì‰æ‘œEƒ}ƒeƒŠƒAƒ‹•ÏX
+            // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¢ãƒƒãƒ—ç”¨ã®ç”»åƒãƒ»ãƒãƒ†ãƒªã‚¢ãƒ«å¤‰æ›´
             iconImages[currentIndex].sprite = statusIcons[(int)item.StatusType1 - 1];
             iconImages[currentIndex].material = rarityMaterials[(int)item.Rarity - 1];
 
@@ -611,54 +655,54 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒXƒe[ƒ^ƒX‹­‰»ƒEƒBƒ“ƒhƒEƒƒbƒN
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼·åŒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ­ãƒƒã‚¯
     /// </summary>
     public void HoldStatusWindow()
     {
         if (!isHold)
-        {// ƒz[ƒ‹ƒhó‘Ô‚Å‚È‚¢‚Æ‚«
-            // ƒz[ƒ‹ƒh‚É‚·‚é
+        {// ãƒ›ãƒ¼ãƒ«ãƒ‰çŠ¶æ…‹ã§ãªã„ã¨ã
+            // ãƒ›ãƒ¼ãƒ«ãƒ‰ã«ã™ã‚‹
             isHold = true;
         }
         else
-        {// ƒz[ƒ‹ƒhó‘Ô‚Ì‚Æ‚«
-            // ƒz[ƒ‹ƒh‰ğœ
+        {// ãƒ›ãƒ¼ãƒ«ãƒ‰çŠ¶æ…‹ã®ã¨ã
+            // ãƒ›ãƒ¼ãƒ«ãƒ‰è§£é™¤
             isHold = false;
         }
     }
 
     /// <summary>
-    /// ƒXƒe[ƒ^ƒXƒEƒBƒ“ƒhƒE•Â‚¶‚é
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–‰ã˜ã‚‹
     /// </summary>
     public void CloseStatusWindow()
     {
         if (!isHold)
-        {// ƒz[ƒ‹ƒhó‘Ô‚Å‚È‚¢‚Æ‚«
-            // ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é
+        {// ãƒ›ãƒ¼ãƒ«ãƒ‰çŠ¶æ…‹ã§ãªã„ã¨ã
+            // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹
             statusUpWindow.SetActive(false);
         }
     }
 
     /// <summary>
-    /// ƒ{ƒXğŒ‚ÌƒeƒLƒXƒgXV
+    /// ãƒœã‚¹æ¡ä»¶ã®ãƒ†ã‚­ã‚¹ãƒˆæ›´æ–°
     /// </summary>
     /// <param name="crashNum"></param>
     public void CountTermsText(int crashNum)
     {
-        clashNumText.text = "ğŒ:" + crashNum + "/" + SpawnManager.Instance.KnockTermsNum;
+        clashNumText.text = "æ¡ä»¶:" + crashNum + "/" + SpawnManager.Instance.KnockTermsNum;
     }
 
     /// <summary>
-    /// ğŒƒoƒi[‚ğˆê’èŠÔ•\¦‚µA‚»‚ÌŒãƒtƒF[ƒhƒAƒEƒg
+    /// æ¡ä»¶ãƒãƒŠãƒ¼ã‚’ä¸€å®šæ™‚é–“è¡¨ç¤ºã—ã€ãã®å¾Œãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ
     /// </summary>
     public void ShowUIAndFadeOut()
     {
-        StopAllCoroutines(); // Šù‚ÉÀs’†‚ÌƒRƒ‹[ƒ`ƒ“‚ğ’â~
+        StopAllCoroutines(); // æ—¢ã«å®Ÿè¡Œä¸­ã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’åœæ­¢
         StartCoroutine(FadeSequence());
     }
 
     /// <summary>
-    /// ƒtƒF[ƒhƒAƒEƒgˆ—
+    /// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆå‡¦ç†
     /// </summary>
     /// <returns></returns>
     private IEnumerator FadeSequence()
@@ -673,10 +717,10 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            termsBanner.SetActive(true); // UIƒpƒlƒ‹‚ğ•\¦
+            termsBanner.SetActive(true); // UIãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
         }
 
-        // ŠeRenderer‚ÆText‚ÌƒAƒ‹ƒtƒ@’l‚ğŠ®‘S‚É•s“§–¾‚Éİ’è
+        // å„Rendererã¨Textã®ã‚¢ãƒ«ãƒ•ã‚¡å€¤ã‚’å®Œå…¨ã«ä¸é€æ˜ã«è¨­å®š
         int rendererIndex = 0;
         foreach (Renderer renderer in childRenderers)
         {
@@ -699,15 +743,15 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        // w’è‚³‚ê‚½•\¦ŠÔ‘Ò‹@ (Time.timeScale‚ª1‚È‚Ì‚ÅWaitForSeconds‚ÅOK)
+        // æŒ‡å®šã•ã‚ŒãŸè¡¨ç¤ºæ™‚é–“å¾…æ©Ÿ (Time.timeScaleãŒ1ãªã®ã§WaitForSecondsã§OK)
         yield return new WaitForSeconds(displayDuration);
 
-        // ƒtƒF[ƒhƒAƒEƒgˆ—
+        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆå‡¦ç†
         float timer = 0f;
         while (timer < fadeDuration)
         {
-            timer += Time.deltaTime; // Time.timeScale‚ª1‚È‚Ì‚ÅdeltaTime‚ÅOK
-            float alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration); // 1‚©‚ç0‚ÖüŒ`•âŠÔ
+            timer += Time.deltaTime; // Time.timeScaleãŒ1ãªã®ã§deltaTimeã§OK
+            float alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration); // 1ã‹ã‚‰0ã¸ç·šå½¢è£œé–“
 
             foreach (Renderer renderer in childRenderers)
             {
@@ -727,10 +771,10 @@ public class UIManager : MonoBehaviour
                     text.color = currentColor;
                 }
             }
-            yield return null; // 1ƒtƒŒ[ƒ€‘Ò‹@
+            yield return null; // 1ãƒ•ãƒ¬ãƒ¼ãƒ å¾…æ©Ÿ
         }
 
-        // ƒtƒF[ƒhƒAƒEƒgŠ®—¹Œã‚Ìˆ— (Š®‘S‚É“§–¾‚É‚·‚é)
+        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆå®Œäº†å¾Œã®å‡¦ç† (å®Œå…¨ã«é€æ˜ã«ã™ã‚‹)
         foreach (Renderer renderer in childRenderers)
         {
             if (renderer != null)
@@ -762,13 +806,13 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            termsBanner.SetActive(false); // Š®‘S‚É“§–¾‚É‚È‚Á‚½‚çUIƒpƒlƒ‹‚ğ”ñ•\¦‚É‚·‚é
+            termsBanner.SetActive(false); // å®Œå…¨ã«é€æ˜ã«ãªã£ãŸã‚‰UIãƒ‘ãƒãƒ«ã‚’éè¡¨ç¤ºã«ã™ã‚‹
         }
     }
     
 
     /// <summary>
-    /// StandardƒVƒF[ƒ_[‚Å“§–¾“x‚ğˆµ‚¤‚½‚ß‚Ìİ’èƒwƒ‹ƒp[ƒƒ\ƒbƒh
+    /// Standardã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã§é€æ˜åº¦ã‚’æ‰±ã†ãŸã‚ã®è¨­å®šãƒ˜ãƒ«ãƒ‘ãƒ¼ãƒ¡ã‚½ãƒƒãƒ‰
     /// </summary>
     /// <param name="material"></param>
     private void SetMaterialFadeMode(Material material)
@@ -786,7 +830,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ_ƒ[ƒW•\‹Lˆ—
+    /// ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨è¨˜å‡¦ç†
     /// </summary>
     public void PopDamageUI(int dmgVol, Vector3 popPosition, bool isPlayer)
     {
@@ -807,7 +851,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ‰ñ•œ•\‹Lˆ—
+    /// å›å¾©è¡¨è¨˜å‡¦ç†
     /// </summary>
     public void PopHealUI(int healVol, Vector3 popPosition)
     {
@@ -825,20 +869,17 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// æ“¾‚µ‚½ƒŒƒŠƒbƒN‚ğƒoƒi[‚Å•\¦
+    /// å–å¾—ã—ãŸãƒ¬ãƒªãƒƒã‚¯ã‚’ãƒãƒŠãƒ¼ã§è¡¨ç¤º
     /// </summary>
     /// <param name="relicImg"></param>
     private void GetRelicBanner(Sprite relicSprite)
     {
-        if (relicImg.sprite == null)
-        {
-            relicImg.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            relicImg.sprite = relicSprite;
-        }
+        relicImg.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        relicImg.sprite = relicSprite;
     }
 
     /// <summary>
-    /// ƒŒƒŠƒbƒNƒCƒ[ƒW‚ğŒ³‚É–ß‚·
+    /// ãƒ¬ãƒªãƒƒã‚¯ã‚¤ãƒ¡ãƒ¼ã‚¸ã‚’å…ƒã«æˆ»ã™
     /// </summary>
     private void DeleteRelicBunnerImg()
     {
@@ -849,7 +890,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒQ[ƒ€“àƒŒƒxƒ‹ƒAƒbƒv
+    /// ã‚²ãƒ¼ãƒ å†…ãƒ¬ãƒ™ãƒ«ã‚¢ãƒƒãƒ—
     /// </summary>
     public void UpGameLevelText()
     {
@@ -861,9 +902,9 @@ public class UIManager : MonoBehaviour
              
         diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
 
-        // text‚ÌF•ÏX
+        // textã®è‰²å¤‰æ›´
         switch (LevelManager.GameLevel)
-        {// Baby‚Ístart‚Åİ’èÏ‚İ‚Ì‚½‚ßÈ‚­
+        {// Babyã¯startã§è¨­å®šæ¸ˆã¿ã®ãŸã‚çœã
 
             case (int)DIFFICULTY_TYPE.Easy:
                 diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
@@ -923,7 +964,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ^[ƒ~ƒiƒ‹‚Ìà–¾•¶•\¦E•ÏXˆ—
+    /// ã‚¿ãƒ¼ãƒŸãƒŠãƒ«ã®èª¬æ˜æ–‡è¡¨ç¤ºãƒ»å¤‰æ›´å‡¦ç†
     /// </summary>
     /// <param name="type"></param>
     public void DisplayTerminalExplanation(TERMINAL_TYPE type)
@@ -934,16 +975,16 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ^[ƒ~ƒiƒ‹à–¾•¶”ñ•\¦EƒeƒLƒXƒg‚ğ–ß‚·
+    /// ã‚¿ãƒ¼ãƒŸãƒŠãƒ«èª¬æ˜æ–‡éè¡¨ç¤ºãƒ»ãƒ†ã‚­ã‚¹ãƒˆã‚’æˆ»ã™
     /// </summary>
     public void DisplayTimeInstructions()
     {
         terminalExplanationObj.SetActive(false);
-        TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " “G‰qƒVƒXƒeƒ€•œ‹Œ‚Ü‚Å";
+        TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " æ•µè¡›ã‚·ã‚¹ãƒ†ãƒ å¾©æ—§ã¾ã§";
     }
 
     /// <summary>
-    /// ŠÏí‰æ–Ê—pUI‚ÌXV
+    /// è¦³æˆ¦ç”»é¢ç”¨UIã®æ›´æ–°
     /// </summary>
     public void DisplaySpectatingPlayer()
     {
@@ -972,7 +1013,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ‘SƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚©Šm”F‚·‚éˆ—
+    /// å…¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ­»äº¡ã—ãŸã‹ç¢ºèªã™ã‚‹å‡¦ç†
     /// </summary>
     /// <returns></returns>
     private bool CheckAllPlayersDead()
@@ -994,10 +1035,10 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒN[ƒ‹ƒ_ƒEƒ“•\¦
+    /// ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³è¡¨ç¤º
     /// </summary>
     /// <param name="skillFlag">true:skill false;blink</param>
-    /// <param name="coolTime">ƒN[ƒ‹ƒ^ƒCƒ€</param>
+    /// <param name="coolTime">ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ </param>
     public void DisplayCoolDown(bool skillFlag,float coolTime)
     {
         if(skillFlag)
@@ -1013,7 +1054,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ‘€ìUI•Ï‰»ˆ—
+    /// æ“ä½œUIå¤‰åŒ–å‡¦ç†
     /// </summary>
     /// <param name="keyBoardFlag"></param>
     private void ChangeOperationUI(string mode)
@@ -1033,7 +1074,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒLƒƒƒ‰–ˆ‚ÌƒXƒLƒ‹UI•Ï‰»
+    /// ã‚­ãƒ£ãƒ©æ¯ã®ã‚¹ã‚­ãƒ«UIå¤‰åŒ–
     /// </summary>
     /// <param name="job"></param>
     private void ChangeSkillUI(string job)
@@ -1051,11 +1092,11 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// “ü—Í‚ÌUI•ÏX
+    /// å…¥åŠ›æ™‚ã®UIå¤‰æ›´
     /// </summary>
     private void InputChangeUI()
     {
-        // ƒKƒ“ƒi[ƒXƒLƒ‹ƒƒbƒNˆ—
+        // ã‚¬ãƒ³ãƒŠãƒ¼ã‚¹ã‚­ãƒ«ãƒ­ãƒƒã‚¯å‡¦ç†
         if (!player.GetGrounded() && player.PlayerType == Player_Type.Gunner)
         {
             gunSkillLockObj.SetActive(true);
@@ -1065,7 +1106,7 @@ public class UIManager : MonoBehaviour
             gunSkillLockObj.SetActive(false);
         }
 
-        // ƒL[ƒ{[ƒh or ƒQ[ƒ€ƒpƒbƒh‚Ì“ü—Í‚ÅUI•Ï‰»
+        // ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ or ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®å…¥åŠ›ã§UIå¤‰åŒ–
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.Space)
             || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
         {
@@ -1077,18 +1118,18 @@ public class UIManager : MonoBehaviour
             ChangeOperationUI("Gamepad");
         }
 
-        // ƒL[“ü—Í or ƒ{ƒ^ƒ““ü—Í‚ÅUIƒŠƒAƒNƒVƒ‡ƒ“
+        // ã‚­ãƒ¼å…¥åŠ› or ãƒœã‚¿ãƒ³å…¥åŠ›ã§UIãƒªã‚¢ã‚¯ã‚·ãƒ§ãƒ³
 
-        // ’ÊíUŒ‚
+        // é€šå¸¸æ”»æ’ƒ
         if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
         {
             if (player.PlayerType == Player_Type.Sword)
-            {   // Œ•mƒAƒCƒRƒ“
+            {   // å‰£å£«ã‚¢ã‚¤ã‚³ãƒ³
                 swordIconObjs[0].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 swordIconImages[0].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
             else
-            {   // ƒKƒ“ƒi[ƒAƒCƒRƒ“
+            {   // ã‚¬ãƒ³ãƒŠãƒ¼ã‚¢ã‚¤ã‚³ãƒ³
                 gunIconObjs[0].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 gunIconImages[0].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
@@ -1106,16 +1147,16 @@ public class UIManager : MonoBehaviour
                 gunIconImages[0].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
-        // ƒXƒLƒ‹UŒ‚
+        // ã‚¹ã‚­ãƒ«æ”»æ’ƒ
         if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("Attack2"))
         {
             if (player.PlayerType == Player_Type.Sword)
-            {   // Œ•mƒAƒCƒRƒ“
+            {   // å‰£å£«ã‚¢ã‚¤ã‚³ãƒ³
                 swordIconObjs[1].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 swordIconImages[1].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
             else
-            {   // ƒKƒ“ƒi[ƒAƒCƒRƒ“
+            {   // ã‚¬ãƒ³ãƒŠãƒ¼ã‚¢ã‚¤ã‚³ãƒ³
                 gunIconObjs[1].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 gunIconImages[1].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
@@ -1133,16 +1174,16 @@ public class UIManager : MonoBehaviour
                 gunIconImages[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
-        // ƒuƒŠƒ“ƒN
+        // ãƒ–ãƒªãƒ³ã‚¯
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Blink"))
         {
             if (player.PlayerType == Player_Type.Sword)
-            {   // Œ•mƒAƒCƒRƒ“
+            {   // å‰£å£«ã‚¢ã‚¤ã‚³ãƒ³
                 swordIconObjs[2].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 swordIconImages[2].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
             else
-            {   // ƒKƒ“ƒi[ƒAƒCƒRƒ“
+            {   // ã‚¬ãƒ³ãƒŠãƒ¼ã‚¢ã‚¤ã‚³ãƒ³
                 gunIconObjs[2].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 gunIconImages[2].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
@@ -1160,16 +1201,16 @@ public class UIManager : MonoBehaviour
                 gunIconImages[2].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
-        // ƒWƒƒƒ“ƒv
+        // ã‚¸ãƒ£ãƒ³ãƒ—
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
         {
             if (player.PlayerType == Player_Type.Sword)
-            {   // Œ•mƒAƒCƒRƒ“
+            {   // å‰£å£«ã‚¢ã‚¤ã‚³ãƒ³
                 swordIconObjs[3].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 swordIconImages[3].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
             else
-            {   // ƒKƒ“ƒi[ƒAƒCƒRƒ“
+            {   // ã‚¬ãƒ³ãƒŠãƒ¼ã‚¢ã‚¤ã‚³ãƒ³
                 gunIconObjs[3].localScale = new Vector3(pushIconScale, pushIconScale, pushIconScale);
                 gunIconImages[3].color = new Color(pushIconColor, pushIconColor, pushIconColor, 1.0f);
             }
@@ -1190,7 +1231,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Ÿ‚Ì‰æ–Ê‚ÉˆÚ“®‚·‚é‚©Šm”F‚·‚éƒEƒBƒ“ƒhƒE‚Ì•\¦
+    /// æ¬¡ã®ç”»é¢ã«ç§»å‹•ã™ã‚‹ã‹ç¢ºèªã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º
     /// </summary>
     public void DisplayNextStageWindow()
     {
@@ -1198,7 +1239,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒQ[ƒ€I—¹Šm”FƒEƒBƒ“ƒhƒE•\¦
+    /// ã‚²ãƒ¼ãƒ çµ‚äº†ç¢ºèªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤º
     /// </summary>
     public void DisplayEndGameWindow()
     {
@@ -1206,7 +1247,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒQ[ƒ€I—¹ƒ{ƒ^ƒ“
+    /// ã‚²ãƒ¼ãƒ çµ‚äº†ãƒœã‚¿ãƒ³
     /// </summary>
     /// <param name="id"></param>
     public async void EndGameButtonPush(int id)
@@ -1230,7 +1271,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ŸƒXƒe[ƒWˆÚ“®‚Ìƒ{ƒ^ƒ“ˆ—
+    /// æ¬¡ã‚¹ãƒ†ãƒ¼ã‚¸ç§»å‹•ã®ãƒœã‚¿ãƒ³å‡¦ç†
     /// </summary>
     /// <param name="id"></param>
     public async void NextGameButtonPush(int id)

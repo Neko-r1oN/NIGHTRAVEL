@@ -297,6 +297,24 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 自身以外のプレイヤーをListにして返す
+    /// </summary>
+    /// <returns></returns>
+    public List<PlayerBase> GetPlayersExceptSelf()
+    {
+        List<PlayerBase> result = new List<PlayerBase>();
+        foreach (var player in playerObjs.Values)
+        {
+            if (player != playerObjSelf)
+            {
+                if (player == null) result.Add(null);
+                else result.Add(player.GetComponent<PlayerBase>());
+            }
+        }
+        return result;
+    }
+
+    /// <summary>
     /// プレイヤー情報取得
     /// </summary>
     /// <returns></returns>
