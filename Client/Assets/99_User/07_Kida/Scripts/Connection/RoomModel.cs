@@ -590,9 +590,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:ñÿìcçWï„
     /// </summary>
     /// <returns></returns>
-    public async UniTask JoinedAsync(string roomName, int userId , string pass)
+    public async UniTask JoinedAsync(string roomName, int userId ,string userName, string pass)
     {
-        joinedUserList = await roomHub.JoinedAsync(roomName, userId, pass);
+        joinedUserList = await roomHub.JoinedAsync(roomName, userId,userName, pass);
         if (joinedUserList == null) return;
         foreach (var user in joinedUserList)
         {

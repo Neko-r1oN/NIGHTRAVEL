@@ -1,6 +1,7 @@
 using DG.Tweening;                   //DOTweenを使うときはこのusingを入れる
 using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,9 +11,15 @@ using UnityEngine.SceneManagement;
 
 public class TitleManagerk : MonoBehaviour
 {
-
     [SerializeField] GameObject fade;
-   // [SerializeField] GameObject menu;
+    // [SerializeField] GameObject menu;
+
+    //steamユーザー名
+    private static string steamusername;
+    public static string SteamUserName
+    {
+        get { return steamusername; }
+    }
 
     public static bool isMenuFlag;
 
@@ -20,6 +27,20 @@ public class TitleManagerk : MonoBehaviour
 
     void Start()
     {
+
+
+        //Steamのユーザー名を取得
+        if (SteamManager.Initialized)
+        {
+            steamusername = SteamFriends.GetPersonaName();
+            Debug.Log("Steam Username: " + steamusername);
+            // 取得したユーザー名をゲーム内で表示する処理を記述
+        }
+        else
+        {
+            Debug.LogError("Steamworks is not initialized.");
+        }
+
         fade.SetActive(true);               //フェードを有効化
       //  menu.SetActive(false);            //メニューを非表示
         isMenuFlag = false;                 //メニューフラグを無効化
