@@ -325,6 +325,8 @@ public class UIManager : MonoBehaviour
             tmText.GetComponent<Transform>().parent.gameObject.SetActive(false);
         }
 
+        UpdatePlayerStatus();
+
         // 自分以外のプレイヤーのステータスを表示
         int count = 0;
         var players = CharacterManager.Instance.GetPlayersExceptSelf();
@@ -336,10 +338,7 @@ public class UIManager : MonoBehaviour
                 playerStatus[count].SetActive(true);
                 // 名前反映
                 playerStatus[count].transform.Find("Text(Name)").GetComponent<Text>().text
-                    = "player" + count;
-                // HP反映
-                playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().value
-                   = p.HP;
+                    = "player" + count; // 仮
             }
         }
     }
@@ -392,7 +391,7 @@ public class UIManager : MonoBehaviour
 
         foreach (var p in players)
         {
-            if(p == null)
+            if (p == null)
             {
                 playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().value = 0;
                 count++;
@@ -400,11 +399,21 @@ public class UIManager : MonoBehaviour
             }
             else if (p != null)
             {
+                playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().maxValue
+                    = p.MaxHP;
+
                 playerStatus[count].transform.Find("Slider(Hp)").GetComponent<Slider>().value
                     = p.HP;
             }
             count++;
         }
+    }
+
+    public void ChangeStatusToTargetPlayer(PlayerBase playerBase)
+    {
+        DisplaySpectatingPlayer();
+        player = playerBase;
+        UpdatePlayerStatus();
     }
 
     /// <summary>
@@ -991,7 +1000,7 @@ public class UIManager : MonoBehaviour
         spectatingWindow.SetActive(true);
         spectatingNameText.text = "player2";
 
-        //statusUpButton.SetActive(false);
+        statusUpButton.SetActive(false);
         levelUpText.enabled = false;
 
         foreach (Image relic in relicImages)

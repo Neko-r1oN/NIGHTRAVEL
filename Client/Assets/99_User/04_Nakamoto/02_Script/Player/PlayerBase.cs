@@ -267,6 +267,7 @@ abstract public class PlayerBase : CharacterBase
     public bool IsDead { get { return isDead; } private set { isDead = value; } }
     #endregion
 
+
     #region ƒvƒŒƒCƒ„[‚ÉŠÖ‚·‚é’è”
     protected const float REGENE_TIME = 1.0f;           // ©“®‰ñ•œŠÔŠu
     protected const float REGENE_STOP_TIME = 1.5f;      // ©“®‰ñ•œ’â~ŠÔ
@@ -1028,7 +1029,9 @@ abstract public class PlayerBase : CharacterBase
         yield return new WaitForSeconds(0.4f);
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
-        Camera.main.gameObject.GetComponent<SpectatorModeManager>().FocusCameraOnAlivePlayer();
+
+        if (CharacterManager.Instance.PlayerObjSelf) Camera.main.gameObject.GetComponent<SpectatorModeManager>().FocusCameraOnAlivePlayer(); 
+        
         this.gameObject.SetActive(false);
     }
 
