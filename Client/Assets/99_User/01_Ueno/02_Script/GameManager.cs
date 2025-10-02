@@ -231,7 +231,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void OnGameEnd(ResultData resultData)
     {
-        UIManager.Instance.OnDeadPlayer();
+        //UIManager.Instance.OnDeadPlayer();
         this.resultData = resultData;
         CangeResult();
     }

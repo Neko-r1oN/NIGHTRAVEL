@@ -38,7 +38,7 @@ public class SpectatorModeManager : MonoBehaviour
     {
         foreach(var player in players)
         {
-            if(player.Value == null)
+            if(player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
             {
                 continue;
             }
@@ -46,6 +46,8 @@ public class SpectatorModeManager : MonoBehaviour
             if(player.Value != CharacterManager.Instance.PlayerObjSelf && followKey != player.Key)
             {
                 followKey = player.Key;
+
+                UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
 
                 Camera.main.gameObject.GetComponent<CameraFollow>().Target = player.Value.transform;
                 break;
