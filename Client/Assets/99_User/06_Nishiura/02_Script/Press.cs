@@ -1,29 +1,43 @@
 //===================
-// ƒvƒŒƒXƒXƒNƒŠƒvƒg
+// ãƒ—ãƒ¬ã‚¹ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
 // Author:Nishiura
 // Date:2025/07/07
 //===================
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Press : MonoBehaviour
 {
     PlayerBase playerBase;
+    EnemyBase enemyBase;
     PressCheck pressCheck;
+
+    [SerializeField] GameObject enemyObj;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // ƒvƒŒƒCƒ„[‚ª‚Â‚Ô‚µƒGƒŠƒA‚É“ü‚Á‚½ê‡
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã¤ã¶ã—ã‚¨ãƒªã‚¢ã«å…¥ã£ãŸå ´åˆ
         if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
-            playerBase = collision.gameObject.GetComponent<PlayerBase>();   // ‚Â‚Ô‚³‚ê‘ÎÛ‚©‚çPlayerBase‚ğæ“¾
-            bool isGround =  playerBase.GetGrounded();  // PlayerBase‚©‚çÚ’n”»’è•Ï”‚ğæ“¾
+            playerBase = collision.gameObject.GetComponent<PlayerBase>();   // ã¤ã¶ã•ã‚Œå¯¾è±¡ã‹ã‚‰PlayerBaseã‚’å–å¾—
+            bool isGround = playerBase.GetGrounded();  // PlayerBaseã‹ã‚‰æ¥åœ°åˆ¤å®šå¤‰æ•°ã‚’å–å¾—
 
-            if (!isGround) return;  // Ú’n‚µ‚Ä‚¢‚È‚¢ê‡Aˆ—‚µ‚È‚¢
+            if (!isGround) return;  // æ¥åœ°ã—ã¦ã„ãªã„å ´åˆã€å‡¦ç†ã—ãªã„
 
-            // ƒvƒŒƒCƒ„[‚ÌÅ‘åHP20%‘Š“–‚Ìƒ_ƒ[ƒW‚Éİ’è
+            // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€å¤§HP20%ç›¸å½“ã®ãƒ€ãƒ¡ãƒ¼ã‚¸ã«è¨­å®š
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.2f);
             playerBase.ApplyDamage(damage);
-            playerBase.MoveCheckPoint();    // ‚Â‚Ô‚ê‚½ƒvƒŒƒCƒ„[‚ğƒ`ƒFƒbƒNƒ|ƒCƒ“ƒg‚Ö–ß‚·
+            playerBase.MoveCheckPoint();    // ã¤ã¶ã‚ŒãŸãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ãƒã‚§ãƒƒã‚¯ãƒã‚¤ãƒ³ãƒˆã¸æˆ»ã™
+        }
+
+        // æ•µãŒã¤ã¶ã—ã‚¨ãƒªã‚¢ã«å…¥ã£ãŸå ´åˆ
+        if (collision.transform.tag == "Enemy")
+        {
+            enemyBase = collision.gameObject.GetComponent<EnemyBase>();   // ã¤ã¶ã•ã‚Œå¯¾è±¡ã‹ã‚‰EnemyBaseã‚’å–å¾—
+
+            // æ•µã«å¤§é‡ã®ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã¦ã€å®Ÿè³ªå³æ­»ã«ã™ã‚‹
+            int damage = 9999;
+            enemyBase.ApplyDamage(damage,0,null,false,false);
         }
     }
 }
