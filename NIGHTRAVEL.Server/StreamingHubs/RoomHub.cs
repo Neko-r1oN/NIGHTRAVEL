@@ -73,14 +73,20 @@ namespace StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId, string pass)
+        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId,string userName, string pass)
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
 
                 GameDbContext dbContext = new GameDbContext();
+
                 //DBからユーザー情報取得
                 var user = dbContext.Users.Where(user => user.Id == userId).First();
+
+                //ユーザーデータを設定(Steam対応デバッグ用)
+                User userSteam = new User();
+                userSteam.Id = userId;
+                userSteam.Name = userName;
 
 
                 // ルームに参加＆ルームを保持
@@ -90,7 +96,7 @@ namespace StreamingHubs
                     this.roomContext = roomContextRepository.CreateContext(roomName,pass);
                     //DBに生成
                     room.roomName = roomName;
-                    room.userName = user.Name;
+                    room.userName = userName;
                     room.password = pass;
                     room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName,room.password);
@@ -103,7 +109,7 @@ namespace StreamingHubs
                     this.roomContext = roomContextRepository.CreateContext(roomName,pass);  //ルームを生成
                     //DBに生成
                     room.roomName = roomName;
-                    room.userName = user.Name;
+                    room.userName = userName;
                     room.password = pass;
                     room.is_started = false;
                     roomService.RegistRoom(room.roomName, room.userName, room.password);
@@ -132,7 +138,7 @@ namespace StreamingHubs
 
 
                 // グループストレージにユーザーデータを格納
-                var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = user };
+                var joinedUser = new JoinedUser() { ConnectionId = this.ConnectionId, UserData = userSteam };
 
                 if (roomContext.JoinedUserList.Count == 0)
                 {//roomContext内の参加人数が0である場合

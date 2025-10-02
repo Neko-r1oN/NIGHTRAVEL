@@ -120,7 +120,7 @@ public class MatchingManager : MonoBehaviour
         {//ÉãÅ[ÉÄçÏê¨ÇÃèÍçá
             passText = inputFieldCreatePassWord;
             roomNameText = inputFieldRoomName;
-            await RoomModel.Instance.JoinedAsync(roomNameText.text, userId, passText.text);
+            await RoomModel.Instance.JoinedAsync(roomNameText.text, userId,TitleManagerk.SteamUserName, passText.text);
         }
     }
 
@@ -140,7 +140,7 @@ public class MatchingManager : MonoBehaviour
         else
         {
             conducter.Loading();
-            await RoomModel.Instance.JoinedAsync(joinRoomName, userId, "");
+            await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, "");
         }
     }
 
@@ -152,7 +152,7 @@ public class MatchingManager : MonoBehaviour
     {
         conducter.Loading();
         string pass = inputFieldPassWord.text;
-        await RoomModel.Instance.JoinedAsync(joinRoomName, userId, pass);
+        await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, pass);
     }
 
     #endregion
