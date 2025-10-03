@@ -8,15 +8,19 @@ using UnityEngine;
 
 public class TutorialButton : MonoBehaviour
 {
+    [SerializeField] GameObject controlerButton;
+
     void Start()
     {
         this.GetComponent<Renderer>().material.color = new Color(255, 255, 255, 0);
+        controlerButton.GetComponent<Renderer>().material.color = new Color(255, 255, 255, 0);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             this.GetComponent<Renderer>().material.DOFade(1, 0.5f);
+            controlerButton.GetComponent<Renderer>().material.DOFade(1, 0.5f);
         }
     }
 
@@ -25,6 +29,7 @@ public class TutorialButton : MonoBehaviour
         if (collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {
             this.GetComponent<Renderer>().material.DOFade(0, 0.5f);
+            controlerButton.GetComponent<Renderer>().material.DOFade(0, 0.5f);
         }
     }
 }
