@@ -5,11 +5,13 @@
 //=========================================
 
 using UnityEngine;
+using static Rewired.Glyphs.GlyphSet;
 
 public class PressCheck : MonoBehaviour
 {
     Press press;
     PlayerBase playerBase;
+    EnemyBase enemyBase;
     public bool isToutch = false;
 
     public bool ObjectPressCheck() { return isToutch; }
@@ -43,6 +45,13 @@ public class PressCheck : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {//“G‚ªG‚ê‚½‚ç
             isToutch = true; //G‚ê‚½‚±‚Æ‚É‚·‚é
+
+            enemyBase = collision.gameObject.GetComponent<EnemyBase>();   // ‚Â‚Ô‚³‚ê‘ÎÛ‚©‚çEnemyBase‚ğæ“¾
+
+            // “G‚É‘å—Ê‚Ìƒ_ƒ[ƒW‚ğ—^‚¦‚ÄAÀ¿‘¦€‚É‚·‚é
+            int damage = 9999;
+            enemyBase.ApplyDamage(damage, 0, null, false, false);
+
         }
     }
 
