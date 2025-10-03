@@ -2,6 +2,7 @@
 //  [ボス] フルメタルワーム(本体)のの管理クラス
 //  Author:r-enomoto
 //**************************************************
+using DG.Tweening;
 using Pixeye.Unity;
 using Shared.Interfaces.StreamingHubs;
 using System;
@@ -639,11 +640,17 @@ public class FullMetalWorm : EnemyBase
         // 歯車の回転、座標を同期する
         for (int i = 0; i < enemyData.Quatarnions.Count; i++)
         {
-            if (i <= joints.Count - 1 && joints[i] != null) joints[i].transform.rotation = enemyData.Quatarnions[i];
+            if (i <= joints.Count - 1 && joints[i] != null)
+            {
+                joints[i].transform.DORotateQuaternion(enemyData.Quatarnions[i], CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
+            }
         }
         for (int i = 0; i < enemyData.Vector2s.Count; i++)
         {
-            if (i <= joints.Count - 1 && joints[i] != null) joints[i].transform.position = enemyData.Vector2s[i];
+            if (i <= joints.Count - 1 && joints[i] != null)
+            {
+                joints[i].transform.DOMove(enemyData.Vector2s[i], CharacterManager.Instance.UpdateSec).SetEase(Ease.Linear);
+            }
         }
     }
 
