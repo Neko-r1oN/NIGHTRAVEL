@@ -451,6 +451,7 @@ public class CharacterManager : MonoBehaviour
         List<EnemyData> enemyDatas = new List<EnemyData>();
         foreach (var key in enemies.Keys)
         {
+            if (enemies[key] == null || enemies[key].Enemy == null) continue;
             var enemyData = enemies[key];
             var enemy = enemyData.Enemy;
             var data = enemy.GetEnemyData();
@@ -618,8 +619,8 @@ public class CharacterManager : MonoBehaviour
         // 敵の情報更新
         foreach (var enemyData in masterClientData.EnemyDatas)
         {
-            if (!enemies.ContainsKey(enemyData.UniqueId)
-                || enemies.ContainsKey(enemyData.UniqueId) && enemies[enemyData.UniqueId].Enemy.HP <= 0) continue;
+            bool isEnemy = enemies.ContainsKey(enemyData.UniqueId);
+            if (!isEnemy || isEnemy && enemies[enemyData.UniqueId].Enemy == null) continue;
 
             var enemy = enemies[enemyData.UniqueId].Enemy;
             UpdateCharacter(enemyData, enemy);
@@ -643,9 +644,12 @@ public class CharacterManager : MonoBehaviour
     {
         if (IsPlayerAlive(damageData.AttackerId))
         {
+            // ザコ敵のときだけノックバックさせる
+            bool isKnockback = !enemies[damageData.HitEnemyId].Enemy.IsBoss && enemies[damageData.HitEnemyId].Enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
+
             GameObject attacker = playerObjs[damageData.AttackerId];
             enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
-                playerObjs[damageData.AttackerId], true, true, damageData.DebuffList.ToArray());
+                playerObjs[damageData.AttackerId], isKnockback, true, damageData.DebuffList.ToArray());
 
             if (RoomModel.Instance.ConnectionId == damageData.AttackerId)
             {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復

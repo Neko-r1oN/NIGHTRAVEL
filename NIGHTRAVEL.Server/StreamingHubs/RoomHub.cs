@@ -787,8 +787,21 @@ namespace StreamingHubs
                     enemDmgData.Exp = enemDmgData.Exp + (int)(enemDmgData.Exp * addExpRate);
                     this.roomContext.ExpManager.nowExp += enemDmgData.Exp;
 
+                    // ワーム本体が死亡したときに全ての部位を死亡させる
+                    if(enemData.TypeId == ENEMY_TYPE.FullMetalWorm)
+                    {
+                        foreach(var data in this.roomContext.enemyDataList)
+                        {
+                            if(data.Value.TypeId == ENEMY_TYPE.MetalBody)
+                            {
+                                data.Value.State.hp = 0;
+                                DeleteEnemyData(data.Key);
+                            }
+                        }
+                    }
+
                     // 合計キル数を加算
-                    DeleteEnemyData(enemID);
+                    if (enemData.TypeId != ENEMY_TYPE.MetalBody) DeleteEnemyData(enemID);
 
                     // リザルトデータを更新
                     this.roomContext.resultDataList[this.ConnectionId].EnemyKillCount++;
@@ -828,6 +841,7 @@ namespace StreamingHubs
         {
             lock (roomContextRepository)
             {
+                if (this.roomContext.enemyDataList.ContainsKey(uniqueId)) return;
                 this.roomContext.enemyDataList.Remove(uniqueId);
 
                 // 以下に端末生成の敵の処理を記載
@@ -886,6 +900,22 @@ namespace StreamingHubs
                 if (enemDmgData.RemainingHp <= 0)
                 {
                     this.roomContext.ExpManager.nowExp += enemDmgData.Exp; // 被弾クラスにExpを代入
+
+                    // ワーム本体が死亡したときに全ての部位を死亡させる
+                    if (enemData.TypeId == ENEMY_TYPE.FullMetalWorm)
+                    {
+                        foreach (var data in this.roomContext.enemyDataList)
+                        {
+                            if (data.Value.TypeId == ENEMY_TYPE.MetalBody)
+                            {
+                                data.Value.State.hp = 0;
+                                DeleteEnemyData(data.Key);
+                            }
+                        }
+                    }
+
+                    // 合計キル数を加算
+                    if (enemData.TypeId != ENEMY_TYPE.MetalBody) DeleteEnemyData(enemID);
 
                     // 所持経験値が必要経験値に満ちた場合
                     if (this.roomContext.ExpManager.nowExp >= this.roomContext.ExpManager.RequiredExp)

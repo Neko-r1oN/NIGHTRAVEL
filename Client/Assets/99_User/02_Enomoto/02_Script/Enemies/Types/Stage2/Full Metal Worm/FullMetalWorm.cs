@@ -133,6 +133,10 @@ public class FullMetalWorm : EnemyBase
     List<GameObject> joints = new List<GameObject>();
 
     [SerializeField]
+    [Foldout("bodyグループのリスト")]
+    List<Transform> bodyGroups = new List<Transform>();
+
+    [SerializeField]
     [Foldout("移動範囲")]
     Vector2 maxPos;
 
@@ -160,10 +164,17 @@ public class FullMetalWorm : EnemyBase
 
         if (RoomModel.Instance && !RoomModel.Instance.IsMaster)
         {
+            // 歯車がJointなどによって追従しないようにする
             foreach (var joint in joints)
             {
                 joint.GetComponent<HingeJoint2D>().enabled = false;
                 joint.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            }
+
+            // 体の各部位の親子関係を解除し、一緒に移動しないようにする
+            foreach(var group in bodyGroups)
+            {
+                group.parent = null;
             }
         }
     }
@@ -587,6 +598,11 @@ public class FullMetalWorm : EnemyBase
         {
             joint.GetComponent<HingeJoint2D>().enabled = true;
             joint.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        }
+
+        foreach (var group in bodyGroups)
+        {
+            group.parent = this.transform;
         }
 
         nextDecide = isAttacking ? DECIDE_TYPE.Attack : DECIDE_TYPE.None;
