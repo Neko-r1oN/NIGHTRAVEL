@@ -529,7 +529,7 @@ namespace StreamingHubs
                 for (int i = 0; i < spawnEnemyData.Count; i++)
                 {
                     // 個体識別用のIDを設定
-                    spawnEnemyData[i].UniqueId = Guid.NewGuid().ToString();
+                    //spawnEnemyData[i].UniqueId = Guid.NewGuid().ToString();
 
                     // DBからIDを指定して敵を取得
                     GameDbContext dbContext = new GameDbContext();
