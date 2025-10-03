@@ -74,6 +74,9 @@ public abstract class TerminalBase : MonoBehaviour
     // レリック生成位置
     [SerializeField] protected Transform[] relicSpawnPoints;
 
+    // 端末使用済みテキスト
+    [SerializeField] protected GameObject usingText;
+
     #endregion
 
     #region マネージャー

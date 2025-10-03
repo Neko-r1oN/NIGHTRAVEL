@@ -285,7 +285,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-
                 // キャラクターデータリストに自身のデータがない場合
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
                 {
@@ -313,7 +312,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-
                 // ルームデータから敵のリストを取得し、該当する要素を更新する
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
                 foreach (var enemyData in masterClientData.EnemyDatas)
