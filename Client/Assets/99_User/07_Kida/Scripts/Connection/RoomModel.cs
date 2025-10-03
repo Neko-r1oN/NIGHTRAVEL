@@ -824,7 +824,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask TerminalFailureAsync(int termID)
     {
-        //await roomHub.TerminalFailureAsync(termID);
+        await roomHub.TerminalFailureAsync(termID);
     }
 
     #endregion

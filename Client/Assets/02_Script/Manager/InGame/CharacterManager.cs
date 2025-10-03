@@ -432,13 +432,22 @@ public class CharacterManager : MonoBehaviour
     /// <param name="termID"></param>
     public void DeleteTerminalEnemy(int termID)
     {
+        // 削除対象のキーを一時的に保存するリスト
+        var removeKeys = new List<string>();
+
         foreach (var data in enemies)
         {
             if (data.Value.TerminalID == termID && data.Value.Enemy.HP > 0)
             {
-                Destroy(data.Value.Object);
-                enemies.Remove(data.Key);
+                Destroy(data.Value.Object); // ゲームオブジェクトを削除
+                removeKeys.Add(data.Key);   // 辞書から削除するキーを追加
             }
+        }
+
+        // ループが終わってからまとめて削除
+        foreach (var key in removeKeys)
+        {
+            enemies.Remove(key);
         }
     }
 

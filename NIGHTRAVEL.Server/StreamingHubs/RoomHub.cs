@@ -828,6 +828,8 @@ namespace StreamingHubs
             {
                 this.roomContext.enemyDataList.Remove(uniqueId);
 
+                #region 端末処理
+
                 // 以下に端末生成の敵の処理を記載
                 if (this.roomContext.terminalList == null) return;
 
@@ -852,6 +854,8 @@ namespace StreamingHubs
                         }
                     }
                 }
+
+                #endregion
             }
         }
 

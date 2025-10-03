@@ -25,6 +25,8 @@ public class Jumble : TerminalBase
     public override void BootTerminal()
     {
         isUsed = true; // ’[––Žg—p’†‚É‚·‚é
+        usingText.text = "IN USE";
+
         if (RoomModel.Instance)
             TerminalManager.Instance.TerminalDatas[terminalID - 1].State = EnumManager.TERMINAL_STATE.Success;
 
