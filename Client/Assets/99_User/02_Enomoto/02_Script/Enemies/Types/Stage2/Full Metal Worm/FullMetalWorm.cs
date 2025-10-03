@@ -3,9 +3,11 @@
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
+using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
@@ -126,6 +128,10 @@ public class FullMetalWorm : EnemyBase
     #region オリジナル
 
     [SerializeField]
+    [Foldout("歯車のリスト")]
+    List<GameObject> joints = new List<GameObject>();
+
+    [SerializeField]
     [Foldout("移動範囲")]
     Vector2 maxPos;
 
@@ -150,6 +156,15 @@ public class FullMetalWorm : EnemyBase
         isAttacking = false;
         doOnceDecision = false;
         bodys.AddRange(GetComponentsInChildren<FullMetalBody>(true));   // 全ての子オブジェクトが持つFullMetalBodyを取得
+
+        if (RoomModel.Instance && !RoomModel.Instance.IsMaster)
+        {
+            foreach (var joint in joints)
+            {
+                joint.GetComponent<HingeJoint2D>().enabled = false;
+                joint.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            }
+        }
     }
 
     protected override void FixedUpdate()
@@ -177,6 +192,8 @@ public class FullMetalWorm : EnemyBase
     /// </summary>
     protected override void DecideBehavior()
     {
+        if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+
         if (doOnceDecision)
         {
             doOnceDecision = false;
@@ -211,6 +228,8 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     void NextDecision(float? time = null)
     {
+        if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+
         // 実行していなければ、行動の抽選のコルーチンを開始
         string key = COROUTINE.NextDecision.ToString();
         if (!ContaintsManagedCoroutine(key))
@@ -563,6 +582,12 @@ public class FullMetalWorm : EnemyBase
             body.ResetAllStates();
         }
 
+        foreach (var joint in joints)
+        {
+            joint.GetComponent<HingeJoint2D>().enabled = true;
+            joint.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        }
+
         nextDecide = isAttacking ? DECIDE_TYPE.Attack : DECIDE_TYPE.None;
         MeleeAttack();
         DecideBehavior();
@@ -584,6 +609,42 @@ public class FullMetalWorm : EnemyBase
             }
         }
         return isAttacking;
+    }
+
+    /// <summary>
+    /// 同期情報取得
+    /// </summary>
+    /// <returns></returns>
+    public override EnemyData GetEnemyData()
+    {
+        EnemyData enemyData = new EnemyData();
+
+        // 歯車の同期情報を加える
+        List<Quaternion> rotations = joints.Select(obj => obj.transform.rotation).ToList();
+        List<Vector2> positions = joints.Select(obj => (Vector2)obj.transform.position).ToList();
+        enemyData.Quatarnions.AddRange(rotations);
+        enemyData.Vector2s.AddRange(positions);
+
+        return SetEnemyData(enemyData);
+    }
+
+    /// <summary>
+    /// 同期情報更新
+    /// </summary>
+    /// <param name="enemyData"></param>
+    public override void UpdateEnemy(EnemyData enemyData)
+    {
+        base.UpdateEnemy(enemyData);
+
+        // 歯車の回転、座標を同期する
+        for (int i = 0; i < enemyData.Quatarnions.Count; i++)
+        {
+            if (i <= joints.Count - 1 && joints[i] != null) joints[i].transform.rotation = enemyData.Quatarnions[i];
+        }
+        for (int i = 0; i < enemyData.Vector2s.Count; i++)
+        {
+            if (i <= joints.Count - 1 && joints[i] != null) joints[i].transform.position = enemyData.Vector2s[i];
+        }
     }
 
     #endregion
