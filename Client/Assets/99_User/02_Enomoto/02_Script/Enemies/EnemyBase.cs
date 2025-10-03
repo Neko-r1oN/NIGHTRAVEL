@@ -292,7 +292,7 @@ abstract public class EnemyBase : CharacterBase
     /// </summary>
     protected void LookAtTarget()
     {
-        if (canChaseTarget)
+        if (canChaseTarget && target)
         {
             if (target.transform.position.x < transform.position.x && transform.localScale.x > 0
                 || target.transform.position.x > transform.position.x && transform.localScale.x < 0) Flip();
@@ -878,6 +878,17 @@ abstract public class EnemyBase : CharacterBase
         isInvincible = false;
         isSpawn = false;
     }
+
+    /// <summary>
+    /// 指定したアニメーションIDがヒットアニメーションかどうか
+    /// </summary>
+    /// <param name="animationId"></param>
+    /// <returns></returns>
+    public virtual bool IsHitAnimIdFrom(int animationId)
+    {
+        return false;
+    }
+
     #endregion
 
     #region コルーチン管理関連

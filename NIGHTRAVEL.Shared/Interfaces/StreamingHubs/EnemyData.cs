@@ -54,5 +54,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Enomoto
         /// </summary>
         public List<Quaternion> Quatarnions { get; set; } = new List<Quaternion>();
+
+        [Key(14)]
+        /// <summary>
+        /// Vector2のオプション
+        /// Author:Enomoto
+        /// </summary>
+        public List<Vector2> Vector2s { get; set; } = new List<Vector2>();
     }
 }

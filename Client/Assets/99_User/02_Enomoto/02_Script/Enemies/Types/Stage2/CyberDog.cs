@@ -328,6 +328,16 @@ public class CyberDog : EnemyBase
     }
 
     /// <summary>
+    /// 指定したアニメーションIDがヒットアニメーションかどうか
+    /// </summary>
+    /// <param name="animationId"></param>
+    /// <returns></returns>
+    public override bool IsHitAnimIdFrom(int animationId)
+    {
+        return animationId == (int)ANIM_ID.Hit;
+    }
+
+    /// <summary>
     /// アニメーション設定処理
     /// </summary>
     /// <param name="id"></param>

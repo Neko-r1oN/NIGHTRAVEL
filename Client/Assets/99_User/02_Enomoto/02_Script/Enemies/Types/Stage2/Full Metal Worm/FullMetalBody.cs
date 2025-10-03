@@ -87,6 +87,7 @@ public class FullMetalBody : EnemyBase
         base.Start();
         isAttacking = false;
         doOnceDecision = false;
+        if(RoomModel.Instance && !RoomModel.Instance.IsMaster) GetComponent<HingeJoint2D>().enabled = false;
     }
 
     /// <summary>
@@ -370,6 +371,7 @@ public class FullMetalBody : EnemyBase
     {
         base.ResetAllStates();
 
+        GetComponent<HingeJoint2D>().enabled = true;
         SetAnimId((int)ANIM_ID.None);
         gunPsControllerList.ForEach(item => { item.StopShooting(); });
     }
@@ -383,7 +385,7 @@ public class FullMetalBody : EnemyBase
         EnemyData enemyData = new EnemyData();
         foreach (var item in aimTransformList)
         {
-            if(item.localRotation != null)
+            if(item != null && item.localRotation != null)
                 enemyData.Quatarnions.Add(item.localRotation);
         }
         return SetEnemyData(enemyData);

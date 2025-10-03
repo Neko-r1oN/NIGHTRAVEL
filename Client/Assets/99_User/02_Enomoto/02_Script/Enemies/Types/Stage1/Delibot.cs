@@ -231,6 +231,17 @@ public class Delibot : EnemyBase
     }
 
     /// <summary>
+    /// 指定したアニメーションIDがヒットアニメーションかどうか
+    /// </summary>
+    /// <param name="animationId"></param>
+    /// <returns></returns>
+    public override bool IsHitAnimIdFrom(int animationId)
+    {
+        return animationId == (int)ANIM_ID.Hit;
+    }
+
+
+    /// <summary>
     /// アニメーション設定処理
     /// </summary>
     /// <param name="id"></param>
@@ -400,7 +411,7 @@ public class Delibot : EnemyBase
     }
 
     /// <summary>
-    /// ドローンの同期情報を更新する
+    /// 同期情報を更新する
     /// </summary>
     /// <param name="enemyData"></param>
     public override void UpdateEnemy(EnemyData enemyData)

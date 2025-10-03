@@ -215,8 +215,14 @@ public class CharacterManager : MonoBehaviour
         character.gameObject.transform.DOMove(characterData.Position, updateSec).SetEase(Ease.Linear);
         character.gameObject.transform.localScale = characterData.Scale;
         character.gameObject.transform.DORotateQuaternion(characterData.Rotation, updateSec).SetEase(Ease.Linear);
-        character.SetAnimId(characterData.AnimationId);
         character.gameObject.GetComponent<DebuffController>().ApplyStatusEffect(false, characterData.DebuffList.ToArray());
+
+        if (character.tag != "Enemy" || 
+            (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsHitAnimIdFrom(characterData.AnimationId)))
+        {
+            character.SetAnimId(characterData.AnimationId);
+        }
+
 
         if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
