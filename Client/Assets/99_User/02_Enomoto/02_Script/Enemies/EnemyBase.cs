@@ -125,6 +125,11 @@ abstract public class EnemyBase : CharacterBase
     [Tooltip("DeadZoneとの接触判定を消すことが可能")]
     [SerializeField]
     protected bool canIgnoreDeadZoneCollision = false;
+
+    [Foldout("オプション")]
+    [Tooltip("自身のオブジェクトが消えるまでリストから削除されないようにする")]
+    [SerializeField]
+    protected bool dontRemoveOnDeath = false;
     #endregion
 
     #region 状態管理
@@ -205,6 +210,14 @@ abstract public class EnemyBase : CharacterBase
     {
         if (!isStartComp || hp <= 0 || isDead) return;
         ResetAllStates();
+    }
+
+    private void OnDestroy()
+    {
+        if (dontRemoveOnDeath)
+        {
+            RemoveEnemyFromList();
+        }
     }
 
     protected override void Awake()
@@ -721,27 +734,38 @@ abstract public class EnemyBase : CharacterBase
                 }
             }
 
-            if (CharacterManager.Instance.Enemies[uniqueId].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
-            {   // 生成タイプがターミナルなら
-                var termId = CharacterManager.Instance.Enemies[uniqueId].TerminalID;    // 端末IDを保管
-                CharacterManager.Instance.RemoveEnemyFromList(uniqueId);                // リストから削除
-                
-                if(CharacterManager.Instance.GetEnemysByTerminalID(termId).Count == 0)
-                {   // 生成端末の敵が全員倒されたら報酬出す
-                    TerminalManager.Instance.DropRelic(termId);
-                }
-            }
-            else
+            if (!dontRemoveOnDeath)
             {
-                // Instanceがあるなら敵撃破関数を呼ぶ
-                if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
-
-                CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
+                RemoveEnemyFromList();
             }
 
             m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // プレイヤーとの判定を消す
             yield return new WaitForSeconds(destroyWaitSec);
             Destroy(gameObject);
+        }
+    }
+
+    /// <summary>
+    /// 自身を外部のリストから削除する
+    /// </summary>
+    void RemoveEnemyFromList()
+    {
+        if (CharacterManager.Instance.Enemies[uniqueId].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
+        {   // 生成タイプがターミナルなら
+            var termId = CharacterManager.Instance.Enemies[uniqueId].TerminalID;    // 端末IDを保管
+            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);                // リストから削除
+
+            if (CharacterManager.Instance.GetEnemysByTerminalID(termId).Count == 0)
+            {   // 生成端末の敵が全員倒されたら報酬出す
+                TerminalManager.Instance.DropRelic(termId);
+            }
+        }
+        else
+        {
+            // Instanceがあるなら敵撃破関数を呼ぶ
+            if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
+
+            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
         }
     }
 
