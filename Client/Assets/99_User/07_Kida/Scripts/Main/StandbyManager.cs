@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Xml.Serialization;
@@ -16,6 +17,8 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] GameObject playerReadyFieldPrehub;
     [SerializeField] GameObject readyButton;
     [SerializeField] Text characterNameText;
+    [SerializeField] Image[] iconImages;
+    [SerializeField] Material[] iconCharacterImage;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -58,6 +61,20 @@ public class StandbyManager : MonoBehaviour
         characterImage[changeCharacterId].SetActive(true);
         characterId = changeCharacterId;
         characterNameText.text = characterImage[characterId].name;
+    }
+
+    /// <summary>
+    /// アイコン表示
+    /// 準備完了した際に押されたキャラのボタンのIDからアイコンの画像を変更する感じ
+    /// 使う変数 
+    /// Image[] iconImages (アイコンのイメージ)
+    /// Material[] iconCharacterImage (貼り付けたい画像)
+    /// 例：iconImages[自分のID].material = iconCharacterImage[changeIconId]
+    /// </summary>
+    /// <param name="changeIconId"></param>
+    public void ChangeIcon(int changeIconId)
+    {
+        
     }
 
     private void Loaded()
