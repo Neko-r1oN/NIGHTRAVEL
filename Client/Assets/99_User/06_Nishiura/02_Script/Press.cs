@@ -12,8 +12,6 @@ public class Press : MonoBehaviour
     EnemyBase enemyBase;
     PressCheck pressCheck;
 
-    [SerializeField] GameObject enemyObj;
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // プレイヤーがつぶしエリアに入った場合

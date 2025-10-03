@@ -30,6 +30,16 @@ public class SawBlade : MonoBehaviour
             int damage = Mathf.FloorToInt(playerBase.MaxHP * 0.10f);
             playerBase.ApplyDamage(damage);
         }
+
+        if (isPowerd == true && collision.transform.tag == "Enemy")
+        {
+            audioSource.PlayOneShot(hitSE);
+            var enemyBase = collision.gameObject.GetComponent<EnemyBase>();
+            // “G‚ÌÅ‘åHP10%‘Š“–‚Ìƒ_ƒ[ƒW‚Éİ’è
+            int damage = Mathf.FloorToInt(enemyBase.MaxHP * 0.10f);
+            enemyBase.ApplyDamage(damage,enemyBase.HP,null,true,true);
+        }
+
     }
 
     /// <summary>
