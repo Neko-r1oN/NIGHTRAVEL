@@ -25,6 +25,11 @@ abstract public class EnemyBase : CharacterBase
     [Tooltip("生成されたときの識別用ID")]
     protected string uniqueId = "";    // 生成されたときの識別用ID  ※他の敵と重複しないよう注意
 
+    [Foldout("データ関連")]
+    [SerializeField]
+    [Tooltip("生成されたときの識別用ID")]
+    protected string selfName = "Enemy Sample";
+
     #endregion
 
     #region プレイヤー・ターゲット
@@ -182,6 +187,8 @@ abstract public class EnemyBase : CharacterBase
     public ENEMY_TYPE EnemyTypeId { get { return enemyTypeId; } set { enemyTypeId = value; } }
 
     public string UniqueId { get { return uniqueId; } set { uniqueId = value; } }
+
+    public string SelfName { get { return selfName; } }
 
     public int SpawnWeight { get { return spawnWeight; } }
 
