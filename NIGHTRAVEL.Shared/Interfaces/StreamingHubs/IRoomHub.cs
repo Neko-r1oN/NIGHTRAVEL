@@ -37,6 +37,12 @@ namespace Shared.Interfaces.StreamingHubs
         Task LeavedAsync(bool isEnd);
 
         /// <summary>
+        /// キャラクター変更
+        /// </summary>
+        /// <returns></returns>
+        Task ChangeCharacterAsync(int CharacterId);
+
+        /// <summary>
         /// 準備完了
         /// Author:Nishiura
         /// </summary>

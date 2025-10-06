@@ -54,6 +54,12 @@ namespace Shared.Interfaces.StreamingHubs
         void OnLeave(JoinedUser user);
 
         /// <summary>
+        /// キャラクター変更通知
+        /// Author:Kida
+        /// </summary>
+        void OnChangeCharacter(Guid guid , int characterId);
+
+        /// <summary>
         /// 準備完了通知
         /// </summary>
         /// <param name="conID">接続ID</param>

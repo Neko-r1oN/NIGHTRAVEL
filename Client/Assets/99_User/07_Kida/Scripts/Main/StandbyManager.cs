@@ -1,9 +1,11 @@
 using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Splines;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
@@ -18,8 +20,7 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] GameObject readyButton;
     [SerializeField] Text characterNameText;
     [SerializeField] Image[] iconImages;
-    [SerializeField] Material[] iconCharacterImage;
-
+    [SerializeField] Sprite[] iconCharacterImage;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,6 +28,8 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnJoinedUser += OnJoinedUser;
         //ユーザーが退室した時にOnLeavedUserメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnLeavedUser += this.OnLeavedUser;
+        //ユーザーがキャラクター変更をした場合に
+        RoomModel.Instance.OnChangedCharacter += this.OnChangeIcon;
         //ユーザーが準備完了した時にOnReadyメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnReadySyn += this.OnReadySyn;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
@@ -54,13 +57,18 @@ public class StandbyManager : MonoBehaviour
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
-    public void ChangeCharacter(int changeCharacterId)
+    public async void ChangeCharacter(int changeCharacterId)
     {
-        readyButton.SetActive(true);
-        characterImage[characterId].SetActive(false);
-        characterImage[changeCharacterId].SetActive(true);
-        characterId = changeCharacterId;
-        characterNameText.text = characterImage[characterId].name;
+        readyButton.SetActive(true);                                //準備完了ボタンを表示
+        characterImage[characterId].SetActive(false);               //前のキャラレビュー非表示
+        characterImage[changeCharacterId].SetActive(true);          //新しいキャラレビューを表示
+        this.characterId = changeCharacterId;                       //キャラクターＩＤを最新に
+        characterNameText.text = characterImage[characterId].name;  //キャラクター名を最新に
+
+        if (RoomModel.Instance)
+            await RoomModel.Instance.ChangeCharacterAsync(this.characterId);
+        else
+            ChangeIcon(this.characterId);
     }
 
     /// <summary>
@@ -74,8 +82,19 @@ public class StandbyManager : MonoBehaviour
     /// <param name="changeIconId"></param>
     public void ChangeIcon(int changeIconId)
     {
-        
+        iconImages[MatchingManager.UserID].sprite = iconCharacterImage[changeIconId];
     }
+
+    /// <summary>
+    /// アイコン表示通知
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <param name="changeIconId"></param>
+    public void OnChangeIcon( Guid guid,int changeIconId)
+    {
+        iconImages[RoomModel.Instance.joinedUserList[guid].JoinOrder-1].sprite = iconCharacterImage[changeIconId];
+    }
+
 
     private void Loaded()
     {
@@ -148,7 +167,6 @@ public class StandbyManager : MonoBehaviour
         {
             //入室したときの処理を書く
             Debug.Log(data.UserData.Name + "が入室しました。");
-
         }
     }
 

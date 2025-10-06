@@ -57,10 +57,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
 
+    //入室失敗通知
     public Action<int> OnFailedJoinSyn {  get; set; }
 
     //ユーザー退室通知
     public Action<JoinedUser> OnLeavedUser { get; set; }
+
+    //キャラクター変更通知
+    public Action<Guid,int> OnChangedCharacter {  get; set; }
 
     //準備完了通知
     public Action<Guid> OnReadySyn { get; set; }
@@ -321,6 +325,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         if (joinedUserList.ContainsKey(joinedUser.ConnectionId))
             joinedUserList.Remove(joinedUser.ConnectionId);
         OnLeavedUser(joinedUser);
+    }
+
+    /// <summary>
+    /// キャラクター変更通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnChangeCharacter(Guid guid , int characterId)
+    {
+        OnChangedCharacter(guid,characterId);
     }
 
     /// <summary>
@@ -616,6 +629,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         this.IsMaster = false;
         //自分をリストから消す
         joinedUserList.Clear();
+    }
+
+    /// <summary>
+    /// キャラクター変更
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask ChangeCharacterAsync(int characterId)
+    {
+        await roomHub.ChangeCharacterAsync(characterId);
     }
 
     /// <summary>

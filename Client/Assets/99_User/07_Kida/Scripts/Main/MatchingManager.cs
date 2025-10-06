@@ -31,7 +31,6 @@ public class MatchingManager : MonoBehaviour
     [SerializeField] Text inputFieldCreatePassWord; //パスワードの作成フィールド
     [SerializeField] Text inputFieldPassWord; //パスワードの入力フィールド
     [SerializeField] Text roomSerchField;   //ルームの名前検索
-    [SerializeField] int userId;//新マッチング用のユーザーID
     [SerializeField] GameObject roomPrefab; //ルームのプレハブ
     [SerializeField] GameObject Content;
     [SerializeField] Transform rooms;
@@ -54,6 +53,12 @@ public class MatchingManager : MonoBehaviour
     string roomSerchName;
     int errorId;
 
+    //新マッチング用のユーザーID
+    private static int userId;
+    public static int UserID
+    {
+        get { return userId; }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Start()
