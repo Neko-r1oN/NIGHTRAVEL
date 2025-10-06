@@ -14,7 +14,6 @@ using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
-using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 
 public class RelicManager : MonoBehaviour

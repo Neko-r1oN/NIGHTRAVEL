@@ -248,7 +248,7 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     public bool IsPlayerAlive(Guid id)
     {
-        return playerObjs.ContainsKey(id) && playerObjs[id] && playerObjs[id].GetComponent<CharacterBase>().HP > 0;
+        return playerObjs.ContainsKey(id) && playerObjs[id] && !playerObjs[id].GetComponent<PlayerBase>().IsDead;
     }
 
     /// <summary>
@@ -651,22 +651,31 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
-        if (IsPlayerAlive(damageData.AttackerId))
+        if (enemies.ContainsKey(damageData.HitEnemyId))
         {
-            // ザコ敵のときだけノックバックさせる
-            bool isKnockback = !enemies[damageData.HitEnemyId].Enemy.IsBoss && enemies[damageData.HitEnemyId].Enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
+            var enemy = enemies[damageData.HitEnemyId].Enemy;
+            GameObject attacker = null;
+            bool isKnockback = false;
+            bool isAttackerAlive = IsPlayerAlive(damageData.AttackerId);
 
-            GameObject attacker = playerObjs[damageData.AttackerId];
-            enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
-                playerObjs[damageData.AttackerId], isKnockback, true, damageData.DebuffList.ToArray());
+            if (isAttackerAlive)
+            {
+                // ザコ敵のときだけノックバックさせる
+                isKnockback = !enemy.IsBoss && enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
+                attacker = playerObjs[damageData.AttackerId];
+            }
+            enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, attacker, isKnockback, true, damageData.DebuffList.ToArray());
 
-            if (RoomModel.Instance.ConnectionId == damageData.AttackerId)
+            if (isAttackerAlive && RoomModel.Instance.ConnectionId == damageData.AttackerId)
             {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
                 var plBase = playerObjSelf.GetComponent<PlayerBase>();
                 if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
             }
 
-            playerObjSelf.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+            if (damageData.Exp > 0)
+            {
+                playerObjSelf.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+            }
         }
     }
 

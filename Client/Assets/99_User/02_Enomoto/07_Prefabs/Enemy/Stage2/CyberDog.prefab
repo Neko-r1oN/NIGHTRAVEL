@@ -1965,6 +1965,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blazeTrap: {fileID: 8369996319166385413, guid: ec24b268010420c42af3065f7f0814b1, type: 3}
+  blazeTrapSpawnPosY: 0
 --- !u!114 &6237438143520011635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1978,7 +1979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewAngleMax: 65
-  viewDistMax: 8
+  viewDistMax: 12
 --- !u!114 &3136978941888288294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2031,6 +2032,7 @@ MonoBehaviour:
   canJump: 0
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
+  dontRemoveOnDeath: 0
   spawnGroundOffset: 0.6
   spawnWeight: 30
   canDrawRay: 1

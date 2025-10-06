@@ -124,7 +124,6 @@ public class MissileMachine : EnemyBase
     protected override void Idle()
     {
         SetAnimId((int)ANIM_ID.Idle);
-        m_rb2d.linearVelocity = new Vector2(0f, m_rb2d.linearVelocity.y);
     }
 
     #region UŒ‚ˆ—ŠÖ˜A
@@ -135,7 +134,6 @@ public class MissileMachine : EnemyBase
     public void Attack()
     {
         isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack);
     }
 

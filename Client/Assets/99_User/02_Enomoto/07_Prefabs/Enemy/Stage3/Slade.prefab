@@ -123114,8 +123114,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfae242b54b19f4389e781fecafcfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewAngleMax: 65
-  viewDistMax: 8
+  viewAngleMax: 80
+  viewDistMax: 12
 --- !u!114 &9064733730147688396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123167,6 +123167,7 @@ MonoBehaviour:
   canJump: 0
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
+  dontRemoveOnDeath: 0
   spawnGroundOffset: 1.5
   spawnWeight: 5
   canDrawRay: 1
