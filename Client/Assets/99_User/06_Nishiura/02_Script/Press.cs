@@ -35,7 +35,11 @@ public class Press : MonoBehaviour
 
             // 敵に大量のダメージを与えて、実質即死にする
             int damage = 9999;
-            enemyBase.ApplyDamage(damage,0,null,false,false);
+
+            if ((RoomModel.Instance && RoomModel.Instance.IsMaster) || !RoomModel.Instance)
+            {
+                enemyBase.ApplyDamageRequest(damage, null, false, true);
+            }
         }
     }
 }
