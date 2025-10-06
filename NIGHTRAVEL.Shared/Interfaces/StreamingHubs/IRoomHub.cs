@@ -145,6 +145,13 @@ namespace Shared.Interfaces.StreamingHubs
         Task BootTerminalAsync(int termID);
 
         /// <summary>
+        /// 端末成功処理
+        /// </summary>
+        /// <param name="termID"></param>
+        /// <returns></returns>
+        Task TerminalSuccessAsync(int termID);
+
+        /// <summary>
         /// 端末失敗処理
         /// </summary>
         /// <param name="termID"></param>

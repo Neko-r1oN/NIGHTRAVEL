@@ -31,7 +31,7 @@ public class Jumble : TerminalBase
             TerminalManager.Instance.TerminalDatas[terminalID - 1].State = EnumManager.TERMINAL_STATE.Success;
 
         // レリック生成リクエスト
-        GiveRewardRequest();
+        SuccessRequest();
 
         // ターミナル非表示
         terminalSprite.DOFade(0, 2.5f);
