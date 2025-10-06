@@ -478,17 +478,17 @@ namespace StreamingHubs
         Relic DrawRelic(RARITY_TYPE rarity)
         {
             GameDbContext dbContext = new GameDbContext();
-            List<Relic> ralics = dbContext.Relics.Where(relic => relic.rarity == (int)rarity).ToList();
+            List<Relic> relics = dbContext.Relics.Where(relic => relic.rarity == (int)rarity).ToList();
             int no = 0;
 
             while (true)
             {
-                no = new Random().Next(0, ralics.Count);
-                if (no != (int)RELIC_TYPE.ScatterBug && no != (int)RELIC_TYPE.ChargedCore && no != (int)RELIC_TYPE.BuckupHDMI)
+                no = new Random().Next(0, relics.Count);
+                if(relics[no].id != (int)RELIC_TYPE.ScatterBug && relics[no].id != (int)RELIC_TYPE.ChargedCore)
                     break;
             }
 
-            return ralics[no];
+            return relics[no];
         }
 
         /// <summary>
@@ -1040,6 +1040,46 @@ namespace StreamingHubs
         }
 
         /// <summary>
+        /// 端末失敗処理
+        /// </summary>
+        /// <param name="termID"></param>
+        /// <returns></returns>
+        public async Task TerminalFailureAsync(int termID)
+        {
+            // 端末の状態を失敗状態
+            var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
+            terminal.State = TERMINAL_STATE.Failure;
+
+            // 失敗したので生成された敵を削除
+            if (terminal.Type == TERMINAL_TYPE.Elite || terminal.Type == TERMINAL_TYPE.Enemy)
+            {
+                foreach (var enemyID in terminal.EnemyList)
+                {
+                    this.roomContext.enemyDataList.Remove(enemyID);
+                }
+                terminal.EnemyList.Clear();
+            }
+
+            // 全員に失敗したことを通知
+            this.roomContext.Group.All.OnTerminalFailure(termID);
+        }
+
+        /// <summary>
+        /// 端末成功処理
+        /// </summary>
+        /// <param name="termID"></param>
+        /// <returns></returns>
+        public async Task TerminalSuccessAsync(int termID)
+        {
+            // 端末の状態を成功状態
+            var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
+            terminal.State = TERMINAL_STATE.Success;
+
+            // 全員に成功したことを通知
+            this.roomContext.Group.All.OnTerminalsSuccess(termID);
+        }
+
+        /// <summary>
         /// リクエスト者に対してジャンブルの効果適用
         /// </summary>
         /// <param name="connectionId"></param>
@@ -1075,31 +1115,6 @@ namespace StreamingHubs
             }
 
             return relicList;
-        }
-
-        /// <summary>
-        /// 端末失敗処理
-        /// </summary>
-        /// <param name="termID"></param>
-        /// <returns></returns>
-        public async Task TerminalFailureAsync(int termID)
-        {
-            // 端末の状態を失敗状態
-            var terminal = this.roomContext.terminalList.Where(term => term.ID == termID).First();
-            terminal.State = TERMINAL_STATE.Failure;
-
-            // 失敗したので生成された敵を削除
-            if(terminal.Type == TERMINAL_TYPE.Elite || terminal.Type == TERMINAL_TYPE.Enemy)
-            {
-                foreach (var enemyID in terminal.EnemyList)
-                {
-                    this.roomContext.enemyDataList.Remove(enemyID);
-                }
-                terminal.EnemyList.Clear();
-            }
-
-            // 全員に失敗したことを通知
-            this.roomContext.Group.All.OnTerminalFailure(termID);
         }
 
         /// <summary>

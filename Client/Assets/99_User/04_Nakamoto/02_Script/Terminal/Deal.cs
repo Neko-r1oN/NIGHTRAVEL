@@ -54,7 +54,7 @@ public class Deal : TerminalBase
             TerminalManager.Instance.TerminalDatas[terminalID-1].State = EnumManager.TERMINAL_STATE.Success;
 
         // レリック生成リクエスト
-        GiveRewardRequest();
+        SuccessRequest();
 
         // ターミナル非表示
         terminalSprite.DOFade(0, 2.5f);
@@ -67,7 +67,7 @@ public class Deal : TerminalBase
     private void DealDamage(int damage)
     {
         // 最大体力割合のダメージを受ける
-        CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().hp -= damage;
+        CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().ApplyDamage(damage);
         UIManager.Instance.PopDamageUI(damage, CharacterManager.Instance.PlayerObjSelf.transform.position, true);
     }
 }

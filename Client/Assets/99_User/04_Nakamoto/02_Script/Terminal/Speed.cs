@@ -95,7 +95,7 @@ public class Speed : TerminalBase
                 terminalSprite.DOFade(0, 2.5f);
                 iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
 
-                GiveRewardRequest();
+                SuccessRequest();
             }
         }
     }

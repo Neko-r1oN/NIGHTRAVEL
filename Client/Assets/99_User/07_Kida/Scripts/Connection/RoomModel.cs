@@ -144,16 +144,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     #region 端末
 
-    //端末起動通知
+    // 端末起動通知
     public Action<int> OnBootedTerminal { get; set; }
 
-    //端末結果通知
+    // 端末成功通知
     public Action<int> OnTerminalsSuccessed{ get; set; }
 
     // 端末失敗通知
     public Action<int> OnTerminalFailured { get; set; }
 
-    //端末ジャンブル適用通知
+    // 端末ジャンブル適用通知
     public Action<List<DropRelicData>> OnTerminalJumbled { get; set; }
 
     #endregion
@@ -838,6 +838,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask BootTerminalAsync(int termID)
     {
         await roomHub.BootTerminalAsync(termID);
+    }
+
+    /// <summary>
+    /// 端末成功処理
+    /// </summary>
+    /// <param name="termID"></param>
+    /// <returns></returns>
+    public async UniTask TerminalSuccessAsync(int termID)
+    {
+        await roomHub.TerminalSuccessAsync(termID);
     }
 
     /// <summary>

@@ -219,20 +219,37 @@ public abstract class TerminalBase : MonoBehaviour
     }
 
     /// <summary>
+    /// 成功リクエスト
+    /// </summary>
+    public async virtual void SuccessRequest()
+    {
+        if (RoomModel.Instance)
+        {
+            // サーバーに成功通知
+            await RoomModel.Instance.TerminalSuccessAsync(terminalID);
+        }
+        else
+        {
+            SuccessTerminal();
+        }
+    }
+
+    /// <summary>
     /// 端末成功処理
     /// </summary>
-    public async void SuccessTerminal()
+    public void SuccessTerminal()
     {
-        //カウントダウンを停止する
+        // カウントダウンを停止する
         CancelInvoke("CountDown");
 
         // ターミナル非表示
-        usingText.text = "";
+        usingText.text = "Success!";
+        timerText.text = "";
         terminalSprite.DOFade(0, 2.5f);
         iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
 
-        // マスターはレリック要求
-        if(RoomModel.Instance.IsMaster) GiveRewardRequest();
+        // レリック要求
+        GiveRewardRequest();
     }
 
     #endregion
@@ -249,7 +266,6 @@ public abstract class TerminalBase : MonoBehaviour
     /// </summary>
     public async virtual void FailureRequest()
     {
-        // リストの該当端末IDの状態を失敗にする
         if (RoomModel.Instance)
         {
             // サーバーに失敗通知
@@ -270,7 +286,8 @@ public abstract class TerminalBase : MonoBehaviour
             TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Failure;
 
         // ターミナル非表示
-        usingText.text = "";
+        usingText.text = "Failure";
+        timerText.text = "0";
         terminalSprite.DOFade(0, 2.5f);
         iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
     }

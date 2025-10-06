@@ -5,7 +5,9 @@
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class TerminalManager : MonoBehaviour
 {
@@ -103,18 +105,19 @@ public class TerminalManager : MonoBehaviour
     /// <param name="list"></param>
     public void SetTerminal(List<TerminalData> list)
     {
+        Debug.Log("");
         terminalDatas.Clear();
         terminalObjs.Clear();
 
         terminalDatas = list;
 
-        if(terminalObjs.Count == 0)
+        if (terminalObjs.Count == 0)
         {
             foreach (var data in list)
             {
                 var terminal = Instantiate(terminalPrefabs[(int)data.Type - 1], generatePos[data.ID - 1].transform.position, Quaternion.identity);
 
-                if(data.ID == 2)
+                if (data.ID == 2)
                 {
                     terminal.transform.GetChild(0).GetComponent<TerminalBase>().TerminalID = data.ID;
                     terminal.transform.GetChild(0).GetComponent<TerminalBase>().TerminalType = data.Type;
@@ -147,7 +150,7 @@ public class TerminalManager : MonoBehaviour
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Active;
 
-        if(id == 2)
+        if (id == 2)
         {
             if (terminalObjs[id] != null)
                 terminalObjs[id].transform.GetChild(0).GetComponent<TerminalBase>().BootTerminal();
@@ -165,7 +168,7 @@ public class TerminalManager : MonoBehaviour
     /// <param name="id"></param>
     public void OnTerminalsSuccessed(int id)
     {
-        terminalDatas[id-1].State = EnumManager.TERMINAL_STATE.Success;
+        terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Success;
         terminalObjs[id].GetComponent<TerminalBase>().SuccessTerminal();
     }
 
@@ -189,7 +192,7 @@ public class TerminalManager : MonoBehaviour
         TerminalDatas = terminalDatas;
 
         // アクティブ且つエネミーかエリートの場合、テキスト表示更新
-        for (int i = 0; i < TerminalDatas.Count; i++) 
+        for (int i = 0; i < TerminalDatas.Count; i++)
         {
             if (TerminalDatas[i].State == EnumManager.TERMINAL_STATE.Active && TerminalDatas[i].Type == EnumManager.TERMINAL_TYPE.Enemy ||
                 TerminalDatas[i].State == EnumManager.TERMINAL_STATE.Active && TerminalDatas[i].Type == EnumManager.TERMINAL_TYPE.Elite)
