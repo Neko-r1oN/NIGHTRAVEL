@@ -7,10 +7,16 @@ using UnityEngine;
 
 public class JumpStep : MonoBehaviour
 {
-    [SerializeField] AudioSource jumpStepSE;
+    [SerializeField] AudioClip jumpStepSE;
+    AudioSource audioSource;
 
     //加える力の量の変数
     public float addPow;
+
+    private void Start()
+    {
+        audioSource=GetComponent<AudioSource>();
+    }
 
     /// <summary>
     /// 触れたオブジェクトに力を加える処理
@@ -24,7 +30,7 @@ public class JumpStep : MonoBehaviour
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, addPow));
 
             //ジャンプ台効果音再生
-            jumpStepSE.Play();
+            audioSource.PlayOneShot(jumpStepSE);
         }
     }
 }

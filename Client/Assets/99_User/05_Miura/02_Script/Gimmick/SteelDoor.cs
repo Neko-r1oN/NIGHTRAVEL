@@ -12,12 +12,6 @@ public class SteelDoor : GimmickBase
 {
     [SerializeField] GameObject doorObj;
 
-    //自動ドアが開くSE
-    [SerializeField] AudioSource openSE;
-    //自動ドアが閉じるSE
-    [SerializeField] AudioSource closeSE;
-
-
     [SerializeField] AudioClip openDoorSE;
     [SerializeField] AudioClip closeDoorSE;
     AudioSource audioSource;
@@ -57,7 +51,6 @@ public class SteelDoor : GimmickBase
         if (collision.CompareTag("Player") && isPowerd == true && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
         {//「Player」タグが付いたものが触れたら
             //ドアを開くSEを再生する
-            //openSE.Play();
             audioSource.PlayOneShot(openDoorSE);
         }
     }
@@ -70,7 +63,6 @@ public class SteelDoor : GimmickBase
             doorObj.transform.DOMoveY(initPos.y, 0.5f);
 
             //ドアが閉じるSEを再生する
-            //closeSE.Play();
             audioSource.PlayOneShot(closeDoorSE);
         }
     }
