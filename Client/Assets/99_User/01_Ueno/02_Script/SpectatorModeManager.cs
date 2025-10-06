@@ -47,9 +47,9 @@ public class SpectatorModeManager : MonoBehaviour
             {
                 followKey = player.Key;
 
-                UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
-
                 Camera.main.gameObject.GetComponent<CameraFollow>().Target = player.Value.transform;
+
+                UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
                 break;
             }
         }
