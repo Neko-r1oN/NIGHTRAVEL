@@ -194,7 +194,7 @@ public class TerminalManager : MonoBehaviour
             if (TerminalDatas[i].State == EnumManager.TERMINAL_STATE.Active && TerminalDatas[i].Type == EnumManager.TERMINAL_TYPE.Enemy ||
                 TerminalDatas[i].State == EnumManager.TERMINAL_STATE.Active && TerminalDatas[i].Type == EnumManager.TERMINAL_TYPE.Elite)
             {
-                TerminalObjs[i].GetComponent<TerminalBase>().OnCountDown(TerminalDatas[i].Time);
+                TerminalObjs[i + 1].GetComponent<TerminalBase>().OnCountDown(TerminalDatas[i].Time);
             }
         }
     }

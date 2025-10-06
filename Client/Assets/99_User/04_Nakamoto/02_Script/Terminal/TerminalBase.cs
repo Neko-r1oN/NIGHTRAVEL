@@ -74,6 +74,9 @@ public abstract class TerminalBase : MonoBehaviour
     // レリック生成位置
     [SerializeField] protected Transform[] relicSpawnPoints;
 
+    // 端末使用中テキスト
+    [SerializeField] protected Text usingText;
+
     #endregion
 
     #region マネージャー
@@ -184,9 +187,10 @@ public abstract class TerminalBase : MonoBehaviour
         }
 
         isUsed = true; // 起動済みにする
+        usingText.text = "IN USE";
 
         // 起動リクエストをサーバーに送信
-        if(RoomModel.Instance)
+        if (RoomModel.Instance)
         {
             await RoomModel.Instance.BootTerminalAsync(terminalID);
         }
@@ -223,6 +227,7 @@ public abstract class TerminalBase : MonoBehaviour
         CancelInvoke("CountDown");
 
         // ターミナル非表示
+        usingText.text = "";
         terminalSprite.DOFade(0, 2.5f);
         iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
 
@@ -265,6 +270,7 @@ public abstract class TerminalBase : MonoBehaviour
             TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Failure;
 
         // ターミナル非表示
+        usingText.text = "";
         terminalSprite.DOFade(0, 2.5f);
         iconSprite.DOFade(0, 2.5f).OnComplete(() => { gameObject.SetActive(false); });
     }

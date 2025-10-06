@@ -56,8 +56,9 @@ public class Speed : TerminalBase
     public override void BootTerminal()
     {
         isUsed = true; // ’[––Žg—p’†‚É‚·‚é
+        usingText.text = "IN USE";
 
-        if(RoomModel.Instance)
+        if (RoomModel.Instance)
             TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Active;
     }
 

@@ -285,7 +285,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-
                 // キャラクターデータリストに自身のデータがない場合
                 if (!this.roomContext.characterDataList.ContainsKey(this.ConnectionId))
                 {
@@ -313,7 +312,6 @@ namespace StreamingHubs
         {
             lock (roomContextRepository) // 排他制御
             {
-
                 // ルームデータから敵のリストを取得し、該当する要素を更新する
                 var gottenEnemyDataList = this.roomContext.enemyDataList;
                 foreach (var enemyData in masterClientData.EnemyDatas)
@@ -844,6 +842,8 @@ namespace StreamingHubs
                 if (this.roomContext.enemyDataList.ContainsKey(uniqueId)) return;
                 this.roomContext.enemyDataList.Remove(uniqueId);
 
+                #region 端末処理
+
                 // 以下に端末生成の敵の処理を記載
                 if (this.roomContext.terminalList == null) return;
 
@@ -868,6 +868,8 @@ namespace StreamingHubs
                         }
                     }
                 }
+
+                #endregion
             }
         }
 

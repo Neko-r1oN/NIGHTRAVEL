@@ -267,7 +267,6 @@ abstract public class PlayerBase : CharacterBase
     public bool IsDead { get { return isDead; } private set { isDead = value; } }
     #endregion
 
-
     #region ƒvƒŒƒCƒ„[‚ÉŠÖ‚·‚é’è”
     protected const float REGENE_TIME = 1.0f;           // ©“®‰ñ•œŠÔŠu
     protected const float REGENE_STOP_TIME = 1.5f;      // ©“®‰ñ•œ’â~ŠÔ
