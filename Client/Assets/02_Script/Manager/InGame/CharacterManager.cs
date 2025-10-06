@@ -675,6 +675,7 @@ public class CharacterManager : MonoBehaviour
             if (damageData.Exp > 0)
             {
                 playerObjSelf.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+                if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
             }
         }
     }
@@ -712,6 +713,7 @@ public class CharacterManager : MonoBehaviour
             player.NowLv = level;
             player.NextLvExp = nextExp;
             player.OverridMaxStatus(updatedStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.Defense);
+            if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
         }
         LevelManager.Options.Add(optionsKey, statusOptionList);
     }

@@ -30,9 +30,13 @@ public class EnemyElite : MonoBehaviour
     /// <summary>
     /// 初期化処理
     /// </summary>
-    public void Init(EnumManager.ENEMY_ELITE_TYPE type)
+    public void Init(ENEMY_ELITE_TYPE type)
     {
         eliteType = type;
+
+        // 獲得可能経験値量を2倍に増加させる
+        var enemy = GetComponent<EnemyBase>();
+        enemy.Exp += enemy.BaseExp;
 
         // HP・攻撃力が50%増し、防御力・移動速度・移動速度係数が25%増しにする
         CharacterBase charaBase = GetComponent<CharacterBase>();

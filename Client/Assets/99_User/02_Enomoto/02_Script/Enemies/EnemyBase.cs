@@ -346,13 +346,14 @@ abstract public class EnemyBase : CharacterBase
     {
         if (LevelManager.GameLevel == 0) return;
 
-        // レベル1毎にHP,Defence,Powerが15%上昇
+        // 難易度のレベル1毎にHP,Defence,Powerが15%上昇
         const float rate = 0.15f;
         float applyRate = rate * LevelManager.GameLevel;
         int addHp = (int)(baseHp * applyRate) == 0 ? 1 : (int)(baseHp * applyRate);
         int addDef = (int)(baseDefense * applyRate) == 0 ? 1 : (int)(baseDefense * applyRate);
         int addPower = (int)(basePower * applyRate) == 0 ? 1 : (int)(basePower * applyRate);
         float addMoveSpeed = 0;
+        int addExp = (int)(baseExp * applyRate) == 0 ? 1 : (int)(baseExp * applyRate);
 
         // エリートの場合も考慮する
         if (isElite)
@@ -362,8 +363,12 @@ abstract public class EnemyBase : CharacterBase
             addPower += (int)(basePower * 0.5f);
             addDef += (int)(baseDefense * 0.25f);
             addMoveSpeed += (enemyElite.EliteType == ENEMY_ELITE_TYPE.Thunder) ? baseMoveSpeed : baseMoveSpeed * 0.25f; // エリートタイプがThunderの場合は2倍上がる
+
+            // 二倍経験値増加
+            addExp += baseExp;
         }
 
+        Exp = baseExp + addExp;
         CharacterStatusData characterStatusData = new CharacterStatusData()
         {
             hp = baseHp + addHp,
@@ -920,10 +925,11 @@ abstract public class EnemyBase : CharacterBase
                 target = nearPlayer;    // 一時的にターゲットに設定
                 bool isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
                 if (!isTargetVisible) target = null;
-                else LookAtTarget();
             }
         }
         else SelectNewTargetInBossRoom();
+
+        if (target) LookAtTarget();
     }
 
     /// <summary>
