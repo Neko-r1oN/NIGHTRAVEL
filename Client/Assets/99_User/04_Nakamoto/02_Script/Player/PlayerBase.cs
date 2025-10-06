@@ -345,6 +345,8 @@ abstract public class PlayerBase : CharacterBase
                 {
                     HP = MaxHP;
                 }
+
+                UIManager.Instance.UpdatePlayerStatus();
             }
 
             regeneTimer = 0;
@@ -774,9 +776,6 @@ abstract public class PlayerBase : CharacterBase
         // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
         nextLvExp = (int)Math.Pow(nowLv + 1, 3) - (int)Math.Pow(nowLv, 3);
 
-        // 経験値UIの更新
-        UIManager.Instance.UpdateExperienceAndLevel();
-
         // レベルアップによるステータス変化
         LevelUpStatusChange();
     }
@@ -1135,6 +1134,10 @@ abstract public class PlayerBase : CharacterBase
         {   // レベルアップ処理
             LevelUp();
         }
+
+        // 経験値UIの更新
+        UIManager.Instance.UpdateExperienceAndLevel();
+
     }
 
     /// <summary>
@@ -1227,6 +1230,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (HP > MaxHP)
             HP = MaxHP;
+        UIManager.Instance.UpdatePlayerStatus();
     }
 
     /// <summary>

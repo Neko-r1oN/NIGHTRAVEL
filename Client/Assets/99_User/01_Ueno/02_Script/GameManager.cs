@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     int level;                  // レベル
     bool isBossDead;            // ボスが死んだかどうか
     bool isGameStart;           // ゲームが開始したかどうか
+    bool isCanSpawnBoss;        // ボスがスポーン可能かどうか
     GameObject bossTerminal;    // ボス端末
     [SerializeField] STAGE_TYPE nextStage;    // 現在のステージ
     #endregion
@@ -122,6 +123,7 @@ public class GameManager : MonoBehaviour
         }
 
         isBossDead = false;
+        isCanSpawnBoss = false;
         UIManager.Instance.ShowUIAndFadeOut();
 
         if (!RoomModel.Instance) StartCoroutine(DelayedCallCoroutine());
@@ -255,6 +257,8 @@ public class GameManager : MonoBehaviour
     public void CrushEnemy(EnemyBase enemy)
     {
         SpawnManager.Instance.CrashNum++;
+
+        if(SpawnManager.Instance.CrashNum >= SpawnManager.Instance.KnockTermsNum) isCanSpawnBoss = true;
 
         UIManager.Instance.CountTermsText(SpawnManager.Instance.CrashNum);
 

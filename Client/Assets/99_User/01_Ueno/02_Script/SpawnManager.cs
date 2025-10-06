@@ -61,8 +61,8 @@ public class SpawnManager : MonoBehaviour
     #region ボス関連
     GameObject bossTerminal;
     [SerializeField] ENEMY_TYPE bossId;
-    bool isSpawnBoss;           // ボスが生成されたかどうか
-    public bool IsSpawnBoss { get {  return isSpawnBoss; } set {  isSpawnBoss = value; } }
+    bool isBossActive;           // ボスが生成されたかどうか
+    public bool IsSpawnBoss { get {  return isBossActive; } set {  isBossActive = value; } }
     #endregion
 
     int crashNum = 0; 　　　　　// 撃破数
@@ -131,7 +131,7 @@ public class SpawnManager : MonoBehaviour
 
                 if (characterManager.Enemies.Count < maxSpawnCnt && !GameManager.Instance.IsBossDead)
                 {// スポーン回数が限界に達しているか
-                    if (!isSpawnBoss)
+                    if (!isBossActive)
                     {
                         enemyCnt = characterManager.Enemies.Count;
 
@@ -658,7 +658,7 @@ public class SpawnManager : MonoBehaviour
     [ContextMenu("SpawnBoss")]
     public void SpawnBoss()
     {
-        if (!isSpawnBoss)
+        if (!isBossActive)
         {
             bossTerminal = GameObject.Find("6_BossTerminal(Clone)");
             int childrenCnt = bossTerminal.transform.childCount;
@@ -701,7 +701,7 @@ public class SpawnManager : MonoBehaviour
                 spawnEnemyDatas = CreateSpawnEnemyDatas(entrys, spawnType, false);
             }
 
-            isSpawnBoss = true;
+            isBossActive = true;
 
             SpawnEnemyRequest(spawnEnemyDatas.ToArray());
         }
