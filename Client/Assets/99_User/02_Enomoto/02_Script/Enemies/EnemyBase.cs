@@ -705,6 +705,17 @@ abstract public class EnemyBase : CharacterBase
             PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
             StartCoroutine(DestroyEnemy(player));
         }
+        else
+        {
+            // 現在のターゲットを視認できていない&&アタッカーが存在する場合、ターゲットをアタッカーに更新する
+            bool isTargetVisible = true;
+            if (target) isTargetVisible = !sightChecker.IsObstructed() || target && sightChecker.IsTargetVisible();
+
+            if(!isTargetVisible && attacker != null)
+            {
+                target = attacker;
+            }
+        }
     }
 
     /// <summary>
