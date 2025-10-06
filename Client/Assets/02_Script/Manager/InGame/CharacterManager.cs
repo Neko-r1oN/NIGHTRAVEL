@@ -651,18 +651,22 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
-        if (IsPlayerAlive(damageData.AttackerId) && enemies.ContainsKey(damageData.HitEnemyId))
+        if (enemies.ContainsKey(damageData.HitEnemyId))
         {
             var enemy = enemies[damageData.HitEnemyId].Enemy;
-            var player = playerObjs[damageData.AttackerId];
+            GameObject attacker = null;
+            bool isKnockback = false;
+            bool isAttackerAlive = IsPlayerAlive(damageData.AttackerId);
 
-            // ザコ敵のときだけノックバックさせる
-            bool isKnockback = !enemy.IsBoss && enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
+            if (isAttackerAlive)
+            {
+                // ザコ敵のときだけノックバックさせる
+                isKnockback = !enemy.IsBoss && enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
+                attacker = playerObjs[damageData.AttackerId];
+            }
+            enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, attacker, isKnockback, true, damageData.DebuffList.ToArray());
 
-            GameObject attacker = playerObjs[damageData.AttackerId];
-            enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, player, isKnockback, true, damageData.DebuffList.ToArray());
-
-            if (RoomModel.Instance.ConnectionId == damageData.AttackerId)
+            if (isAttackerAlive && RoomModel.Instance.ConnectionId == damageData.AttackerId)
             {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
                 var plBase = playerObjSelf.GetComponent<PlayerBase>();
                 if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
