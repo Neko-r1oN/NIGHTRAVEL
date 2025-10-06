@@ -21,6 +21,9 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] Text characterNameText;
     [SerializeField] Image[] iconImages;
     [SerializeField] Sprite[] iconCharacterImage;
+    [SerializeField] Text logTextPrefab;
+
+    [SerializeField] GameObject logs;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -167,6 +170,9 @@ public class StandbyManager : MonoBehaviour
         {
             //入室したときの処理を書く
             Debug.Log(data.UserData.Name + "が入室しました。");
+            Text gameObject = Instantiate(logTextPrefab);
+            gameObject.text = data.UserData.Name+ "が入室しました。";
+            gameObject.transform.position = logs.transform.position;
         }
     }
 
@@ -178,6 +184,9 @@ public class StandbyManager : MonoBehaviour
     {
         //退室したときの処理を書く
         Debug.Log(joinedUser.UserData.Name + "が退室しました。");
+        Text gameObject = Instantiate(logTextPrefab);
+        gameObject.text = joinedUser.UserData.Name + "が退室しました。";
+        gameObject.transform.position = logs.transform.position;
     }
 
     /// <summary>
