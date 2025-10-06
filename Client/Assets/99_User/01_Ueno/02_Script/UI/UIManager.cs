@@ -446,7 +446,7 @@ public class UIManager : MonoBehaviour
         bossHpBar.maxValue = boss.BaseHP;
         bossHpBar.value = boss.BaseHP;
         bossSliderText.text = "" + bossHpBar.maxValue;
-        bossName.text = "" + boss.name;
+        bossName.text = "" + boss.GetComponent<EnemyBase>().SelfName;
 
         //if (boss.HP <= 0)
         //{// ボスのHP表示がマイナスにならないようにする
@@ -462,10 +462,8 @@ public class UIManager : MonoBehaviour
 
     public void UpdateBossStatus()
     {
-        bossHpBar.maxValue = boss.MaxHP;
         bossHpBar.value = boss.HP;
-        bossSliderText.text = "" + bossHpBar.maxValue;
-        //bossName.text = "" + boss.name;
+        bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
     }
 
     /// <summary>
