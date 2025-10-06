@@ -1101,6 +1101,8 @@ namespace StreamingHubs
                 // すでに取得済みである場合、処理しない
                 if (this.roomContext.gottenItemList.Contains(itemID)) return;
 
+                int getExp = 0;
+
                 switch (itemType)   // アイテムの種類に応じて処理を分ける
                 {
                     case EnumManager.ITEM_TYPE.Relic:       // レリックの場合
@@ -1123,11 +1125,13 @@ namespace StreamingHubs
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合
-                        this.roomContext.ExpManager.nowExp += (int)(this.roomContext.ExpManager.RequiredExp * 0.05f); // 要求経験値の5%を渡す
+                        getExp = (int)(this.roomContext.ExpManager.RequiredExp * 0.05f);
+                        this.roomContext.ExpManager.nowExp += getExp == 0 ? 1 : getExp; // 要求経験値の5%を渡す(0の場合は1を渡す)
                         break;
                     
                     case EnumManager.ITEM_TYPE.DataBox:     // データボックスの場合
-                        this.roomContext.ExpManager.nowExp += (int)(this.roomContext.ExpManager.RequiredExp * 0.25f); // 要求経験値の25%を渡す
+                        getExp = (int)(this.roomContext.ExpManager.RequiredExp * 0.25f);
+                        this.roomContext.ExpManager.nowExp += getExp == 0 ? 1 : getExp; // 要求経験値の25%を渡す(0の場合は1を渡す)
                         break;
                 }
 
