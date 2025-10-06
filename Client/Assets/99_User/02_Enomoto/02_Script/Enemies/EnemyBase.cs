@@ -263,7 +263,8 @@ abstract public class EnemyBase : CharacterBase
         if (characterManager.PlayerObjs.Count > 0 && !target || target && target.GetComponent<CharacterBase>().HP <= 0)
         {
             // 新しくターゲットを探す
-            target = sightChecker.GetTargetInSight();
+            if (!isBoss) target = sightChecker.GetTargetInSight();
+            else SelectNewTargetInBossRoom();
         }
 
         if (target)
@@ -451,15 +452,6 @@ abstract public class EnemyBase : CharacterBase
         {
             target = null;
             if (chaseAI) chaseAI.Stop();
-        }
-
-        // 実行中でなければ、その場に待機するコルーチンを開始
-        string key = "Waiting";
-        float waitTime = 2f;
-        if (!ContaintsManagedCoroutine(key))
-        {
-            Coroutine waitCoroutine = StartCoroutine(Waiting(waitTime, () => { RemoveAndStopCoroutineByKey(key); }));
-            managedCoroutines.Add(key, waitCoroutine);
         }
 
         onFinished?.Invoke();

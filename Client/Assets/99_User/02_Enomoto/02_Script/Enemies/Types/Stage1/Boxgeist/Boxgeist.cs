@@ -412,6 +412,13 @@ public class Boxgeist : EnemyBase
         float currentSec = 0;
         while (disToTarget > attackDist && currentSec <= maxMoveTime)
         {
+            if (!target)
+            {
+                onFinished?.Invoke();
+                CancellAttack();
+                yield break;
+            }
+
             CloseIn();
             yield return new WaitForSeconds(waitSec);
             currentSec += waitSec;
@@ -513,6 +520,13 @@ public class Boxgeist : EnemyBase
         float currentSec = 0;
         while (disToTargetX > attackDist && currentSec <= maxMoveTime)
         {
+            if (!target)
+            {
+                onFinished?.Invoke();
+                CancellAttack();
+                yield break;
+            }
+
             CloseIn();
             yield return new WaitForSeconds(waitSec);
             currentSec += waitSec;
@@ -582,6 +596,13 @@ public class Boxgeist : EnemyBase
         float currentSec = 0;
         while (disToTargetX > targetDist && currentSec <= maxMoveTime)
         {
+            if (!target)
+            {
+                onFinished?.Invoke();
+                CancellAttack();
+                yield break;
+            }
+
             CloseIn();
             yield return null;
         }
@@ -648,6 +669,24 @@ public class Boxgeist : EnemyBase
         isAttacking = false;
         NextDecision();
         onFinished?.Invoke();
+    }
+
+    /// <summary>
+    /// UŒ‚ƒLƒƒƒ“ƒZƒ‹ˆ—
+    /// </summary>
+    void CancellAttack()
+    {
+        if (canChaseTarget)
+        {
+            LookAtTarget();
+        }
+
+        Idle();
+        isInvincible = false;
+        isAttacking = false;
+        m_rb2d.bodyType = RigidbodyType2D.Dynamic;
+        StopAllManagedCoroutines();
+        NextDecision();
     }
 
     #endregion
