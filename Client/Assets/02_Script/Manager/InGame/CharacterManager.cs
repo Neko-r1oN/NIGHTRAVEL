@@ -248,7 +248,7 @@ public class CharacterManager : MonoBehaviour
     /// <returns></returns>
     public bool IsPlayerAlive(Guid id)
     {
-        return playerObjs.ContainsKey(id) && playerObjs[id] && playerObjs[id].GetComponent<CharacterBase>().HP > 0;
+        return playerObjs.ContainsKey(id) && playerObjs[id] && !playerObjs[id].GetComponent<PlayerBase>().IsDead;
     }
 
     /// <summary>
@@ -651,14 +651,16 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
-        if (IsPlayerAlive(damageData.AttackerId))
+        if (IsPlayerAlive(damageData.AttackerId) && enemies.ContainsKey(damageData.HitEnemyId))
         {
+            var enemy = enemies[damageData.HitEnemyId].Enemy;
+            var player = playerObjs[damageData.AttackerId];
+
             // ザコ敵のときだけノックバックさせる
-            bool isKnockback = !enemies[damageData.HitEnemyId].Enemy.IsBoss && enemies[damageData.HitEnemyId].Enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
+            bool isKnockback = !enemy.IsBoss && enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
 
             GameObject attacker = playerObjs[damageData.AttackerId];
-            enemies[damageData.HitEnemyId].Enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp,
-                playerObjs[damageData.AttackerId], isKnockback, true, damageData.DebuffList.ToArray());
+            enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, player, isKnockback, true, damageData.DebuffList.ToArray());
 
             if (RoomModel.Instance.ConnectionId == damageData.AttackerId)
             {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
@@ -666,7 +668,10 @@ public class CharacterManager : MonoBehaviour
                 if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
             }
 
-            playerObjSelf.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+            if (damageData.Exp > 0)
+            {
+                playerObjSelf.GetComponent<PlayerBase>().NowExp += damageData.Exp;
+            }
         }
     }
 
