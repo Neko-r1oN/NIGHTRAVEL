@@ -387,6 +387,8 @@ abstract public class EnemyBase : CharacterBase
             healRate = maxHealRate,
         };
         ChangeAccordingStatusToMaximumValue(characterStatusData);
+
+        if (isBoss && UIManager.Instance) UIManager.Instance.UpdateBossStatus();
     }
 
     #endregion
@@ -691,7 +693,7 @@ abstract public class EnemyBase : CharacterBase
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp = remainingHP;
 
-        if(isBoss) UIManager.Instance.UpdateBossStatus();
+        if(isBoss && UIManager.Instance) UIManager.Instance.UpdateBossStatus();
 
         // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
         if (attacker != null && attacker.tag == "Player")

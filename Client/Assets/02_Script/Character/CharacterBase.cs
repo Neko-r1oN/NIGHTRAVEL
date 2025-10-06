@@ -244,14 +244,15 @@ abstract public class CharacterBase : MonoBehaviour
 
     protected virtual void Start()
     {
+        var rb2d = GetComponent<Rigidbody2D>();
+        defaultType2D = rb2d.bodyType;
+
         // リアルタイム中&&マスタークライアントではない場合
-        if (RoomModel.Instance && RoomModel.Instance.ConnectionId != Guid.Empty && !RoomModel.Instance.IsMaster)
+        if (RoomModel.Instance)
         {
-            // 自身が敵 || 操作キャラではない場合はスクリプトを非アクティブにする
-            if (gameObject.tag == "Enemy" || CharacterManager.Instance.PlayerObjSelf != this.gameObject)
+            // 操作キャラではない || 自身が敵 の場合はスクリプトを非アクティブにする
+            if ((CharacterManager.Instance.PlayerObjSelf != this.gameObject && gameObject.tag == "Player") || (!RoomModel.Instance.IsMaster && gameObject.tag == "Enemy"))
             {
-                var rb2d = GetComponent<Rigidbody2D>();
-                defaultType2D = rb2d.bodyType;
                 rb2d.bodyType = RigidbodyType2D.Static;
                 this.enabled = false;
             }

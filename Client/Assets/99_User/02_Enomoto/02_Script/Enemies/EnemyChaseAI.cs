@@ -80,7 +80,8 @@ public class EnemyChaseAI : MonoBehaviour
     /// </summary>
     public void Stop()
     {
-        if (agent != null) agent.GetComponent<NavMeshAgent>();
+        if (agent == null) agent.GetComponent<NavMeshAgent>();
+        if (agent == null) return;
         agent.isStopped = true;
         agent.ResetPath();
     }
