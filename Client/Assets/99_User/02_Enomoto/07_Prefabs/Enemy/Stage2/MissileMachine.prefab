@@ -1134,7 +1134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewAngleMax: 65
-  viewDistMax: 6
+  viewDistMax: 8
 --- !u!114 &4817271198513664039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1184,6 +1184,7 @@ MonoBehaviour:
   canJump: 0
   canCancelAttackOnHit: 0
   canIgnoreDeadZoneCollision: 0
+  dontRemoveOnDeath: 0
   spawnGroundOffset: 1.5
   spawnWeight: 20
   canDrawRay: 1

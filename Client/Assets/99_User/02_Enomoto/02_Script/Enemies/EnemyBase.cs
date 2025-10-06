@@ -709,7 +709,7 @@ abstract public class EnemyBase : CharacterBase
         {
             // 現在のターゲットを視認できていない&&アタッカーが存在する場合、ターゲットをアタッカーに更新する
             bool isTargetVisible = true;
-            if (target) isTargetVisible = !sightChecker.IsObstructed() || target && sightChecker.IsTargetVisible();
+            if (target) isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
 
             if(!isTargetVisible && attacker != null)
             {
@@ -904,6 +904,20 @@ abstract public class EnemyBase : CharacterBase
     {
         isInvincible = false;
         isSpawn = false;
+
+        // ターゲットを探す
+        if (!isBoss)
+        {
+            var nearPlayer = GetNearPlayer();
+            if (nearPlayer != null)
+            {
+                target = nearPlayer;    // 一時的にターゲットに設定
+                bool isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
+                if (!isTargetVisible) target = null;
+                else LookAtTarget();
+            }
+        }
+        else SelectNewTargetInBossRoom();
     }
 
     /// <summary>
