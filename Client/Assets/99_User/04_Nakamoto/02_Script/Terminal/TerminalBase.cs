@@ -283,7 +283,7 @@ public abstract class TerminalBase : MonoBehaviour
     public virtual void FailureTerminal()
     {
         if (RoomModel.Instance)
-            TerminalManager.Instance.TerminalDatas[terminalID].State = EnumManager.TERMINAL_STATE.Failure;
+            TerminalManager.Instance.TerminalDatas[terminalID - 1].State = EnumManager.TERMINAL_STATE.Failure;
 
         // ターミナル非表示
         usingText.text = "Failure";

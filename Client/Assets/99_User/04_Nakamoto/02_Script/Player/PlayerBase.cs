@@ -1224,6 +1224,9 @@ abstract public class PlayerBase : CharacterBase
     public void KilledHPRegain()
     {
         HP += (int)(MaxHP * lifeScavengerRate);
+
+        if (HP > MaxHP)
+            HP = MaxHP;
     }
 
     /// <summary>
