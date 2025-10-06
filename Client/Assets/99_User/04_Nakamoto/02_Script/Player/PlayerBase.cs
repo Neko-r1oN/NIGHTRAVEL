@@ -1121,6 +1121,8 @@ abstract public class PlayerBase : CharacterBase
         else
             hp -= damage;
 
+        UIManager.Instance.UpdatePlayerStatus();
+
         // ˆÚ“®
         playerPos.position = FetchNearObjectWithTag("Gimmick/ChecKPoint").position;
     }
