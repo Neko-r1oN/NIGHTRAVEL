@@ -13,9 +13,9 @@ public class BoxManager : MonoBehaviour
 {
     [SerializeField] GameObject BoxPrefab;  //” ƒvƒŒƒnƒuŽæ“¾
     [SerializeField] float addPos;
-/*    const float leftPosX = 27.09f;
+    const float leftPosX = 27.09f;
     const float rightPosX = 28.9f;
-    const float posY = 27f;*/
+    const float posY = 27f;
 
     public float spawnTime;
 
@@ -41,7 +41,7 @@ public class BoxManager : MonoBehaviour
     {
         if (!RoomModel.Instance || RoomModel.Instance && RoomModel.Instance.IsMaster)
         {
-            float spawnPosX = UnityEngine.Random.Range(1, 3) == 1 ? transform.position.x -addPos : transform.position.x + addPos;
+            float spawnPosX = UnityEngine.Random.Range(1, 3) == 1 ? transform.position.x - addPos : transform.position.x + addPos;
             float spawnPosY = transform.position.y;
             Vector2 spawnPos = new Vector2(spawnPosX, spawnPosY);
             SpawnObjectRequest(OBJECT_TYPE.Box, spawnPos);
