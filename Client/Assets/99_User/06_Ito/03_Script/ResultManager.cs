@@ -40,31 +40,31 @@ public class ResultManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // テストデータ
-        if (!RoomModel.Instance)
-        {
-            ResultData resultData = new ResultData()
-            {
-                PlayerClass = EnumManager.Player_Type.Sword,
-                GottenRelicList = new List<EnumManager.RELIC_TYPE>() {
-                EnumManager.RELIC_TYPE.Firewall,
-                EnumManager.RELIC_TYPE.Firewall,
-                EnumManager.RELIC_TYPE.MoveSpeedTip,
-                EnumManager.RELIC_TYPE.Firewall,
-                EnumManager.RELIC_TYPE.CoolingFan},
+        //// テストデータ
+        //if (!RoomModel.Instance)
+        //{
+        //    ResultData resultData = new ResultData()
+        //    {
+        //        PlayerClass = EnumManager.Player_Type.Sword,
+        //        GottenRelicList = new List<EnumManager.RELIC_TYPE>() {
+        //        EnumManager.RELIC_TYPE.Firewall,
+        //        EnumManager.RELIC_TYPE.Firewall,
+        //        EnumManager.RELIC_TYPE.MoveSpeedTip,
+        //        EnumManager.RELIC_TYPE.Firewall,
+        //        EnumManager.RELIC_TYPE.CoolingFan},
 
-                TotalClearStageCount = 3,
-                DifficultyLevel = 2,
-                AliveTime = new TimeSpan(0, 0, 600),
-                EnemyKillCount = 20,
-                TotalGaveDamage = 50,
-                TotalGottenItem = 2,
-                TotalActivedTerminal = 3,
-                TotalScore = 30000
-            };
+        //        TotalClearStageCount = 3,
+        //        DifficultyLevel = 2,
+        //        AliveTime = new TimeSpan(0, 0, 600),
+        //        EnemyKillCount = 20,
+        //        TotalGaveDamage = 50,
+        //        TotalGottenItem = 2,
+        //        TotalActivedTerminal = 3,
+        //        TotalScore = 30000
+        //    };
 
-            DisplayResultData(resultData);
-        }
+        //    DisplayResultData(resultData);
+        //}
         DisplayResultData(GameManager.Instance.ResultData);
     }
 
@@ -113,18 +113,18 @@ public class ResultManager : MonoBehaviour
                 ChildObj.transform.localScale = ChildObj.transform.localScale;
 
                 ChildObj.GetComponent<Image>().sprite =
-                RelicManager.Instance.RelicSprites[(int)item];
+                RelicManager.Instance.RelicSprites[(int)item - 1];
                 relics.Add(item);
             }
         }
 
-        stageNumText.text = "3";                                                  // 攻略ステージ数
-        arrivalLevelText.text = "ハード";                                         // 到達レベル
-        survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
-        totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
-        grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数
-        totalEarningsItemText.text = resultData.TotalGottenItem.ToString();       // 総獲得アイテム数
-        terminalStartupNumText.text = resultData.TotalActivedTerminal.ToString(); // 合計端末起動数
-        totalScore.text = "50000";
+        //stageNumText.text = "3";                                                  // 攻略ステージ数
+        //arrivalLevelText.text = "ハード";                                         // 到達レベル
+        //survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
+        //totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
+        //grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数
+        //totalEarningsItemText.text = resultData.TotalGottenItem.ToString();       // 総獲得アイテム数
+        //terminalStartupNumText.text = resultData.TotalActivedTerminal.ToString(); // 合計端末起動数
+        //totalScore.text = "50000";
     }
 }
