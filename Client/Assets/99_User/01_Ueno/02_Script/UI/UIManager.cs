@@ -460,6 +460,14 @@ public class UIManager : MonoBehaviour
         clashNumText.enabled = false;
     }
 
+    public void UpdateBossStatus()
+    {
+        bossHpBar.maxValue = boss.MaxHP;
+        bossHpBar.value = boss.HP;
+        bossSliderText.text = "" + bossHpBar.maxValue;
+        //bossName.text = "" + boss.name;
+    }
+
     /// <summary>
     /// ボスUI非表示
     /// </summary>
