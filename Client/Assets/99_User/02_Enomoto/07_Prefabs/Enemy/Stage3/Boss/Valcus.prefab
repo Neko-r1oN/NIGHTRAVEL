@@ -55172,7 +55172,7 @@ Transform:
   m_GameObject: {fileID: 6537609773714005122}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.56, z: 0}
+  m_LocalPosition: {x: 0, y: -2.998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -84731,7 +84731,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8803915633328194528}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -84840,6 +84840,7 @@ MonoBehaviour:
   canJump: 0
   canCancelAttackOnHit: 0
   canIgnoreDeadZoneCollision: 0
+  dontRemoveOnDeath: 0
   spawnGroundOffset: 4
   spawnWeight: 1
   canDrawRay: 1
@@ -84850,7 +84851,7 @@ MonoBehaviour:
   wallCheck: {fileID: 9112739973695253355}
   wallCheckRadius: {x: 0, y: 5}
   groundCheck: {fileID: 6575995753718192572}
-  groundCheckRadius: {x: 4.5, y: 0.7}
+  groundCheckRadius: {x: 2.5, y: 0.25}
   frontFallCheck: {fileID: 1588225113119194455}
   frontFallCheckRange: {x: 0, y: 12}
   backFallCheck: {fileID: 3449037002952415240}
