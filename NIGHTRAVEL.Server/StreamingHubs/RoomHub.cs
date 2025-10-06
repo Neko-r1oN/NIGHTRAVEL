@@ -1540,33 +1540,36 @@ namespace StreamingHubs
         protected void LevelUp(ExpManager expManager)
         {
             // レベルアップ処理
-            expManager.Level++; // 現在のレベルを上げる
-            expManager.nowExp = expManager.nowExp - expManager.RequiredExp;    // 超過した分の経験値を現在の経験値量として保管
-
-            // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
-            expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
-
-            // 強化選択肢格納リスト
-            List<StatusUpgrateOptionData> statusOptionList = DrawStatusUpgrateOption(3);
-            Guid optionsKey = Guid.NewGuid();
-
-            // 参加者リストをループ
-            foreach (var user in this.roomContext.JoinedUserList)
+            while (expManager.nowExp >= expManager.RequiredExp)
             {
-                // ステータス強化選択肢をルームデータで管理
-                this.roomContext.AddStatusOptions(user.Key, optionsKey, statusOptionList);
+                expManager.Level++; // 現在のレベルを上げる
+                expManager.nowExp = expManager.nowExp - expManager.RequiredExp;    // 超過した分の経験値を現在の経験値量として保管
 
-                // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
-                var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
+                // 次のレベルまで必要な経験値量を計算 （必要な経験値量 = 次のレベルの3乗 - 今のレベルの3乗）
+                expManager.RequiredExp = (int)Math.Pow(expManager.Level + 1, 3) - (int)Math.Pow(expManager.Level, 3);
 
-                // 各最大値を更新
-                const float LEVEL_UP_RATE = 0.05f;
-                playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE);
-                playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE);
-                playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE);
+                // 参加者リストをループ
+                foreach (var user in this.roomContext.JoinedUserList)
+                {
+                    // 強化選択肢格納リスト
+                    List<StatusUpgrateOptionData> statusOptionList = DrawStatusUpgrateOption(3);
+                    Guid optionsKey = Guid.NewGuid();
 
-                // ユーザー毎にレベルアップ通知
-                this.roomContext.Group.Single(user.Key).OnLevelUp(expManager.Level, expManager.nowExp, expManager.RequiredExp, playerData, optionsKey, statusOptionList);
+                    // ステータス強化選択肢をルームデータで管理
+                    this.roomContext.AddStatusOptions(user.Key, optionsKey, statusOptionList);
+
+                    // 参加者リストのキーから接続IDを受け取り対応ユーザのデータを取得
+                    var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
+
+                    // 各最大値を更新
+                    const float LEVEL_UP_RATE = 0.05f;
+                    playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE);
+                    playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE);
+                    playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE);
+
+                    // ユーザー毎にレベルアップ通知
+                    this.roomContext.Group.Single(user.Key).OnLevelUp(expManager.Level, expManager.nowExp, expManager.RequiredExp, playerData, optionsKey, statusOptionList);
+                }
             }
         }
 
