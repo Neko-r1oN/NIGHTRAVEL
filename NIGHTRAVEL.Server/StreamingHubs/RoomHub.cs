@@ -81,7 +81,7 @@ namespace StreamingHubs
                 GameDbContext dbContext = new GameDbContext();
 
                 //DBからユーザー情報取得
-                var user = dbContext.Users.Where(user => user.Id == userId).First();
+                //var user = dbContext.Users.Where(user => user.Id == userId).First();
 
                 //ユーザーデータを設定(Steam対応デバッグ用)
                 User userSteam = new User();
@@ -230,6 +230,19 @@ namespace StreamingHubs
                 // ルームデータから自身のデータを削除
                 roomContext.characterDataList.Remove(this.ConnectionId);;
 
+            }
+        }
+
+        /// <summary>
+        /// キャラクター変更
+        ///  Author:木田晃輔
+        /// </summary>
+        /// <returns></returns>
+        public async Task ChangeCharacterAsync(int characterId)
+        {
+            lock(roomContextRepository) //排他制御
+            {
+                this.roomContext.Group.All.OnChangeCharacter(this.ConnectionId , characterId);
             }
         }
 
