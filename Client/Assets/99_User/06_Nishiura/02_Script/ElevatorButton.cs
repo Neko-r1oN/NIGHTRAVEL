@@ -15,8 +15,10 @@ public class ElevatorButton : GimmickBase
     [SerializeField] GameObject buttonObj;
     Elevator elevatorScript;
 
-    [SerializeField] AudioSource elevatorButtonSE;
+    [SerializeField] AudioClip elevatorButtonSE;
     
+    AudioSource audioSource;
+
     // ボタンの種別(f:下降t:上昇)
     public bool buttonType;
     bool isEnterd = false;
@@ -26,6 +28,7 @@ public class ElevatorButton : GimmickBase
     void Start()
     {
         elevatorScript = targetElevator.GetComponent<Elevator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -89,8 +92,8 @@ public class ElevatorButton : GimmickBase
             Invoke("InvoeCoolTime", 2f);
         }
 
-        //エレベーターのボタンのSEを再生する
-        elevatorButtonSE.Play();
+        // 使用音を再生
+        audioSource.PlayOneShot(elevatorButtonSE);
 
         elevatorScript.MoveButton(buttonType);
         MoveButton();
