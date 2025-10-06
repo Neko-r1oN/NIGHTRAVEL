@@ -91,6 +91,7 @@ public class ItemManager : MonoBehaviour
             player.NowLv = nowLevel;
             player.NowExp = nowExp;
             player.NextLvExp = nextLevelExp;
+            if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
         }
     }
 
