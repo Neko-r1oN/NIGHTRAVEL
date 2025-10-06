@@ -290,6 +290,11 @@ abstract public class PlayerBase : CharacterBase
     protected const float STICK_DEAD_ZONE = 0.3f; // スティックのデッドゾーン
     #endregion
 
+    [SerializeField] AudioClip useZipline_SE;   // ジップライン使用音
+    [SerializeField] AudioClip usingZipline_SE; // ジップライン使用中音
+
+    AudioSource audioSource;
+
     //--------------------
     // メソッド
 
@@ -317,6 +322,7 @@ abstract public class PlayerBase : CharacterBase
         animator = GetComponent<Animator>();
         cam = Camera.main.gameObject;
         startHp = maxHp;
+        audioSource = GetComponent<AudioSource>();
 
         // カメラのターゲットを自身に設定
         if(RoomModel.Instance == null)
@@ -381,6 +387,9 @@ abstract public class PlayerBase : CharacterBase
                 m_IsZipline = false;
                 ziplineSpark.SetActive(false);
                 m_Rigidbody2D.AddForce(new Vector2(-m_ZipJumpForceX,m_ZipJumpForceY));
+
+                audioSource.Stop();     // ジップライン使用音停止
+                audioSource.PlayOneShot(useZipline_SE);
             }
             else if(Input.GetKeyDown(KeyCode.D) || Input.GetAxisRaw("Horizontal") <= -STICK_DEAD_ZONE)
             {
@@ -388,6 +397,9 @@ abstract public class PlayerBase : CharacterBase
                 m_IsZipline = false;
                 ziplineSpark.SetActive(false);
                 m_Rigidbody2D.AddForce(new Vector2(m_ZipJumpForceX, m_ZipJumpForceY));
+
+                audioSource.Stop();     // ジップライン使用音停止
+                audioSource.PlayOneShot(useZipline_SE);
             }
         }
         else
@@ -526,9 +538,16 @@ abstract public class PlayerBase : CharacterBase
         {
             if (Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack || Input.GetAxisRaw("Vertical") >= STICK_DEAD_ZONE && canBlink && canSkill && canAttack)
             {
+                if (!m_IsZipline)
+                {
+                    audioSource.PlayOneShot(useZipline_SE);
+                    audioSource.PlayOneShot(usingZipline_SE);
+
+                    ziplineSpark.SetActive(true);
+                    animator.SetInteger("animation_id", (int)ANIM_ID.Zipline);
+                }
+
                 m_IsZipline = true;
-                ziplineSpark.SetActive(true);
-                animator.SetInteger("animation_id", (int)ANIM_ID.Zipline);
             }
         }
 
