@@ -914,10 +914,11 @@ abstract public class EnemyBase : CharacterBase
                 target = nearPlayer;    // 一時的にターゲットに設定
                 bool isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
                 if (!isTargetVisible) target = null;
-                else LookAtTarget();
             }
         }
         else SelectNewTargetInBossRoom();
+
+        if (target) LookAtTarget();
     }
 
     /// <summary>

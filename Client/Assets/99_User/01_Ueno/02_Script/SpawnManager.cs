@@ -478,12 +478,6 @@ public class SpawnManager : MonoBehaviour
             eliteType = ENEMY_ELITE_TYPE.None;
         }
 
-        // プレイヤーの向きを算出
-        var playerPos = FetchNearObjectWithTag("Player");
-        float scaleX = playerPos.position.x - entryData.Position.x;
-        scaleX = scaleX >= 0 ? 1 : -1;
-        var enemyScale = new Vector3(entryData.Scale.x * scaleX, entryData.Scale.y, entryData.Scale.z);
-
         // 返すデータ作成
         string uniqueId = entryData.PresetId == "" ? Guid.NewGuid().ToString() : entryData.PresetId;    // 事前に識別用IDが設定されていない場合は生成する
         return new SpawnEnemyData()
@@ -491,7 +485,7 @@ public class SpawnManager : MonoBehaviour
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
             UniqueId = uniqueId,
             Position = entryData.Position,
-            Scale = enemyScale,
+            Scale = entryData.Scale,
             SpawnType = spawnType,
             EliteType = eliteType,
             TerminalID = -1,
@@ -526,12 +520,6 @@ public class SpawnManager : MonoBehaviour
             eliteType = ENEMY_ELITE_TYPE.None;
         }
 
-        // プレイヤーの向きを算出
-        var playerPos = FetchNearObjectWithTag("Player");
-        float scaleX = playerPos.position.x - entryData.Position.x;
-        scaleX = scaleX >= 0 ? 1 : -1;
-        var enemyScale = new Vector3(scaleX, 1, 1);
-
         // 返すデータ作成
         string uniqueId = entryData.PresetId == "" ? Guid.NewGuid().ToString() : entryData.PresetId;    // 事前に識別用IDが設定されていない場合は生成する
         return new SpawnEnemyData()
@@ -539,7 +527,7 @@ public class SpawnManager : MonoBehaviour
             TypeId = (ENEMY_TYPE)entryData.EnemyType,
             UniqueId = uniqueId,
             Position = entryData.Position,
-            Scale = enemyScale,
+            Scale = entryData.Scale,
             SpawnType = spawnType,
             EliteType = eliteType,
             TerminalID = termID
@@ -705,29 +693,5 @@ public class SpawnManager : MonoBehaviour
 
             SpawnEnemyRequest(spawnEnemyDatas.ToArray());
         }
-    }
-
-    /// <summary>
-    /// １番近いオブジェクトを取得する
-    /// </summary>
-    /// <param name="tagName">取得したいtagName</param>
-    /// <returns>最小距離の指定Obj</returns>
-    private Transform FetchNearObjectWithTag(string tagName)
-    {
-        // 該当タグが1つしか無い場合はそれを返す
-        var targets = GameObject.FindGameObjectsWithTag(tagName);
-        if (targets.Length == 1) return targets[0].transform;
-        GameObject result = null;               // 返り値
-        var minTargetDistance = float.MaxValue; // 最小距離
-        foreach (var target in targets)
-        {
-            // 前回計測したオブジェクトよりも近くにあれば記録
-            var targetDistance = Vector3.Distance(transform.position, target.transform.position);
-            if (!(targetDistance < minTargetDistance)) continue;
-            minTargetDistance = targetDistance;
-            result = target.transform.gameObject;
-        }
-        // 最後に記録されたオブジェクトを返す
-        return result?.transform;
     }
 }
