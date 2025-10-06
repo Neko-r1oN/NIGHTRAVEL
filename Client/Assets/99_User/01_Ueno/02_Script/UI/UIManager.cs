@@ -1290,7 +1290,6 @@ public class UIManager : MonoBehaviour
             case 0:
                 if (!RoomModel.Instance)
                 {
-                    
                     GameManager.Instance.ChengScene(GameManager.Instance.NextStage);
                 }
                 else await RoomModel.Instance.StageClear(true);
