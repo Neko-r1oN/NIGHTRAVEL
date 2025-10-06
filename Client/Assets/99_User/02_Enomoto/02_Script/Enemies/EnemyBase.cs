@@ -646,9 +646,6 @@ abstract public class EnemyBase : CharacterBase
             var debuffController = GetComponent<DebuffController>();
             if (debuffController.GetAppliedStatusEffects().Count != 0) damage = (int)(damage * plBase.DebuffDmgRate);
 
-            // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
-            if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
-
             // レリック「イリーガルスクリプト」適用時、ダメージを99999にする
             damage = (plBase.LotteryRelic(RELIC_TYPE.IllegalScript)) ? MAX_DAMAGE : damage;
         }
@@ -681,6 +678,15 @@ abstract public class EnemyBase : CharacterBase
         if (attacker != null) attackerPos = attacker.transform.position;
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp = remainingHP;
+
+        // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
+        if (attacker != null && attacker.tag == "Player")
+        {
+            var plBase = attacker.GetComponent<PlayerBase>();
+            
+            if (plBase.DmgHealRate > 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
+            if (plBase.MaxHP <= plBase.HP) plBase.HP = plBase.MaxHP;
+        }
 
         // 状態異常を付与する
         if (debuffList.Length > 0) effectController.ApplyStatusEffect(debuffList);

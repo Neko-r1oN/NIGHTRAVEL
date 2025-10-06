@@ -169,7 +169,17 @@ public class TerminalManager : MonoBehaviour
     public void OnTerminalsSuccessed(int id)
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Success;
-        terminalObjs[id].GetComponent<TerminalBase>().SuccessTerminal();
+
+        if (id == 2)
+        {
+            if (terminalObjs[id] != null)
+                terminalObjs[id].transform.GetChild(0).GetComponent<TerminalBase>().SuccessTerminal();
+        }
+        else
+        {
+            if (terminalObjs[id] != null)
+                terminalObjs[id].GetComponent<TerminalBase>().SuccessTerminal();
+        }
     }
 
     /// <summary>
@@ -179,7 +189,17 @@ public class TerminalManager : MonoBehaviour
     public void OnTerminalFailured(int id)
     {
         terminalDatas[id - 1].State = EnumManager.TERMINAL_STATE.Failure;
-        terminalObjs[id].GetComponent<TerminalBase>().FailureTerminal();
+
+        if (id == 2)
+        {
+            if (terminalObjs[id] != null)
+                terminalObjs[id].transform.GetChild(0).GetComponent<TerminalBase>().FailureTerminal();
+        }
+        else
+        {
+            if (terminalObjs[id] != null)
+                terminalObjs[id].GetComponent<TerminalBase>().FailureTerminal();
+        }
     }
 
     /// <summary>
