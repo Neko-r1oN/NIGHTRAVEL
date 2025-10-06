@@ -462,6 +462,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateBossStatus()
     {
+        bossHpBar.maxValue = boss.MaxHP;
         bossHpBar.value = boss.HP;
         bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
     }

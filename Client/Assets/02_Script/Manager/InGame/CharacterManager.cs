@@ -226,13 +226,8 @@ public class CharacterManager : MonoBehaviour
 
         if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
-        // 自身がマスタークライアントの場合、敵が動けるようにする
-        if (RoomModel.Instance.IsMaster && character.tag == "Enemy" && !character.enabled)
-        {
-            character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-            character.enabled = true;
-        }
-        else
+        // 操作キャラ以外のプレイヤーオブジェクトが震えないようにする
+        if (character.tag == "Player" && character.gameObject != playerObjSelf)
         {
             character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
             character.enabled = false;
