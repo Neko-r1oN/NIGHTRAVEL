@@ -191,14 +191,32 @@ public class Rifle : PlayerBase
     /// </summary>
     public void FireBullet()
     {
-        var bullet = Instantiate(bulletPrefab, bulletSpawnObj.transform.position, Quaternion.identity);
-        if (!m_FacingRight)
+        if(RoomModel.Instance)
         {
-            bullet.transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+            if (CharacterManager.Instance.PlayerObjSelf == gameObject)
+            {
+                var bullet = Instantiate(bulletPrefab, bulletSpawnObj.transform.position, Quaternion.identity);
+                if (!m_FacingRight)
+                {
+                    bullet.transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+                }
+                bullet.GetComponent<Bullet>().SetPlayer(m_Player);
+                bullet.GetComponent<Bullet>().Speed = bulletSpeed;
+                bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);
+            }
         }
-        bullet.GetComponent<Bullet>().SetPlayer(m_Player);
-        bullet.GetComponent<Bullet>().Speed = bulletSpeed;
-        bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);
+        else
+        {
+            var bullet = Instantiate(bulletPrefab, bulletSpawnObj.transform.position, Quaternion.identity);
+            if (!m_FacingRight)
+            {
+                bullet.transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+            }
+            bullet.GetComponent<Bullet>().SetPlayer(m_Player);
+            bullet.GetComponent<Bullet>().Speed = bulletSpeed;
+            bullet.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(transform.localScale.x * bulletSpeed, 0);
+        }
+
     }
 
     #endregion

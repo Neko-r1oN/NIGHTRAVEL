@@ -53,7 +53,7 @@ public class Deal : TerminalBase
         if (RoomModel.Instance)
             TerminalManager.Instance.TerminalDatas[terminalID-1].State = EnumManager.TERMINAL_STATE.Success;
 
-        // レリック生成リクエスト
+        // 成功リクエスト
         SuccessRequest();
 
         // ターミナル非表示

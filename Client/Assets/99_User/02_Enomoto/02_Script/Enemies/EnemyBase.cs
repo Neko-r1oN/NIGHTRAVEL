@@ -699,9 +699,13 @@ abstract public class EnemyBase : CharacterBase
         if (attacker != null && attacker.tag == "Player")
         {
             var plBase = attacker.GetComponent<PlayerBase>();
-            
-            if (plBase.DmgHealRate > 0) plBase.HP += (int)(damage * plBase.DmgHealRate);
-            if (plBase.MaxHP <= plBase.HP) plBase.HP = plBase.MaxHP;
+
+            if (plBase.DmgHealRate > 0)
+            {
+                plBase.HP += (int)(damage * plBase.DmgHealRate);
+
+                if (plBase.HP > plBase.MaxHP) plBase.HP = plBase.MaxHP;
+            }
         }
 
         // ó‘ÔˆÙí‚ğ•t—^‚·‚é
@@ -782,7 +786,7 @@ abstract public class EnemyBase : CharacterBase
 
             if (CharacterManager.Instance.GetEnemysByTerminalID(termId).Count == 0)
             {   // ¶¬’[––‚Ì“G‚ª‘Sˆõ“|‚³‚ê‚½‚ç•ñVo‚·
-                TerminalManager.Instance.DropRelic(termId);
+                TerminalManager.Instance.TerminalObjs[termId].GetComponent<TerminalBase>().SuccessRequest();
             }
         }
         else

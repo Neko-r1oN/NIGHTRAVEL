@@ -723,7 +723,6 @@ namespace StreamingHubs
             // 3以降は抽選
             Random rand = new Random();
             int terminalCount = 6;
-            // rand.Next(MIN_TERMINAL_NUM, MAX_TERMINAL_NUM); // 3～6個の端末を抽選
 
             for(int i = 3; i <= terminalCount; i++ )
             {
@@ -841,7 +840,6 @@ namespace StreamingHubs
 
             if (result < value) return true;
             else return false;
-
         }
 
         /// <summary>
@@ -854,35 +852,6 @@ namespace StreamingHubs
             {
                 if (this.roomContext.enemyDataList.ContainsKey(uniqueId)) return;
                 this.roomContext.enemyDataList.Remove(uniqueId);
-
-                #region 端末処理
-
-                // 以下に端末生成の敵の処理を記載
-                if (this.roomContext.terminalList == null) return;
-
-                foreach (var item in this.roomContext.terminalList)
-                {
-                    if (item.Type == EnumManager.TERMINAL_TYPE.Enemy && item.State == EnumManager.TERMINAL_STATE.Active ||
-                        item.Type == EnumManager.TERMINAL_TYPE.Elite && item.State == EnumManager.TERMINAL_STATE.Active)
-                    {   // エネミーかエリートがアクティブになってる場合
-                        foreach (var enemyID in item.EnemyList)
-                        {   // 引数のユニークIDと一致する敵を検索、削除
-                            if (enemyID == uniqueId)
-                            {
-                                item.EnemyList.Remove(uniqueId);
-
-                                if (item.EnemyList.Count == 0)
-                                {   // 端末の敵を全部倒した時
-                                    this.roomContext.Group.All.OnTerminalsSuccess(item.ID);
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                #endregion
             }
         }
 
@@ -1494,7 +1463,6 @@ namespace StreamingHubs
                             break;
 
                         case (int)STATUS_TYPE.BuckupHDMICnt:    // バックアップHDMIの場合
-                            //if (relicStatus.BuckupHDMICnt >= relic.max) break;
                             relicStatus.BuckupHDMICnt += relic.const_effect;
                             relicStatus.BuckupHDMICnt += (int)relic.rate_effect;
                             break;

@@ -413,7 +413,6 @@ abstract public class PlayerBase : CharacterBase
             if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Blink"))
             {   // ブリンク押下時
                     isBlink = true;
-                    gameObject.layer = 21;
             }
 
             if (m_IsScaffold && Input.GetKeyDown(KeyCode.S) || m_IsScaffold && Input.GetAxisRaw("Vertical") <= -STICK_DEAD_ZONE)
@@ -1075,18 +1074,18 @@ abstract public class PlayerBase : CharacterBase
         animator.SetInteger("animation_id", (int)ANIM_ID.Blink);
         isBlinking = true;
         canBlink = false;
+        invincible = true;
         yield return new WaitForSeconds(blinkTime);  // ブリンク時間
 
         // ブリンク終了
-        gameObject.layer = 20;
         canAttack = true;
         isBlinking = false;
+        invincible = false;
 
         // クールダウン時間
         UIManager.Instance.DisplayCoolDown(false, blinkCoolDown);
         yield return new WaitForSeconds(blinkCoolDown);
         canBlink = true;
-        gameObject.layer = 20;
     }
 
     /// <summary>
@@ -1252,7 +1251,7 @@ abstract public class PlayerBase : CharacterBase
     {
         HP += (int)(MaxHP * lifeScavengerRate);
 
-        if (HP > MaxHP)
+        if (HP >= MaxHP)
             HP = MaxHP;
         UIManager.Instance.UpdatePlayerStatus();
     }
