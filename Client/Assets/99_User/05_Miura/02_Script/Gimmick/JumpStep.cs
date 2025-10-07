@@ -22,7 +22,7 @@ public class JumpStep : MonoBehaviour
     /// 触れたオブジェクトに力を加える処理
     /// </summary>
     /// <param name="collision">触れたオブジェクト</param>
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
         {
