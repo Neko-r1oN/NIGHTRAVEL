@@ -474,7 +474,7 @@ public class UIManager : MonoBehaviour
     {
         bossStatus.SetActive(false);
     }
-
+    
     /// <summary>
     /// 取得したレリックを表示する関数
     /// </summary>
