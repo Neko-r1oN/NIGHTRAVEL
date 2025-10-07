@@ -61,8 +61,10 @@ public class Elevator : GimmickBase
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isBroken == true || isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
+
         // エレベーターに乗っているキャラクターを子オブジェクトに設定
         var obj = collision.transform.gameObject;
         if (obj.tag == "Player" && obj == CharacterManager.Instance.PlayerObjSelf
@@ -71,10 +73,8 @@ public class Elevator : GimmickBase
             collision.transform.SetParent(transform);
         }
 
-        if (isBroken == true || isMoving == true || isPowerd == false) return;  // 電源offまたはエレベーター動作中の場合処理しない
-        // プレイヤーがエレベーター内に入った場合
         if (collision.transform.tag == "Player" && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
-        {
+        { // 自分自身がエレベーター内に入った場合
             isMoving = true;    // 動作中にする
             Invoke("InvokeTurnOnPowerRequest", 0.5f);
         }
