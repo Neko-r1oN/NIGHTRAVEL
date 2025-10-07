@@ -333,7 +333,8 @@ public class CharacterManager : MonoBehaviour
                 power: player.MaxPower,
                 moveSpeed: player.MaxMoveSpeed,
                 attackSpeedFactor: player.MaxAttackSpeedFactor,
-                jumpPower: player.MaxJumpPower
+                jumpPower: player.MaxJumpPower,
+                healRate: player.MaxHealRate
                 ),
             State = new CharacterStatusData(
                 hp: player.HP,
@@ -341,7 +342,8 @@ public class CharacterManager : MonoBehaviour
                 power: player.power,
                 moveSpeed: player.moveSpeed,
                 attackSpeedFactor: player.attackSpeedFactor,
-                jumpPower: player.jumpPower
+                jumpPower: player.jumpPower,
+                healRate: player.healRate
                 ),
             Position = player.transform.position,
             Scale = player.transform.localScale,
@@ -664,7 +666,13 @@ public class CharacterManager : MonoBehaviour
             if (isAttackerAlive && RoomModel.Instance.ConnectionId == damageData.AttackerId)
             {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
                 var plBase = playerObjSelf.GetComponent<PlayerBase>();
-                if (plBase.DmgHealRate >= 0) plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
+
+                if (plBase.DmgHealRate > 0)
+                {
+                    plBase.HP += (int)(damageData.Damage * plBase.DmgHealRate);
+
+                    if (plBase.HP > plBase.MaxHP) plBase.HP = plBase.MaxHP;
+                }
             }
 
             if (damageData.Exp > 0)
