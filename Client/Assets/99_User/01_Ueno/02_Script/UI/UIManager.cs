@@ -290,8 +290,9 @@ public class UIManager : MonoBehaviour
             + SpawnManager.Instance.KnockTermsNum + "体倒せ";
 
         level = LevelManager.Instance;
+        int gameLevel = Mathf.Clamp(LevelManager.GameLevel, 0, level.LevelName.Count - 1);
 
-        diffText.text = level.LevelName[(DIFFICULTY_TYPE)LevelManager.GameLevel].ToString();
+        diffText.text = level.LevelName[(DIFFICULTY_TYPE)gameLevel].ToString();
         colorCode = "#ffc0cb";
 
         if (ColorUtility.TryParseHtmlString(colorCode, out color))

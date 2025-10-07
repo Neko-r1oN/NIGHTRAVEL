@@ -942,6 +942,8 @@ abstract public class EnemyBase : CharacterBase
             if (nearPlayer != null)
             {
                 target = nearPlayer;    // 一時的にターゲットに設定
+                LookAtTarget();
+
                 bool isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
                 if (!isTargetVisible) target = null;
             }
