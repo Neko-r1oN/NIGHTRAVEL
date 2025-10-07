@@ -320,11 +320,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:ñÿìcçWï„
     /// </summary>
     /// <param name="user"></param>
-    public void OnLeave(JoinedUser joinedUser)
+    public void OnLeave(Dictionary<Guid,JoinedUser> joinedUser, Guid targetUser)
     {
-        if (joinedUserList.ContainsKey(joinedUser.ConnectionId))
-            joinedUserList.Remove(joinedUser.ConnectionId);
-        OnLeavedUser(joinedUser);
+        int i = 1;
+        JoinedUser leaveUser = joinedUser[targetUser];
+        joinedUserList = joinedUser;
+        joinedUserList.Remove(targetUser);
+        foreach(var user in joinedUserList)
+        {
+            user.Value.JoinOrder = i;
+            i++;
+        }
+
+        OnLeavedUser(leaveUser);
     }
 
     /// <summary>
@@ -333,6 +341,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// </summary>
     public void OnChangeCharacter(Guid guid , int characterId)
     {
+        joinedUserList[guid].CharacterID = characterId;
         OnChangedCharacter(guid,characterId);
     }
 

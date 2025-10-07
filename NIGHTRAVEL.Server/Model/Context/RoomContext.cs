@@ -252,10 +252,16 @@ namespace NIGHTRAVEL.Server.Model.Context
         /// <returns></returns>
         public void RemoveUser(Guid guid)
         {
+            int joinOrder = 1;
             if (JoinedUserList != null)
             { //参加者リストが存在している場合
                 // 退出したユーザーを特定して削除
                 JoinedUserList.Remove(guid);
+                foreach (var joinUser in JoinedUserList)
+                {
+                    joinUser.Value.JoinOrder = joinOrder;
+                    joinOrder++;
+                }
             }
         }
 
