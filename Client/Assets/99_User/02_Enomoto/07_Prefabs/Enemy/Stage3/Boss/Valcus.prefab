@@ -5094,7 +5094,7 @@ Transform:
   m_GameObject: {fileID: 639776188848148703}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: -9.3, z: 0}
+  m_LocalPosition: {x: 4, y: -9.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24964,7 +24964,7 @@ Transform:
   m_GameObject: {fileID: 2259912127679893959}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.010002136, y: -3.7000008, z: 0}
+  m_LocalPosition: {x: 0.010002136, y: -3.950001, z: 0}
   m_LocalScale: {x: -0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -49951,7 +49951,7 @@ Transform:
   m_GameObject: {fileID: 5171090926232071322}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 0}
+  m_LocalPosition: {x: 4, y: -0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -55051,7 +55051,7 @@ Transform:
   m_GameObject: {fileID: 6139822022530137864}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.5, y: -3.9, z: 0}
+  m_LocalPosition: {x: -3.5, y: -4.15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -60087,7 +60087,7 @@ Transform:
   m_GameObject: {fileID: 6537609773714005122}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.998, z: 0}
+  m_LocalPosition: {x: 0, y: -3.248, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -60118,7 +60118,7 @@ Transform:
   m_GameObject: {fileID: 6634907876123158216}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.93, y: -0.56, z: 0}
+  m_LocalPosition: {x: 1.93, y: -0.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -89780,7 +89780,8 @@ MonoBehaviour:
   dontRemoveOnDeath: 0
   spawnGroundOffset: 4
   spawnWeight: 1
-  canDrawRay: 1
+  checkObstacleRange: 3.5
+  canDrawRay: 0
   baseExp: 1370
   exp: 1370
   meleeAttackCheck: {fileID: 92348239390412121}
@@ -89827,7 +89828,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.25}
+  m_Offset: {x: 0, y: 0}
   m_Size: {x: 5.5, y: 6.8}
   m_Direction: 0
 --- !u!70 &6605084902682472282
@@ -89864,7 +89865,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.25}
+  m_Offset: {x: 0, y: 0}
   m_Size: {x: 5.5, y: 6.8}
   m_Direction: 0
 --- !u!50 &5488564133610804209

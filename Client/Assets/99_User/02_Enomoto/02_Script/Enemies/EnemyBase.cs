@@ -163,6 +163,10 @@ abstract public class EnemyBase : CharacterBase
     [Foldout("スポーン関連")]
     [SerializeField]
     protected int spawnWeight = 1;  // スポーンの抽選する際の重み
+
+    [Foldout("スポーン関連")]
+    [SerializeField]
+    protected float checkObstacleRange = 1; // 障害物を検知する範囲
     #endregion
 
     #region システム
@@ -1095,6 +1099,21 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
+    #region チェック関連
+
+    /// <summary>
+    /// 指定した座標にスポーンする場合、障害物と重なるかどうかチェックする
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public bool IsOverlappingObstacle(Vector2 point)
+    {
+        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick") | LayerMask.GetMask("Scaffold");
+        return Physics2D.OverlapCircle(point, checkObstacleRange, terrainLayerMask);
+    }
+
+    #endregion
+
     #region Debug描画処理関連
 
     /// <summary>
@@ -1116,6 +1135,9 @@ abstract public class EnemyBase : CharacterBase
         }
 
         DrawDetectionGizmos();
+
+        Gizmos.color = Color.azure;
+        Gizmos.DrawWireSphere(transform.position, checkObstacleRange);
     }
 
     #endregion

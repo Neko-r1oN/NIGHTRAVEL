@@ -32,6 +32,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
     int fivePercentOfMaxFloor;
     List<Vector3> enemySpawnPosList = new List<Vector3>();
+
+    LayerMask terrainLayerMask; // 地形のマスク(ギミック含む)
     #endregion
 
     #region ステージ情報
@@ -65,11 +67,12 @@ public class SpawnManager : MonoBehaviour
     public bool IsSpawnBoss { get {  return isBossActive; } set {  isBossActive = value; } }
     #endregion
 
+    #region 敵撃破関連
     int crashNum = 0; 　　　　　// 撃破数
     public int CrashNum { get { return crashNum; } set { crashNum = value; } }
+    #endregion
 
-    CharacterManager characterManager;
-
+    #region シングルトン
     private static SpawnManager instance;
 
     public static SpawnManager Instance
@@ -79,6 +82,9 @@ public class SpawnManager : MonoBehaviour
             return instance;
         }
     }
+    #endregion
+
+    CharacterManager characterManager;
 
     private void Awake()
     {
@@ -91,6 +97,8 @@ public class SpawnManager : MonoBehaviour
             // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
+
+        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick") | LayerMask.GetMask("Scaffold");
 
         // RoomModelが実行してない場合はここから下は実行しない
         if (RoomModel.Instance == null) return;
@@ -108,7 +116,7 @@ public class SpawnManager : MonoBehaviour
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
-        StartCoroutine(WaitAndStartCoroutine(2f));
+        StartCoroutine(SpawnCoroutin(2f));
     }
 
     private void OnDisable()
@@ -118,8 +126,15 @@ public class SpawnManager : MonoBehaviour
         RoomModel.Instance.OnSpawndEnemy -= this.OnSpawnEnemy;
     }
 
-    IEnumerator SpawnCoroutin()
+    /// <summary>
+    /// 一定間隔で敵生成処理呼び出し
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
+    IEnumerator SpawnCoroutin(float delay)
     {
+        yield return new WaitForSeconds(delay);
+
         while (true)
         {
             if (GameManager.Instance.IsGameStart)
@@ -157,12 +172,6 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    IEnumerator WaitAndStartCoroutine(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        StartCoroutine(SpawnCoroutin());
-    }
-
     /// <summary>
     /// 敵のプレファブ情報をまとめる
     /// </summary>
@@ -176,46 +185,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 敵生成の位置決定処理
-    /// </summary>
-    /// <param name="minRange"></param>
-    /// <param name="maxRange"></param>
-    /// <returns></returns>
-    public Vector3? GenerateEnemySpawnPosition(Vector3 minRange, Vector3 maxRange, EnemyBase enemyBase)
-    {
-        // 試行回数
-        int loopMax = 100;
-
-        for (int i = 0; i < loopMax; i++)
-        {
-            int seed = System.DateTime.Now.Millisecond + i;
-            Random.InitState(seed);  // Unityの乱数にシードを設定
-
-            Vector3 spawnPos = new Vector3
-                 (Random.Range(minRange.x, maxRange.x), Random.Range(minRange.y, maxRange.y));
-
-            Vector2? pos = IsGroundCheck(spawnPos);
-            if (pos != null && !enemySpawnPosList.Contains(spawnPos))
-            {
-                // listの中にない場合、リストにadd
-                enemySpawnPosList.Add(spawnPos);
-
-                LayerMask mask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick");
-
-                Vector2 result = (Vector2)pos;
-
-                result.y += enemyBase.SpawnGroundOffset;
-
-                if (!Physics2D.OverlapCircle(new Vector2(result.x, result.y + 1), 0.8f, mask))
-                {
-                    return result;
-                }
-            }
-        }
-
-        return null;
-    }
+    #region 敵生成関連
 
     /// <summary>
     /// 敵生成処理
@@ -243,22 +213,18 @@ public class SpawnManager : MonoBehaviour
                 continue;
             }
             ENEMY_TYPE enemyType = (ENEMY_TYPE)emitResult;
-
             EnemyBase enemyBase = idEnemyPrefabPairs[enemyType].GetComponent<EnemyBase>();
 
-            Vector2 spawnRight = playerPos + Vector2.right * spawnRangeOffset;
-            Vector2 spawnLeft = playerPos + Vector2.left * spawnRangeOffset;
+            // 対象のプレイヤーを軸とした生成範囲取得
+            var spawnRightMinPoint = (playerPos + Vector2.right * spawnRangeOffset) - spawnRange / 2;
+            var spawnRightMaxPoint = (playerPos + Vector2.right * spawnRangeOffset) + spawnRange / 2;
+            var spawnLeftMinPoint = (playerPos + Vector2.left * spawnRangeOffset) - spawnRange / 2;
+            var spawnLeftMaxPoint = (playerPos + Vector2.left * spawnRangeOffset) + spawnRange / 2;
 
-            Vector2 minSpawnRight = spawnRight - spawnRight / 2;
-            Vector2 maxSpawnRight = spawnRight + spawnRight / 2;
-
-            Vector2 minSpawnLeft = spawnLeft - spawnLeft / 2;
-            Vector2 maxSpawnLeft = spawnLeft + spawnLeft / 2;
-
+            // ランダムな生成可能の座標を抽選
             Vector3? spawnRightPosCandidate = null, spawnLeftPosCandidate = null, spawnPos = null;
-
-            spawnRightPosCandidate = GenerateEnemySpawnPosition(minSpawnRight, maxSpawnRight, enemyBase);
-            spawnLeftPosCandidate = GenerateEnemySpawnPosition(minSpawnLeft, maxSpawnLeft, enemyBase);
+            spawnRightPosCandidate = EmitEnemySpawnPosition(spawnRightMinPoint, spawnRightMaxPoint, enemyBase);
+            spawnLeftPosCandidate = EmitEnemySpawnPosition(spawnLeftMinPoint, spawnLeftMaxPoint, enemyBase);
 
             if (spawnLeftPosCandidate != null && spawnRightPosCandidate != null)
             {
@@ -318,7 +284,7 @@ public class SpawnManager : MonoBehaviour
 
             EnemyBase enemyBase = idEnemyPrefabPairs[enemyType].GetComponent<EnemyBase>();
 
-            Vector3? spawnPos = GenerateEnemySpawnPosition(minPos, maxPos, enemyBase);
+            Vector3? spawnPos = EmitEnemySpawnPosition(minPos, maxPos, enemyBase);
 
             if (spawnPos != null)
             {
@@ -336,27 +302,116 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    [ContextMenu("SpawnBoss")]
+    public void SpawnBoss()
+    {
+        if (!isBossActive)
+        {
+            bossTerminal = GameObject.Find("6_BossTerminal(Clone)");
+            int childrenCnt = bossTerminal.transform.childCount;
+            List<Transform> children = new List<Transform>();
+            for (int i = 0; i < childrenCnt; i++)
+            {
+                children.Add(bossTerminal.transform.GetChild(i));
+            }
+
+            EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
+            Vector3? spawnPos =
+                EmitEnemySpawnPosition(children[0].position, children[1].position, bossEnemy);
+
+            List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
+
+            if (spawnPos != null)
+            {// 返り値がnullじゃないとき
+                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
+
+                List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
+                {
+                    new EnemySpawnEntry(bossId, (Vector3)spawnPos, bossEnemy.transform.localScale)
+                };
+
+                #region サーバーにワームの各パーツの情報を登録するための処理
+
+                // ワームを生成する場合、ワームの各パーツも生成情報に含める (※SpawnEnemy()で実際に生成はしない)
+                List<FullMetalBody> bodys = new List<FullMetalBody>(
+                    bossEnemy.transform.gameObject.GetComponentsInChildren<FullMetalBody>(true));
+                if (bodys.Count > 0)
+                {
+                    foreach (var body in bodys)
+                    {
+                        // 事前に設定されてある識別用ID(body.UniqueId)もデータに追加する
+                        entrys.Add(new EnemySpawnEntry(ENEMY_TYPE.MetalBody, Vector3.zero, Vector3.zero, body.UniqueId));
+                    }
+                }
+                #endregion
+
+                spawnEnemyDatas = CreateSpawnEnemyDatas(entrys, spawnType, false);
+            }
+
+            isBossActive = true;
+
+            SpawnEnemyRequest(spawnEnemyDatas.ToArray());
+        }
+    }
+
+    #endregion
+
+    #region チェック処理関連
+
+    /// <summary>
+    /// 敵生成の座標抽選処理
+    /// </summary>
+    /// <param name="minRange"></param>
+    /// <param name="maxRange"></param>
+    /// <returns></returns>
+    Vector3? EmitEnemySpawnPosition(Vector3 minRange, Vector3 maxRange, EnemyBase enemyBase)
+    {
+        // 試行回数
+        int loopMax = 100;
+
+        for (int i = 0; i < loopMax; i++)
+        {
+            int seed = System.DateTime.Now.Millisecond + i;
+            Random.InitState(seed);  // Unityの乱数にシードを設定
+
+            float rndX = Random.Range(minRange.x, maxRange.x);
+            float rndY = Random.Range(minRange.y, maxRange.y);
+            Vector3 rndPos = new Vector3(rndX, rndY);
+
+            Vector2? groundPos = IsGroundCheck(rndPos); // 地面の上に生成可能かチェック
+            if (groundPos != null)
+            {
+                Vector2 spawnPos = (Vector2)groundPos + Vector2.up * enemyBase.SpawnGroundOffset;
+
+                // 障害物が重なっていない かつ 生成座標が重複していない場合は成功
+                if (!enemyBase.IsOverlappingObstacle(spawnPos) && !enemySpawnPosList.Contains(spawnPos))
+                {
+                    enemySpawnPosList.Add(spawnPos);
+                    return spawnPos;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// 床チェック
     /// </summary>
     /// <param name="rayOrigin"></param>
     /// <returns></returns>
-    private Vector2? IsGroundCheck(Vector3 rayOrigin)
+    Vector2? IsGroundCheck(Vector3 rayOrigin)
     {
-        LayerMask mask = LayerMask.GetMask("Default");
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, float.MaxValue, terrainLayerMask);
 
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, float.MaxValue, mask);
-
-        Debug.DrawRay((Vector2)rayOrigin, Vector2.down * hit.distance, Color.red);
-        if (hit && hit.collider.gameObject.CompareTag("ground"))
-        {
-            return hit.point;
-        }
-        else
-        {
-            return null;
-        }
+        //Debug.DrawRay((Vector2)rayOrigin, Vector2.down * hit.distance, Color.red);
+        if(hit && hit.transform.tag != "ClearWall") return hit.point;
+        else return null;
     }
+
+    #endregion
+
+    #region 抽選処理
 
     /// <summary>
     /// 敵の出現確率の抽出
@@ -431,6 +486,10 @@ public class SpawnManager : MonoBehaviour
         return entryType;
     }
 
+    #endregion
+
+    #region スポーンデータ作成
+
     /// <summary>
     /// 複数の生成する敵のデータ作成
     /// </summary>
@@ -491,6 +550,10 @@ public class SpawnManager : MonoBehaviour
             TerminalID = -1,
         };
     }
+
+    #endregion
+
+    #region 生成実行処理
 
     /// <summary>
     /// 端末用敵生成処理
@@ -586,6 +649,24 @@ public class SpawnManager : MonoBehaviour
         return enemyObj;
     }
 
+    #endregion
+
+    #region デバック用
+
+    private void OnDrawGizmos()
+    {
+        if (CharacterManager.Instance && CharacterManager.Instance.PlayerObjSelf)
+        {
+            var player = CharacterManager.Instance.PlayerObjSelf;
+            Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // 右
+            Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.left * spawnRangeOffset, spawnRange);   // 左
+        }
+    }
+
+    #endregion
+
+    #region リアルタイム同期用
+
     #region リクエスト関連
 
     /// <summary>
@@ -633,65 +714,5 @@ public class SpawnManager : MonoBehaviour
 
     #endregion
 
-    private void OnDrawGizmos()
-    {
-        if (CharacterManager.Instance && CharacterManager.Instance.PlayerObjSelf)
-        {
-            var player = CharacterManager.Instance.PlayerObjSelf;
-            Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.right * spawnRangeOffset, spawnRange);  // 右
-            Gizmos.DrawWireCube((Vector2)player.transform.position + Vector2.left * spawnRangeOffset, spawnRange);   // 左
-        }
-    }
-
-    [ContextMenu("SpawnBoss")]
-    public void SpawnBoss()
-    {
-        if (!isBossActive)
-        {
-            bossTerminal = GameObject.Find("6_BossTerminal(Clone)");
-            int childrenCnt = bossTerminal.transform.childCount;
-            List<Transform> children = new List<Transform>();
-            for (int i = 0; i < childrenCnt; i++)
-            {
-                children.Add(bossTerminal.transform.GetChild(i));
-            }
-
-            EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
-            Vector3? spawnPos =
-                GenerateEnemySpawnPosition(children[0].position, children[1].position, bossEnemy);
-
-            List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
-
-            if (spawnPos != null)
-            {// 返り値がnullじゃないとき
-                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
-
-                List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
-                {
-                    new EnemySpawnEntry(bossId, (Vector3)spawnPos, bossEnemy.transform.localScale)
-                };
-
-                #region サーバーにワームの各パーツの情報を登録するための処理
-
-                // ワームを生成する場合、ワームの各パーツも生成情報に含める (※SpawnEnemy()で実際に生成はしない)
-                List<FullMetalBody> bodys = new List<FullMetalBody>(
-                    bossEnemy.transform.gameObject.GetComponentsInChildren<FullMetalBody>(true));
-                if (bodys.Count > 0)
-                {
-                    foreach (var body in bodys)
-                    {
-                        // 事前に設定されてある識別用ID(body.UniqueId)もデータに追加する
-                        entrys.Add(new EnemySpawnEntry(ENEMY_TYPE.MetalBody, Vector3.zero, Vector3.zero, body.UniqueId));
-                    }
-                }
-                #endregion
-
-                spawnEnemyDatas = CreateSpawnEnemyDatas(entrys, spawnType, false);
-            }
-
-            isBossActive = true;
-
-            SpawnEnemyRequest(spawnEnemyDatas.ToArray());
-        }
-    }
+    #endregion
 }

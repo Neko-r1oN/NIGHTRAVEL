@@ -56,7 +56,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776841400715568972}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7055473, w: 0.7086629}
+  m_LocalRotation: {x: -0, y: -0, z: 0.70554763, w: 0.7086625}
   m_LocalPosition: {x: 2.5149138, y: 0.00000008605733, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -276,7 +276,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005956343500769160}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.17574061, w: 0.9844365}
+  m_LocalRotation: {x: -0, y: -0, z: 0.17574093, w: 0.98443645}
   m_LocalPosition: {x: 1.9913962, y: -0.0000000843482, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -307,7 +307,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2359600346803599084}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.9946012, w: 0.10377182}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9946012, w: 0.103771426}
   m_LocalPosition: {x: -0.12842193, y: 1.0218105, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -768,7 +768,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3273262919947552793}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.99489915, w: 0.100874774}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9948992, w: 0.10087427}
   m_LocalPosition: {x: -0.15535359, y: -0.81593347, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6017,7 +6017,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4578401181021637318}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.70497316, w: 0.709234}
+  m_LocalRotation: {x: -0, y: -0, z: 0.70497346, w: 0.7092337}
   m_LocalPosition: {x: 2.4456146, y: 0.00000021907046, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6079,7 +6079,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4932585834600796553}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.9824803, w: 0.18636681}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9824802, w: 0.18636715}
   m_LocalPosition: {x: 1.8511009, y: 2.2858481, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6344,7 +6344,8 @@ MonoBehaviour:
   dontRemoveOnDeath: 0
   spawnGroundOffset: 2
   spawnWeight: 10
-  canDrawRay: 1
+  checkObstacleRange: 1.45
+  canDrawRay: 0
   baseExp: 40
   exp: 40
   meleeAttackCheck: {fileID: 5599692221346466547}
