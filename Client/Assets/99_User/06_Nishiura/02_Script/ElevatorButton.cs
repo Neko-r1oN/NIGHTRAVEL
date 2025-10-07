@@ -33,7 +33,7 @@ public class ElevatorButton : GimmickBase
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && isEnterd && !elevatorScript.isMoving && !isCoolDown)
+        if ((Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Interact")) && isEnterd && !elevatorScript.isMoving && !isCoolDown)
         {
             isCoolDown = true;
             Invoke("InvoeCoolTime", 2f);
