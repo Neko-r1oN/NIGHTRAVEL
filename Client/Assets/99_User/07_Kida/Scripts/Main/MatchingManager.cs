@@ -102,9 +102,9 @@ public class MatchingManager : MonoBehaviour
 
     public async void SerchRoom()
     {
+        conducter.Loading();
         //roomSerchName = inputFieldSerchRoomName.text;
         await RoomModel.Instance.SearchRoomAsync();
-        conducter.Loading();
     }
 
     private void Loaded()

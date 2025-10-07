@@ -51,7 +51,10 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Kida
         /// </summary>
         /// <param name="user">対象者</param>
-        void OnLeave(JoinedUser user);
+        //void OnLeave(JoinedUser user);
+
+        void OnLeave(Dictionary<Guid,JoinedUser> user,Guid targetUser);
+
 
         /// <summary>
         /// キャラクター変更通知

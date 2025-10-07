@@ -1,8 +1,10 @@
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
@@ -16,14 +18,17 @@ public class StandbyManager : MonoBehaviour
     [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject fade;
     [SerializeField] GameObject[] characterImage;
-    [SerializeField] GameObject playerReadyFieldPrehub;
     [SerializeField] GameObject readyButton;
     [SerializeField] Text characterNameText;
+    [SerializeField] GameObject playerIconPrefab;
+    [SerializeField] Transform playerIconsZone;
     [SerializeField] Image[] iconImages;
     [SerializeField] Sprite[] iconCharacterImage;
     [SerializeField] Text logTextPrefab;
-
     [SerializeField] GameObject logs;
+    [SerializeField] List<GameObject> logList;
+
+    public List<GameObject> playerIcons;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,13 +42,16 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnReadySyn += this.OnReadySyn;
         //ゲーム開始が出来る状態の時にメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnStartedGame += this.OnStartedGame;
+        //マスタークライアント譲渡
+        RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
 
-        for (int i = 0; i < RoomModel.Instance.joinedUserList.Count; i++) 
-        {
-            Instantiate(playerReadyFieldPrehub);
-        }
 
+        //アイコンを更新
+        Loading();
+        Invoke("UpdatePlayerIcon", 1.0f);
+        Invoke("Loaded", 3.0f);
     }
+
 
     private void OnDisable()
     {
@@ -51,6 +59,43 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnLeavedUser -= this.OnLeavedUser;
         RoomModel.Instance.OnReadySyn -= this.OnReadySyn;
         RoomModel.Instance.OnStartedGame -= this.OnStartedGame;
+        RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
+    }
+
+    public void UpdatePlayerIcon()
+    {
+        foreach(var icon in playerIcons)
+        {
+            Destroy(icon);
+        }
+        playerIcons.Clear();
+        //初期化
+        //GameObject playerN = new GameObject();
+        //GameObject userN = new GameObject();
+        int i = 0;
+
+        foreach (var joinedUser in RoomModel.Instance.joinedUserList)
+        {
+            GameObject gameObject = Instantiate(playerIconPrefab);
+            gameObject.transform.parent = playerIconsZone;
+
+            //子オブジェクトを探す
+            GameObject playerN = gameObject.transform.Find("Number").gameObject;
+            GameObject userN = gameObject.transform.Find("name").gameObject;
+
+            Text playerNText = playerN.GetComponent<Text>();
+            Text userNText = userN.GetComponent<Text>();
+
+            
+            playerNText.text = RoomModel.Instance.joinedUserList[joinedUser.Key].JoinOrder.ToString() + "P";
+            userNText.text = RoomModel.Instance.joinedUserList[joinedUser.Key].UserData.Name;
+            
+
+            playerIcons.Add(gameObject);
+            iconImages[i] = gameObject.transform.Find("IconBG").gameObject.transform.Find("Icon").gameObject.GetComponent<Image>();
+            iconImages[i].sprite = iconCharacterImage[joinedUser.Value.CharacterID];
+            i++;
+        }
     }
 
     public async void ReturnMaching()
@@ -98,11 +143,18 @@ public class StandbyManager : MonoBehaviour
         iconImages[RoomModel.Instance.joinedUserList[guid].JoinOrder-1].sprite = iconCharacterImage[changeIconId];
     }
 
+    private void Loading()
+    {
+        conducter.Loading();
+    }
+
 
     private void Loaded()
     {
         conducter.Loaded();
     }
+
+
 
 
     /// <summary>
@@ -166,14 +218,14 @@ public class StandbyManager : MonoBehaviour
     /// </summary>
     public void OnJoinedUser(JoinedUser joinedUser)
     {
-        foreach (var data in RoomModel.Instance.joinedUserList.Values)
-        {
-            //入室したときの処理を書く
-            Debug.Log(data.UserData.Name + "が入室しました。");
-            Text gameObject = Instantiate(logTextPrefab);
-            gameObject.text = data.UserData.Name+ "が入室しました。";
-            gameObject.transform.position = logs.transform.position;
-        }
+        //入室したときの処理を書く
+        Debug.Log(joinedUser.UserData.Name + "が入室しました。");
+        Text gameObject = Instantiate(logTextPrefab);
+        gameObject.text = joinedUser.UserData.Name + "が入室しました。";
+        gameObject.transform.parent = logs.transform;
+        gameObject.transform.position = logs.transform.position;
+        logList.Add(gameObject.gameObject);
+        UpdatePlayerIcon();
     }
 
     /// <summary>
@@ -186,7 +238,10 @@ public class StandbyManager : MonoBehaviour
         Debug.Log(joinedUser.UserData.Name + "が退室しました。");
         Text gameObject = Instantiate(logTextPrefab);
         gameObject.text = joinedUser.UserData.Name + "が退室しました。";
+        gameObject.transform.parent = logs.transform;
         gameObject.transform.position = logs.transform.position;
+        logList.Add(gameObject.gameObject);
+        UpdatePlayerIcon();
     }
 
     /// <summary>
@@ -197,6 +252,12 @@ public class StandbyManager : MonoBehaviour
     {
         //準備完了したときの処理を書く
         Debug.Log(guid.ToString() + "準備完了！！");
+        playerIcons[RoomModel.Instance.joinedUserList[guid].JoinOrder-1].GetComponent<Image>().color =new Color(255.0f,183.0f,0.0f);
+        Text gameObject = Instantiate(logTextPrefab);
+        gameObject.text = RoomModel.Instance.joinedUserList[guid].UserData.Name + "準備完了！！";
+        gameObject.transform.parent = logs.transform;
+        gameObject.transform.position = logs.transform.position;
+        logList.Add(gameObject.gameObject);
     }
 
     /// <summary>
@@ -212,5 +273,14 @@ public class StandbyManager : MonoBehaviour
         SceneManager.LoadScene("4_Stage_01");
         Invoke("Loaded", 1.0f);
 
+    }
+
+    /// <summary>
+    /// マスタークライアント譲渡通知
+    /// Aughter:木田晃輔
+    /// </summary>
+    public void OnChangedMasterClient()
+    {
+        Debug.Log("あなたがルームのホストになりました。");
     }
 }

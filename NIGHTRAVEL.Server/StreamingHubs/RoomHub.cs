@@ -218,14 +218,15 @@ namespace StreamingHubs
                     roomService.RemoveRoom(this.roomContext.Name);
                 }
 
-                // ルーム参加者全員に、ユーザーの退室通知を送信
-                this.roomContext.Group.All.OnLeave(joinedUser);
+                //// ルーム参加者全員に、ユーザーの退室通知を送信
+                this.roomContext.Group.All.OnLeave(roomContext.JoinedUserList, this.ConnectionId);
 
                 //　ルームから退室
                 this.roomContext.Group.Remove(this.ConnectionId);
 
                 //コンテキストからユーザーを削除
                 roomContext.RemoveUser(this.ConnectionId);
+
 
                 // ルームデータから自身のデータを削除
                 roomContext.characterDataList.Remove(this.ConnectionId);;
@@ -242,6 +243,7 @@ namespace StreamingHubs
         {
             lock(roomContextRepository) //排他制御
             {
+                this.roomContext.JoinedUserList[this.ConnectionId].CharacterID = characterId;
                 this.roomContext.Group.All.OnChangeCharacter(this.ConnectionId , characterId);
             }
         }
