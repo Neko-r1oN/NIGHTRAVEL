@@ -1340,7 +1340,7 @@ namespace StreamingHubs
         {
             var statusData = this.roomContext.playerStatusDataList[this.ConnectionId];
             CharacterStatusData status = new CharacterStatusData(statusData.Item1);     // 実際に更新はしない
-            PlayerRelicStatusData relicStatus = statusData.Item2;   // インスタンス取得
+            PlayerRelicStatusData relicStatus = new PlayerRelicStatusData();
 
             // ここで所持レリックを基にresultDataを更新する
             foreach (var relic in this.roomContext.relicDataList[this.ConnectionId])

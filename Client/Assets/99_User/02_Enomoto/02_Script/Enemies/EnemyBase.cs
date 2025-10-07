@@ -786,7 +786,8 @@ abstract public class EnemyBase : CharacterBase
 
             if (CharacterManager.Instance.GetEnemysByTerminalID(termId).Count == 0)
             {   // ¶¬’[––‚Ì“G‚ª‘Sˆõ“|‚³‚ê‚½‚ç•ñVo‚·
-                TerminalManager.Instance.TerminalObjs[termId].GetComponent<TerminalBase>().SuccessRequest();
+                if (RoomModel.Instance.IsMaster)
+                    TerminalManager.Instance.TerminalObjs[termId].GetComponent<TerminalBase>().SuccessRequest();
             }
         }
         else
