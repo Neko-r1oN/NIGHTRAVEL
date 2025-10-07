@@ -61,5 +61,12 @@ namespace Shared.Interfaces.StreamingHubs
         /// Author:Enomoto
         /// </summary>
         public List<Vector2> Vector2s { get; set; } = new List<Vector2>();
+
+        [Key(15)]
+        /// <summary>
+        /// 獲得可能経験値量
+        /// Author:Enomoto
+        /// </summary>
+        public int Exp { get; set; }
     }
 }
