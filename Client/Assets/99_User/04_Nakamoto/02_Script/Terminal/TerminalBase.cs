@@ -239,6 +239,9 @@ public abstract class TerminalBase : MonoBehaviour
     /// </summary>
     public void SuccessTerminal()
     {
+        if (RoomModel.Instance)
+            TerminalManager.Instance.TerminalDatas[terminalID - 1].State = EnumManager.TERMINAL_STATE.Success;
+
         // カウントダウンを停止する
         CancelInvoke("CountDown");
 
