@@ -187,7 +187,7 @@ public class UIManager : MonoBehaviour
 
     int windowCnt = 0;   // ウィンドウが表示できるカウント(一度だけ使う)
     int lastLevel = 0;   // レベルアップ前のレベル
-    int statusStock = 0; // レベルアップストック数
+    static int statusStock = 0; // レベルアップストック数
     bool isStatusWindow; // ステータスウィンドウが開けるかどうか
     bool isHold;         // ステータスウィンドウロック用
     string colorCode;    // カラーコード
@@ -296,6 +296,12 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < playerStatus.Count; i++)
         {
             playerStatus[i].SetActive(false);
+        }
+
+        if(statusStock > 0)
+        {
+            levelUpText.enabled = true;
+            isStatusWindow = true;
         }
 
         clashNumText.text = "条件:0/" + SpawnManager.Instance.KnockTermsNum;
