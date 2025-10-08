@@ -601,7 +601,7 @@ public class CharacterManager : MonoBehaviour
     /// <param name="playerData"></param>
     void OnUpdatePlayer(PlayerData playerData)
     {
-        if (!playerObjs.ContainsKey(playerData.ConnectionId)) return;
+        if (!playerObjs.ContainsKey(playerData.ConnectionId) || !RoomModel.Instance) return;
 
         // プレイヤーの情報更新
         var player = playerObjs[playerData.ConnectionId].GetComponent<PlayerBase>();
