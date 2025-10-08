@@ -92,6 +92,9 @@ public class UIManager : MonoBehaviour
                                                          
     [Foldout("ウィンドウ関係")]                          
     [SerializeField] GameObject statusUpWindow;          // ステータス強化ウィンドウ
+    [Foldout("ウィンドウ関係")]
+    bool isOpenStatusWindow;
+    public bool IsOpenStatusWindow { get { return isOpenStatusWindow; } }
     [Foldout("ウィンドウ関係")]                          
     [SerializeField] float windowTime;                   // ウィンドウが表示される秒数
     [Foldout("ウィンドウ関係")]                          
@@ -165,6 +168,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] List<Image> iconImages;
     [Foldout("ステータスアイコン関連")]
     [SerializeField] List<Material> rarityMaterials;
+
+    [SerializeField] List<GameObject> buttonIcons;
 
     //[SerializeField] Button cube;
     private Gamepad gamepad;
@@ -381,22 +386,26 @@ public class UIManager : MonoBehaviour
         }
         else if (gamepad != null)
         {
-            if (isStatusWindow && Input.GetButtonDown("Submit"))
+            if (isOpenStatusWindow && Input.GetButtonDown("Submit"))
+            {
+                CloseStatusWindow();
+            }
+            else if (isStatusWindow && Input.GetButtonDown("Submit"))
             {
                 OpenStatusWindow();
             }
 
-            if(statusUpWindow.activeSelf == true)
+            if (statusUpWindow.activeSelf == true)
             {
-                if (gamepad.dpad.left.isPressed)
+                if (Input.GetButtonDown("Attack1"))
                 {
                     statusUpButtons[0].onClick.Invoke();
                 }
-                else if (gamepad.dpad.up.isPressed)
+                else if (Input.GetButtonDown("Attack2"))
                 {
                     statusUpButtons[1].onClick.Invoke();
                 }
-                else if (gamepad.dpad.right.isPressed)
+                else if (Input.GetButtonDown("Blink"))
                 {
                     statusUpButtons[2].onClick.Invoke();
                 }
@@ -415,7 +424,7 @@ public class UIManager : MonoBehaviour
         }
         if (player == null) return;
 
-        if (SpawnManager.Instance.IsSpawnBoss)
+        if (SpawnManager.Instance.IsBossActive)
         {// ボスがスポーンした
             if (windowCnt <= 0)
             {// ウィンドウが一回も出ていないとき
@@ -615,6 +624,7 @@ public class UIManager : MonoBehaviour
     {
         if (isStatusWindow)
         {
+            isOpenStatusWindow = true;
             statusUpWindow.SetActive(true);
 
             var pair = LevelManager.Options.FirstOrDefault();
@@ -644,6 +654,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public async void UpPlayerStatus(int buttonId)
     {
+
         // 選択したステータス強化選択肢を取得して削除
         var values = LevelManager.Options.FirstOrDefault().Value;
         var key = LevelManager.Options.FirstOrDefault().Key;
@@ -673,6 +684,7 @@ public class UIManager : MonoBehaviour
 
         // ステータス強化回数の減少
         statusStock--;
+        Debug.Log(statusStock);
 
         levelUpStock.text = "残り強化数：" + statusStock;
 
@@ -750,6 +762,7 @@ public class UIManager : MonoBehaviour
         if (!isHold)
         {// ホールド状態でないとき
             // ウィンドウを閉じる
+            isOpenStatusWindow = false;
             statusUpWindow.SetActive(false);
         }
     }
@@ -782,7 +795,7 @@ public class UIManager : MonoBehaviour
         {
             relicBanner.SetActive(true);
         }
-        else if (SpawnManager.Instance.IsSpawnBoss)
+        else if (SpawnManager.Instance.IsBossActive)
         {
             bossWindow.SetActive(true);
         }
@@ -1132,12 +1145,22 @@ public class UIManager : MonoBehaviour
     {
         if (mode == "Keyboard")
         {
+            foreach(var icon in buttonIcons)
+            {
+                icon.SetActive(false);
+            }
+
             isInputGamePad = false;
             gamePadUI.SetActive(false);
             keyBoardUI.SetActive(true);
         }
         else if (mode == "Gamepad")
         {
+            foreach (var icon in buttonIcons)
+            {
+                icon.SetActive(true);
+            }
+
             isInputGamePad = true;
             gamePadUI.SetActive(true);
             keyBoardUI.SetActive(false);
@@ -1393,5 +1416,11 @@ public class UIManager : MonoBehaviour
     public void HideCanvas()
     {
         canvas.SetActive(false);
+    }
+
+    // 退出したプレイヤーのステータス削除
+    public void RemovePlayerStatus(int playerNum)
+    {
+        playerStatus[playerNum].gameObject.SetActive(false);
     }
 }
