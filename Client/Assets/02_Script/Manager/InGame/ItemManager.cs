@@ -9,6 +9,7 @@ public class ItemManager : MonoBehaviour
     Dictionary<string, Item> managedItems = new Dictionary<string, Item>();
 
     static ItemManager instance;
+
     public static ItemManager Instance
     {
         get
@@ -88,6 +89,8 @@ public class ItemManager : MonoBehaviour
             managedItems.Remove(itemID);
 
             var player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
+         
+            int getExp = nowExp - player.NowExp;    // Žæ“¾ŒoŒ±’l‚ðŒvŽZ
             player.NowLv = nowLevel;
             player.NowExp = nowExp;
             player.NextLvExp = nextLevelExp;

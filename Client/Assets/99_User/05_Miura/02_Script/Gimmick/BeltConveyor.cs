@@ -7,20 +7,18 @@ public class BeltConveyor : MonoBehaviour
     public float addPowEnemy;
     private void OnTriggerStay2D(Collider2D collision)
     {
-        // 対象がプレイヤーの場合
         if(collision.CompareTag("Player") && collision.gameObject == CharacterManager.Instance.PlayerObjSelf)
-        {
-            //ぶつかったオブジェクトに、addPow分の力を加える
+        { // 対象がプレイヤーの場合
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(addPow, 0));
         }
-        // 対象が敵の場合
+       
         if(collision.CompareTag("Enemy"))
-        {
+        { // 対象が敵の場合
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(addPowEnemy, 0));
         }
-
+       
         if (collision.CompareTag("Object"))
-        {
+        { // 対象がオブジェクトの場合
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(addPowEnemy, 0));
         }
     }
