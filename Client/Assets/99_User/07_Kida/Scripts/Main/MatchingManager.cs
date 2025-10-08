@@ -76,8 +76,14 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnJoinedUser += this.OnJoinedUser;
         #endregion
 
+        //安全動作のための初回ローディング
+        conducter.Loading();
+
+        //ルーム検索
         SerchRoom();
-       
+
+        //ローディング停止
+        Invoke("Loaded", 2.0f);
     }
 
     private void OnDisable()

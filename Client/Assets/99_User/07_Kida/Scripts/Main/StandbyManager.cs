@@ -50,6 +50,9 @@ public class StandbyManager : MonoBehaviour
         Loading();
         Invoke("UpdatePlayerIcon", 1.0f);
         Invoke("Loaded", 3.0f);
+
+        //ログの自動削除
+        InvokeRepeating("LogDelite", 5.0f,5.0f);
     }
 
 
@@ -62,6 +65,10 @@ public class StandbyManager : MonoBehaviour
         RoomModel.Instance.OnChangedMasterClient -= this.OnChangedMasterClient;
     }
 
+    /// <summary>
+    /// プレイヤーアイコンの更新
+    ///  Aughter:木田晃輔
+    /// </summary>
     public void UpdatePlayerIcon()
     {
         foreach(var icon in playerIcons)
@@ -98,6 +105,10 @@ public class StandbyManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// マッチングシーン遷移
+    ///  Aughter:木田晃輔
+    /// </summary>
     public async void ReturnMaching()
     {
         await RoomModel.Instance.LeavedAsync();
@@ -105,6 +116,11 @@ public class StandbyManager : MonoBehaviour
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
+    /// <summary>
+    /// キャラクターを変更
+    ///  Aughter:木田晃輔
+    /// </summary>
+    /// <param name="changeCharacterId"></param>
     public async void ChangeCharacter(int changeCharacterId)
     {
         readyButton.SetActive(true);                                //準備完了ボタンを表示
@@ -135,6 +151,7 @@ public class StandbyManager : MonoBehaviour
 
     /// <summary>
     /// アイコン表示通知
+    ///  Aughter:木田晃輔
     /// </summary>
     /// <param name="guid"></param>
     /// <param name="changeIconId"></param>
@@ -154,7 +171,13 @@ public class StandbyManager : MonoBehaviour
         conducter.Loaded();
     }
 
-
+    private void LogDelite()
+    {
+        if (!RoomModel.Instance || logList.Count == 0) return;
+        GameObject gameObject = logList[0];
+        logList.Remove(gameObject);
+        Destroy(gameObject);
+    }
 
 
     /// <summary>
@@ -175,6 +198,7 @@ public class StandbyManager : MonoBehaviour
     {
         //キャラクターを送る
         int character = characterId;
+        readyButton.SetActive(false);
         await RoomModel.Instance.ReadyAsync(character);
     }
 
@@ -220,11 +244,15 @@ public class StandbyManager : MonoBehaviour
     {
         //入室したときの処理を書く
         Debug.Log(joinedUser.UserData.Name + "が入室しました。");
+
+        //ログの設定
         Text gameObject = Instantiate(logTextPrefab);
         gameObject.text = joinedUser.UserData.Name + "が入室しました。";
         gameObject.transform.parent = logs.transform;
         gameObject.transform.position = logs.transform.position;
         logList.Add(gameObject.gameObject);
+
+        //アイコン更新
         UpdatePlayerIcon();
     }
 
@@ -236,6 +264,8 @@ public class StandbyManager : MonoBehaviour
     {
         //退室したときの処理を書く
         Debug.Log(joinedUser.UserData.Name + "が退室しました。");
+
+        //ログの生成
         Text gameObject = Instantiate(logTextPrefab);
         gameObject.text = joinedUser.UserData.Name + "が退室しました。";
         gameObject.transform.parent = logs.transform;
@@ -252,7 +282,11 @@ public class StandbyManager : MonoBehaviour
     {
         //準備完了したときの処理を書く
         Debug.Log(guid.ToString() + "準備完了！！");
+
+        //アイコンを準備完了が分かるように色を変える
         playerIcons[RoomModel.Instance.joinedUserList[guid].JoinOrder-1].GetComponent<Image>().color =new Color(255.0f,183.0f,0.0f);
+        
+        //ログの生成
         Text gameObject = Instantiate(logTextPrefab);
         gameObject.text = RoomModel.Instance.joinedUserList[guid].UserData.Name + "準備完了！！";
         gameObject.transform.parent = logs.transform;
