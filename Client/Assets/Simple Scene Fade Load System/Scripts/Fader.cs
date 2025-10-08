@@ -19,6 +19,7 @@ public class Fader : MonoBehaviour
     public bool isFadeIn = false;
     CanvasGroup myCanvas;
     Image bg;
+    GameObject loadingText; //ローディング用
     float lastTime = 0;
     bool startedLoading = false;
     //Set callback
@@ -46,6 +47,10 @@ public class Fader : MonoBehaviour
             bg = transform.GetComponent<Image>();
             bg.color = fadeColor;
         }
+        //ローディング用
+        GameObject prefab = (GameObject)Resources.Load("Prefabs/LoadingCanvas");
+        loadingText = Instantiate(prefab);
+        loadingText.SetActive(true);
         //Checking and starting the coroutine
         if (myCanvas && bg)
         {
@@ -79,6 +84,7 @@ public class Fader : MonoBehaviour
                 {
                     startedLoading = true;
                     SceneManager.LoadScene(fadeScene);
+                    loadingText.SetActive (false);
                 }
 
             }

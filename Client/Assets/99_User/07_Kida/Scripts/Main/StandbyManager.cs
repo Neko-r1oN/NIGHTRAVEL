@@ -266,13 +266,13 @@ public class StandbyManager : MonoBehaviour
     /// </summary>
     public void OnStartedGame()
     { 
+        readyButton.SetActive(false);
         //ゲーム開始の時の処理を書く
-        conducter.Loading();
+        //conducter.Loading();
         Debug.Log("ゲームを開始します");
         //SceneManager.LoadScene("4_Stage_01");
-        SceneManager.LoadScene("4_Stage_01");
-        Invoke("Loaded", 1.0f);
-
+        Initiate.DoneFading();
+        Initiate.Fade("4_Stage_01", Color.black, 1.0f);   // フェード時間1秒
     }
 
     /// <summary>
