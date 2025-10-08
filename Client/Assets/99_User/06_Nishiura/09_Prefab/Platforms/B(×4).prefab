@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 66804052583040596}
   - component: {fileID: 3540739708096959699}
   - component: {fileID: 6166893536668728959}
+  - component: {fileID: 3716961778479278047}
   m_Layer: 12
   m_Name: Tile_32_0 (3)
   m_TagString: Gimmick/Scaffold
@@ -54,6 +55,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -75,6 +78,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
@@ -154,6 +158,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.032258, y: 0.5483871}
   m_EdgeRadius: 0
+--- !u!208 &3716961778479278047
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342687411015169282}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.51600003, y: 0.27400002, z: 1.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &644872730197123053
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,6 +186,7 @@ GameObject:
   - component: {fileID: 6828779044897410398}
   - component: {fileID: 4120816189824078801}
   - component: {fileID: 2308531019501040345}
+  - component: {fileID: 4958926660215836218}
   m_Layer: 12
   m_Name: Tile_32_0
   m_TagString: Gimmick/Scaffold
@@ -208,6 +229,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -229,6 +252,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
@@ -308,6 +332,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.032258, y: 0.5483871}
   m_EdgeRadius: 0
+--- !u!208 &4958926660215836218
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 644872730197123053}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.51600003, y: 0.27400002, z: 1.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1440615400365341607
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,6 +360,7 @@ GameObject:
   - component: {fileID: 7686871673214773630}
   - component: {fileID: 570560465980121792}
   - component: {fileID: 650189337848846021}
+  - component: {fileID: 5504691713340024155}
   m_Layer: 12
   m_Name: Tile_32_0 (1)
   m_TagString: Gimmick/Scaffold
@@ -362,6 +403,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -383,6 +426,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
@@ -462,6 +506,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.032258, y: 0.5483871}
   m_EdgeRadius: 0
+--- !u!208 &5504691713340024155
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440615400365341607}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.51600003, y: 0.27400002, z: 1.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6360060497550620409
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,6 +534,7 @@ GameObject:
   - component: {fileID: 6968185904788951736}
   - component: {fileID: 3051010254170399411}
   - component: {fileID: 4245602070793010401}
+  - component: {fileID: 8259419461197929098}
   m_Layer: 12
   m_Name: Tile_32_0 (2)
   m_TagString: Gimmick/Scaffold
@@ -516,6 +577,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -537,6 +600,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
@@ -616,6 +680,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.032258, y: 0.5483871}
   m_EdgeRadius: 0
+--- !u!208 &8259419461197929098
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6360060497550620409}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.51600003, y: 0.27400002, z: 1.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &9155987005726821882
 GameObject:
   m_ObjectHideFlags: 0
