@@ -41,8 +41,6 @@ namespace StreamingHubs
         private const int MAX_JOINABLE_PLAYERS = 3;
 
         // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
-        private const int MIN_TERMINAL_NUM = 3;
-        private const int MAX_TERMINAL_NUM = 7;
         private const int MIN_TERMINAL_ID = 1;
         private const int MAX_TERMINAL_ID = 6;
 

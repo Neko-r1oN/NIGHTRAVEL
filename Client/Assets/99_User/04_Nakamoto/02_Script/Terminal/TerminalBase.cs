@@ -116,7 +116,7 @@ public abstract class TerminalBase : MonoBehaviour
     protected void Update()
     {
         // Eキー入力かつプレイヤーが端末に触れている場合かつその端末が未使用である場合、端末を起動
-        if (Input.GetKeyDown(KeyCode.E) && isUsed == false && isPlayerIn == true || Input.GetButtonDown("Interract") && isUsed == false && isPlayerIn == true)
+        if (Input.GetKeyDown(KeyCode.E) && isUsed == false && isPlayerIn == true || Input.GetButtonDown("Interact") && isUsed == false && isPlayerIn == true)
         {
             Debug.Log("Terminal Booted");
             BootRequest(); // 端末を起動
