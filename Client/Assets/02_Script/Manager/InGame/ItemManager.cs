@@ -89,12 +89,14 @@ public class ItemManager : MonoBehaviour
             managedItems.Remove(itemID);
 
             var player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
-         
-            int getExp = nowExp - player.NowExp;    // 取得経験値を計算
             player.NowLv = nowLevel;
             player.NowExp = nowExp;
             player.NextLvExp = nextLevelExp;
-            if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
+            if (UIManager.Instance)
+            {
+                UIManager.Instance.UpdateExperienceAndLevel();
+                UIManager.Instance.DisplayGetExp(nowExp - player.NowExp);  // 取得経験値を計算
+            }
         }
     }
 

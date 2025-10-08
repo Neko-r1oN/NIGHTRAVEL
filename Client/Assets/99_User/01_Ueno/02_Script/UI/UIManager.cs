@@ -71,6 +71,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text terminalExplanationText;       // ターミナル説明テキスト
     [Foldout("テキスト")]                                
     [SerializeField] Text spectatingNameText;            // 観戦中プレイヤー名テキスト
+    [Foldout("テキスト")]
+    [SerializeField] Text getExpText;                    // 取得した経験値テキスト
     [Foldout("テキスト")]                                
     [SerializeField] GameObject healText;                // その他ダメージ表記
 
@@ -1363,6 +1365,29 @@ public class UIManager : MonoBehaviour
                 break;
         }
     }
+
+    /// <summary>
+    /// 取得経験値表示処理
+    /// Author:Nishiura
+    /// </summary>
+    /// <param name="exp">経験値</param>
+    public void DisplayGetExp(int exp)
+    {
+        CancelInvoke("RemoveGetExpText");
+        getExpText.text = "";
+        getExpText.text = "+" + exp + "EXP";
+        Invoke("RemoveGetExpText",2f);
+    }
+
+    /// <summary>
+    /// 取得経験値テキスト消去処理
+    /// Author:Nishiura
+    /// </summary>
+    private void RemoveGetExpText()
+    {
+        getExpText.text = "";
+    }
+
 
     public void HideCanvas()
     {
