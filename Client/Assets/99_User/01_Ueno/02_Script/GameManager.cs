@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     bool isBossDead;            // ボスが死んだかどうか
     bool isGameStart;           // ゲームが開始したかどうか
     bool isCanSpawnBoss;        // ボスがスポーン可能かどうか
+    public bool IsCanSpawnBoss { get { return isCanSpawnBoss; } } 
     GameObject bossTerminal;    // ボス端末
     [SerializeField] STAGE_TYPE nextStage;    // 現在のステージ
     #endregion

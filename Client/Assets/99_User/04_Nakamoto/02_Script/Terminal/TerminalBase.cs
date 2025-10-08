@@ -186,9 +186,6 @@ public abstract class TerminalBase : MonoBehaviour
             if (RelicManager.HaveRelicList.Count == 0) return;
         }
 
-        isUsed = true; // 起動済みにする
-        usingText.text = "IN USE";
-
         // 起動リクエストをサーバーに送信
         if (RoomModel.Instance)
         {

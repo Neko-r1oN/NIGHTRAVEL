@@ -24,6 +24,12 @@ public class Boss : TerminalBase
     /// </summary>
     public override void BootTerminal()
     {
+        if (!GameManager.Instance.IsCanSpawnBoss)
+        {
+            usingText.text = "CAN NOT USE";
+            return;
+        }
+
         isUsed = true; // ’[––Žg—p’†‚É‚·‚é
         usingText.text = "IN USE";
 
