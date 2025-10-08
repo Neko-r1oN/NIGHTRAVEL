@@ -23,18 +23,20 @@ public class Portal : MonoBehaviour
     {
         
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // プレイヤーが端末付近に接近した場合
         if (collision.transform.tag == "Player")
         {
             if (roleType == ROLE_TYPE.Result)
             {
-                UIManager.Instance.DisplayEndGameWindow();
+                if(Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Interact"))
+                    UIManager.Instance.DisplayEndGameWindow();
             }
             else
             {
-                UIManager.Instance.DisplayNextStageWindow();
+                if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Interact"))
+                    UIManager.Instance.DisplayNextStageWindow();
             }
         }
     }

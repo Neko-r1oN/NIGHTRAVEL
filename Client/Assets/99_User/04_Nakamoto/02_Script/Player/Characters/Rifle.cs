@@ -86,7 +86,7 @@ public class Rifle : PlayerBase
     protected override void Update()
     {
         // ƒLƒƒƒ‰‚ÌˆÚ“®
-        if (!canMove) return;
+        if (!canMove || UIManager.Instance.IsOpenStatusWindow) return;
 
         int id = animator.GetInteger("animation_id");
 

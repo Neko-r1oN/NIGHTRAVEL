@@ -64,7 +64,7 @@ public class SpawnManager : MonoBehaviour
     GameObject bossTerminal;
     [SerializeField] ENEMY_TYPE bossId;
     bool isBossActive;           // ƒ{ƒX‚ª¶¬‚³‚ê‚½‚©‚Ç‚¤‚©
-    public bool IsSpawnBoss { get {  return isBossActive; } set {  isBossActive = value; } }
+    public bool IsBossActive { get {  return isBossActive; } set {  isBossActive = value; } }
     #endregion
 
     #region “GŒ‚”jŠÖ˜A
@@ -139,7 +139,7 @@ public class SpawnManager : MonoBehaviour
         {
             if (GameManager.Instance.IsGameStart)
             {
-                if (crashNum >= knockTermsNum && IsSpawnBoss)
+                if (crashNum >= knockTermsNum && IsBossActive)
                 {
                     SpawnBoss();
                 }

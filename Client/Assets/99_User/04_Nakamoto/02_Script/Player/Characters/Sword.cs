@@ -95,7 +95,7 @@ public class Sword : PlayerBase
         base.Update();
 
         // ƒLƒƒƒ‰‚ÌˆÚ“®
-        if (!canMove) return;
+        if (!canMove || UIManager.Instance.IsOpenStatusWindow) return;
 
         if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Attack1"))
         {   // ’ÊíUŒ‚
