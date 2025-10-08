@@ -19,7 +19,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => 'HPアップ(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に体力が20増加する',
+            'explanation' => '体力が20増加する',
             'type1' => 1,
             'const_effect1' => 20,
             'rate_effect1' => 1,
@@ -34,7 +34,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '防御力アップ(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に防御力が5増加する',
+            'explanation' => '防御力が5増加する',
             'type1' => 2,
             'const_effect1' => 5,
             'rate_effect1' => 1,
@@ -49,7 +49,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃力アップ(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に攻撃力が5増加する',
+            'explanation' => '攻撃力が5増加する',
             'type1' => 3,
             'const_effect1' => 5,
             'rate_effect1' => 1,
@@ -64,7 +64,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '跳躍力アップ(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に跳躍力が1増加する',
+            'explanation' => '跳躍力が1増加する',
             'type1' => 4,
             'const_effect1' => 1,
             'rate_effect1' => 1,
@@ -79,7 +79,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '移動速度アップ(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に移動速度が1増加する',
+            'explanation' => '移動速度が1増加する',
             'type1' => 5,
             'const_effect1' => 1,
             'rate_effect1' => 1,
@@ -94,9 +94,9 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃速度アップ(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に攻撃速度が0.05増加する',
+            'explanation' => '攻撃速度が微かに増加する',
             'type1' => 6,
-            'const_effect1' => 0.05,
+            'const_effect1' => 0.02,
             'rate_effect1' => 1,
             'type2' => 0,
             'const_effect2' => 0,
@@ -109,7 +109,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '自動回復の倍率増加(コモン)',
             'rarity' => 1,
-            'explanation' => '即座に自動回復の倍率が0.01増加する',
+            'explanation' => '自動回復の倍率が0.01増加する',
             'type1' => 7,
             'const_effect1' => 0.01,
             'rate_effect1' => 1,
@@ -124,7 +124,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => 'HPアップ(アンコモン)',
             'rarity' => 2,
-            'explanation' => '即座に体力が60増加する',
+            'explanation' => '体力が60増加する',
             'type1' => 1,
             'const_effect1' => 60,
             'rate_effect1' => 1,
@@ -139,7 +139,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '防御力アップ(アンコモン)',
             'rarity' => 2,
-            'explanation' => '即座に防御力が20増加する',
+            'explanation' => '防御力が20増加する',
             'type1' => 2,
             'const_effect1' => 20,
             'rate_effect1' => 1,
@@ -154,7 +154,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃力アップ(アンコモン)',
             'rarity' => 2,
-            'explanation' => '即座に攻撃力が20増加する',
+            'explanation' => '攻撃力が20増加する',
             'type1' => 3,
             'const_effect1' => 20,
             'rate_effect1' => 1,
@@ -199,9 +199,9 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃速度アップ(アンコモン)',
             'rarity' => 2,
-            'explanation' => '即座に攻撃速度が0.1増加する',
+            'explanation' => '攻撃速度が少し増加する',
             'type1' => 6,
-            'const_effect1' => 0.1,
+            'const_effect1' => 0.05,
             'rate_effect1' => 1,
             'type2' => 0,
             'const_effect2' => 0,
@@ -229,7 +229,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => 'HPアップ(レア)',
             'rarity' => 3,
-            'explanation' => '即座に体力が180増加する',
+            'explanation' => '体力が180増加する',
             'type1' => 1,
             'const_effect1' => 180,
             'rate_effect1' => 1,
@@ -244,7 +244,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '防御力アップ(レア)',
             'rarity' => 3,
-            'explanation' => '即座に防御力が90増加する',
+            'explanation' => '防御力が90増加する',
             'type1' => 2,
             'const_effect1' => 90,
             'rate_effect1' => 1,
@@ -259,7 +259,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃力アップ(レア)',
             'rarity' => 3,
-            'explanation' => '即座に攻撃力が90増加する',
+            'explanation' => '攻撃力が90増加する',
             'type1' => 3,
             'const_effect1' => 90,
             'rate_effect1' => 1,
@@ -274,7 +274,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '跳躍力アップ(レア)',
             'rarity' => 3,
-            'explanation' => '即座に跳躍力が6増加する',
+            'explanation' => '跳躍力が6増加する',
             'type1' => 4,
             'const_effect1' => 6,
             'rate_effect1' => 1,
@@ -289,7 +289,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '移動速度アップ(レア)',
             'rarity' => 3,
-            'explanation' => '即座に移動速度を6増加する',
+            'explanation' => '移動速度を6増加する',
             'type1' => 5,
             'const_effect1' => 6,
             'rate_effect1' => 1,
@@ -305,9 +305,9 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃速度アップ(レア)',
             'rarity' => 3,
-            'explanation' => '即座に攻撃速度が0.5増加',
+            'explanation' => '攻撃速度が増加',
             'type1' => 6,
-            'const_effect1' => 0.5,
+            'const_effect1' => 0.15,
             'rate_effect1' => 1,
             'type2' => 0,
             'const_effect2' => 0,
@@ -410,10 +410,10 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃速度アップ、跳躍力ダウン(ユニーク)',
             'rarity' => 4,
-            'explanation' => '即座に攻撃速度が10%増加、跳躍力が5%減少する',
+            'explanation' => '攻撃速度が大きく増加、跳躍力が5%減少する',
             'type1' => 6,
-            'const_effect1' => 0,
-            'rate_effect1' => 1.10,
+            'const_effect1' => 0.3,
+            'rate_effect1' => 1.0,
             'type2' => 4,
             'const_effect2' => 0,
             'rate_effect2' => 0.95,
@@ -425,7 +425,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '自動回復の倍率アップ、防御力ダウン(ユニーク)',
             'rarity' => 4,
-            'explanation' => '即座に自動回復の倍率を10%増加、防御力が10%減少する',
+            'explanation' => '自動回復の倍率を10%増加、防御力が10%減少する',
             'type1' => 7,
             'const_effect1' => 0,
             'rate_effect1' => 1.10,
@@ -440,7 +440,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '体力アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に体力が50%増加',
+            'explanation' => '体力が50%増加する',
             'type1' => 1,
             'const_effect1' => 0,
             'rate_effect1' => 1.5,
@@ -455,7 +455,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '防御力アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に防御力が30%増加',
+            'explanation' => '防御力が30%増加する',
             'type1' => 2,
             'const_effect1' => 0,
             'rate_effect1' => 1.3,
@@ -470,7 +470,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃力アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に攻撃力が30%増加',
+            'explanation' => '攻撃力が30%増加する',
             'type1' => 3,
             'const_effect1' => 0,
             'rate_effect1' => 1.3,
@@ -485,7 +485,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '跳躍力アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に跳躍力が20%増加',
+            'explanation' => '跳躍力が20%増加する',
             'type1' => 4,
             'const_effect1' => 0,
             'rate_effect1' => 1.2,
@@ -500,7 +500,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '移動速度アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に移動速度が20%増加',
+            'explanation' => '移動速度が20%増加する',
             'type1' => 5,
             'const_effect1' => 0,
             'rate_effect1' => 1.2,
@@ -515,10 +515,10 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '攻撃速度アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に攻撃速度が20%増加',
+            'explanation' => '攻撃速度がとても大きく増加',
             'type1' => 6,
-            'const_effect1' => 0,
-            'rate_effect1' => 1.2,
+            'const_effect1' => 0.5,
+            'rate_effect1' => 1,
             'type2' => 0,
             'const_effect2' => 0,
             'rate_effect2' => 1.0,
@@ -530,7 +530,7 @@ class StatusEnhancementTableSeeder extends Seeder
         StatusEnhancement::create([
             'name' => '自動回復の倍率アップ(レジェンド)',
             'rarity' => 5,
-            'explanation' => '即座に自動回復の倍率が20%増加',
+            'explanation' => '自動回復の倍率が20%増加',
             'type1' => 7,
             'const_effect1' => 0,
             'rate_effect1' => 1.2,
@@ -539,8 +539,6 @@ class StatusEnhancementTableSeeder extends Seeder
             'rate_effect2' => 1.0,
             'enhancement_type' => '自動回復',
             'duplication' => true
-
         ]);
-
     }
 }

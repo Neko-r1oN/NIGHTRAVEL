@@ -44,14 +44,14 @@ abstract public class PlayerBase : CharacterBase
 
     #region 共通ステータス
     [Foldout("共通ステータス")]
-    protected int nowLv = 1;          // 現在レベル
+    protected int nowLv = 1;        // 現在レベル
     [Foldout("共通ステータス")]
-    protected int nowExp = 0;         // 現在の獲得経験値
+    protected int nowExp = 0;       // 現在の獲得経験値
     [Foldout("共通ステータス")]
-    protected int nextLvExp = 10;      // 次のレベルまでに必要な経験値
+    protected int nextLvExp = 10;   // 次のレベルまでに必要な経験値
 
     [Foldout("共通ステータス")]
-    protected int startHp = 0;        // 初期体力
+    protected int startHp = 0;      // 初期体力
 
     [Foldout("共通ステータス")]
     [SerializeField] protected float m_JumpForce = 400f;    // ジャンプ力
@@ -268,10 +268,10 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region プレイヤーに関する定数
-    protected const float REGENE_TIME = 1.0f;           // 自動回復間隔
-    protected const float REGENE_STOP_TIME = 1.5f;      // 自動回復停止時間
-    protected const float REGENE_MAGNIFICATION = 0.03f; // 自動回復倍率
-    protected const float HEAL_GENERATE_TIME = 20f;     // 回復肉生成間隔
+    protected const float REGENE_TIME = 1.5f;           // 自動回復間隔
+    protected const float REGENE_STOP_TIME = 3.0f;      // 自動回復停止時間
+    protected const float REGENE_MAGNIFICATION = 0.05f; // 自動回復倍率
+    protected const float HEAL_GENERATE_TIME = 18f;     // 回復肉生成間隔
     protected const float MEATHEAL_RATE = 0.03f;        // 回復肉回復量
 
     protected const float GROUNDED_RADIUS = .2f;// 接地確認用の円の半径
@@ -282,8 +282,8 @@ abstract public class PlayerBase : CharacterBase
     protected const float KB_MEDIUM = 10f;      // ノックバック力（中）
     protected const float KB_BIG = 20f;         // ノックバック力（大）
 
-    protected const float STUN_TIME = 0.15f;        // スタン時間
-    protected const float INVINCIBLE_TIME = 0.4f;   // 無敵時間
+    protected const float STUN_TIME = 0.2f;        // スタン時間
+    protected const float INVINCIBLE_TIME = 0.5f;  // 無敵時間
 
     protected const float SMOKE_SCALE = 0.22f; // 土煙のスケール
 
@@ -752,6 +752,15 @@ abstract public class PlayerBase : CharacterBase
     }
 
     /// <summary>
+    /// 動作に関わるフラグをリセット
+    /// </summary>
+    protected void ResetMoveFlag()
+    {
+        canMove = true;
+        canAttack = true;
+    }
+
+    /// <summary>
     /// ジップライン判定処理
     /// </summary>
     /// <returns></returns>
@@ -819,6 +828,8 @@ abstract public class PlayerBase : CharacterBase
 
                 if (HP > MaxHP)
                     HP = MaxHP;
+
+                UIManager.Instance.UpdatePlayerStatus();
 
                 UIManager.Instance.PopHealUI(healVol, transform.position);
                 Destroy(collision.gameObject);
@@ -981,6 +992,7 @@ abstract public class PlayerBase : CharacterBase
         invincible = true;
         yield return new WaitForSeconds(time);
         invincible = false;
+        ResetMoveFlag();
     }
     /// <summary>
     /// 動作不能処理
@@ -1030,6 +1042,7 @@ abstract public class PlayerBase : CharacterBase
                 if (!result.IsDead)
                 {
                     hp = maxHp;
+                    UIManager.Instance.UpdatePlayerStatus();
                     StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
                     yield break;
                 }
@@ -1038,6 +1051,7 @@ abstract public class PlayerBase : CharacterBase
             if (!RoomModel.Instance && buckupHDMICnt > 0)
             {   // 体力回復 & 残機減少
                 hp = maxHp;
+                UIManager.Instance.UpdatePlayerStatus();
                 buckupHDMICnt--;
                 StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
                 yield break;
@@ -1160,7 +1174,6 @@ abstract public class PlayerBase : CharacterBase
 
         // 経験値UIの更新
         UIManager.Instance.UpdateExperienceAndLevel();
-
     }
 
     /// <summary>

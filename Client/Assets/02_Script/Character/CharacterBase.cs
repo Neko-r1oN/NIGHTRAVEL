@@ -41,6 +41,7 @@ abstract public class CharacterBase : MonoBehaviour
     protected float baseMoveSpeed = 1f;   // 移動速度
 
     [Foldout("ステータス")]
+    [SerializeField]
     protected float baseAttackSpeedFactor = 1f;    // 攻撃速度(Animatorの係数)
 
     [Foldout("ステータス")]

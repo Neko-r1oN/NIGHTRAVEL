@@ -40,6 +40,9 @@ namespace StreamingHubs
         // 参加可能人数
         private const int MAX_JOINABLE_PLAYERS = 3;
 
+        // ステータス上限定数
+        private const float MAX_ATTACKSPEED = 1.15f;
+
         // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
         private const int MIN_TERMINAL_ID = 1;
         private const int MAX_TERMINAL_ID = 6;
@@ -1226,8 +1229,8 @@ namespace StreamingHubs
                         // 第1効果
                         status.attackSpeedFactor += (float)upgrade.const_effect1;
                         status.attackSpeedFactor = status.attackSpeedFactor * (float)upgrade.rate_effect1;
-
                         if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
+                        if (status.attackSpeedFactor >= MAX_ATTACKSPEED) status.attackSpeedFactor = MAX_ATTACKSPEED;
                         break;
                 }
 
@@ -1285,8 +1288,8 @@ namespace StreamingHubs
                         // 第2効果
                         status.attackSpeedFactor += (float)upgrade.const_effect2;
                         status.attackSpeedFactor = status.attackSpeedFactor * (float)upgrade.rate_effect2;
-
                         if (status.attackSpeedFactor <= 0) status.attackSpeedFactor = 0.1f; // 攻撃速度が0を下回った場合、1にする
+                        if (status.attackSpeedFactor >= MAX_ATTACKSPEED) status.attackSpeedFactor = MAX_ATTACKSPEED;
                         break;
                 }
 
@@ -1378,6 +1381,7 @@ namespace StreamingHubs
                         case (int)STATUS_TYPE.AttackSpeedFactor:    // 攻撃速度の場合
                             status.attackSpeedFactor += relic.const_effect;
                             status.attackSpeedFactor += status.attackSpeedFactor * relic.rate_effect;
+                            if (status.attackSpeedFactor >= MAX_ATTACKSPEED) status.attackSpeedFactor = MAX_ATTACKSPEED;
                             break;
 
                         case (int)STATUS_TYPE.HealRate:             // 自動回復速度の場合
