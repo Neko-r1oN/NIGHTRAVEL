@@ -89669,7 +89669,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 92348239390412121}
@@ -89778,6 +89778,7 @@ MonoBehaviour:
   canCancelAttackOnHit: 0
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
+  isUseHitBlendShader: 1
   spawnGroundOffset: 4
   spawnWeight: 1
   checkObstacleRange: 3.5
