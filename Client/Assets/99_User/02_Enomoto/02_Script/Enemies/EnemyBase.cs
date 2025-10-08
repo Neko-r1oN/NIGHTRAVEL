@@ -691,7 +691,7 @@ abstract public class EnemyBase : CharacterBase
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
         hp = remainingHP;
 
-        UIManager.Instance.UpdateBossStatus();
+        if(IsBoss) UIManager.Instance.UpdateBossStatus();
 
         // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
         if (attacker != null && attacker.tag == "Player")

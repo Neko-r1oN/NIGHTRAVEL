@@ -20,6 +20,7 @@ using System.Xml.Schema;
 using Cysharp.Threading.Tasks.Triggers;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -106,6 +107,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button changeGameYesButton;
     [Foldout("ボタン")]
     [SerializeField] Button changeGameNoButton;
+    [Foldout("ボタン")]
+    [SerializeField] List<Button> statusUpButtons;
 
     [Foldout("バナー関係")]                              
     [SerializeField] GameObject bossWindow;              // ボス出現UI
@@ -160,6 +163,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] List<Image> iconImages;
     [Foldout("ステータスアイコン関連")]
     [SerializeField] List<Material> rarityMaterials;
+
+    //[SerializeField] Button cube;
+    private Gamepad gamepad;
+    private bool isConnected;
 
     private bool isInputGamePad;                         // ゲームパッド入力かどうか
 
@@ -304,13 +311,25 @@ public class UIManager : MonoBehaviour
 
         spectatingWindow.SetActive(false);
 
+        int relicCnt = 0;
+
         foreach (Image relic in relicImages)
         {
-            relic.enabled = false;
+            if(RelicManager.HaveRelicList.Count > relicCnt)
+            {
+                relicImages[relicCnt].sprite =
+                    RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID];
+
+                relicCnt++;
+            }
+            else
+            {
+                relic.enabled = false;
+            }
         }
 
-        // キャラのジョブ毎にUIを変更
-        if (player.PlayerType == Player_Type.Sword)
+            // キャラのジョブ毎にUIを変更
+            if (player.PlayerType == Player_Type.Sword)
         {
             ChangeSkillUI("Sword");
         }
@@ -341,6 +360,11 @@ public class UIManager : MonoBehaviour
                     = "player" + count; // 仮
             }
         }
+
+        gamepad = Gamepad.current;
+
+        // 最初に選択状態にしたいボタンの設定
+        //cube.Select();
     }
 
     /// <summary>
@@ -348,12 +372,40 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if (gamepad == null)
+        {
+            isConnected = false;
+        }
+        else if (gamepad != null)
+        {
+            if (isStatusWindow && Input.GetButtonDown("Submit"))
+            {
+                OpenStatusWindow();
+            }
+
+            if(statusUpWindow.activeSelf == true)
+            {
+                if (gamepad.dpad.left.isPressed)
+                {
+                    statusUpButtons[0].onClick.Invoke();
+                }
+                else if (gamepad.dpad.up.isPressed)
+                {
+                    statusUpButtons[1].onClick.Invoke();
+                }
+                else if (gamepad.dpad.right.isPressed)
+                {
+                    statusUpButtons[2].onClick.Invoke();
+                }
+            }
+        }
+
         // 操作UI変更処理
         InputChangeUI();
-        
+
         if (player == null)
         {
-            if(CharacterManager.Instance.PlayerObjSelf != null)
+            if (CharacterManager.Instance.PlayerObjSelf != null)
             {
                 player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
             }
