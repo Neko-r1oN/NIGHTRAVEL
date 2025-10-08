@@ -753,6 +753,7 @@ public class Boxgeist : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+        PlayHitBlendShader(false, 0.5f);
     }
 
     #endregion

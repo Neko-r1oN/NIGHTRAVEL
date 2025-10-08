@@ -529,6 +529,8 @@ public class FullMetalWorm : EnemyBase
         {
             StartCoroutine(enemy.GetComponent<EnemyBase>().DestroyEnemy(null));
         }
+
+        PlayHitBlendShader(false, 2f, 0.5f);
     }
 
     /// <summary>

@@ -287,16 +287,9 @@ public class GameManager : MonoBehaviour
 
         UIManager.Instance.HideBossUI();
 
-        if (SceneManager.GetActiveScene().name == "6_Stage_03")
+        for (int i = 0; i < portals.Count; i++)
         {
-            OnGameEnd(resultData);
-        }
-        else
-        {
-            for (int i = 0; i < portals.Count; i++)
-            {
-                portals[i].SetActive(true);
-            }
+            portals[i].SetActive(true);
         }
     }
 

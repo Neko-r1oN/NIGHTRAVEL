@@ -3,16 +3,13 @@
 //  Author:r-enomoto
 //**************************************************
 using DG.Tweening;
-using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
-using static UnityEngine.UI.Image;
 
 public class Valcus : EnemyBase
 {
@@ -610,6 +607,13 @@ public class Valcus : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        foreach (var spriteRenderer in SpriteRenderers)
+        {
+            ColorUtility.TryParseHtmlString("#2A5CFF", out Color color);
+            spriteRenderer.material.SetColor("_HitEffectColor", color);
+        }
+        PlayHitBlendShader(true, 0.4f);
+
         SetAnimId((int)ANIM_ID.Dead);
     }
 

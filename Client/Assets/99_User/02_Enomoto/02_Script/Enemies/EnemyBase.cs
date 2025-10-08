@@ -1,5 +1,5 @@
-//**************************************************
-//  ƒGƒlƒ~[‚Ì’ŠÛƒNƒ‰ƒX
+ï»¿//**************************************************
+//  ã‚¨ãƒãƒŸãƒ¼ã®æŠ½è±¡ã‚¯ãƒ©ã‚¹
 //  Author:r-enomoto
 //**************************************************
 using Pixeye.Unity;
@@ -13,180 +13,185 @@ using System.Linq;
 
 abstract public class EnemyBase : CharacterBase
 {
-    #region ƒf[ƒ^ŠÖ˜A
+    #region ãƒ‡ãƒ¼ã‚¿é–¢é€£
 
-    [Foldout("ƒf[ƒ^ŠÖ˜A")]
+    [Foldout("ãƒ‡ãƒ¼ã‚¿é–¢é€£")]
     [SerializeField]
-    [Tooltip("ƒGƒlƒ~[í—ŞID")]
-    protected ENEMY_TYPE enemyTypeId;    // ©g‚ÌƒGƒlƒ~[í—ŞID@(DB‚ÌƒŒƒR[ƒh‚Æ•R‚Ã‚¯‚é)
+    [Tooltip("ã‚¨ãƒãƒŸãƒ¼ç¨®é¡ID")]
+    protected ENEMY_TYPE enemyTypeId;    // è‡ªèº«ã®ã‚¨ãƒãƒŸãƒ¼ç¨®é¡IDã€€(DBã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã¨ç´ã¥ã‘ã‚‹)
     
-    [Foldout("ƒf[ƒ^ŠÖ˜A")]
+    [Foldout("ãƒ‡ãƒ¼ã‚¿é–¢é€£")]
     [SerializeField]
-    [Tooltip("¶¬‚³‚ê‚½‚Æ‚«‚Ì¯•Ê—pID")]
-    protected string uniqueId = "";    // ¶¬‚³‚ê‚½‚Æ‚«‚Ì¯•Ê—pID  ¦‘¼‚Ì“G‚Æd•¡‚µ‚È‚¢‚æ‚¤’ˆÓ
+    [Tooltip("ç”Ÿæˆã•ã‚ŒãŸã¨ãã®è­˜åˆ¥ç”¨ID")]
+    protected string uniqueId = "";    // ç”Ÿæˆã•ã‚ŒãŸã¨ãã®è­˜åˆ¥ç”¨ID  â€»ä»–ã®æ•µã¨é‡è¤‡ã—ãªã„ã‚ˆã†æ³¨æ„
 
-    [Foldout("ƒf[ƒ^ŠÖ˜A")]
+    [Foldout("ãƒ‡ãƒ¼ã‚¿é–¢é€£")]
     [SerializeField]
-    [Tooltip("¶¬‚³‚ê‚½‚Æ‚«‚Ì¯•Ê—pID")]
+    [Tooltip("ç”Ÿæˆã•ã‚ŒãŸã¨ãã®è­˜åˆ¥ç”¨ID")]
     protected string selfName = "Enemy Sample";
 
     #endregion
 
-    #region ƒvƒŒƒCƒ„[Eƒ^[ƒQƒbƒg
-    [Header("ƒvƒŒƒCƒ„[Eƒ^[ƒQƒbƒg")]
+    #region ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ»ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ
+    [Header("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ»ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ")]
     protected GameObject target;
     public GameObject Target { get { return target; } set { target = value; } }
 
     protected CharacterManager characterManager;
     #endregion
 
-    #region ƒRƒ“ƒ|[ƒlƒ“ƒg
+    #region ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     protected EnemyElite enemyElite;
     protected EnemySightChecker sightChecker;
     protected EnemyChaseAI chaseAI;
     protected Rigidbody2D m_rb2d;
     #endregion
 
-    #region ƒeƒNƒXƒ`ƒƒEƒAƒjƒ[ƒVƒ‡ƒ“ŠÖ˜A
-    [Foldout("ƒeƒNƒXƒ`ƒƒEƒAƒjƒ[ƒVƒ‡ƒ“")]
+    #region ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ»ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–¢é€£
+    [Foldout("ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ»ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³")]
     [SerializeField]
     float destroyWaitSec = 1f;
 
-    [Foldout("ƒeƒNƒXƒ`ƒƒEƒAƒjƒ[ƒVƒ‡ƒ“")]
+    [Foldout("ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ»ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³")]
     [SerializeField]
     List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
     #endregion
 
-    #region ƒ`ƒFƒbƒN”»’è
-    protected LayerMask terrainLayerMask; // •Ç‚Æ’n–Ê‚ÌƒŒƒCƒ„[
+    #region ãƒã‚§ãƒƒã‚¯åˆ¤å®š
+    protected LayerMask terrainLayerMask; // å£ã¨åœ°é¢ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼
     public LayerMask TerrainLayerMask { get { return terrainLayerMask; } }
     #endregion
 
-    #region ƒXƒe[ƒ^ƒX
-    [Foldout("ƒXƒe[ƒ^ƒX")]
+    #region ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
     [SerializeField]
     protected int bulletNum = 3;
 
-    [Foldout("ƒXƒe[ƒ^ƒX")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
     [SerializeField]
-    [Tooltip("’e‚Ì”­ËŠÔŠu")]
+    [Tooltip("å¼¾ã®ç™ºå°„é–“éš”")]
     protected float shotsPerSecond = 0.5f;
 
-    [Foldout("ƒXƒe[ƒ^ƒX")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
     [SerializeField]
-    [Tooltip("UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€")]
+    [Tooltip("æ”»æ’ƒã®ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ ")]
     protected float attackCoolTime = 0.5f;
 
-    [Foldout("ƒXƒe[ƒ^ƒX")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
     [SerializeField]
-    [Tooltip("UŒ‚‚ğŠJn‚·‚é‹——£")]
+    [Tooltip("æ”»æ’ƒã‚’é–‹å§‹ã™ã‚‹è·é›¢")]
     protected float attackDist = 1.5f;
     
-    [Foldout("ƒXƒe[ƒ^ƒX")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
     [SerializeField]
     protected float hitTime = 0.5f;
 
-    [Foldout("ƒXƒe[ƒ^ƒX")]
+    [Foldout("ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
     [SerializeField]
-    [Tooltip("ƒ^[ƒQƒbƒg‚ğŒ©¸‚¤‚Ü‚Å‚É•K—v‚È•b”")]
+    [Tooltip("ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¦‹å¤±ã†ã¾ã§ã«å¿…è¦ãªç§’æ•°")]
     protected float obstructionMaxTime = 3f;
     #endregion
 
-    #region ƒIƒvƒVƒ‡ƒ“
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
+    #region ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
     [SerializeField]
     protected bool isBoss = false;
 
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
     [SerializeField]
     protected bool isElite = false;
 
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("í‚É“®‚«‰ñ‚é‚±‚Æ‚ª‰Â”\")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("å¸¸ã«å‹•ãå›ã‚‹ã“ã¨ãŒå¯èƒ½")]
     [SerializeField] 
     protected bool canPatrol;
 
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("ƒ^[ƒQƒbƒg‚ğ’ÇÕ‰Â”\")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¿½è·¡å¯èƒ½")]
     [SerializeField] 
     protected bool canChaseTarget;
     
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("UŒ‚‰Â”\")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("æ”»æ’ƒå¯èƒ½")]
     [SerializeField]
     protected bool canAttack;
     
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("ƒWƒƒƒ“ƒv‰Â”\")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("ã‚¸ãƒ£ãƒ³ãƒ—å¯èƒ½")]
     [SerializeField] 
     protected bool canJump;
 
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("UŒ‚’†‚Éƒqƒbƒg‚µ‚½ê‡AUŒ‚‚ğƒLƒƒƒ“ƒZƒ‹‰Â”\")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("æ”»æ’ƒä¸­ã«ãƒ’ãƒƒãƒˆã—ãŸå ´åˆã€æ”»æ’ƒã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«å¯èƒ½")]
     [SerializeField]
     protected bool canCancelAttackOnHit = false;
 
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("DeadZone‚Æ‚ÌÚG”»’è‚ğÁ‚·‚±‚Æ‚ª‰Â”\")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("DeadZoneã¨ã®æ¥è§¦åˆ¤å®šã‚’æ¶ˆã™ã“ã¨ãŒå¯èƒ½")]
     [SerializeField]
     protected bool canIgnoreDeadZoneCollision = false;
 
-    [Foldout("ƒIƒvƒVƒ‡ƒ“")]
-    [Tooltip("©g‚ÌƒIƒuƒWƒFƒNƒg‚ªÁ‚¦‚é‚Ü‚ÅƒŠƒXƒg‚©‚çíœ‚³‚ê‚È‚¢‚æ‚¤‚É‚·‚é")]
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("è‡ªèº«ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒæ¶ˆãˆã‚‹ã¾ã§ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤ã•ã‚Œãªã„ã‚ˆã†ã«ã™ã‚‹")]
     [SerializeField]
     protected bool dontRemoveOnDeath = false;
+
+    [Foldout("ã‚ªãƒ—ã‚·ãƒ§ãƒ³")]
+    [Tooltip("ãƒ’ãƒƒãƒˆæ™‚ã«HitBlendã‚’ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‹ã‚‰æ“ä½œã™ã‚‹")]
+    [SerializeField]
+    protected bool isUseHitBlendShader = false;
     #endregion
 
-    #region ó‘ÔŠÇ—
-    protected Dictionary<string,Coroutine> managedCoroutines = new Dictionary<string,Coroutine>();  // ŠÇ—‚µ‚Ä‚¢‚éƒRƒ‹[ƒ`ƒ“
+    #region çŠ¶æ…‹ç®¡ç†
+    protected Dictionary<string,Coroutine> managedCoroutines = new Dictionary<string,Coroutine>();  // ç®¡ç†ã—ã¦ã„ã‚‹ã‚³ãƒ«ãƒ¼ãƒãƒ³
     protected bool isStun;
     protected bool isInvincible = true;
     protected bool doOnceDecision;
     protected bool isAttacking;
     protected bool isDead;
     protected bool isPatrolPaused;
-    protected bool isSpawn = true; // ƒXƒ|[ƒ“’†‚©‚Ç‚¤‚©
+    protected bool isSpawn = true; // ã‚¹ãƒãƒ¼ãƒ³ä¸­ã‹ã©ã†ã‹
     protected bool isStartComp;
     #endregion
 
-    #region ƒ^[ƒQƒbƒg‚Æ‚Ì‹——£
+    #region ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ã®è·é›¢
     protected float disToTarget;
     protected float disToTargetX;
     #endregion
 
-    #region ƒXƒ|[ƒ“ŠÖ˜A
-    [Foldout("ƒXƒ|[ƒ“ŠÖ˜A")]
-    [Tooltip("¶¬‚³‚ê‚é‚Æ‚«‚Ì’n–Ê‚©‚ç‚Ì‹——£")]
+    #region ã‚¹ãƒãƒ¼ãƒ³é–¢é€£
+    [Foldout("ã‚¹ãƒãƒ¼ãƒ³é–¢é€£")]
+    [Tooltip("ç”Ÿæˆã•ã‚Œã‚‹ã¨ãã®åœ°é¢ã‹ã‚‰ã®è·é›¢")]
     [SerializeField]
     protected float spawnGroundOffset;
 
-    [Foldout("ƒXƒ|[ƒ“ŠÖ˜A")]
+    [Foldout("ã‚¹ãƒãƒ¼ãƒ³é–¢é€£")]
     [SerializeField]
-    protected int spawnWeight = 1;  // ƒXƒ|[ƒ“‚Ì’Š‘I‚·‚éÛ‚Ìd‚İ
+    protected int spawnWeight = 1;  // ã‚¹ãƒãƒ¼ãƒ³ã®æŠ½é¸ã™ã‚‹éš›ã®é‡ã¿
 
-    [Foldout("ƒXƒ|[ƒ“ŠÖ˜A")]
+    [Foldout("ã‚¹ãƒãƒ¼ãƒ³é–¢é€£")]
     [SerializeField]
-    protected float checkObstacleRange = 1; // áŠQ•¨‚ğŒŸ’m‚·‚é”ÍˆÍ
+    protected float checkObstacleRange = 1; // éšœå®³ç‰©ã‚’æ¤œçŸ¥ã™ã‚‹ç¯„å›²
     #endregion
 
-    #region ƒVƒXƒeƒ€
+    #region ã‚·ã‚¹ãƒ†ãƒ 
 
-    [Foldout("ƒVƒXƒeƒ€")]
-    [Tooltip("”»’è‚ğ•`‰æ‚·‚é‚©‚Ç‚¤‚©")]
+    [Foldout("ã‚·ã‚¹ãƒ†ãƒ ")]
+    [Tooltip("åˆ¤å®šã‚’æç”»ã™ã‚‹ã‹ã©ã†ã‹")]
     [SerializeField]
     protected bool canDrawRay = false;
     public bool CanDrawRay { get { return canDrawRay; } }
 
-    [Foldout("ƒVƒXƒeƒ€")]
+    [Foldout("ã‚·ã‚¹ãƒ†ãƒ ")]
     [SerializeField]
-    protected int baseExp = 100;    // ‰Šú‚ÌŠl“¾‰Â”\ŒoŒ±’l—Ê
+    protected int baseExp = 100;    // åˆæœŸã®ç²å¾—å¯èƒ½çµŒé¨“å€¤é‡
 
-    [Foldout("ƒVƒXƒeƒ€")]
+    [Foldout("ã‚·ã‚¹ãƒ†ãƒ ")]
     [SerializeField]
-    protected int exp = 100;    // Œ»İ‚ÌŠl“¾‰Â”\ŒoŒ±’l—Ê
+    protected int exp = 100;    // ç¾åœ¨ã®ç²å¾—å¯èƒ½çµŒé¨“å€¤é‡
     #endregion
 
-    #region ŠO•”QÆ—pƒvƒƒpƒeƒB
+    #region å¤–éƒ¨å‚ç…§ç”¨ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 
     public ENEMY_TYPE EnemyTypeId { get { return enemyTypeId; } set { enemyTypeId = value; } }
 
@@ -213,8 +218,8 @@ abstract public class EnemyBase : CharacterBase
     public List<SpriteRenderer> SpriteRenderers { get { return spriteRenderers; } }
     #endregion
 
-    #region ’è”
-    private const int MAX_DAMAGE = 99999; // Å‘åƒ_ƒ[ƒW—Ê
+    #region å®šæ•°
+    private const int MAX_DAMAGE = 99999; // æœ€å¤§ãƒ€ãƒ¡ãƒ¼ã‚¸é‡
     #endregion
 
     protected virtual void OnEnable()
@@ -258,7 +263,7 @@ abstract public class EnemyBase : CharacterBase
     {
         if (target)
         {
-            // ƒ^[ƒQƒbƒg‚Æ‚Ì‹——£‚ğæ“¾‚·‚é
+            // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ã®è·é›¢ã‚’å–å¾—ã™ã‚‹
             disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
             disToTargetX = MathF.Abs(target.transform.position.x - transform.position.x);
         }
@@ -270,17 +275,17 @@ abstract public class EnemyBase : CharacterBase
 
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
-        // ƒ^[ƒQƒbƒg‚ª‘¶İ‚µ‚È‚¢ || Œ»İ‚Ìƒ^[ƒQƒbƒg‚ª€–S‚µ‚Ä‚¢‚éê‡
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒå­˜åœ¨ã—ãªã„ || ç¾åœ¨ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒæ­»äº¡ã—ã¦ã„ã‚‹å ´åˆ
         if (characterManager.PlayerObjs.Count > 0 && !target || target && target.GetComponent<CharacterBase>().HP <= 0)
         {
-            // V‚µ‚­ƒ^[ƒQƒbƒg‚ğ’T‚·
+            // æ–°ã—ãã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ¢ã™
             if (!isBoss) target = sightChecker.GetTargetInSight();
             else SelectNewTargetInBossRoom();
         }
 
         if (target)
         {
-            // Às’†‚Å‚È‚¯‚ê‚ÎAƒ^[ƒQƒbƒg‚ğŠÄ‹‚·‚éƒRƒ‹[ƒ`ƒ“‚ğŠJn
+            // å®Ÿè¡Œä¸­ã§ãªã‘ã‚Œã°ã€ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’ç›£è¦–ã™ã‚‹ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’é–‹å§‹
             string key = "CheckTargetObstructionCoroutine";
             if (!ContaintsManagedCoroutine(key))
             {
@@ -297,23 +302,23 @@ abstract public class EnemyBase : CharacterBase
             return;
         }
 
-        // ƒ^[ƒQƒbƒg‚Ì‚¢‚é•ûŒü‚ÉƒeƒNƒXƒ`ƒƒ‚ğ”½“]
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã„ã‚‹æ–¹å‘ã«ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’åè»¢
         LookAtTarget();
         DecideBehavior();
     }
 
     /// <summary>
-    /// s“®ƒpƒ^[ƒ“Àsˆ—
+    /// è¡Œå‹•ãƒ‘ã‚¿ãƒ¼ãƒ³å®Ÿè¡Œå‡¦ç†
     /// </summary>
     abstract protected void DecideBehavior();
 
     /// <summary>
-    /// ƒAƒCƒhƒ‹ˆ—
+    /// ã‚¢ã‚¤ãƒ‰ãƒ«å‡¦ç†
     /// </summary>
     protected virtual void Idle() { }
 
     /// <summary>
-    /// ƒ^[ƒQƒbƒg‚Ì‚¢‚é•ûŒü‚ÉŒü‚©‚¹‚é
+    /// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã„ã‚‹æ–¹å‘ã«å‘ã‹ã›ã‚‹
     /// </summary>
     protected void LookAtTarget()
     {
@@ -325,7 +330,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// •ûŒü“]Š·
+    /// æ–¹å‘è»¢æ›
     /// </summary>
     protected void Flip()
     {
@@ -335,7 +340,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ‚»‚Ìê‚É‘Ò‹@‚·‚éˆ—
+    /// ãã®å ´ã«å¾…æ©Ÿã™ã‚‹å‡¦ç†
     /// </summary>
     /// <param name="waitingTime"></param>
     /// <returns></returns>
@@ -348,16 +353,16 @@ abstract public class EnemyBase : CharacterBase
         onFinished?.Invoke();
     }
 
-    #region ƒXƒe[ƒ^ƒXŠÖ˜A
+    #region ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹é–¢é€£
 
     /// <summary>
-    /// Œ»İ‚Ì“ïˆÕ“x‚ğŠî‚ÉƒXƒe[ƒ^ƒX‚ğã¸‚³‚¹‚é
+    /// ç¾åœ¨ã®é›£æ˜“åº¦ã‚’åŸºã«ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šæ˜‡ã•ã›ã‚‹
     /// </summary>
     public void ApplyDifficultyBasedStatusBoost()
     {
         if (LevelManager.GameLevel == 0) return;
 
-        // “ïˆÕ“x‚ÌƒŒƒxƒ‹1–ˆ‚ÉHP,Defence,Power‚ª15%ã¸
+        // é›£æ˜“åº¦ã®ãƒ¬ãƒ™ãƒ«1æ¯ã«HP,Defence,PowerãŒ15%ä¸Šæ˜‡
         const float rate = 0.15f;
         float applyRate = rate * LevelManager.GameLevel;
         int addHp = (int)(baseHp * applyRate) == 0 ? 1 : (int)(baseHp * applyRate);
@@ -366,16 +371,16 @@ abstract public class EnemyBase : CharacterBase
         float addMoveSpeed = 0;
         int addExp = (int)(baseExp * applyRate) == 0 ? 1 : (int)(baseExp * applyRate);
 
-        // ƒGƒŠ[ƒg‚Ìê‡‚àl—¶‚·‚é
+        // ã‚¨ãƒªãƒ¼ãƒˆã®å ´åˆã‚‚è€ƒæ…®ã™ã‚‹
         if (isElite)
         {
-            // HPEUŒ‚—Í‚ª50%‘‚µA–hŒä—ÍEˆÚ“®‘¬“xEˆÚ“®‘¬“xŒW”‚ª25%‘‚µ‚É‚·‚é
+            // HPãƒ»æ”»æ’ƒåŠ›ãŒ50%å¢—ã—ã€é˜²å¾¡åŠ›ãƒ»ç§»å‹•é€Ÿåº¦ãƒ»ç§»å‹•é€Ÿåº¦ä¿‚æ•°ãŒ25%å¢—ã—ã«ã™ã‚‹
             addHp += (int)(baseHp * 0.5f);
             addPower += (int)(basePower * 0.5f);
             addDef += (int)(baseDefense * 0.25f);
-            addMoveSpeed += (enemyElite.EliteType == ENEMY_ELITE_TYPE.Thunder) ? baseMoveSpeed : baseMoveSpeed * 0.25f; // ƒGƒŠ[ƒgƒ^ƒCƒv‚ªThunder‚Ìê‡‚Í2”{ã‚ª‚é
+            addMoveSpeed += (enemyElite.EliteType == ENEMY_ELITE_TYPE.Thunder) ? baseMoveSpeed : baseMoveSpeed * 0.25f; // ã‚¨ãƒªãƒ¼ãƒˆã‚¿ã‚¤ãƒ—ãŒThunderã®å ´åˆã¯2å€ä¸ŠãŒã‚‹
 
-            // “ñ”{ŒoŒ±’l‘‰Á
+            // äºŒå€çµŒé¨“å€¤å¢—åŠ 
             addExp += baseExp;
         }
 
@@ -397,10 +402,10 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region ƒvƒŒƒCƒ„[Eƒ^[ƒQƒbƒgŠÖ˜A
+    #region ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ»ã‚¿ãƒ¼ã‚²ãƒƒãƒˆé–¢é€£
 
     /// <summary>
-    /// ƒ{ƒX•”‰®‚É‚¢‚éƒvƒŒƒCƒ„[‚Ì’†‚©‚çV‚µ‚­ƒ^[ƒQƒbƒg‚ğŒˆ‚ß‚é
+    /// ãƒœã‚¹éƒ¨å±‹ã«ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä¸­ã‹ã‚‰æ–°ã—ãã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ±ºã‚ã‚‹
     /// </summary>
     protected bool SelectNewTargetInBossRoom()
     {
@@ -424,7 +429,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ƒ^[ƒQƒbƒg‚Æ‚ÌŠÔ‚ÉÕ•Á•¨‚ª‚ ‚é‚©‚ğŠÄ‹‚µ‘±‚¯‚éƒRƒ‹[ƒ`ƒ“
+    /// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ã®é–“ã«é®è”½ç‰©ãŒã‚ã‚‹ã‹ã‚’ç›£è¦–ã—ç¶šã‘ã‚‹ã‚³ãƒ«ãƒ¼ãƒãƒ³
     /// </summary>
     /// <returns></returns>
     IEnumerator CheckTargetObstructionCoroutine(Action onFinished)
@@ -432,14 +437,14 @@ abstract public class EnemyBase : CharacterBase
         float currentTime = 0;
         float waitSec = 0.01f;
 
-        // obstructionMaxTimeˆÈãŒo‰ß‚Åƒ^[ƒQƒbƒg‚ğŒ©¸‚Á‚½‚±‚Æ‚É‚·‚é
+        // obstructionMaxTimeä»¥ä¸ŠçµŒéã§ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¦‹å¤±ã£ãŸã“ã¨ã«ã™ã‚‹
         while (currentTime < obstructionMaxTime)
         {
             yield return new WaitForSeconds(waitSec);
 
             if (isBoss)
             {
-                // V‚µ‚­ƒ^[ƒQƒbƒg‚ğ’T‚·•K—v‚ª‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN
+                // æ–°ã—ãã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ¢ã™å¿…è¦ãŒã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
                 bool needNewTarget = false;
                 if (target)
                 {
@@ -450,7 +455,7 @@ abstract public class EnemyBase : CharacterBase
 
                 if(needNewTarget) SelectNewTargetInBossRoom();
 
-                // ƒ{ƒX•”‰®‚©‚çƒvƒŒƒCƒ„[‚ª‚¢‚È‚­‚È‚Á‚½‚çŒ©¸‚Á‚½‚±‚Æ‚É‚·‚é
+                // ãƒœã‚¹éƒ¨å±‹ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã„ãªããªã£ãŸã‚‰è¦‹å¤±ã£ãŸã“ã¨ã«ã™ã‚‹
                 if (!target) break;
             }
             else
@@ -476,7 +481,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ¶‘¶‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[‚Ìæ“¾ˆ—
+    /// ç”Ÿå­˜ã—ã¦ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å–å¾—å‡¦ç†
     /// </summary>
     /// <returns></returns>
     protected List<GameObject> GetAlivePlayers()
@@ -493,7 +498,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ˆê”Ô‹ß‚¢ƒvƒŒƒCƒ„[‚ğæ“¾‚·‚é
+    /// ä¸€ç•ªè¿‘ã„ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å–å¾—ã™ã‚‹
     /// </summary>
     /// <returns></returns>
     public GameObject GetNearPlayer(Vector3? offset = null)
@@ -518,7 +523,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ˆê”Ô‹ß‚¢ƒvƒŒƒCƒ„[‚ğƒ^[ƒQƒbƒg‚Éİ’è‚·‚é
+    /// ä¸€ç•ªè¿‘ã„ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«è¨­å®šã™ã‚‹
     /// </summary>
     public void SetNearTarget(Vector3? offset = null)
     {
@@ -531,9 +536,9 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region ƒGƒŠ[ƒgŒÂ‘ÌEó‘ÔˆÙíŠÖ˜A
+    #region ã‚¨ãƒªãƒ¼ãƒˆå€‹ä½“ãƒ»çŠ¶æ…‹ç•°å¸¸é–¢é€£
     /// <summary>
-    /// ƒGƒŠ[ƒgŒÂ‘Ì‚É‚·‚éˆ—
+    /// ã‚¨ãƒªãƒ¼ãƒˆå€‹ä½“ã«ã™ã‚‹å‡¦ç†
     /// </summary>
     public void PromoteToElite(ENEMY_ELITE_TYPE type)
     {
@@ -546,7 +551,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// “K—p‚³‚¹‚éó‘ÔˆÙí‚Ìí—Ş‚ğæ“¾‚·‚é
+    /// é©ç”¨ã•ã›ã‚‹çŠ¶æ…‹ç•°å¸¸ã®ç¨®é¡ã‚’å–å¾—ã™ã‚‹
     /// </summary>
     public DEBUFF_TYPE? GetStatusEffectToApply()
     {
@@ -560,29 +565,29 @@ abstract public class EnemyBase : CharacterBase
     }
     #endregion
 
-    #region ˆÚ“®ˆ—ŠÖ˜A
+    #region ç§»å‹•å‡¦ç†é–¢é€£
 
     /// <summary>
-    /// ’ÇÕ‚·‚éˆ—
+    /// è¿½è·¡ã™ã‚‹å‡¦ç†
     /// </summary>
     protected virtual void Tracking() { }
 
     /// <summary>
-    /// „‰ñ‚·‚éˆ—
+    /// å·¡å›ã™ã‚‹å‡¦ç†
     /// </summary>
     protected virtual void Patorol() { }
 
     #endregion
 
-    #region ƒqƒbƒgˆ—ŠÖ˜A
+    #region ãƒ’ãƒƒãƒˆå‡¦ç†é–¢é€£
 
     /// <summary>
-    /// €–S‚ÉŒÄ‚Î‚ê‚éˆ— (ê—pƒAƒjƒ[ƒVƒ‡ƒ“‚È‚Ç)
+    /// æ­»äº¡æ™‚ã«å‘¼ã°ã‚Œã‚‹å‡¦ç† (å°‚ç”¨ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãªã©)
     /// </summary>
     abstract protected void OnDead();
 
     /// <summary>
-    /// ƒmƒbƒNƒoƒbƒNˆ—
+    /// ãƒãƒƒã‚¯ãƒãƒƒã‚¯å‡¦ç†
     /// </summary>
     /// <param name="damage"></param>
     protected void DoKnokBack()
@@ -594,14 +599,14 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Æ‚«‚Ìˆ—
+    /// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãŸã¨ãã®å‡¦ç†
     /// </summary>
     protected virtual void OnHit()
     {
         isAttacking = false;
         doOnceDecision = true;
 
-        // ƒqƒbƒg‚ÉUŒ‚ˆ—‚È‚Ç‚ğ’â~‚·‚é
+        // ãƒ’ãƒƒãƒˆæ™‚ã«æ”»æ’ƒå‡¦ç†ãªã©ã‚’åœæ­¢ã™ã‚‹
         if (canCancelAttackOnHit)
         {
             StopAllManagedCoroutines();
@@ -609,19 +614,19 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ”íƒ_ƒ[ƒW‚ğ•\¦‚·‚é
+    /// è¢«ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹
     /// </summary>
     protected void DrawHitDamageUI(int damage, Vector3? attackerPos = null)
     {
-        // ”íƒ_ƒ[ƒW—Ê‚ÌUI‚ğ•\¦‚·‚é
+        // è¢«ãƒ€ãƒ¡ãƒ¼ã‚¸é‡ã®UIã‚’è¡¨ç¤ºã™ã‚‹
         var attackerPoint = attackerPos != null ? (Vector3)attackerPos : transform.position;
         var hitPoint = TransformUtils.GetHitPointToTarget(transform, attackerPoint);
         if (hitPoint == null) hitPoint = transform.position;
-        UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ƒ_ƒ[ƒW•\‹L
+        UIManager.Instance.PopDamageUI(damage, (Vector2)hitPoint, false);   // ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨è¨˜
     }
 
     /// <summary>
-    /// ƒ_ƒ[ƒW“K—pƒŠƒNƒGƒXƒg
+    /// ãƒ€ãƒ¡ãƒ¼ã‚¸é©ç”¨ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
     /// </summary>
     /// <param name="damage"></param>
     async public virtual void ApplyDamageRequest(int power, GameObject attacker = null, bool isKnokBack = true, bool drawDmgText = true, params DEBUFF_TYPE[] debuffList)
@@ -629,24 +634,24 @@ abstract public class EnemyBase : CharacterBase
         GameObject playerSelf = CharacterManager.Instance.PlayerObjSelf;
         if (isInvincible || isDead || attacker && attacker != playerSelf) return;
 
-        #region ƒŠƒAƒ‹ƒ^ƒCƒ€“¯Šú—p
+        #region ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ åŒæœŸç”¨
         if (RoomModel.Instance)
         {
             if (attacker && attacker == playerSelf)
             {
-                // ƒvƒŒƒCƒ„[‚É‚æ‚éƒ_ƒ[ƒW“K—p
+                // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ã‚ˆã‚‹ãƒ€ãƒ¡ãƒ¼ã‚¸é©ç”¨
                 await RoomModel.Instance.EnemyHealthAsync(uniqueId, power, new List<DEBUFF_TYPE>(debuffList));
             }
             else if (RoomModel.Instance.IsMaster)
             {
-                // ƒMƒ~ƒbƒN‚âó‘ÔˆÙí‚É‚æ‚éƒ_ƒ[ƒW“K—p(ƒ}ƒXƒ^ƒNƒ‰ƒCƒAƒ“ƒg‚Ì‚İƒŠƒNƒGƒXƒg‰Â”\)
+                // ã‚®ãƒŸãƒƒã‚¯ã‚„çŠ¶æ…‹ç•°å¸¸ã«ã‚ˆã‚‹ãƒ€ãƒ¡ãƒ¼ã‚¸é©ç”¨(ãƒã‚¹ã‚¿ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®ã¿ãƒªã‚¯ã‚¨ã‚¹ãƒˆå¯èƒ½)
                 await RoomModel.Instance.ApplyDamageToEnemyAsync(uniqueId, power);
             }
             return;
         }
         #endregion
 
-        // ˆÈ~‚Íƒ[ƒJƒ‹ || ƒMƒ~ƒbƒN—p
+        // ä»¥é™ã¯ãƒ­ãƒ¼ã‚«ãƒ« || ã‚®ãƒŸãƒƒã‚¯ç”¨
 
         PlayerBase plBase = null;
         int damage = 0;
@@ -655,31 +660,31 @@ abstract public class EnemyBase : CharacterBase
         {
             plBase = attacker.GetComponent<PlayerBase>();
 
-            damage = CalculationLibrary.CalcDamage(power, Defense - (int)(Defense * plBase.PierceRate));   // ŠÑ’Ê—¦“K—p
+            damage = CalculationLibrary.CalcDamage(power, Defense - (int)(Defense * plBase.PierceRate));   // è²«é€šç‡é©ç”¨
 
             //----------------
-            // ƒŒƒŠƒbƒN“K—p
+            // ãƒ¬ãƒªãƒƒã‚¯é©ç”¨
 
-            // ©g‚ªƒfƒoƒt‚ğó‚¯‚Ä‚¢‚é + ƒŒƒŠƒbƒNu¯•ÊAIvŠ—LAƒ_ƒ[ƒW‚ª‘‰Á
+            // è‡ªèº«ãŒãƒ‡ãƒãƒ•ã‚’å—ã‘ã¦ã„ã‚‹ + ãƒ¬ãƒªãƒƒã‚¯ã€Œè­˜åˆ¥AIã€æ‰€æœ‰æ™‚ã€ãƒ€ãƒ¡ãƒ¼ã‚¸ãŒå¢—åŠ 
             var debuffController = GetComponent<DebuffController>();
             if (debuffController.GetAppliedStatusEffects().Count != 0) damage = (int)(damage * plBase.DebuffDmgRate);
 
-            // ƒŒƒŠƒbƒNuƒCƒŠ[ƒKƒ‹ƒXƒNƒŠƒvƒgv“K—pAƒ_ƒ[ƒW‚ğ99999‚É‚·‚é
+            // ãƒ¬ãƒªãƒƒã‚¯ã€Œã‚¤ãƒªãƒ¼ã‚¬ãƒ«ã‚¹ã‚¯ãƒªãƒ—ãƒˆã€é©ç”¨æ™‚ã€ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’99999ã«ã™ã‚‹
             damage = (plBase.LotteryRelic(RELIC_TYPE.IllegalScript)) ? MAX_DAMAGE : damage;
         }
         else
         {
-            // ƒMƒ~ƒbƒN‚È‚Ç‚É‚æ‚éƒ_ƒ[ƒW
+            // ã‚®ãƒŸãƒƒã‚¯ãªã©ã«ã‚ˆã‚‹ãƒ€ãƒ¡ãƒ¼ã‚¸
             damage = power;
         }
 
-        // ƒ_ƒ[ƒW“K—p
+        // ãƒ€ãƒ¡ãƒ¼ã‚¸é©ç”¨
         int remainingHp = this.hp - Mathf.Abs(damage);
         ApplyDamage(damage, remainingHp, attacker, isKnokBack, drawDmgText, debuffList);
     }
 
     /// <summary>
-    /// ƒ_ƒ[ƒW“K—pˆ—
+    /// ãƒ€ãƒ¡ãƒ¼ã‚¸é©ç”¨å‡¦ç†
     /// </summary>
     /// <param name="damage"></param>
     /// <param name="remainingHP"></param>
@@ -691,7 +696,7 @@ abstract public class EnemyBase : CharacterBase
         if (isInvincible || isDead) return;
         var charaManager = CharacterManager.Instance;
 
-        // ƒ_ƒ[ƒW“K—pAƒ_ƒ[ƒW•\‹L
+        // ãƒ€ãƒ¡ãƒ¼ã‚¸é©ç”¨ã€ãƒ€ãƒ¡ãƒ¼ã‚¸è¡¨è¨˜
         Vector3? attackerPos = null;
         if (attacker != null) attackerPos = attacker.transform.position;
         if (drawDmgText && !isInvincible) DrawHitDamageUI(damage, attackerPos);
@@ -699,7 +704,7 @@ abstract public class EnemyBase : CharacterBase
 
         if(isBoss && UIManager.Instance) UIManager.Instance.UpdateBossStatus();
 
-        // ƒŒƒŠƒbƒNuƒŠƒQƒCƒ“ƒR[ƒhvŠ—LA—^ƒ_ƒ[ƒW‚Ìˆê•”‚ğHP‰ñ•œ
+        // ãƒ¬ãƒªãƒƒã‚¯ã€Œãƒªã‚²ã‚¤ãƒ³ã‚³ãƒ¼ãƒ‰ã€æ‰€æœ‰æ™‚ã€ä¸ãƒ€ãƒ¡ãƒ¼ã‚¸ã®ä¸€éƒ¨ã‚’HPå›å¾©
         if (attacker != null && attacker.tag == "Player")
         {
             var plBase = attacker.GetComponent<PlayerBase>();
@@ -712,10 +717,10 @@ abstract public class EnemyBase : CharacterBase
             }
         }
 
-        // ó‘ÔˆÙí‚ğ•t—^‚·‚é
+        // çŠ¶æ…‹ç•°å¸¸ã‚’ä»˜ä¸ã™ã‚‹
         if (debuffList.Length > 0) effectController.ApplyStatusEffect(debuffList);
 
-        // ƒAƒ^ƒbƒJ[‚ª‹‚é•ûŒü‚ÉƒeƒNƒXƒ`ƒƒ‚ğ”½“]‚³‚¹AƒmƒbƒNƒoƒbƒN‚ğ‚³‚¹‚é
+        // ã‚¢ã‚¿ãƒƒã‚«ãƒ¼ãŒå±…ã‚‹æ–¹å‘ã«ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’åè»¢ã•ã›ã€ãƒãƒƒã‚¯ãƒãƒƒã‚¯ã‚’ã•ã›ã‚‹
         if (isKnokBack && attackerPos != null)
         {
             Vector3 pos = (Vector3)attackerPos;
@@ -729,7 +734,7 @@ abstract public class EnemyBase : CharacterBase
 
         if (hp <= 0)
         {
-            // ‘S‚Ä‚ÌƒRƒ‹[ƒ`ƒ“(UŒ‚ˆ—‚âƒXƒ^ƒ“ˆ—‚È‚Ç)‚ğ’â~‚·‚é
+            // å…¨ã¦ã®ã‚³ãƒ«ãƒ¼ãƒãƒ³(æ”»æ’ƒå‡¦ç†ã‚„ã‚¹ã‚¿ãƒ³å‡¦ç†ãªã©)ã‚’åœæ­¢ã™ã‚‹
             StopAllCoroutines();
 
             PlayerBase player = attacker ? attacker.gameObject.GetComponent<PlayerBase>() : null;
@@ -737,9 +742,11 @@ abstract public class EnemyBase : CharacterBase
         }
         else
         {
-            // Œ»İ‚Ìƒ^[ƒQƒbƒg‚ğ‹”F‚Å‚«‚Ä‚¢‚È‚¢&&ƒAƒ^ƒbƒJ[‚ª‘¶İ‚·‚éê‡Aƒ^[ƒQƒbƒg‚ğƒAƒ^ƒbƒJ[‚ÉXV‚·‚é
+            if (isUseHitBlendShader) PlayHitBlendShader(true, 0.1f);
+
+            // ç¾åœ¨ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¦–èªã§ãã¦ã„ãªã„&&ã‚¢ã‚¿ãƒƒã‚«ãƒ¼ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’ã‚¢ã‚¿ãƒƒã‚«ãƒ¼ã«æ›´æ–°ã™ã‚‹
             bool isTargetVisible = true;
-            if (target) isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
+            if (target && sightChecker) isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
 
             if(!isTargetVisible && attacker != null)
             {
@@ -749,7 +756,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// €–Sˆ—
+    /// æ­»äº¡å‡¦ç†
     /// </summary>
     /// <returns></returns>
     public virtual IEnumerator DestroyEnemy(PlayerBase player)
@@ -772,31 +779,31 @@ abstract public class EnemyBase : CharacterBase
                 RemoveEnemyFromList();
             }
 
-            m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // ƒvƒŒƒCƒ„[‚Æ‚Ì”»’è‚ğÁ‚·
+            m_rb2d.excludeLayers = LayerMask.GetMask("BlinkPlayer") | LayerMask.GetMask("Player"); ;  // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®åˆ¤å®šã‚’æ¶ˆã™
             yield return new WaitForSeconds(destroyWaitSec);
             Destroy(gameObject);
         }
     }
 
     /// <summary>
-    /// ©g‚ğŠO•”‚ÌƒŠƒXƒg‚©‚çíœ‚·‚é
+    /// è‡ªèº«ã‚’å¤–éƒ¨ã®ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤ã™ã‚‹
     /// </summary>
     void RemoveEnemyFromList()
     {
         if (CharacterManager.Instance.Enemies[uniqueId].SpawnType == SPAWN_ENEMY_TYPE.ByTerminal)
-        {   // ¶¬ƒ^ƒCƒv‚ªƒ^[ƒ~ƒiƒ‹‚È‚ç
-            var termId = CharacterManager.Instance.Enemies[uniqueId].TerminalID;    // ’[––ID‚ğ•ÛŠÇ
-            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);                // ƒŠƒXƒg‚©‚çíœ
+        {   // ç”Ÿæˆã‚¿ã‚¤ãƒ—ãŒã‚¿ãƒ¼ãƒŸãƒŠãƒ«ãªã‚‰
+            var termId = CharacterManager.Instance.Enemies[uniqueId].TerminalID;    // ç«¯æœ«IDã‚’ä¿ç®¡
+            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);                // ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
 
             if (CharacterManager.Instance.GetEnemysByTerminalID(termId).Count == 0)
-            {   // ¶¬’[––‚Ì“G‚ª‘Sˆõ“|‚³‚ê‚½‚ç•ñVo‚·
+            {   // ç”Ÿæˆç«¯æœ«ã®æ•µãŒå…¨å“¡å€’ã•ã‚ŒãŸã‚‰å ±é…¬å‡ºã™
                 if (RoomModel.Instance.IsMaster)
                     TerminalManager.Instance.TerminalObjs[termId].GetComponent<TerminalBase>().SuccessRequest();
             }
         }
         else
         {
-            // Instance‚ª‚ ‚é‚È‚ç“GŒ‚”jŠÖ”‚ğŒÄ‚Ô
+            // InstanceãŒã‚ã‚‹ãªã‚‰æ•µæ’ƒç ´é–¢æ•°ã‚’å‘¼ã¶
             if (GameManager.Instance) GameManager.Instance.CrushEnemy(this);
 
             CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
@@ -804,12 +811,12 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ƒgƒŠƒK[ÚG”»’è
+    /// ãƒˆãƒªã‚¬ãƒ¼æ¥è§¦åˆ¤å®š
     /// </summary>
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // ”ÍˆÍŠO‚É‚Å‚½‚ç”jŠü‚·‚é
+        // ç¯„å›²å¤–ã«ã§ãŸã‚‰ç ´æ£„ã™ã‚‹
         if (!canIgnoreDeadZoneCollision && collision.gameObject.tag == "Gimmick/Abyss")
         {
             CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
@@ -819,10 +826,10 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region ƒXƒ^ƒ“ˆ—ŠÖ˜A
+    #region ã‚¹ã‚¿ãƒ³å‡¦ç†é–¢é€£
 
     /// <summary>
-    /// ƒXƒ^ƒ“ˆ—
+    /// ã‚¹ã‚¿ãƒ³å‡¦ç†
     /// </summary>
     /// <param name="time"></param>
     public void ApplyStun(float time, bool isHit = true)
@@ -831,7 +838,7 @@ abstract public class EnemyBase : CharacterBase
 
         isStun = true;
 
-        // ƒXƒ^ƒ“‚ÌƒRƒ‹[ƒ`ƒ“‚ğÄŠJn
+        // ã‚¹ã‚¿ãƒ³ã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’å†é–‹å§‹
         string cooldownKey = "StunTime";
         RemoveAndStopCoroutineByKey(cooldownKey);
         Coroutine coroutine = StartCoroutine(StunTime(time));
@@ -839,7 +846,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ˆê’èŠÔƒXƒ^ƒ“‚³‚¹‚éˆ—
+    /// ä¸€å®šæ™‚é–“ã‚¹ã‚¿ãƒ³ã•ã›ã‚‹å‡¦ç†
     /// </summary>
     /// <returns></returns>
     IEnumerator StunTime(float stunTime)
@@ -850,99 +857,99 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region ƒeƒNƒXƒ`ƒƒEƒAƒjƒ[ƒVƒ‡ƒ“ŠÖ˜A
+    #region ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ»ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–¢é€£
 
-    #region UŒ‚ƒpƒ^[ƒ“‚P
+    #region æ”»æ’ƒãƒ‘ã‚¿ãƒ¼ãƒ³ï¼‘
 
     /// <summary>
-    /// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnAttackAnimEvent() { }
 
     /// <summary>
-    /// UŒ‚‚ÌƒAƒjƒ[ƒVƒ‡ƒ“I—¹‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnEndAttackAnimEvent() { }
 
     #endregion
 
-    #region UŒ‚ƒpƒ^[ƒ“‚Q
+    #region æ”»æ’ƒãƒ‘ã‚¿ãƒ¼ãƒ³ï¼’
 
     /// <summary>
-    /// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnAttackAnim2Event() { }
 
     /// <summary>
-    /// UŒ‚‚ÌƒAƒjƒ[ƒVƒ‡ƒ“I—¹‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnEndAttackAnim2Event() { }
 
     #endregion
 
-    #region UŒ‚ƒpƒ^[ƒ“‚R
+    #region æ”»æ’ƒãƒ‘ã‚¿ãƒ¼ãƒ³ï¼“
 
     /// <summary>
-    /// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnAttackAnim3Event() { }
 
     /// <summary>
-    /// UŒ‚‚ÌƒAƒjƒ[ƒVƒ‡ƒ“I—¹‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnEndAttackAnim3Event() { }
 
     #endregion
 
-    #region UŒ‚ƒpƒ^[ƒ“‚S
+    #region æ”»æ’ƒãƒ‘ã‚¿ãƒ¼ãƒ³ï¼”
 
     /// <summary>
-    /// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnAttackAnim4Event() { }
 
     /// <summary>
-    /// UŒ‚‚ÌƒAƒjƒ[ƒVƒ‡ƒ“I—¹‚ÌƒCƒxƒ“ƒg’Ê’mˆ—
+    /// æ”»æ’ƒã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥å‡¦ç†
     /// </summary>
     public virtual void OnEndAttackAnim4Event() { }
 
     #endregion
 
     /// <summary>
-    /// ˆÚ“®‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“ƒCƒxƒ“ƒg’Ê’m
+    /// ç§»å‹•ã™ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥
     /// </summary>
     public virtual void OnMoveAnimEvent() { }
 
     /// <summary>
-    /// ˆÚ“®I—¹ƒAƒjƒ[ƒVƒ‡ƒ“ƒCƒxƒ“ƒg’Ê’m
+    /// ç§»å‹•çµ‚äº†ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆé€šçŸ¥
     /// </summary>
     public virtual void OnEndMoveAnimEvent() { }
 
     /// <summary>
-    /// ƒXƒ|[ƒ“ƒAƒjƒƒ[ƒVƒ‡ƒ“ŠJn
+    /// ã‚¹ãƒãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–‹å§‹æ™‚
     /// </summary>
     public virtual void OnSpawnAnimEvent()
     {
         if (!isStartComp) Start();
         isSpawn = false;
-        isInvincible = true;    // –³“Gó‘Ô‚É‚·‚é & –{—ˆ‚Ìs“®•s‰Â
+        isInvincible = true;    // ç„¡æ•µçŠ¶æ…‹ã«ã™ã‚‹ & æœ¬æ¥ã®è¡Œå‹•ä¸å¯
     }
 
     /// <summary>
-    /// ƒXƒ|[ƒ“ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚Æ‚«
+    /// ã‚¹ãƒãƒ¼ãƒ³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã¨ã
     /// </summary>
     public virtual void OnEndSpawnAnimEvent()
     {
         isInvincible = false;
         isSpawn = false;
 
-        // ƒ^[ƒQƒbƒg‚ğ’T‚·
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ¢ã™
         if (!isBoss)
         {
             var nearPlayer = GetNearPlayer();
-            if (nearPlayer != null)
+            if (nearPlayer != null && sightChecker)
             {
-                target = nearPlayer;    // ˆê“I‚Éƒ^[ƒQƒbƒg‚Éİ’è
+                target = nearPlayer;    // ä¸€æ™‚çš„ã«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«è¨­å®š
                 bool isTargetVisible = !sightChecker.IsObstructed() || sightChecker.IsTargetVisible();
                 if (!isTargetVisible) target = null;
             }
@@ -953,7 +960,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// w’è‚µ‚½ƒAƒjƒ[ƒVƒ‡ƒ“ID‚ªƒqƒbƒgƒAƒjƒ[ƒVƒ‡ƒ“‚©‚Ç‚¤‚©
+    /// æŒ‡å®šã—ãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³IDãŒãƒ’ãƒƒãƒˆã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‹ã©ã†ã‹
     /// </summary>
     /// <param name="animationId"></param>
     /// <returns></returns>
@@ -962,12 +969,76 @@ abstract public class EnemyBase : CharacterBase
         return false;
     }
 
-    #endregion
+    /// <summary>
+    /// HitBlendã®æ¼”å‡ºé–‹å§‹
+    /// </summary>
+    /// <param name="loopTime">æ¼”å‡ºæ™‚é–“</param>
+    /// <param name="isStartFromOne">Blendã®å€¤ã‚’1ã‹ã‚‰é–‹å§‹ã™ã‚‹ã‹ã©ã†ã‹</param>
+    protected void PlayHitBlendShader(bool isStartFromOne, float loopTime, float delay = 0)
+    {
+        // å®Ÿè¡Œã—ã¦ã„ãªã‘ã‚Œã°ã€ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’é–‹å§‹
+        string cooldownKey = "HitBlend";
 
-    #region ƒRƒ‹[ƒ`ƒ“ŠÇ—ŠÖ˜A
+        // HitBlendãƒªã‚»ãƒƒãƒˆ
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        float blend = isStartFromOne ? 1f : 0f;
+        foreach (var spriteRenderer in spriteRenderers)
+        {
+            spriteRenderer.material.SetFloat("_HitEffectBlend", blend);
+        }
+
+        Coroutine coroutine = StartCoroutine(HitBlendShaderCoroutine(loopTime, delay, isStartFromOne ,() =>
+        {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
+    }
 
     /// <summary>
-    /// ŠÇ—‚µ‚Ä‚¢‚é‚à‚Ì‚Ì’†‚ÅA‹N“®’†‚ÌƒRƒ‹[ƒ`ƒ“‚ğŒŸõ‚·‚é
+    /// æŒ‡å®šã—ãŸç§’æ•°ã«ã‹ã‘ã¦Blendã‚’å¾ã€…ã«1ã«å¤‰æ›´ã™ã‚‹
+    /// </summary>
+    /// <param name="loopTime"></param>
+    /// <param name="onFinished"></param>
+    /// <returns></returns>
+    protected IEnumerator HitBlendShaderCoroutine(float loopTime, float delay, bool isStartFromOne, Action onFinished)
+    {
+        yield return new WaitForSeconds(delay);
+
+        float currentTime = 0;
+        while (currentTime < loopTime)
+        {
+            currentTime += Time.deltaTime;
+
+            // é€²è¡Œåº¦ï¼ˆ0-1ã¾ãŸã¯1-0ï¼‰
+            float nextBlend = Mathf.Clamp01(currentTime / loopTime);
+            nextBlend = isStartFromOne ? 1 - nextBlend : nextBlend;
+
+            // å„ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®ãƒãƒ†ãƒªã‚¢ãƒ«ã«åæ˜ 
+            foreach (var spriteRenderer in spriteRenderers)
+            {
+                Material material = spriteRenderer.material;
+                material.SetFloat("_HitEffectBlend", nextBlend);
+            }
+
+            yield return null;
+        }
+
+        // æœ€çµ‚çš„ã«å€¤ã‚’ã€0ã‹1ã€ã«å›ºå®š
+        float blend = isStartFromOne ? 0 : 1f;
+        foreach (var spriteRenderer in spriteRenderers)
+        {
+            spriteRenderer.material.SetFloat("_HitEffectBlend", blend);
+        }
+
+        onFinished?.Invoke();
+    }
+
+    #endregion
+
+    #region ã‚³ãƒ«ãƒ¼ãƒãƒ³ç®¡ç†é–¢é€£
+
+    /// <summary>
+    /// ç®¡ç†ã—ã¦ã„ã‚‹ã‚‚ã®ã®ä¸­ã§ã€èµ·å‹•ä¸­ã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’æ¤œç´¢ã™ã‚‹
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
@@ -989,7 +1060,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// w’è‚µ‚½key‚ÌƒRƒ‹[ƒ`ƒ“‚Ì—v‘f‚ğíœ
+    /// æŒ‡å®šã—ãŸkeyã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ã®è¦ç´ ã‚’å‰Šé™¤
     /// </summary>
     /// <param name="key"></param>
     protected void RemoveAndStopCoroutineByKey(string key)
@@ -1002,7 +1073,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// ŠÇ—‚µ‚Ä‚¢‚é‘S‚Ä‚ÌƒRƒ‹[ƒ`ƒ“‚ğ’â~‚·‚é
+    /// ç®¡ç†ã—ã¦ã„ã‚‹å…¨ã¦ã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’åœæ­¢ã™ã‚‹
     /// </summary>
     protected void StopAllManagedCoroutines()
     {
@@ -1018,10 +1089,10 @@ abstract public class EnemyBase : CharacterBase
     }
     #endregion
 
-    #region ƒŠƒAƒ‹ƒ^ƒCƒ€“¯ŠúŠÖ˜A
+    #region ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ åŒæœŸé–¢é€£
 
     /// <summary>
-    /// ƒ}ƒXƒ^ƒNƒ‰ƒCƒAƒ“ƒgØ‚è‘Ö‚¦‚Éó‘Ô‚ğƒŠƒZƒbƒg‚·‚é
+    /// ãƒã‚¹ã‚¿ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆåˆ‡ã‚Šæ›¿ãˆæ™‚ã«çŠ¶æ…‹ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
     /// </summary>
     public virtual void ResetAllStates()
     {
@@ -1035,9 +1106,9 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// EnemyData‚ğì¬‚·‚é
+    /// EnemyDataã‚’ä½œæˆã™ã‚‹
     /// </summary>
-    /// <param name="enemyData">Œ^‚ğw’è</param>
+    /// <param name="enemyData">å‹ã‚’æŒ‡å®š</param>
     /// <returns></returns>
     protected EnemyData SetEnemyData(EnemyData enemyData)
     {
@@ -1066,7 +1137,7 @@ abstract public class EnemyBase : CharacterBase
         enemyData.AnimationId = this.GetAnimId();
         enemyData.DebuffList = debuffController.GetAppliedStatusEffects();
 
-        // ˆÈ‰º‚Íê—pƒvƒƒpƒeƒB
+        // ä»¥ä¸‹ã¯å°‚ç”¨ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
         enemyData.UniqueId = this.UniqueId;
         enemyData.EnemyName = this.gameObject.name;
         enemyData.isBoss = this.IsBoss;
@@ -1078,7 +1149,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// EnemyDataæ“¾ˆ—
+    /// EnemyDataå–å¾—å‡¦ç†
     /// </summary>
     /// <returns></returns>
     public virtual EnemyData GetEnemyData()
@@ -1087,7 +1158,7 @@ abstract public class EnemyBase : CharacterBase
     }
 
     /// <summary>
-    /// “G‚Ì“¯Šúî•ñ‚ğXV‚·‚é
+    /// æ•µã®åŒæœŸæƒ…å ±ã‚’æ›´æ–°ã™ã‚‹
     /// </summary>
     /// <param name="enemyData"></param>
     public virtual void UpdateEnemy(EnemyData enemyData)
@@ -1101,10 +1172,10 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region ƒ`ƒFƒbƒNŠÖ˜A
+    #region ãƒã‚§ãƒƒã‚¯é–¢é€£
 
     /// <summary>
-    /// w’è‚µ‚½À•W‚ÉƒXƒ|[ƒ“‚·‚éê‡AáŠQ•¨‚Æd‚È‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚·‚é
+    /// æŒ‡å®šã—ãŸåº§æ¨™ã«ã‚¹ãƒãƒ¼ãƒ³ã™ã‚‹å ´åˆã€éšœå®³ç‰©ã¨é‡ãªã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
@@ -1116,21 +1187,21 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
-    #region Debug•`‰æˆ—ŠÖ˜A
+    #region Debugæç”»å‡¦ç†é–¢é€£
 
     /// <summary>
-    /// ‘¼‚ÌŒŸ’m”ÍˆÍ‚Ì•`‰æˆ—
+    /// ä»–ã®æ¤œçŸ¥ç¯„å›²ã®æç”»å‡¦ç†
     /// </summary>
     abstract protected void DrawDetectionGizmos();
 
     /// <summary>
-    /// [ ƒfƒoƒbƒN—p ] Gizmos‚ğg—p‚µ‚ÄŒŸo”ÍˆÍ‚ğ•`‰æ
+    /// [ ãƒ‡ãƒãƒƒã‚¯ç”¨ ] Gizmosã‚’ä½¿ç”¨ã—ã¦æ¤œå‡ºç¯„å›²ã‚’æç”»
     /// </summary>
     private void OnDrawGizmos()
     {
         if (!canDrawRay) return;
 
-        // ‹ü•`‰æ
+        // è¦–ç·šæç”»
         if (sightChecker != null)
         {
             sightChecker.DrawSightLine(canChaseTarget, target);

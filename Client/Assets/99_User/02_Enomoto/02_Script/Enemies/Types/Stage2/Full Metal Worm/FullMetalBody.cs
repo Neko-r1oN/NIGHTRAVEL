@@ -8,7 +8,6 @@ using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -309,6 +308,12 @@ public class FullMetalBody : EnemyBase
         {
             isDead = true;
             OnDead();
+
+            foreach (var spriteRenderer in SpriteRenderers)
+            {
+                spriteRenderer.material.SetFloat("_HitEffectBlend", 0);
+            }
+
             yield break;
         }
     }
@@ -320,6 +325,13 @@ public class FullMetalBody : EnemyBase
     {
         selfJointAnimator.SetInteger("animation_id", (int)ANIM_ID.Despown);
         SetAnimId((int)ANIM_ID.Despown);
+
+        foreach (var spriteRenderer in SpriteRenderers)
+        {
+            ColorUtility.TryParseHtmlString("#2A5CFF", out Color color);
+            spriteRenderer.material.SetColor("_HitEffectColor", color);
+        }
+        PlayHitBlendShader(false, 2f);
     }
 
     #endregion

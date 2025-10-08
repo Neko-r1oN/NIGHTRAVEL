@@ -253,7 +253,7 @@ public class Delibot : EnemyBase
         switch (id)
         {
             case (int)ANIM_ID.Hit:
-                animator.Play("Haitatu_Damage_Animation");
+                animator.Play("Haitatu_Damage_Animation", 0, 0);
                 break;
             default:
                 break;

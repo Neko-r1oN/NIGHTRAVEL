@@ -4,6 +4,7 @@
 //----------------------------------------------------
 using DG.Tweening;
 using NUnit.Framework;
+using Pixeye.Unity;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -17,28 +18,41 @@ using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
-    #region 敵生成条件
-    [SerializeField] Vector2 spawnRange;
-    [SerializeField] float spawnRangeOffset;
+    #region プレイヤーを軸にした敵の生成範囲
+    [Foldout("プレイヤーを軸にした敵の生成範囲")]
+    [SerializeField] Vector2 spawnRange;    // 敵の生成範囲
+    [Foldout("プレイヤーを軸にした敵の生成範囲")]
+    [SerializeField] float spawnRangeOffset;    // 敵の生成範囲に対するオフセット
     #endregion
 
     #region 敵生成関連
-    int spawnCount;
+
+    [Foldout("敵の生成関連")]
     [SerializeField] int maxSpawnCnt; // マックススポーン回数
     public int MaxSpawnCnt { get { return maxSpawnCnt; } }
-    int enemyCnt;
-    [SerializeField] int knockTermsNum;      // ボスのエネミーの撃破数条件
+
+    [Foldout("敵の生成関連")]
+    [Tooltip("ボスを生成するための条件数(敵を撃破する度にカウント)")]
+    [SerializeField] int knockTermsNum;
     public int KnockTermsNum { get { return knockTermsNum; } }
+
+    [Foldout("敵の生成関連")]
+    [Tooltip("生成する敵がエリート個体になる確率")]
     [SerializeField] float spawnProbability = 0.05f; // 5%の確率 (0.0から1.0の間で指定)
     int fivePercentOfMaxFloor;
-    List<Vector3> enemySpawnPosList = new List<Vector3>();
 
+    int spawnCount;
+    int enemyCnt;
+    int eliteEnemyCnt;
+    List<Vector3> enemySpawnPosList = new List<Vector3>();  // 一度に生成する座標のリスト
     LayerMask terrainLayerMask; // 地形のマスク(ギミック含む)
     #endregion
 
     #region ステージ情報
-    [SerializeField] Transform stageMin;             // リスポーン範囲A
-    [SerializeField] Transform stageMax;             // リスポーン範囲B
+    [Foldout("ステージ情報関連")]
+    [SerializeField] Transform stageMin;
+    [Foldout("ステージ情報関連")]
+    [SerializeField] Transform stageMax;
 
     #region 外部参照
     public Transform StageMinPoint { get { return stageMin; } }
@@ -47,28 +61,38 @@ public class SpawnManager : MonoBehaviour
 
     #endregion
 
-    #region 敵関連
+    #region 生成する敵の情報関連
+
+    [Foldout("生成する敵の情報関連")]
     [SerializeField] List<GameObject> enemyPrefabs;      // エネミーのプレファブリスト
+
+    [Foldout("生成する敵の情報関連")]
+    [Tooltip("生成対象の敵の種類")]
     [SerializeField] List<ENEMY_TYPE> emitEnemyTypes;   // 生成対象の敵の種類
     public List<ENEMY_TYPE> EmitEnemyTypes { get { return emitEnemyTypes; } }
 
-    [SerializeField] Dictionary<ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
+    // emitEnemyTypesとenemyPrefabsを組み合わせたリスト
+    Dictionary<ENEMY_TYPE, GameObject> idEnemyPrefabPairs;
     public Dictionary<ENEMY_TYPE, GameObject> IdEnemyPrefabPairs { get { return idEnemyPrefabPairs; } }
 
-    int eliteEnemyCnt;
     List<GameObject> terminalEnemyList = new List<GameObject>();
     public List<GameObject> TerminalEnemyList { get { return terminalEnemyList; } }
     #endregion
 
     #region ボス関連
-    GameObject bossTerminal;
+
+    [Foldout("ボス関連")]
+    [SerializeField] Vector2 spawnBossPoint;
+
+    [Foldout("ボス関連")]
     [SerializeField] ENEMY_TYPE bossId;
+
     bool isBossActive;           // ボスが生成されたかどうか
     public bool IsSpawnBoss { get {  return isBossActive; } set {  isBossActive = value; } }
     #endregion
 
     #region 敵撃破関連
-    int crashNum = 0; 　　　　　// 撃破数
+    int crashNum = 0;   // 撃破数
     public int CrashNum { get { return crashNum; } set { crashNum = value; } }
     #endregion
 
@@ -84,7 +108,9 @@ public class SpawnManager : MonoBehaviour
     }
     #endregion
 
+    #region その他
     CharacterManager characterManager;
+    #endregion
 
     private void Awake()
     {
@@ -302,51 +328,35 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    [ContextMenu("SpawnBoss")]
+    /// <summary>
+    /// ボスの生成処理
+    /// </summary>
     public void SpawnBoss()
     {
         if (!isBossActive)
         {
-            bossTerminal = GameObject.Find("6_BossTerminal(Clone)");
-            int childrenCnt = bossTerminal.transform.childCount;
-            List<Transform> children = new List<Transform>();
-            for (int i = 0; i < childrenCnt; i++)
-            {
-                children.Add(bossTerminal.transform.GetChild(i));
-            }
-
             EnemyBase bossEnemy = idEnemyPrefabPairs[bossId].GetComponent<EnemyBase>();
-            Vector3? spawnPos =
-                EmitEnemySpawnPosition(children[0].position, children[1].position, bossEnemy);
-
-            List<SpawnEnemyData> spawnEnemyDatas = new List<SpawnEnemyData>();
-
-            if (spawnPos != null)
-            {// 返り値がnullじゃないとき
-                var spawnType = EnumManager.SPAWN_ENEMY_TYPE.ByManager;
-
-                List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
+            List<EnemySpawnEntry> entrys = new List<EnemySpawnEntry>()
                 {
-                    new EnemySpawnEntry(bossId, (Vector3)spawnPos, bossEnemy.transform.localScale)
+                    new EnemySpawnEntry(bossId, spawnBossPoint, bossEnemy.transform.localScale)
                 };
 
-                #region サーバーにワームの各パーツの情報を登録するための処理
+            #region サーバーにワームの各パーツの情報を登録するための処理
 
-                // ワームを生成する場合、ワームの各パーツも生成情報に含める (※SpawnEnemy()で実際に生成はしない)
-                List<FullMetalBody> bodys = new List<FullMetalBody>(
-                    bossEnemy.transform.gameObject.GetComponentsInChildren<FullMetalBody>(true));
-                if (bodys.Count > 0)
+            // ワームを生成する場合、ワームの各パーツも生成情報に含める (※SpawnEnemy()で実際に生成はしない)
+            List<FullMetalBody> bodys = new List<FullMetalBody>(
+                bossEnemy.transform.gameObject.GetComponentsInChildren<FullMetalBody>(true));
+            if (bodys.Count > 0)
+            {
+                foreach (var body in bodys)
                 {
-                    foreach (var body in bodys)
-                    {
-                        // 事前に設定されてある識別用ID(body.UniqueId)もデータに追加する
-                        entrys.Add(new EnemySpawnEntry(ENEMY_TYPE.MetalBody, Vector3.zero, Vector3.zero, body.UniqueId));
-                    }
+                    // 事前に設定されてある識別用ID(body.UniqueId)もデータに追加する
+                    entrys.Add(new EnemySpawnEntry(ENEMY_TYPE.MetalBody, Vector3.zero, Vector3.zero, body.UniqueId));
                 }
-                #endregion
-
-                spawnEnemyDatas = CreateSpawnEnemyDatas(entrys, spawnType, false);
             }
+            #endregion
+
+            var spawnEnemyDatas = CreateSpawnEnemyDatas(entrys, SPAWN_ENEMY_TYPE.ByManager, false);
 
             isBossActive = true;
 
