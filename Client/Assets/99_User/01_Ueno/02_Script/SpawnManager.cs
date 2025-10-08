@@ -87,6 +87,9 @@ public class SpawnManager : MonoBehaviour
     [Foldout("ボス関連")]
     [SerializeField] ENEMY_TYPE bossId;
 
+    bool isTerminalBoss;         // 生成条件達成してるかどうか
+    public bool IsTerminalBoss { get {  return isTerminalBoss; } }
+
     bool isBossActive;           // ボスが生成されたかどうか
     public bool IsBossActive { get {  return isBossActive; } set {  isBossActive = value; } }
     #endregion
@@ -165,11 +168,6 @@ public class SpawnManager : MonoBehaviour
         {
             if (GameManager.Instance.IsGameStart)
             {
-                if (crashNum >= knockTermsNum && IsBossActive)
-                {
-                    SpawnBoss();
-                }
-
                 if (characterManager.Enemies.Count < maxSpawnCnt && !GameManager.Instance.IsBossDead)
                 {// スポーン回数が限界に達しているか
                     if (!isBossActive)
