@@ -11,5 +11,15 @@ public class SceneConducter : MonoBehaviour
     public void Loaded()
     {
         SceneManager.UnloadSceneAsync("LoadingScene"); //LoadingSceneシーンを削除
+    }    
+    
+    public void TakeYourPlayer()
+    {
+        SceneManager.LoadScene("TakeYourPlayerScene", LoadSceneMode.Additive);    // 現在のシーンにTakeYourPlayerSceneシーンを追加する
+    }
+    
+    public void SameStartPlayers()
+    {
+        SceneManager.UnloadSceneAsync("TakeYourPlayerScene"); //TakeYourPlayerSceneシーンを削除
     }
 }

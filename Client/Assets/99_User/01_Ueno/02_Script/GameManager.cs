@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public bool IsCanSpawnBoss { get { return isCanSpawnBoss; } } 
     GameObject bossTerminal;    // ボス端末
     [SerializeField] STAGE_TYPE nextStage;    // 現在のステージ
+    [SerializeField] SceneConducter conducter;    // 現在のステージ
     #endregion
 
     #region その他
@@ -136,6 +137,9 @@ public class GameManager : MonoBehaviour
 
             //遷移完了のリクエスト (TerminalManagerにて呼び出し)
             //await RoomModel.Instance.AdvancedStageAsync();  
+
+            //プレイヤー待ち
+            conducter.TakeYourPlayer();
         }
     }
 
@@ -311,6 +315,9 @@ public class GameManager : MonoBehaviour
             player.Value.gameObject.GetComponent<PlayerBase>().CanMove = true;
             player.Value.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         }
+
+        //プレイヤー待ち解除
+        conducter.SameStartPlayers();
     }
 
     private IEnumerator DelayedCallCoroutine()
