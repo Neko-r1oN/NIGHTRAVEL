@@ -213,6 +213,7 @@ MonoBehaviour:
   basePower: 40
   baseJumpPower: 10
   baseMoveSpeed: 2.5
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -247,6 +248,7 @@ MonoBehaviour:
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
+  isUseHitBlendShader: 0
   spawnGroundOffset: 2
   spawnWeight: 25
   checkObstacleRange: 0.6
@@ -412,7 +414,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 45
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
