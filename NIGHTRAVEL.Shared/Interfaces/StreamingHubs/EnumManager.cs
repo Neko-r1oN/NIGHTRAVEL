@@ -295,7 +295,8 @@ namespace Shared.Interfaces.StreamingHubs
             Node_Core,
             Slade,
             Blaze,
-            Valcus
+            Valcus,
+            ValksCodecrysta,
         }
 
         /// <summary>

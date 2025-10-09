@@ -34624,6 +34624,7 @@ MonoBehaviour:
   basePower: 20
   baseJumpPower: 1
   baseMoveSpeed: 5
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -39782,7 +39783,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: f23cc57be81a12c49a930baf1aaf479a, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -39791,7 +39792,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 30
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0

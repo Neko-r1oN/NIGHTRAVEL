@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
         }
 
         isBossDead = false;
-        isCanSpawnBoss = false;
+        isCanSpawnBoss = SpawnManager.Instance.CrashNum >= SpawnManager.Instance.KnockTermsNum;
         UIManager.Instance.ShowUIAndFadeOut();
 
         if (!RoomModel.Instance) StartCoroutine(DelayedCallCoroutine());

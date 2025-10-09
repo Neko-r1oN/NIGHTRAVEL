@@ -123223,6 +123223,7 @@ MonoBehaviour:
   basePower: 230
   baseJumpPower: 10
   baseMoveSpeed: 50
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -123259,6 +123260,7 @@ MonoBehaviour:
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
+  isUseHitBlendShader: 0
   spawnGroundOffset: 1.8
   spawnWeight: 5
   checkObstacleRange: 1.6
@@ -123387,7 +123389,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: faa39c6f5d979774abda3a0f4d615817, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.7
+  m_Volume: 1
   m_Pitch: 2
   Loop: 0
   Mute: 0
@@ -123396,7 +123398,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 35
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -123484,7 +123486,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 8caf7e249b3a7004d9ebc785ee6f4eb5, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 1
   m_Pitch: 0.7
   Loop: 0
   Mute: 0
@@ -123493,7 +123495,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 35
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -123581,7 +123583,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: dcf47a123084ef44fb4efcc56cea45f0, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.2
+  m_Volume: 1
   m_Pitch: 2.5
   Loop: 0
   Mute: 0
@@ -123590,7 +123592,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 35
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0

@@ -168,6 +168,7 @@ MonoBehaviour:
   basePower: 100
   baseJumpPower: 5
   baseMoveSpeed: 2
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -200,6 +201,7 @@ MonoBehaviour:
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
+  isUseHitBlendShader: 0
   spawnGroundOffset: 3
   spawnWeight: 10
   checkObstacleRange: 1.41
@@ -329,7 +331,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 7f87c2991c4f0104a95ddba0e568d440, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.4
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -338,7 +340,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 45
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
