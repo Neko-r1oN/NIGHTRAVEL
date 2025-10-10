@@ -205,6 +205,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 19802146}
+  - component: {fileID: 19802147}
   m_Layer: 0
   m_Name: Gimmicks
   m_TagString: Untagged
@@ -229,6 +230,18 @@ Transform:
   - {fileID: 766749529}
   m_Father: {fileID: 226274678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &19802147
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19802145}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1001 &32001171
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60205,6 +60218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 199699590}
+  - component: {fileID: 199699591}
   m_Layer: 0
   m_Name: Portals
   m_TagString: Untagged
@@ -60229,6 +60243,18 @@ Transform:
   - {fileID: 1195768773}
   m_Father: {fileID: 226274678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &199699591
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199699589}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &200675670
 GameObject:
   m_ObjectHideFlags: 0
@@ -60308,7 +60334,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 226274678}
-  - component: {fileID: 226274679}
   m_Layer: 0
   m_Name: Stage
   m_TagString: Untagged
@@ -60341,18 +60366,6 @@ Transform:
   - {fileID: 642655927}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &226274679
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226274677}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortAtRoot: 0
 --- !u!1 &231020317
 GameObject:
   m_ObjectHideFlags: 0
@@ -62981,6 +62994,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 499804427}
+  - component: {fileID: 499804428}
   m_Layer: 0
   m_Name: Blocks
   m_TagString: Untagged
@@ -63014,6 +63028,18 @@ Transform:
   - {fileID: 53169015}
   m_Father: {fileID: 1496198618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &499804428
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499804426}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &504572406
 GameObject:
   m_ObjectHideFlags: 0
@@ -78808,6 +78834,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5359299794365042959, guid: 5a460f11f0fb1c3448d7b617ec81f992, type: 3}
   m_PrefabInstance: {fileID: 846934185}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &848366897 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6121885091965825695, guid: e48ed6774ef92a94e9766b4077b7194a, type: 3}
+  m_PrefabInstance: {fileID: 1545473336}
+  m_PrefabAsset: {fileID: 0}
+--- !u!210 &848366898
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848366897}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -2
+  m_SortAtRoot: 0
 --- !u!1 &851354830
 GameObject:
   m_ObjectHideFlags: 0
@@ -79231,6 +79274,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 876646619}
+  - component: {fileID: 876646620}
   m_Layer: 0
   m_Name: Objects
   m_TagString: Untagged
@@ -79313,6 +79357,18 @@ Transform:
   - {fileID: 1111252339}
   m_Father: {fileID: 1496198618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &876646620
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876646618}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &889535746
 GameObject:
   m_ObjectHideFlags: 0
@@ -85354,7 +85410,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6121885091965825695, guid: e48ed6774ef92a94e9766b4077b7194a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 848366898}
   m_SourcePrefab: {fileID: 100100000, guid: e48ed6774ef92a94e9766b4077b7194a, type: 3}
 --- !u!1001 &1554065573
 PrefabInstance:
@@ -87627,6 +87686,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1805627774}
+  - component: {fileID: 1805627775}
   m_Layer: 0
   m_Name: Terminals
   m_TagString: Untagged
@@ -87650,6 +87710,18 @@ Transform:
   - {fileID: 8528628651430212202}
   m_Father: {fileID: 226274678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &1805627775
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805627773}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!213 &1819664248
 Sprite:
   m_ObjectHideFlags: 0
@@ -88766,7 +88838,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -99
+  m_SortingOrder: -1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0.04838711, y: 0.04838711, z: 0}
   m_MaxChunkCount: 16
@@ -105371,8 +105443,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextStage: 1
   conducter: {fileID: 1122618938}
-  minCameraPos: {fileID: 0}
-  maxCameraPos: {fileID: 0}
   xRadius: 10
   yRadius: 6
   distMinSpawnPos: 3
