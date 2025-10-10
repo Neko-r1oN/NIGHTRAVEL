@@ -282,6 +282,10 @@ public class CharacterManager : MonoBehaviour
                 {
                     playerObjSelf = playerObj;
                     camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
+                    var target = new CameraTarget();
+                    target.TrackingTarget = playerObjSelf.transform;
+                    target.LookAtTarget = playerObjSelf.transform;
+                    camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
                 }
             }
             else if (joinduser.Value.CharacterID == 2)

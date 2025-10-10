@@ -324,6 +324,12 @@ public class UIManager : MonoBehaviour
             playerStatus[i].SetActive(false);
         }
 
+        if(statusStock > 0)
+        {
+            levelUpText.enabled = true;
+            isStatusWindow = true;
+        }
+
         clashNumText.text = "条件:0/" + SpawnManager.Instance.KnockTermsNum;
 
         tmText.text = "クリア条件：10分間生き残る or 敵"
