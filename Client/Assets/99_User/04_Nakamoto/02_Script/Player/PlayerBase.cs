@@ -339,6 +339,8 @@ abstract public class PlayerBase : CharacterBase
         regeneTimer += Time.deltaTime;
         healGenerateTimer += Time.deltaTime;
 
+        if(isDead) return;
+
         // –ˆ•bÅ‘åHP‚Ì1% ‚ðŠî‘b’l‚Æ‚µA1•b–ˆ‚ÉŠî‘b’l•ª‰ñ•œ‚·‚é
         if (regeneTimer >= REGENE_TIME)
         {
@@ -373,11 +375,15 @@ abstract public class PlayerBase : CharacterBase
 
         // ‘–‚Á‚Ä‚¢‚éŽž‚É“y‰Œ‚ð‹N‚±‚·
         if (animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
+        {
             groundSmoke.Play();
+        }
         else
+        {
             groundSmoke.Stop();
+        }
 
-            Ladder();
+        Ladder();
 
         if(m_IsZipline)
         {
