@@ -117,6 +117,20 @@ public class Valcus : EnemyBase
 
     #endregion
 
+    #region オーディオ関連
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioStamp;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioSpurn;
+
+    [SerializeField]
+    [Foldout("オーディオ")]
+    AudioSource audioWind;
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -267,6 +281,15 @@ public class Valcus : EnemyBase
     /// </summary>
     public override void OnAttackAnimEvent()
     {
+        if(nextDecide == DECIDE_TYPE.Attack_Normal)
+        {
+            audioSpurn.Play();
+        }
+        else
+        {
+            audioStamp.Play();
+        }
+
         m_rb2d.gravityScale = 5;
 
         // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
@@ -369,6 +392,7 @@ public class Valcus : EnemyBase
 
             Vector2 addVec = new Vector2(-targetPosOffsetX * TransformUtils.GetFacingDirection(transform), targetPosOffsetY);
             transform.DOJump((Vector2)targetPos + addVec, jumpPower, 1, duration).SetEase(Ease.InOutQuad);
+            audioWind.Play();
         }
     }
 
@@ -565,6 +589,7 @@ public class Valcus : EnemyBase
     /// <returns></returns>
     IEnumerator BackOffCoroutine(float time, Action onFinished)
     {
+        audioWind.Play();
         float waitSec = 0.1f;
         while (time > 0)
         {
