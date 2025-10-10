@@ -371,7 +371,7 @@ public class Rifle : PlayerBase
             if (hits.Length > 0) endPos = hits[0].point;
 
             // カメラのシェイク処理
-            cam.GetComponent<CameraFollow>().ShakeCamera();
+            //cam.GetComponent<CameraFollow>().ShakeCamera();
 
             // 指定ダメージ間隔毎にダメージ
             if (tickTimer >= damageInterval && hits.Length > 0)

@@ -278,7 +278,7 @@ public class CharacterManager : MonoBehaviour
                 if (joinduser.Key == RoomModel.Instance.ConnectionId)
                 {
                     playerObjSelf = playerObj;
-                    Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+                    //Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
                 }
             }
             else if (joinduser.Value.CharacterID == 2)
@@ -290,7 +290,7 @@ public class CharacterManager : MonoBehaviour
                 if (joinduser.Key == RoomModel.Instance.ConnectionId)
                 {
                     playerObjSelf = playerObj;
-                    Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+                    //Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
                 }
             }
 
