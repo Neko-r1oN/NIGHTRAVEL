@@ -59627,6 +59627,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 722639916}
     m_Modifications:
+    - target: {fileID: 370279196288235248, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+      propertyPath: TrackerSettings.PositionDamping.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 370279196288235248, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+      propertyPath: TrackerSettings.PositionDamping.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 370279196288235248, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+      propertyPath: TrackerSettings.PositionDamping.z
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2936559485827812314, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
       propertyPath: m_Name
       value: New Cam
