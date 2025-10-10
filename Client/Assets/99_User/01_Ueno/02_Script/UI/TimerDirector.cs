@@ -53,8 +53,6 @@ public class TimerDirector : MonoBehaviour
         //GameManager.Instance.InvokeRepeating("DecreaseGeneratInterval", 0.1f, 60f);
     }
 
-
-
     // Update is called once per frame
     async void Update()
     {
@@ -79,7 +77,7 @@ public class TimerDirector : MonoBehaviour
                 // タイマー(UI)の更新
                 UpdateTimerDisplay();
 
-                if (elapsedTime > 60)
+                if (elapsedTime > 210)
                 {
                     // ゲームレベルアップリクエスト送信
 

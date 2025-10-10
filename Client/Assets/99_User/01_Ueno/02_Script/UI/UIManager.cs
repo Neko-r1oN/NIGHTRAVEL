@@ -67,8 +67,6 @@ public class UIManager : MonoBehaviour
     [Foldout("テキスト")]                                
     [SerializeField] Text diffText;                      // 難易度テキスト
     [Foldout("テキスト")]                                
-    [SerializeField] Text terminalExplanationText;       // ターミナル説明テキスト
-    [Foldout("テキスト")]                                
     [SerializeField] Text spectatingNameText;            // 観戦中プレイヤー名テキスト
     [Foldout("テキスト")]
     [SerializeField] Text getExpText;                    // 取得した経験値テキスト
@@ -341,7 +339,6 @@ public class UIManager : MonoBehaviour
             diffText.color = color;
         }
 
-        terminalExplanationObj.SetActive(false);
         endWindow.SetActive(false);
 
         spectatingWindow.SetActive(false);
@@ -1079,8 +1076,6 @@ public class UIManager : MonoBehaviour
     public void DisplayTerminalExplanation(TERMINAL_TYPE type)
     {
         terminalExplanationObj.SetActive(true);
-
-        terminalExplanationText.text = terminalExplanation[type].ToString();
     }
 
     /// <summary>
