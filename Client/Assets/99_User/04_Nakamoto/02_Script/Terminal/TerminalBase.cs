@@ -77,6 +77,12 @@ public abstract class TerminalBase : MonoBehaviour
     // 端末使用中テキスト
     [SerializeField] protected Text usingText;
 
+    // オーディオクリップ
+    [SerializeField] private AudioSource audioSource;
+
+    // 起動SE
+    [SerializeField] private AudioClip bootSE;
+
     #endregion
 
     #region マネージャー
@@ -185,6 +191,9 @@ public abstract class TerminalBase : MonoBehaviour
             Debug.Log("レリックがありません");
             if (RelicManager.HaveRelicList.Count == 0) return;
         }
+
+        // SE再生
+        audioSource.PlayOneShot(bootSE);
 
         // 起動リクエストをサーバーに送信
         if (RoomModel.Instance)
