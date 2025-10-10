@@ -320,6 +320,21 @@ public class ValksCodeCrystal : EnemyBase
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_NormalCombo);
     }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] ターゲットのいる方向を向き 
+    /// </summary>
+    public override void OnAttackAnimEvent()
+    {
+        m_rb2d.linearVelocity = Vector2.zero;
+        if (!IsNormalAttack())
+        {
+            var nearTarget = GetNearPlayer();
+            if(!nearTarget) target = nearTarget;
+        }
+        LookAtTarget();
+    }
+
     #endregion
 
     #region パンチのコンボ攻撃
@@ -339,9 +354,32 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAttackAnim2Event()
     {
-        if(!target) SelectNewTargetInBossRoom();
+        m_rb2d.linearVelocity = Vector2.zero;
+        if (!IsNormalAttack())
+        {
+            var nearTarget = GetNearPlayer();
+            if (!nearTarget) target = nearTarget;
+        }
         LookAtTarget();
-        Vector2 vec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed, 0f);
+
+        Vector2 vec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed * 2, 0f);
+        m_rb2d.AddForce(vec, ForceMode2D.Impulse);
+    }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] さらに勢い良く前進する
+    /// </summary>
+    public override void OnEndAttackAnim2Event()
+    {
+        m_rb2d.linearVelocity = Vector2.zero;
+        if (!IsNormalAttack())
+        {
+            var nearTarget = GetNearPlayer();
+            if (!nearTarget) target = nearTarget;
+        }
+        LookAtTarget();
+
+        Vector2 vec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed * 4, 0f);
         m_rb2d.AddForce(vec, ForceMode2D.Impulse);
     }
 
@@ -372,7 +410,7 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAttackAnim3Event()
     {
-        m_rb2d.gravityScale = 0;
+        m_rb2d.linearVelocity = Vector2.zero;
         if (!target)
         {
             bool isSucsess = SelectNewTargetInBossRoom();

@@ -225,6 +225,10 @@ public class GameManager : MonoBehaviour
                 Initiate.DoneFading();
                 Initiate.Fade("6_Stage_03", Color.black, 0.5f);
                 break;
+            case STAGE_TYPE.Last:
+                Initiate.DoneFading();
+                Initiate.Fade("7_Stage_04", Color.black, 0.5f);
+                break;
         }
         isGameStart = false;
     }
