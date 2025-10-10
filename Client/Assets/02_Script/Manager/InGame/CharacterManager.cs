@@ -12,6 +12,7 @@ using DG.Tweening;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using UnityEngine.TextCore.Text;
 using Unity.VisualScripting.FullSerializer;
+using Unity.Cinemachine;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -54,6 +55,8 @@ public class CharacterManager : MonoBehaviour
 
     Dictionary<PROJECTILE_TYPE, GameObject> projectilePrefabsByType = new Dictionary<PROJECTILE_TYPE, GameObject>();
     #endregion
+
+    [SerializeField] GameObject camera;
 
     const float updateSec = 0.1f;
 
@@ -278,7 +281,14 @@ public class CharacterManager : MonoBehaviour
                 if (joinduser.Key == RoomModel.Instance.ConnectionId)
                 {
                     playerObjSelf = playerObj;
+<<<<<<< HEAD
                     //Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
+=======
+                    var target = new CameraTarget();
+                    target.TrackingTarget = playerObjSelf.transform;
+                    target.LookAtTarget = playerObjSelf.transform;
+                    camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
+>>>>>>> feature/s-ueno
                 }
             }
             else if (joinduser.Value.CharacterID == 2)
