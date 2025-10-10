@@ -327,7 +327,7 @@ abstract public class PlayerBase : CharacterBase
         // カメラのターゲットを自身に設定
         if(RoomModel.Instance == null)
         {
-            cam.GetComponent<CameraFollow>().Target = gameObject.transform;
+            //cam.GetComponent<CameraFollow>().Target = gameObject.transform;
         }
     }
 
