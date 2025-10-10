@@ -372,6 +372,7 @@ MonoBehaviour:
   charaGunnerPrefab: {fileID: 597312972180860245, guid: 12ab70c69e6e4704fb05003a4d7904be, type: 3}
   playerObjSelf: {fileID: 3339484047307445890}
   projectilePrefabs: []
+  camera: {fileID: 0}
 --- !u!1 &517287889
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,63 +773,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee0d449211146a14eb5fea132392d37f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &749397840
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1388552813370740929, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_Name
-      value: Burner
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.9215188
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.52892065
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.135536
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6437107665628820719, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0e3e5c24c61af5042b060110211bcdcb, type: 3}
 --- !u!1 &931151079
 GameObject:
   m_ObjectHideFlags: 0
@@ -1062,13 +1006,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d11666ee1aeff4dbb0ae6b9f495a22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FollowSpeed: 15
-  Target: {fileID: 0}
-  minCameraBounds: {x: 0, y: 0}
-  maxCameraBounds: {x: 0, y: 0}
-  shakeDuration: 0
-  shakeAmount: 0.1
-  decreaseFactor: 55
 --- !u!1 &1015242415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1406,7 +1343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1364437510
 Transform:
   m_ObjectHideFlags: 0
@@ -1434,7 +1371,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7fb9be1d352f9540b0699568303bfa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items: []
+  items:
+  - {fileID: 530195263009963815}
 --- !u!1 &1408517062
 GameObject:
   m_ObjectHideFlags: 0
@@ -1495,6 +1433,7 @@ MonoBehaviour:
   - {fileID: 6428287465686674313, guid: a53e831150600ea439782d27134771cd, type: 3}
   - {fileID: 5446496804023132022, guid: 160ef2f172913704999c66de140cd9a0, type: 3}
   emitEnemyTypes: 010000000200000003000000040000000600000005000000
+  spawnBossPoint: {x: 0, y: 0}
   bossId: 7
 --- !u!1 &1432205824
 GameObject:
@@ -2736,6 +2675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextStage: 0
+  conducter: {fileID: 0}
   minCameraPos: {fileID: 681790314}
   maxCameraPos: {fileID: 1907960824}
   xRadius: 10
@@ -2911,6 +2851,7 @@ MonoBehaviour:
   basePower: 95
   baseJumpPower: 10
   baseMoveSpeed: 60
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.01
   hp: 0
   defense: 0
@@ -2976,6 +2917,17 @@ MonoBehaviour:
   skillEffect1: {fileID: 6263195172513291210}
   skillEffect2: {fileID: 5592272234798742895}
   skillEffect3: {fileID: 2161620717110120444}
+--- !u!114 &530195263009963815 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 530195262735274940, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+  m_PrefabInstance: {fileID: 1609461067862005762}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d98f60459fac97488fb45091f439254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &540680421506691818
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -17879,6 +17831,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 649908276807613439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1609461067862005762
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1989545314476609942, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_Name
+      value: DataBox
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.0492563
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.29933488
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520972433495915274, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1105bb2e718b3be4f987a7574c811880, type: 3}
 --- !u!114 &1630666769703655558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18274,6 +18283,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terminal: {fileID: 0}
+  audioSource: {fileID: 0}
+  getSE: {fileID: 0}
 --- !u!4 &2031531990397431622
 Transform:
   m_ObjectHideFlags: 0
@@ -105875,6 +105886,7 @@ MonoBehaviour:
   basePower: 80
   baseJumpPower: 10
   baseMoveSpeed: 50
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.01
   hp: 0
   defense: 0
@@ -116009,6 +116021,6 @@ SceneRoots:
   - {fileID: 8351539376782561964}
   - {fileID: 1763867421}
   - {fileID: 254979987}
-  - {fileID: 749397840}
   - {fileID: 5712522904585489409}
   - {fileID: 649908276807613439}
+  - {fileID: 1609461067862005762}
