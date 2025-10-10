@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class SpectatorModeManager : MonoBehaviour
 {
@@ -10,13 +12,28 @@ public class SpectatorModeManager : MonoBehaviour
 
     private static SpectatorModeManager instance;
 
+    GameObject camera;
+
     public static SpectatorModeManager Instance
     {
         get { return instance; }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
+            Destroy(gameObject);
+        }
+    }
+
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
     {
         int key = 0;
         foreach(var obj in CharacterManager.Instance.PlayerObjs.Values)
@@ -25,6 +42,8 @@ public class SpectatorModeManager : MonoBehaviour
 
             key++;
         }
+
+        camera = GameObject.Find("Main Camera");
     }
 
     // Update is called once per frame
@@ -47,7 +66,8 @@ public class SpectatorModeManager : MonoBehaviour
             {
                 followKey = player.Key;
 
-                //Camera.main.gameObject.GetComponent<CameraFollow>().Target = player.Value.transform;
+                camera.GetComponent<CinemachineCamera>().Target.TrackingTarget 
+                    = player.Value.transform;
 
                 UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
                 break;

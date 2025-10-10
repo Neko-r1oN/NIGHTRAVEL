@@ -264,7 +264,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        Debug.Log(statusStock);
+        Debug.Log("ストック：" + statusStock);
 
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
@@ -279,13 +279,8 @@ public class UIManager : MonoBehaviour
         if (player.NowLv > 1)
         {
             lastLevel = player.NowLv - 1;
-            statusStock = player.NowLv - lastLevel;
         }
-        else
-        {
-            lastLevel = player.NowLv;
-            statusStock = 0;
-        }
+
         levelText.text = "LV." + player.NowLv;
 
         UpdatePlayerStatus();

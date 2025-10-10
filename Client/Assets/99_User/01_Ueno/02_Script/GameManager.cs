@@ -172,15 +172,15 @@ public class GameManager : MonoBehaviour
         }
 #endif
 
-        //Escが押された時
-        if (Input.GetKey(KeyCode.Escape))
-        {
-#if UNITY_EDITOR
-            UIManager.Instance.DisplayEndGameWindow();
-#else
-    UIManager.Instance.DisplayEndGameWindow();
-#endif
-        }
+//        //Escが押された時
+//        if (Input.GetKey(KeyCode.Escape))
+//        {
+//#if UNITY_EDITOR
+//            UIManager.Instance.DisplayEndGameWindow();
+//#else
+//    UIManager.Instance.DisplayEndGameWindow();
+//#endif
+//        }
 
         // オフライン用
         if (!RoomModel.Instance && !CharacterManager.Instance.PlayerObjSelf && isGameStart)
