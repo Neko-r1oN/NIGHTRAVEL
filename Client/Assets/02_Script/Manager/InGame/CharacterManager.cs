@@ -281,14 +281,14 @@ public class CharacterManager : MonoBehaviour
                 if (joinduser.Key == RoomModel.Instance.ConnectionId)
                 {
                     playerObjSelf = playerObj;
-<<<<<<< HEAD
+
                     //Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
-=======
+
                     var target = new CameraTarget();
                     target.TrackingTarget = playerObjSelf.transform;
                     target.LookAtTarget = playerObjSelf.transform;
                     camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
->>>>>>> feature/s-ueno
+
                 }
             }
             else if (joinduser.Value.CharacterID == 2)
