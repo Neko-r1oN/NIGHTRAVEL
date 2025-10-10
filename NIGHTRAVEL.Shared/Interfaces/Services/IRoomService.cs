@@ -17,6 +17,9 @@ namespace NIGHTRAVEL.Shared.Interfaces.Services
         //ルームを作成
         UnaryResult<Room> RegistRoom(string room_name,string user_name,string pass);
 
+        //ルームを開始状態にする
+        UnaryResult<Room> StartRoom(string userName);
+
         //ルームを削除
         UnaryResult<Room> RemoveRoom(string room_name);
 

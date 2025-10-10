@@ -6,5 +6,6 @@ public class RoomData
     public string userName { get; set; }
 
     public string passWord {  get; set; }
+    public bool isStarted {  get; set; }
 
 }

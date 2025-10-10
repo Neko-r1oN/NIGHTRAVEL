@@ -131,7 +131,16 @@ public class MatchingManager : MonoBehaviour
         {//ルーム作成の場合
             passText = inputFieldCreatePassWord;
             roomNameText = inputFieldRoomName;
-            await RoomModel.Instance.JoinedAsync(roomNameText.text, userId,TitleManagerk.SteamUserName, passText.text);
+            if (roomNameText.text == "")
+            {
+                errorId = 2;
+                ErrorUI[errorId].SetActive(true);
+                Invoke("Loaded", 1.0f);
+            }
+            else
+            {
+                await RoomModel.Instance.JoinedAsync(roomNameText.text, userId, TitleManagerk.SteamUserName, passText.text);
+            }
         }
     }
 
@@ -186,6 +195,13 @@ public class MatchingManager : MonoBehaviour
 
         foreach(var roomData in RoomModel.Instance.roomDataList)
         {
+            //そのルームがゲーム開始していたら
+            if (roomData.isStarted == true)
+            {
+                i++;
+                continue; 
+            }
+
             //RoomDataに格納する
             roomData.roomName = roomNameList[i];
             roomData.userName = userNameList[i];
