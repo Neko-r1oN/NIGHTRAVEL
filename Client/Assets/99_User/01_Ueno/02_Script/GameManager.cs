@@ -104,6 +104,11 @@ public class GameManager : MonoBehaviour
         }
 
         isGameStart = false;
+
+        if (!RoomModel.Instance) return;
+        //プレイヤー待ち
+        conducter.TakeYourPlayer();
+
     }
     #endregion
 
@@ -137,9 +142,6 @@ public class GameManager : MonoBehaviour
 
             //遷移完了のリクエスト (TerminalManagerにて呼び出し)
             //await RoomModel.Instance.AdvancedStageAsync();  
-
-            //プレイヤー待ち
-            conducter.TakeYourPlayer();
         }
     }
 
@@ -318,6 +320,7 @@ public class GameManager : MonoBehaviour
 
         //プレイヤー待ち解除
         conducter.SameStartPlayers();
+
     }
 
     private IEnumerator DelayedCallCoroutine()
