@@ -105,7 +105,6 @@ public class TerminalManager : MonoBehaviour
     /// <param name="list"></param>
     public void SetTerminal(List<TerminalData> list)
     {
-        Debug.Log("");
         terminalDatas.Clear();
         terminalObjs.Clear();
 

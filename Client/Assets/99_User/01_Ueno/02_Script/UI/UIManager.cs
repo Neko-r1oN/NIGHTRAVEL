@@ -21,6 +21,7 @@ using Cysharp.Threading.Tasks.Triggers;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class UIManager : MonoBehaviour
 {
@@ -185,12 +186,12 @@ public class UIManager : MonoBehaviour
     private const float pushIconScale = 0.98f; // キー押下時のアイコン縮小率
     private const float pushIconColor = 0.8f;  // キー押下時のアイコン色変化率
 
-    int windowCnt = 0;   // ウィンドウが表示できるカウント(一度だけ使う)
-    int lastLevel = 0;   // レベルアップ前のレベル
-    int statusStock = 0; // レベルアップストック数
-    bool isStatusWindow; // ステータスウィンドウが開けるかどうか
-    bool isHold;         // ステータスウィンドウロック用
-    string colorCode;    // カラーコード
+    int windowCnt = 0;          // ウィンドウが表示できるカウント(一度だけ使う)
+    int lastLevel = 0;          // レベルアップ前のレベル
+    static int statusStock = 0; // レベルアップストック数
+    bool isStatusWindow;        // ステータスウィンドウが開けるかどうか
+    bool isHold;                // ステータスウィンドウロック用
+    string colorCode;           // カラーコード
     Color color;
     private Renderer[] childRenderers; // 子オブジェクトのRendererを複数対応
     private Text[] childTexts; // 子オブジェクトの標準UI.Textを複数対応
@@ -265,6 +266,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
+        Debug.Log(statusStock);
+
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
         //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
@@ -274,8 +277,19 @@ public class UIManager : MonoBehaviour
         expBar.maxValue = player.NextLvExp;
         levelText.text = "" + player.NowExp;
         expBar.value = player.NowExp;
-        lastLevel = player.NowLv;
+        if (player.NowLv <= 0)
+        {
+            lastLevel = player.NowLv - 1;
+            statusStock = player.NowLv - lastLevel;
+        }
+        else
+        {
+            lastLevel = player.NowLv;
+            statusStock = 0;
+        }
         levelText.text = "LV." + player.NowLv;
+
+        UpdatePlayerStatus();
 
         for (int i = 0; i < relicCntText.Count; i++)
         {
@@ -285,10 +299,22 @@ public class UIManager : MonoBehaviour
         statusUpWindow.SetActive(false);
 
         isHold = false;
-        isStatusWindow = false;
         isRelicGet = false;
 
-        levelUpText.enabled = false;
+        if (statusStock > 0)
+        {
+            isStatusWindow = true;
+            levelUpText.enabled = true;
+
+            statusStock += player.NowLv - lastLevel;
+            if (isOpenStatusWindow) levelUpStock.text = "残り強化数：" + statusStock;
+        }
+        else
+        {
+            isStatusWindow = false;
+            levelUpText.enabled = false;
+        }
+       
         bossStatus.SetActive(false);
 
         relicBanner.SetActive(false);
@@ -300,7 +326,7 @@ public class UIManager : MonoBehaviour
 
         clashNumText.text = "条件:0/" + SpawnManager.Instance.KnockTermsNum;
 
-        tmText.text = "クリア条件：5分間生き残る or 敵"
+        tmText.text = "クリア条件：10分間生き残る or 敵"
             + SpawnManager.Instance.KnockTermsNum + "体倒せ";
 
         level = LevelManager.Instance;
@@ -351,8 +377,6 @@ public class UIManager : MonoBehaviour
             diffText.GetComponent<Transform>().parent.gameObject.SetActive(false);
             tmText.GetComponent<Transform>().parent.gameObject.SetActive(false);
         }
-
-        UpdatePlayerStatus();
 
         // 自分以外のプレイヤーのステータスを表示
         int count = 0;
@@ -488,7 +512,8 @@ public class UIManager : MonoBehaviour
         // 経験値・レベルUI
         expBar.maxValue = player.NextLvExp;
         levelText.text = "LV." + player.NowLv;
-        if (player.NowLv > lastLevel)
+        expBar.value = (float)player.NowExp;
+        if (player.NowLv > lastLevel && lastLevel != player.NowLv)
         {
             isStatusWindow = true;
             statusStock += player.NowLv - lastLevel;
@@ -497,7 +522,6 @@ public class UIManager : MonoBehaviour
             levelUpText.enabled = true;
             lastLevel = player.NowLv;
         }
-        expBar.value = (float)player.NowExp;
     }
 
     /// <summary>
