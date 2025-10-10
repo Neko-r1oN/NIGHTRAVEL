@@ -65,8 +65,6 @@ public class UIManager : MonoBehaviour
     [Foldout("テキスト")]                                
     [SerializeField] GameObject otherDmgText;            // その他ダメージ表記
     [Foldout("テキスト")]                                
-    [SerializeField] Text relicName;                     // レリック名テキスト
-    [Foldout("テキスト")]                                
     [SerializeField] Text diffText;                      // 難易度テキスト
     [Foldout("テキスト")]                                
     [SerializeField] Text terminalExplanationText;       // ターミナル説明テキスト
@@ -277,7 +275,8 @@ public class UIManager : MonoBehaviour
         expBar.maxValue = player.NextLvExp;
         levelText.text = "" + player.NowExp;
         expBar.value = player.NowExp;
-        if (player.NowLv <= 0)
+
+        if (player.NowLv > 1)
         {
             lastLevel = player.NowLv - 1;
             statusStock = player.NowLv - lastLevel;
@@ -306,8 +305,8 @@ public class UIManager : MonoBehaviour
             isStatusWindow = true;
             levelUpText.enabled = true;
 
-            statusStock += player.NowLv - lastLevel;
-            if (isOpenStatusWindow) levelUpStock.text = "残り強化数：" + statusStock;
+            //statusStock = player.NowLv - lastLevel;
+            levelUpStock.text = "残り強化数：" + statusStock;
         }
         else
         {
@@ -326,6 +325,7 @@ public class UIManager : MonoBehaviour
 
         if(statusStock > 0)
         {
+            Debug.Log(statusStock);
             levelUpText.enabled = true;
             isStatusWindow = true;
         }
@@ -522,7 +522,7 @@ public class UIManager : MonoBehaviour
         if (player.NowLv > lastLevel && lastLevel != player.NowLv)
         {
             isStatusWindow = true;
-            statusStock += player.NowLv - lastLevel;
+            statusStock = player.NowLv - lastLevel;
             levelUpStock.text = "残り強化数：" + statusStock;
 
             levelUpText.enabled = true;
