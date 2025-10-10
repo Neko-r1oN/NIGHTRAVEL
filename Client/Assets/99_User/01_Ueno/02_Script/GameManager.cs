@@ -39,8 +39,6 @@ public class GameManager : MonoBehaviour
 
     #region その他
     [Header("その他")]
-    [SerializeField] Transform minCameraPos;   // カメラ範囲の最小値
-    [SerializeField] Transform maxCameraPos;   // カメラ範囲の最大値
     [SerializeField] float xRadius;            // 生成範囲のx半径
     [SerializeField] float yRadius;            // 生成範囲のy半径
     [SerializeField] float distMinSpawnPos;    // 生成しない範囲

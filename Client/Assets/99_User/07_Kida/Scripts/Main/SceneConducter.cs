@@ -20,6 +20,7 @@ public class SceneConducter : MonoBehaviour
     
     public void SameStartPlayers()
     {
-        SceneManager.UnloadSceneAsync("TakeYourPlayerScene"); //TakeYourPlayerSceneƒV[ƒ“‚ğíœ
+        if (SceneManager.GetSceneByName("TakeYourPlayerScene").isLoaded)
+            SceneManager.UnloadSceneAsync("TakeYourPlayerScene");
     }
 }

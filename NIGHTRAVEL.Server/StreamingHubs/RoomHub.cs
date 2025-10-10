@@ -621,7 +621,7 @@ namespace StreamingHubs
 
                 if (isAdvance)
                 {
-                    if((int)this.roomContext.NowStage == 3)
+                    if((int)this.roomContext.NowStage == 4)
                     {
                         this.roomContext.NowStage = STAGE_TYPE.Rust;
                     }else this.roomContext.NowStage++; // 現在のステージを加算
