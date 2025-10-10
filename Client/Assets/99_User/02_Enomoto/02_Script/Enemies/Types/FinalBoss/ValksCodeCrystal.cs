@@ -207,8 +207,6 @@ public class ValksCodeCrystal : EnemyBase
         bool canAttackNormal = IsNormalAttack();
         bool canAttackSmash = hp <= maxHp / 4 && lastAttackPattern != DECIDE_TYPE.Attack_Dive;
         bool canAttackLaser = hp <= maxHp / 2 && lastAttackPattern != DECIDE_TYPE.Attack_Laser;
-
-        canAttackSmash = false;
         canAttackLaser = false;
 
         // 条件を基に該当する行動パターンに重み付け
@@ -417,7 +415,7 @@ public class ValksCodeCrystal : EnemyBase
             targetPos = target.transform.position;
         }
         var pos = (Vector2)targetPos;
-        transform.position = new Vector2(pos.x, warpPosY);
+        transform.position = pos;
         LookAtTarget();
     }
 
