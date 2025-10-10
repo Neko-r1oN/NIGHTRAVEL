@@ -298,12 +298,13 @@ public class StandbyManager : MonoBehaviour
     /// ゲーム開始通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnStartedGame()
+    public async void OnStartedGame()
     { 
         readyButton.SetActive(false);
         //ゲーム開始の時の処理を書く
         //conducter.Loading();
         Debug.Log("ゲームを開始します");
+        await RoomModel.Instance.StartRoomAsync(TitleManagerk.SteamUserName);
         //SceneManager.LoadScene("4_Stage_01");
         Initiate.DoneFading();
         Initiate.Fade("4_Stage_01", Color.black, 1.0f);   // フェード時間1秒

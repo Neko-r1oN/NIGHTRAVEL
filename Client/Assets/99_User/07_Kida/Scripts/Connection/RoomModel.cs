@@ -42,14 +42,14 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Dictionary<Guid, JoinedUser> joinedUserList { get; private set; } = new Dictionary<Guid, JoinedUser>();
 
     //現在のルーム情報
-    public RoomData[] roomDataList { get;  set; }
+    public RoomData[] roomDataList { get; set; }
 
     #region 通知定義一覧
 
     #region システム
 
     //ルーム検索通知
-    public Action<List<string>, List<string>,List<string>> OnSearchedRoom { get; set; }
+    public Action<List<string>, List<string>, List<string>> OnSearchedRoom { get; set; }
 
     //ルーム生成通知
     public Action OnCreatedRoom { get; set; }
@@ -58,13 +58,13 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<JoinedUser> OnJoinedUser { get; set; }
 
     //入室失敗通知
-    public Action<int> OnFailedJoinSyn {  get; set; }
+    public Action<int> OnFailedJoinSyn { get; set; }
 
     //ユーザー退室通知
     public Action<JoinedUser> OnLeavedUser { get; set; }
 
     //キャラクター変更通知
-    public Action<Guid,int> OnChangedCharacter {  get; set; }
+    public Action<Guid, int> OnChangedCharacter { get; set; }
 
     //準備完了通知
     public Action<Guid> OnReadySyn { get; set; }
@@ -82,7 +82,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<STAGE_TYPE> OnAdanceNextStageSyn { get; set; }
 
     //レベルアップ通知
-    public Action<int, int,int, CharacterStatusData, Guid, List<StatusUpgrateOptionData>> OnLevelUpSyn { get; set; }
+    public Action<int, int, int, CharacterStatusData, Guid, List<StatusUpgrateOptionData>> OnLevelUpSyn { get; set; }
 
     //ステージ進行通知
     public Action OnAdvancedStageSyn { get; set; }
@@ -148,7 +148,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action<int> OnBootedTerminal { get; set; }
 
     // 端末成功通知
-    public Action<int> OnTerminalsSuccessed{ get; set; }
+    public Action<int> OnTerminalsSuccessed { get; set; }
 
     // 端末失敗通知
     public Action<int> OnTerminalFailured { get; set; }
@@ -280,7 +280,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             passWordList.Add(roomData.passWord);
         }
 
-        OnSearchedRoom(roomNameList, userNameList,passWordList);
+        OnSearchedRoom(roomNameList, userNameList, passWordList);
     }
 
     /// <summary>
@@ -320,13 +320,13 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <param name="user"></param>
-    public void OnLeave(Dictionary<Guid,JoinedUser> joinedUser, Guid targetUser)
+    public void OnLeave(Dictionary<Guid, JoinedUser> joinedUser, Guid targetUser)
     {
         int i = 1;
         JoinedUser leaveUser = joinedUser[targetUser];
         joinedUserList = joinedUser;
         joinedUserList.Remove(targetUser);
-        foreach(var user in joinedUserList)
+        foreach (var user in joinedUserList)
         {
             user.Value.JoinOrder = i;
             i++;
@@ -339,10 +339,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// キャラクター変更通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnChangeCharacter(Guid guid , int characterId)
+    public void OnChangeCharacter(Guid guid, int characterId)
     {
         joinedUserList[guid].CharacterID = characterId;
-        OnChangedCharacter(guid,characterId);
+        OnChangedCharacter(guid, characterId);
     }
 
     /// <summary>
@@ -414,9 +414,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// プレイヤーのレベルアップ通知
     /// Aughter:木田晃輔
     /// </summary>
-    public void OnLevelUp(int level, int nowExp, int nextLvExp,CharacterStatusData updatedStatusData, Guid optionsKey, List<StatusUpgrateOptionData> statusOptionList)
+    public void OnLevelUp(int level, int nowExp, int nextLvExp, CharacterStatusData updatedStatusData, Guid optionsKey, List<StatusUpgrateOptionData> statusOptionList)
     {
-        OnLevelUpSyn(level,nowExp, nextLvExp, updatedStatusData, optionsKey, statusOptionList);
+        OnLevelUpSyn(level, nowExp, nextLvExp, updatedStatusData, optionsKey, statusOptionList);
     }
 
     /// <summary>
@@ -594,12 +594,13 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
         roomDataList = new RoomData[roomDatas.Length];
 
-        for (int i = 0;i<roomDatas.Length; i++)
+        for (int i = 0; i < roomDatas.Length; i++)
         {
             roomDataList[i] = new RoomData();
             roomDataList[i].roomName = roomDatas[i].roomName;
             roomDataList[i].userName = roomDatas[i].userName;
             roomDataList[i].passWord = roomDatas[i].password;
+            roomDataList[i].isStarted = roomDatas[i].is_started;
         }
 
         OnSearchRoom(roomDataList);
@@ -612,9 +613,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// Aughter:木田晃輔
     /// </summary>
     /// <returns></returns>
-    public async UniTask JoinedAsync(string roomName, int userId ,string userName, string pass)
+    public async UniTask JoinedAsync(string roomName, int userId, string userName, string pass)
     {
-        joinedUserList = await roomHub.JoinedAsync(roomName, userId,userName, pass);
+        joinedUserList = await roomHub.JoinedAsync(roomName, userId, userName, pass);
         if (joinedUserList == null) return;
         foreach (var user in joinedUserList)
         {
@@ -657,6 +658,21 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask ReadyAsync(int characterId)
     {
         await roomHub.ReadyAsync(characterId);
+    }
+
+    /// <summary>
+    /// スタート
+    /// Aughter:木田晃輔
+    /// </summary>
+    /// <param name="hostName"></param>
+    /// <returns></returns>
+    public async Task StartRoomAsync(string hostName)
+    {
+        var handler = new YetAnotherHttpHandler() { Http2Only = true };
+        var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
+        var client = MagicOnionClient.Create<IRoomService>(channel);
+
+        await client.StartRoom(hostName);
     }
     #endregion
 

@@ -71,6 +71,33 @@ namespace NIGHTRAVEL.Server.Services
             return room;
         }
 
+        //ルームを開始状態に
+        public async UnaryResult<Room> StartRoom(string userName)
+        {
+            //DBを取得
+            using var context = new GameDbContext();
+
+            //ステージのデータ格納変数を定義
+            Room room = new Room();
+
+            //テーブルからレコードをuserNameを指定して取得
+            room = context.Rooms.Where(room => room.userName == userName).First();
+
+            //バリデーションチェック
+            if (room == null)
+            {
+                throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument,
+                    "ルームが見つかりませんでした");
+            }
+
+            room.is_started = true;
+            context.Update(room);
+            await context.SaveChangesAsync();   //データベースを保存する
+
+            //ステージのデータを返す
+            return room;
+        }
+
         //ルームを削除
         public async UnaryResult<Room> RemoveRoom(string room_name)
         {
