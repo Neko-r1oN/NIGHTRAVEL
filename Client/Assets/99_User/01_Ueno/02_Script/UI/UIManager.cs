@@ -266,7 +266,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        Debug.Log(statusStock);
+        Debug.Log("ストック：" + statusStock);
 
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
@@ -277,16 +277,12 @@ public class UIManager : MonoBehaviour
         expBar.maxValue = player.NextLvExp;
         levelText.text = "" + player.NowExp;
         expBar.value = player.NowExp;
-        if (player.NowLv <= 0)
+
+        if (player.NowLv > 1)
         {
             lastLevel = player.NowLv - 1;
-            statusStock = player.NowLv - lastLevel;
         }
-        else
-        {
-            lastLevel = player.NowLv;
-            statusStock = 0;
-        }
+
         levelText.text = "LV." + player.NowLv;
 
         UpdatePlayerStatus();
@@ -306,8 +302,8 @@ public class UIManager : MonoBehaviour
             isStatusWindow = true;
             levelUpText.enabled = true;
 
-            statusStock += player.NowLv - lastLevel;
-            if (isOpenStatusWindow) levelUpStock.text = "残り強化数：" + statusStock;
+            //statusStock += player.NowLv - lastLevel;
+            levelUpStock.text = "残り強化数：" + statusStock;
         }
         else
         {
@@ -322,12 +318,6 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < playerStatus.Count; i++)
         {
             playerStatus[i].SetActive(false);
-        }
-
-        if(statusStock > 0)
-        {
-            levelUpText.enabled = true;
-            isStatusWindow = true;
         }
 
         clashNumText.text = "条件:0/" + SpawnManager.Instance.KnockTermsNum;
