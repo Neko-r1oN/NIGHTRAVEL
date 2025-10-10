@@ -208,6 +208,9 @@ public class ValksCodeCrystal : EnemyBase
         bool canAttackSmash = hp <= maxHp / 4 && lastAttackPattern != DECIDE_TYPE.Attack_Dive;
         bool canAttackLaser = hp <= maxHp / 2 && lastAttackPattern != DECIDE_TYPE.Attack_Laser;
 
+        canAttackSmash = false;
+        canAttackLaser = false;
+
         // 条件を基に該当する行動パターンに重み付け
         if (canChaseTarget && !IsGround())
         {
@@ -215,7 +218,7 @@ public class ValksCodeCrystal : EnemyBase
         }
         else if (canAttackNormal || canAttackSmash || canAttackLaser)
         {
-            if (!IsBackFall()) weights[DECIDE_TYPE.BackOff] = wasAttacking ? 15 : 5;
+            if (!IsBackFall() && nextDecide != DECIDE_TYPE.Tracking && nextDecide != DECIDE_TYPE.BackOff) weights[DECIDE_TYPE.BackOff] = wasAttacking ? 15 : 5;
 
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_NormalCombo] = wasAttacking ? 5 : 15;
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_PunchCombo] = wasAttacking ? 5 : 15;
@@ -410,10 +413,11 @@ public class ValksCodeCrystal : EnemyBase
     #region 移動処理関連
 
     /// <summary>
-    ///  追従開始
+    /// 追従開始
     /// </summary>
     void StartTracking()
     {
+        m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
         string cooldownKey = COROUTINE.Tracking.ToString();
         if (!ContaintsManagedCoroutine(cooldownKey))
         {
@@ -498,8 +502,8 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void StartBackOff()
     {
-        float coroutineTime = 0.3f;
-
+        const float coroutineTime = 1.2f;
+        m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
         string cooldownKey = COROUTINE.BackOff.ToString();
         if (!ContaintsManagedCoroutine(cooldownKey))
         {
@@ -517,12 +521,27 @@ public class ValksCodeCrystal : EnemyBase
     /// <returns></returns>
     IEnumerator BackOffCoroutine(float time, Action onFinished)
     {
-        float waitSec = 0.1f;
-        while (time > 0)
+        float waitSec = 0.01f;
+        float currentTime = 0f;
+        const float backOffTime = 0.4f;
+        const float breakeTime = 0.1f;
+
+        while (currentTime < backOffTime + breakeTime)
         {
-            time -= waitSec;
-            BackOff();
+            currentTime += waitSec;
+            float speedRate = currentTime <= backOffTime ? -1.5f : -1f;
+
+            BackOff(speedRate);
             yield return new WaitForSeconds(waitSec);
+        }
+
+        m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
+        yield return new WaitForSeconds(time - backOffTime - breakeTime);
+
+        var nearTarget = GetNearPlayer();
+        if (IsNormalAttack(nearTarget))
+        {
+            target = nearTarget;
         }
 
         NextDecision(false);
@@ -532,7 +551,7 @@ public class ValksCodeCrystal : EnemyBase
     /// <summary>
     /// 距離をとる
     /// </summary>
-    void BackOff()
+    void BackOff(float speedRate)
     {
         SetAnimId((int)ANIM_ID.Backoff);
 
@@ -544,7 +563,7 @@ public class ValksCodeCrystal : EnemyBase
         else
         {
             float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -2, m_rb2d.linearVelocity.y);
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * speedRate, m_rb2d.linearVelocity.y);
         }
         m_rb2d.linearVelocity = speedVec;
     }
@@ -609,8 +628,21 @@ public class ValksCodeCrystal : EnemyBase
     /// 通常攻撃が可能かどうか
     /// </summary>
     /// <returns></returns>
-    bool IsNormalAttack()
+    bool IsNormalAttack(GameObject target = null)
     {
+        if(target == null) target = this.target;
+        if (target)
+        {
+            // ターゲットとの距離を取得する
+            disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
+            disToTargetX = MathF.Abs(target.transform.position.x - transform.position.x);
+        }
+        else
+        {
+            disToTarget = float.MaxValue;
+            disToTargetX = float.MaxValue;
+        }
+
         return canAttack && !sightChecker.IsObstructed() && disToTarget <= attackDist;
     }
 

@@ -17,6 +17,16 @@ public class DamageCollider : MonoBehaviour
     CharacterBase.KB_POW knockBackPower = CharacterBase.KB_POW.Small;
 
     /// <summary>
+    /// ダメージ計算方法
+    /// </summary>
+    enum DamageCalculationType
+    {
+        Percentage,     // 最大HPの割合で与える
+        AttackBased,    // ownerの攻撃力を元に計算する
+    }
+    [SerializeField] DamageCalculationType damageCalculationType = DamageCalculationType.Percentage;
+
+    /// <summary>
     /// 衝突判定方法の種類
     /// </summary>
     enum TriggerDetectionType
@@ -91,7 +101,16 @@ public class DamageCollider : MonoBehaviour
         var player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
         if(player != null && !player.IsDead)
         {
-            int power = owner.Power + (int)(owner.Power * damageRate);
+            int power = 0;
+            if (damageCalculationType == DamageCalculationType.Percentage)
+            {
+                power = (int)(player.MaxHP * damageRate);
+            }
+            else
+            {
+                power = owner.Power + (int)(owner.Power * damageRate);
+            }
+
             EnumManager.DEBUFF_TYPE? debuff = applyDebuffType == EnumManager.DEBUFF_TYPE.None ? null : applyDebuffType;
             player.ApplyDamage(power, transform.position, knockBackPower, debuff);
         }
