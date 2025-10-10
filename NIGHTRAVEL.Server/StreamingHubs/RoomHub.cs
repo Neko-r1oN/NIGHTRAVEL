@@ -487,7 +487,7 @@ namespace StreamingHubs
             while (true)
             {
                 no = new Random().Next(0, relics.Count);
-                if(relics[no].id != (int)RELIC_TYPE.ScatterBug && relics[no].id != (int)RELIC_TYPE.ChargedCore)
+                if(relics[no].id != (int)RELIC_TYPE.ScatterBug && relics[no].id != (int)RELIC_TYPE.ChargedCore && relics[no].id != (int)RELIC_TYPE.BuckupHDMI)
                     break;
             }
 

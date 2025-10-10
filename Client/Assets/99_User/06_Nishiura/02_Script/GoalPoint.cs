@@ -9,6 +9,10 @@ public class GoalPoint : MonoBehaviour
 {
     [SerializeField] GameObject terminal;
 
+    [SerializeField] AudioSource audioSource;
+
+    [SerializeField] AudioClip getSE;
+
     Speed speedScript;
 
     private void Start()
@@ -19,6 +23,7 @@ public class GoalPoint : MonoBehaviour
     {
         if(collision.gameObject.tag == "Player")
         {
+            audioSource.PlayOneShot(getSE);
             speedScript.HitGoalPoint(this.gameObject);
         }
     }
