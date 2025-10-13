@@ -404,13 +404,13 @@ abstract public class PlayerBase : CharacterBase
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
+            if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsOpenStatusWindow || Input.GetButtonDown("Jump") && !UIManager.Instance.IsOpenStatusWindow)
             {   // ジャンプ押下時
                 if (animator.GetInteger("animation_id") != (int)ANIM_ID.Blink)
                     isJump = true;
             }
 
-            if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Blink"))
+            if (Input.GetKeyDown(KeyCode.LeftShift) && !UIManager.Instance.IsOpenStatusWindow || Input.GetButtonDown("Blink") && !UIManager.Instance.IsOpenStatusWindow)
             {   // ブリンク押下時
                     isBlink = true;
             }
