@@ -103,9 +103,19 @@ public class ValksCodeCrystal : EnemyBase
 
     #region 攻撃関連
 
+    #region 氷の岩のパーティクル生成関連
     [Foldout("攻撃関連")]
     [SerializeField]
-    List<GameObject> particles = new List<GameObject>();
+    List<GameObject> iceRockPsPrefabs = new List<GameObject>();
+
+    [Foldout("攻撃関連")]
+    [SerializeField]
+    List<Transform> iceRockPsPoints = new List<Transform>();
+
+    [Foldout("攻撃関連")]
+    [SerializeField]
+    List<float> iceRockPsPointsY = new List<float>();
+    #endregion
 
     [Foldout("攻撃関連")]
     [SerializeField]
@@ -279,10 +289,6 @@ public class ValksCodeCrystal : EnemyBase
         foreach (var collider in damageColliders)
         {
             collider.SetActive(false);
-        }
-        foreach (var ps in particles)
-        {
-            ps.SetActive(false);
         }
     }
 
@@ -478,6 +484,30 @@ public class ValksCodeCrystal : EnemyBase
     }
 
     #endregion
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] 前方向に氷の岩のパーティクルを生成する
+    /// </summary>
+    public override void OnAnimEventOption1()
+    {
+        Vector2 point = new Vector2(iceRockPsPoints[0].position.x, iceRockPsPointsY[0]);
+        var iceRock = Instantiate(iceRockPsPrefabs[1], point, iceRockPsPrefabs[1].transform.rotation);
+
+        float rotationY = transform.localScale.x > 0 ? 90 : -90;
+        iceRock.transform.eulerAngles = Vector2.up * rotationY;
+    }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] 前後に氷の岩のパーティクルを生成する
+    /// </summary>
+    public override void OnAnimEventOption2()
+    {
+        Vector2 point = new Vector2(iceRockPsPoints[0].position.x, iceRockPsPointsY[0]);
+        Instantiate(iceRockPsPrefabs[0], point, iceRockPsPrefabs[0].transform.rotation);
+
+        point = new Vector2(iceRockPsPoints[1].position.x, iceRockPsPointsY[1]);
+        Instantiate(iceRockPsPrefabs[1], point, iceRockPsPrefabs[1].transform.rotation);
+    }
 
     #endregion
 

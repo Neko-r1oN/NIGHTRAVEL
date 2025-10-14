@@ -915,6 +915,22 @@ abstract public class EnemyBase : CharacterBase
 
     #endregion
 
+    #region オプションのアニメーションイベント
+
+    /// <summary>
+    /// アニメーションイベント オプション１
+    /// </summary>
+    public virtual void OnAnimEventOption1() { }
+
+    /// <summary>
+    /// アニメーションイベント オプション２
+    /// </summary>
+    public virtual void OnAnimEventOption2() { }
+
+    #endregion
+
+    #region 移動アニメーションイベント
+
     /// <summary>
     /// 移動するアニメーションイベント通知
     /// </summary>
@@ -924,6 +940,10 @@ abstract public class EnemyBase : CharacterBase
     /// 移動終了アニメーションイベント通知
     /// </summary>
     public virtual void OnEndMoveAnimEvent() { }
+
+    #endregion
+
+    #region スポーンアニメーションイベント
 
     /// <summary>
     /// スポーンアニメメーション開始時
@@ -958,6 +978,9 @@ abstract public class EnemyBase : CharacterBase
 
         if (target) LookAtTarget();
     }
+    #endregion
+
+    #region ヒット演出関連
 
     /// <summary>
     /// 指定したアニメーションIDがヒットアニメーションかどうか
@@ -1032,6 +1055,8 @@ abstract public class EnemyBase : CharacterBase
 
         onFinished?.Invoke();
     }
+
+    #endregion
 
     #endregion
 
