@@ -253,5 +253,17 @@ class EnemiesTableSeeder extends Seeder
             'stage_id' => '3',
             'exp' => 5
         ]);
+        Enemy::create([
+            'name' => 'ValksCodecrysta',
+            'isboss' => false,
+            'hp' => 500,
+            'defence' => 15,
+            'power' => 35,
+            'jump_power' => 7.0,
+            'move_speed' => 8.0,
+            'attack_speed_factor' => 1.0,
+            'stage_id' => '4',
+            'exp' => 5
+        ]);
     }
 }

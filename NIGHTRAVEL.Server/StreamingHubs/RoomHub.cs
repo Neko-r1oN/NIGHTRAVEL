@@ -41,8 +41,9 @@ namespace StreamingHubs
         private const int MAX_JOINABLE_PLAYERS = 3;
 
         // ステータス上限定数
-        private const float LEVEL_UP_RATE1 = 0.1f;
-        private const float LEVEL_UP_RATE2 = 0.05f;
+        private const float LVUP_HP = 0.1f;
+        private const float LVUP_POW = 0.05f;
+        private const float LVUP_DEF = 0.01f;
         private const float MAX_ATTACKSPEED = 1.15f;
 
         // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
@@ -1544,9 +1545,9 @@ namespace StreamingHubs
                     var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
 
                     // 各最大値を更新
-                    playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE1);
-                    playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE1);
-                    playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE2);
+                    playerData.hp = playerData.hp + (int)(playerData.hp * LVUP_HP);
+                    playerData.power = playerData.power + (int)(playerData.power * LVUP_POW);
+                    playerData.defence = playerData.defence + (int)(playerData.defence * LVUP_DEF);
 
                     // ユーザー毎にレベルアップ通知
                     this.roomContext.Group.Single(user.Key).OnLevelUp(expManager.Level, expManager.nowExp, expManager.RequiredExp, playerData, optionsKey, statusOptionList);
