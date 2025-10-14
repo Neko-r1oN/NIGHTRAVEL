@@ -13,6 +13,8 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using UnityEngine.TextCore.Text;
 using Unity.VisualScripting.FullSerializer;
 using Unity.Cinemachine;
+using UnityEngine.SceneManagement;
+using Unity.Cinemachine;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -56,7 +58,10 @@ public class CharacterManager : MonoBehaviour
     Dictionary<PROJECTILE_TYPE, GameObject> projectilePrefabsByType = new Dictionary<PROJECTILE_TYPE, GameObject>();
     #endregion
 
+    #region カメラ関連
     [SerializeField] GameObject camera;
+    [SerializeField] CinemachineTargetGroup cinemachineTargetGroup;
+    #endregion
 
     const float updateSec = 0.1f;
 
@@ -95,6 +100,17 @@ public class CharacterManager : MonoBehaviour
             // プレイヤーのステータス引継ぎ設定
             if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
             else ApplySelfPlayerStatusData();
+
+            if (cinemachineTargetGroup)
+            {
+                var newTarget = new CinemachineTargetGroup.Target
+                {
+                    Object = playerObjSelf.transform,
+                    Radius = 1f,
+                    Weight = 1f
+                };
+                cinemachineTargetGroup.Targets.Add(newTarget);
+            }
 
             return;
         }
@@ -274,41 +290,32 @@ public class CharacterManager : MonoBehaviour
             var point = startPoints[0];
             startPoints.RemoveAt(0);
 
-            if (joinduser.Value.CharacterID == 1)
+            var prefab = joinduser.Value.CharacterID == 1 ? charaSwordPrefab : charaGunnerPrefab;
+            var playerObj = Instantiate(prefab, point.position, Quaternion.identity);
+            playerObjs.Add(joinduser.Key, playerObj);
+
+            if (joinduser.Key == RoomModel.Instance.ConnectionId)
             {
-                var playerObj = Instantiate(charaSwordPrefab, point.position, Quaternion.identity);
+                playerObjSelf = playerObj;
 
-                playerObjs.Add(joinduser.Key, playerObj);
-
-                if (joinduser.Key == RoomModel.Instance.ConnectionId)
+                if (cinemachineTargetGroup)
                 {
-                    playerObjSelf = playerObj;
-
-                    //Camera.main.gameObject.GetComponent<CameraFollow>().Target = playerObjSelf.transform;
-
+                    var newTarget = new CinemachineTargetGroup.Target
+                    {
+                        Object = playerObjSelf.transform,
+                        Radius = 1f,
+                        Weight = 1f
+                    };
+                    cinemachineTargetGroup.Targets.Add(newTarget);
+                }
+                else
+                {
                     var target = new CameraTarget();
                     target.TrackingTarget = playerObjSelf.transform;
                     target.LookAtTarget = playerObjSelf.transform;
                     camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
                 }
             }
-            else if (joinduser.Value.CharacterID == 2)
-            {
-                var playerObj = Instantiate(charaGunnerPrefab, point.position, Quaternion.identity);
-
-                playerObjs.Add(joinduser.Key, playerObj);
-
-                if (joinduser.Key == RoomModel.Instance.ConnectionId)
-                {
-                    playerObjSelf = playerObj;
-
-                    var target = new CameraTarget();
-                    target.TrackingTarget = playerObjSelf.transform;
-                    target.LookAtTarget = playerObjSelf.transform;
-                    camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
-                }
-            }
-
         }
     }
 

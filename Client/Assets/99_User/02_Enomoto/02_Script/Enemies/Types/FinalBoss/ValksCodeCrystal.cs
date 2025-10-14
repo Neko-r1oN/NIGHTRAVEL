@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using Unity.Cinemachine;
 
 public class ValksCodeCrystal : EnemyBase
 {
@@ -135,6 +136,17 @@ public class ValksCodeCrystal : EnemyBase
     int nonLaserAttackCount = 0;
     #endregion
 
+    #region カメラ関連
+    [Foldout("カメラ関連")]
+    [SerializeField]
+    Transform bone1;
+
+    [Foldout("カメラ関連")]
+    [SerializeField]
+    string targetGroupName;
+
+    #endregion
+
     protected override void Start()
     {
         base.Start();
@@ -225,8 +237,8 @@ public class ValksCodeCrystal : EnemyBase
         Dictionary<DECIDE_TYPE, int> weights = new Dictionary<DECIDE_TYPE, int>();
         bool wasAttacking = nextDecide == DECIDE_TYPE.Attack_NormalCombo || nextDecide == DECIDE_TYPE.Attack_PunchCombo || nextDecide == DECIDE_TYPE.Attack_Dive || nextDecide == DECIDE_TYPE.Attack_Laser;
         bool canAttackNormal = IsNormalAttack();
-        bool canAttackSmash = hp <= maxHp / 4 && lastAttackPattern != DECIDE_TYPE.Attack_Dive && nonDiveAttackCount >= attackDiveUnlockCount;
-        bool canAttackLaser = hp <= maxHp / 2 && lastAttackPattern != DECIDE_TYPE.Attack_Laser && nonLaserAttackCount >= attackLaserUnlockCount;
+        bool canAttackSmash = hp <= maxHp * 0.75f && lastAttackPattern != DECIDE_TYPE.Attack_Dive && nonDiveAttackCount >= attackDiveUnlockCount;
+        bool canAttackLaser = hp <= maxHp * 0.5f && lastAttackPattern != DECIDE_TYPE.Attack_Laser && nonLaserAttackCount >= attackLaserUnlockCount;
 
         // 条件を基に該当する行動パターンに重み付け
         if (canChaseTarget && !IsGround())
@@ -239,8 +251,8 @@ public class ValksCodeCrystal : EnemyBase
 
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_NormalCombo] = wasAttacking ? 5 : 15;
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_PunchCombo] = wasAttacking ? 5 : 15;
-            if (canAttackSmash) weights[DECIDE_TYPE.Attack_Dive] = wasAttacking ? 5 : 15;
-            if (canAttackLaser) weights[DECIDE_TYPE.Attack_Laser] = wasAttacking ? 5 : 15;
+            if (canAttackSmash) weights[DECIDE_TYPE.Attack_Dive] = 20;
+            if (canAttackLaser) weights[DECIDE_TYPE.Attack_Laser] = 20;
         }
         else if (canChaseTarget && target)
         {
@@ -314,6 +326,7 @@ public class ValksCodeCrystal : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        RemoveTargetGroup();
         DisableAllDamageColliders();
         isAttacking = true;
         Idle();
@@ -471,6 +484,8 @@ public class ValksCodeCrystal : EnemyBase
     {
         // ステージの中央に移動
         transform.position = stageCenterPosition;
+
+        AddTargetGroup();
     }
 
     /// <summary>
@@ -507,6 +522,40 @@ public class ValksCodeCrystal : EnemyBase
 
         point = new Vector2(iceRockPsPoints[1].position.x, iceRockPsPointsY[1]);
         Instantiate(iceRockPsPrefabs[1], point, iceRockPsPrefabs[1].transform.rotation);
+    }
+
+    #endregion
+
+    #region カメラ関連
+
+    /// <summary>
+    /// 一時的にCinemachineのTargetGroupにbone1を加える
+    /// </summary>
+    void AddTargetGroup()
+    {
+        var targetGroup = GameObject.Find(targetGroupName).GetComponent<CinemachineTargetGroup>();
+        var newTarget = new CinemachineTargetGroup.Target
+        {
+            Object = bone1,
+            Radius = 1f,
+            Weight = 1f
+        };
+        targetGroup.Targets.Add(newTarget);
+    }
+
+    /// <summary>
+    /// ChinemachineのTargetGroupからbone1を除いたリストに修正する
+    /// </summary>
+    void RemoveTargetGroup()
+    {
+        var targetGroup = GameObject.Find(targetGroupName).GetComponent<CinemachineTargetGroup>();
+        var newTarget = new CinemachineTargetGroup.Target
+        {
+            Object = CharacterManager.Instance.PlayerObjSelf.transform,
+            Radius = 1f,
+            Weight = 1f
+        };
+        targetGroup.Targets = new List<CinemachineTargetGroup.Target>() { newTarget};
     }
 
     #endregion
@@ -686,9 +735,6 @@ public class ValksCodeCrystal : EnemyBase
     {
         base.OnEndSpawnAnimEvent();
         ApplyStun(0.5f, false);
-
-        // Cinemachineのターゲットに加える
-        // 着地したときにクリスタル生成する
     }
 
     #endregion
