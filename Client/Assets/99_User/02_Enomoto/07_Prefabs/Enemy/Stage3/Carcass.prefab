@@ -437,11 +437,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beacad8221ae3f24dae996443f75ea2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 200
+  baseHp: 180
   baseDefense: 10
-  basePower: 60
+  basePower: 40
   baseJumpPower: 20
   baseMoveSpeed: 2.5
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -486,6 +487,7 @@ MonoBehaviour:
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
+  isUseHitBlendShader: 0
   spawnGroundOffset: 0.7
   spawnWeight: 35
   checkObstacleRange: 0.6

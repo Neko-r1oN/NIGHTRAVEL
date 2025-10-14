@@ -5832,6 +5832,7 @@ MonoBehaviour:
   basePower: 40
   baseJumpPower: 10
   baseMoveSpeed: 2
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -5866,7 +5867,8 @@ MonoBehaviour:
   canCancelAttackOnHit: 1
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
-  spawnGroundOffset: 4
+  isUseHitBlendShader: 0
+  spawnGroundOffset: 2
   spawnWeight: 20
   checkObstacleRange: 0.75
   canDrawRay: 0

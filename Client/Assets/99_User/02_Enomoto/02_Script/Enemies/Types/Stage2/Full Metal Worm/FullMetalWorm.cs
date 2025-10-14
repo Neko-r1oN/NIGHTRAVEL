@@ -383,7 +383,7 @@ public class FullMetalWorm : EnemyBase
             {
                 if (collidersEnemies[i].gameObject.tag == "Player")
                 {
-                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position,KB_POW.Big, applyEffect);
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power * 10, transform.position,KB_POW.Big, applyEffect);
                 }
             }
             yield return null;
