@@ -67,7 +67,6 @@ public class MatchingManager : MonoBehaviour
         //userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
 
         #region RoomModelíËã`
-        //ê⁄ë±èàóù
         await RoomModel.Instance.ConnectAsync();
         RoomModel.Instance.OnSearchedRoom += this.OnSearchedRoom;
         RoomModel.Instance.OnCreatedRoom += this.OnCreatedRoom;
@@ -139,7 +138,7 @@ public class MatchingManager : MonoBehaviour
             }
             else
             {
-                await RoomModel.Instance.JoinedAsync(roomNameText.text, userId, TitleManagerk.SteamUserName, passText.text);
+                await RoomModel.Instance.JoinedAsync(roomNameText.text, userId, TitleManagerk.SteamUserName, passText.text,TitleManagerk.GameMode);
             }
         }
     }
@@ -160,7 +159,7 @@ public class MatchingManager : MonoBehaviour
         else
         {
             conducter.Loading();
-            await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, "");
+            await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, "",TitleManagerk.GameMode);
         }
     }
 
@@ -172,7 +171,7 @@ public class MatchingManager : MonoBehaviour
     {
         conducter.Loading();
         string pass = inputFieldPassWord.text;
-        await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, pass);
+        await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, pass,TitleManagerk.GameMode);
     }
 
     #endregion

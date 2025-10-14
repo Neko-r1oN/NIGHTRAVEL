@@ -24,7 +24,6 @@ public class SceneConducter : MonoBehaviour
     public void SameStartPlayers()
     {
         Debug.Log("プレイヤー到着");
-        SceneManager.UnloadSceneAsync("TakeYourPlayerScene"); //TakeYourPlayerSceneシーンを削除
         if (SceneManager.GetSceneByName("TakeYourPlayerScene").isLoaded)
             SceneManager.UnloadSceneAsync("TakeYourPlayerScene");
     }
