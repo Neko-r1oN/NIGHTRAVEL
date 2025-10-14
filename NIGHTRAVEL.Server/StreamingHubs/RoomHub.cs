@@ -402,8 +402,8 @@ namespace StreamingHubs
             {
                 { RARITY_TYPE.Legend, 1 },
                 { RARITY_TYPE.Unique, 3 },
-                { RARITY_TYPE.Rare, 16},
-                { RARITY_TYPE.Uncommon, 35},
+                { RARITY_TYPE.Rare, 8},
+                { RARITY_TYPE.Uncommon, 43},
                 { RARITY_TYPE.Common, 45 },
                 { RARITY_TYPE.Boss, 45 }
             };
@@ -766,7 +766,7 @@ namespace StreamingHubs
                 PlayerRelicStatusData relicStatus = statusData.Item2;   // インスタンス取得
 
                 // 受け取った情報で基礎ダメージ計算をする
-                int damage = (int)((giverATK / 2) - (enemData.State.defence / 4));
+                int damage = (int)((giverATK / 2) - (enemData.State.defence / 5));
 
                 // ダメージにレリック効果適用
                 // 「識別AI」効果（デバフ状態の敵に対するダメージ倍率UP）
