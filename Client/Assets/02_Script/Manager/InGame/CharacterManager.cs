@@ -117,6 +117,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateStatusSyn += this.OnUpdatePlayerStatus;
         RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn += this.OnPlayerDead;
+        RoomModel.Instance.OnBeamEffectActived += this.OnBeamEffectActived;
     }
 
     private void Start()
@@ -141,6 +142,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnUpdateStatusSyn -= this.OnUpdatePlayerStatus;
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn -= this.OnPlayerDead;
+        RoomModel.Instance.OnBeamEffectActived -= this.OnBeamEffectActived;
     }
 
     #region キャラクター関連
@@ -368,6 +370,20 @@ public class CharacterManager : MonoBehaviour
             ConnectionId = RoomModel.Instance.ConnectionId,
             IsDead = player.IsDead
         };
+    }
+
+    /// <summary>
+    /// 通知があったキャラのビームエフェクトのON/OFF
+    /// </summary>
+    /// <param name="conID"></param>
+    /// <param name="isActive"></param>
+    private void OnBeamEffectActived(Guid conID, bool isActive)
+    {
+        if (playerObjs.ContainsKey(conID))
+        {
+            var playerEffect = playerObjs[conID].GetComponent<PlayerEffect>();
+            if (playerEffect) playerEffect.BeamEffectActive(isActive);
+        }
     }
 
     #endregion

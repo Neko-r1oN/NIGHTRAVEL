@@ -6,6 +6,7 @@
 using Pixeye.Unity;
 using System.Collections;
 using System.Collections.Generic;   // HashSet 用
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -45,8 +46,6 @@ public class Rifle : PlayerBase
     [SerializeField] private float duration = 2.5f;         // 照射時間
     [Foldout("ビーム関連")]
     [SerializeField] private float damageInterval = 0.3f;   // ダメージ間隔
-    [Foldout("ビーム関連")]
-    [SerializeField] private GameObject beamEffect;         // ビームエフェクト
 
     [Foldout("通常攻撃")]
     [SerializeField] private float bulletSpeed;
@@ -332,9 +331,10 @@ public class Rifle : PlayerBase
     /// 照射処理
     /// </summary>
     /// <param name="direction">プレイヤーの向き</param>
-    public void FireLaser(Vector2 direction)
+    public async Task FireLaser(Vector2 direction)
     {
         if (isFiring) return;             // 多重発射防止
+        await RoomModel.Instance.BeamEffectActiveAsync(true);
         StartCoroutine(LaserRoutine(direction.normalized));
     }
 
@@ -348,8 +348,8 @@ public class Rifle : PlayerBase
         isFiring = true;
 
         // ビームエフェクト表示
-        beamEffect.SetActive(true);
-
+        playerEffect.BeamEffectActive(true);
+        
         float laserTimer = 0f;   // 全体の照射時間
         float tickTimer = 0f;    // ダメージ間隔計測
 
@@ -370,9 +370,6 @@ public class Rifle : PlayerBase
             Vector3 endPos = firePoint.position + (Vector3)(dir * maxDistance);
             if (hits.Length > 0) endPos = hits[0].point;
 
-            // カメラのシェイク処理
-            //cam.GetComponent<CameraFollow>().ShakeCamera();
-
             // 指定ダメージ間隔毎にダメージ
             if (tickTimer >= damageInterval && hits.Length > 0)
             {
@@ -390,7 +387,6 @@ public class Rifle : PlayerBase
         }
 
         // ビームエフェクト非表示
-        beamEffect.SetActive(false);
         isFiring = false;
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
     }
@@ -415,7 +411,17 @@ public class Rifle : PlayerBase
     public void EndSkill()
     {
         ResetFlag();
+        playerEffect.BeamEffectActive(false);
         animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
+    }
+
+    /// <summary>
+    /// ビームエフェクト停止
+    /// </summary>
+    public async void StopBeamEffect()
+    {
+        await RoomModel.Instance.BeamEffectActiveAsync(false);
+        playerEffect.BeamEffectActive(false);
     }
 
     #endregion

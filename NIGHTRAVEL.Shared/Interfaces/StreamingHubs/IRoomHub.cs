@@ -93,6 +93,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="shootVec">発射ベクトル</param>
         /// <returns></returns>
         Task ShootBulletsAsync(params ShootBulletData[] shootBulletDatas);
+
+        /// <summary>
+        /// ビームエフェクトのアクティブ制御
+        /// </summary>
+        /// <param name="isActive"></param>
+        /// <returns></returns>
+        Task BeamEffectActiveAsync(bool isActive);
         #endregion
         #region 敵関連
         /// <summary>
