@@ -15,7 +15,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Œ»İ‚ÌƒQ[ƒ€“ïˆÕ“x
     /// </summary>
-    static public int GameLevel { get; set; } = 6;
+    static public int GameLevel { get; set; } = 0;
 
     readonly public int LevelHellId = 5;
 
