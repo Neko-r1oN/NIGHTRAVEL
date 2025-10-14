@@ -83,6 +83,7 @@ public class RelicManager : MonoBehaviour
         if (HaveRelicList.Find(X => X.ID == relic.ID) != null)
         {
             CountRelic(relic.ID);
+            UIManager.Instance.GetRelicBanner(relicSprites[(int)relic.ID - 1]);
         }
         else
         {
