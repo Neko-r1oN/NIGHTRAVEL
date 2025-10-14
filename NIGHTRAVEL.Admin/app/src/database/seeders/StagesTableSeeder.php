@@ -25,5 +25,9 @@ class StagesTableSeeder extends Seeder
             'name' => 'テストステージ3',
             'descriptive_text' => 'ここにステージ3の説明文',
         ]);
+        Stage::create([
+            'name' => 'テストステージ4',
+            'descriptive_text' => 'ここにステージ4の説明文',
+        ]);
     }
 }
