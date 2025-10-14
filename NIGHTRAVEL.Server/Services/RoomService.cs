@@ -48,7 +48,7 @@ namespace NIGHTRAVEL.Server.Services
         }
 
         //ルームを生成
-        public async UnaryResult<Room> RegistRoom(string room_name,string user_name, string pass)
+        public async UnaryResult<Room> RegistRoom(string room_name,string user_name, string pass, int game_mode)
         {
             Room room = new Room();
             room.userName = user_name;
@@ -56,6 +56,10 @@ namespace NIGHTRAVEL.Server.Services
             room.password = pass;
             room.Created_at = DateTime.Now;      //生成日時
             room.Updated_at = DateTime.Now;      //更新日時
+            if (game_mode == 0) 
+            {
+                room.is_started = true;
+            }
 
 
             //DBを取得

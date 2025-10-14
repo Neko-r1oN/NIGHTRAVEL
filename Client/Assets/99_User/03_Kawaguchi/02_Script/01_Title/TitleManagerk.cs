@@ -1,5 +1,6 @@
 using DG.Tweening;                   //DOTweenを使うときはこのusingを入れる
 using KanKikuchi.AudioManager;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Steamworks;
 using System;
@@ -8,10 +9,21 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Net.Http;
+using Cysharp.Threading.Tasks.Triggers;
+using Grpc.Net.Client;
+using MagicOnion.Client;
+using NIGHTRAVEL.Shared.Interfaces.Services;
+using Shared.Interfaces.StreamingHubs;
+using UnityEngine.UI;
+using System.Threading.Tasks;
+
 
 public class TitleManagerk : MonoBehaviour
 {
     [SerializeField] GameObject fade;
+    [SerializeField] SceneConducter conducter;
+    [SerializeField] GameObject roomModelPrefab;
     // [SerializeField] GameObject menu;
 
     //steamユーザー名
@@ -21,13 +33,22 @@ public class TitleManagerk : MonoBehaviour
         get { return steamusername; }
     }
 
+    //ゲームのモード
+    //ソロモード 0,マルチプレイ 1,チュートリアル 2
+    private static int gamemode;
+
+    public static int GameMode
+    {
+        get { return gamemode; }
+    }
+
     public static bool isMenuFlag;
 
     bool isSuccess;
 
+
     void Start()
     {
-
 
         //Steamのユーザー名を取得
         if (SteamManager.Initialized)
@@ -92,7 +113,25 @@ public class TitleManagerk : MonoBehaviour
         RelicManager.HaveRelicList = new List<RelicData>();
         LevelManager.GameLevel = 0;
         LevelManager.Options = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
+
+        Invoke("NewRoomModel", 0.1f);
+
     }
+
+    void NewRoomModel()
+    {
+        if (GameObject.Find("RoomModel") != null) return;
+        conducter.Loading();
+        //ルームモデルをもう一度作成
+        Instantiate(roomModelPrefab);
+        Invoke("Loaded", 1.0f);
+    }
+
+    private void OnDisable()
+    {
+        RoomModel.Instance.OnCreatedRoom -= OnCreatedRoom;
+    }
+
 
     public void OpenOptionButton()
     {
@@ -137,23 +176,49 @@ public class TitleManagerk : MonoBehaviour
         });
     }
 
-    public void SinglePlayStart()
+    /// <summary>
+    /// ソロモード
+    /// </summary>
+    public async void SinglePlayStart()
+    {
+        await RoomModel.Instance.ConnectAsync();
+        RoomModel.Instance.OnCreatedRoom += OnCreatedRoom;
+        gamemode = 0;
+        await RoomModel.Instance.JoinedAsync("！！ソロモード専用のルームです！！", MatchingManager.UserID, SteamUserName, "404",gamemode);
+    }
+
+    /// <summary>
+    /// ソロモード用ルーム作成通知
+    /// </summary>
+    public void OnCreatedRoom()
     {
         Initiate.DoneFading();
         Initiate.Fade("3_StandbyRoom", Color.black, 1.0f);   // フェード時間1秒
     }
 
+    /// <summary>
+    /// マルチプレイ
+    /// </summary>
     public void MultiPlayStart()
     {
+        gamemode = 1;
         Initiate.DoneFading();
         Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
     }
 
-
+    /// <summary>
+    /// チュートリアル
+    /// </summary>
     public void TutorialPlayStart()
     {
+        gamemode = 2;
         Initiate.DoneFading();
         Initiate.Fade("Tutorial", Color.black, 1.0f);   // フェード時間1秒
+    }
+
+    private void Loaded()
+    {
+        conducter.Loaded();
     }
 }
 

@@ -15,10 +15,10 @@ namespace NIGHTRAVEL.Shared.Interfaces.Services
         UnaryResult<Room[]> GetAllRoom();
 
         //ルームを作成
-        UnaryResult<Room> RegistRoom(string room_name,string user_name,string pass);
+        UnaryResult<Room> RegistRoom(string room_name,string user_name,string pass,int game_mode);
 
         //ルームを開始状態にする
-        UnaryResult<Room> StartRoom(string userName);
+        UnaryResult<Room> StartRoom(string user_name);
 
         //ルームを削除
         UnaryResult<Room> RemoveRoom(string room_name);

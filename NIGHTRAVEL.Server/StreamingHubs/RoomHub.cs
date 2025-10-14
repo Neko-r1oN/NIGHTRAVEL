@@ -74,7 +74,7 @@ namespace StreamingHubs
         /// <param name="roomName"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId,string userName, string pass)
+        public async Task<Dictionary<Guid, JoinedUser>> JoinedAsync(string roomName, int userId,string userName, string pass,int gameMode)
         {
             lock (roomContextRepository)
             { //同時に生成しないように排他制御
@@ -100,7 +100,7 @@ namespace StreamingHubs
                     room.userName = userName;
                     room.password = pass;
                     room.is_started = false;
-                    roomService.RegistRoom(room.roomName, room.userName,room.password);
+                    roomService.RegistRoom(room.roomName, room.userName,room.password,gameMode);
 
                     this.roomContext.IsStartGame = false;
                 }
@@ -113,7 +113,7 @@ namespace StreamingHubs
                     room.userName = userName;
                     room.password = pass;
                     room.is_started = false;
-                    roomService.RegistRoom(room.roomName, room.userName, room.password);
+                    roomService.RegistRoom(room.roomName, room.userName, room.password,gameMode);
 
                     this.roomContext.IsStartGame = false;
                 }
