@@ -1542,7 +1542,7 @@ namespace StreamingHubs
                     var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
 
                     // 各最大値を更新
-                    const float LEVEL_UP_RATE = 0.05f;
+                    const float LEVEL_UP_RATE = 0.2f;
                     playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE);
                     playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE);
                     playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE);
