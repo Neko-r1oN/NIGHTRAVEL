@@ -86,6 +86,22 @@ public class EnemyAnimationEventController : MonoBehaviour
     #endregion
 
     /// <summary>
+    /// オプション１のアニメーションイベントを呼び出す
+    /// </summary>
+    public void OnAnimEventOption1()
+    {
+        m_EnemyBase.OnAnimEventOption1();
+    }
+
+    /// <summary>
+    /// オプション２のアニメーションイベントを呼び出す
+    /// </summary>
+    public void OnAnimEventOption2()
+    {
+        m_EnemyBase.OnAnimEventOption2();
+    }
+
+    /// <summary>
     /// 移動するアニメイトイベント
     /// </summary>
     public void OnMoveAnimEvent()
