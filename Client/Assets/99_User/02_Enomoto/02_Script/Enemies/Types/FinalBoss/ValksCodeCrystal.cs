@@ -130,8 +130,8 @@ public class ValksCodeCrystal : EnemyBase
     const float warpPosY = 5f;
 
     // 落下攻撃、レーザー攻撃を発動できるまでの条件回数
-    const int attackDiveUnlockCount = 4;
-    const int attackLaserUnlockCount = 8;
+    const int attackDiveUnlockCount = 3;
+    const int attackLaserUnlockCount = 6;
     int nonDiveAttackCount = 0;
     int nonLaserAttackCount = 0;
     #endregion
@@ -251,8 +251,8 @@ public class ValksCodeCrystal : EnemyBase
 
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_NormalCombo] = wasAttacking ? 5 : 15;
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_PunchCombo] = wasAttacking ? 5 : 15;
-            if (canAttackSmash) weights[DECIDE_TYPE.Attack_Dive] = 20;
-            if (canAttackLaser) weights[DECIDE_TYPE.Attack_Laser] = 20;
+            if (canAttackSmash) weights[DECIDE_TYPE.Attack_Dive] = 30;
+            if (canAttackLaser) weights[DECIDE_TYPE.Attack_Laser] = 30;
         }
         else if (canChaseTarget && target)
         {
