@@ -350,7 +350,7 @@ public class UIManager : MonoBehaviour
             if(RelicManager.HaveRelicList.Count > relicCnt)
             {
                 relicImages[relicCnt].sprite =
-                    RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID];
+                    RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1];
 
                 relicCnt++;
             }
