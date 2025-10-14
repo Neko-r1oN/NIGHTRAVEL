@@ -18,6 +18,7 @@ using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using System.Collections.Concurrent;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Shared.Interfaces.StreamingHubs
 {
@@ -113,6 +114,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// <param name="characterStatus"></param>
         /// <param name="prsData"></param>
         void OnUpdateStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData);
+
+        /// <summary>
+        /// ビームエフェクトのアクティブ通知
+        /// </summary>
+        /// <param name="conID"></param>
+        /// <param name="isActive"></param>
+        void OnBeamEffectActive(Guid conID, bool isActive);
 
         #endregion
         #region 敵関連

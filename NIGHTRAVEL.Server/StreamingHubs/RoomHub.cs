@@ -542,9 +542,6 @@ namespace StreamingHubs
             {
                 for (int i = 0; i < spawnEnemyData.Count; i++)
                 {
-                    // 個体識別用のIDを設定
-                    //spawnEnemyData[i].UniqueId = Guid.NewGuid().ToString();
-
                     // DBからIDを指定して敵を取得
                     GameDbContext dbContext = new GameDbContext();
                     var enemy = dbContext.Enemies.Where(enemy => enemy.id == (int)spawnEnemyData[i].TypeId).First();
@@ -1087,6 +1084,17 @@ namespace StreamingHubs
             }
 
             return relicList;
+        }
+
+        /// <summary>
+        /// ビームエフェクト通知処理
+        /// </summary>
+        /// <param name="isActive"></param>
+        /// <returns></returns>
+        public async Task BeamEffectActiveAsync(bool isActive)
+        {
+            // 自分以外にビームエフェクトの状態を通知
+            this.roomContext.Group.Except([this.ConnectionId]).OnBeamEffectActive(this.ConnectionId, isActive);
         }
 
         /// <summary>

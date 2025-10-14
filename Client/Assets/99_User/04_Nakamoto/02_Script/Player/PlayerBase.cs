@@ -225,9 +225,6 @@ abstract public class PlayerBase : CharacterBase
 
     [Foldout("エフェクト・UI")]
     [SerializeField] protected Sprite[] interactSprits;         // [0] Pad [1] Key
-
-    [Foldout("エフェクト・UI")]
-    [SerializeField] protected ParticleSystem groundSmoke;
     #endregion
 
     #region カメラ
@@ -290,6 +287,8 @@ abstract public class PlayerBase : CharacterBase
     protected const float STICK_DEAD_ZONE = 0.3f; // スティックのデッドゾーン
     #endregion
 
+    [SerializeField] protected PlayerEffect playerEffect;
+
     [SerializeField] AudioClip useZipline_SE;   // ジップライン使用音
     [SerializeField] AudioClip usingZipline_SE; // ジップライン使用中音
 
@@ -323,12 +322,6 @@ abstract public class PlayerBase : CharacterBase
         cam = Camera.main.gameObject;
         startHp = maxHp;
         audioSource = GetComponent<AudioSource>();
-
-        // カメラのターゲットを自身に設定
-        if(RoomModel.Instance == null)
-        {
-            //cam.GetComponent<CameraFollow>().Target = gameObject.transform;
-        }
     }
 
     /// <summary>
@@ -370,14 +363,8 @@ abstract public class PlayerBase : CharacterBase
 
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
-
-        // 走っている時に土煙を起こす
-        if (animator.GetInteger("animation_id") == (int)ANIM_ID.Run)
-            groundSmoke.Play();
-        else
-            groundSmoke.Stop();
-
-            Ladder();
+            
+        Ladder();
 
         if(m_IsZipline)
         {

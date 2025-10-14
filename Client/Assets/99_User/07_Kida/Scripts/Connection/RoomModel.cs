@@ -109,6 +109,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //プレイヤーダウン通知
     public Action<Guid> OnPlayerDeadSyn { get; set; }
 
+    public Action<Guid, bool> OnBeamEffectActived { get; set; }
+
     #endregion
 
     #region 敵
@@ -448,6 +450,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         OnEnemyHealthSyn(enemyDamegeData);
     }
 
+    /// <summary>
+    /// ビームエフェクトのアクティブ通知
+    /// </summary>
+    /// <param name="conID"></param>
+    /// <param name="isActive"></param>
+    public void OnBeamEffectActive(Guid conID, bool isActive)
+    {
+        OnBeamEffectActived(conID, isActive);
+    }
+
     #endregion
 
     #region レリック通知関連
@@ -733,6 +745,16 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public async UniTask ShootBulletAsync(params ShootBulletData[] shootBulletDatas)
     {
         await roomHub.ShootBulletsAsync(shootBulletDatas);
+    }
+
+    /// <summary>
+    /// ビームエフェクトのアクティブ制御
+    /// </summary>
+    /// <param name="isActive"></param>
+    /// <returns></returns>
+    public async UniTask BeamEffectActiveAsync(bool isActive)
+    {
+        await roomHub.BeamEffectActiveAsync(isActive);
     }
 
     #endregion
