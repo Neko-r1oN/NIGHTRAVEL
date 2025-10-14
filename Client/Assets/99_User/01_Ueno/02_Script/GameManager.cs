@@ -19,6 +19,7 @@ using static Grpc.Core.Metadata;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
+using KanKikuchi.AudioManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -144,6 +145,8 @@ public class GameManager : MonoBehaviour
             //遷移完了のリクエスト (TerminalManagerにて呼び出し)
             //await RoomModel.Instance.AdvancedStageAsync();  
         }
+
+        PlayStageBGM();
     }
 
     private void OnDisable()
@@ -293,9 +296,39 @@ public class GameManager : MonoBehaviour
 
         // 死んだ判定にする
         isBossDead = true;
+        BGMManager.Instance.Stop();
 
-        this.GetComponent<AudioSource>().resource = normalBGM;
-        this.GetComponent<AudioSource>().Play();
+        switch (nextStage)
+        {
+            ///ラスボス
+            case STAGE_TYPE.Rust:  
+                SEManager.Instance.Play(
+                audioPath: SEPath.DEATH, //再生したいオーディオのパス
+                volumeRate: 10,                //音量の倍率
+                delay: 0,                //再生されるまでの遅延時間
+                pitch: 1,                //ピッチ
+                isLoop: false,             //ループ再生するか
+                callback: null              //再生終了後の処理
+);
+                break;
+
+            ///一面
+            case STAGE_TYPE.Industry:
+                
+                break;
+
+            ///二面
+            case STAGE_TYPE.Town:
+                
+                break;
+
+            ///三面
+            case STAGE_TYPE.FinalBoss:
+                
+
+                break;
+        }
+       
 
         // ボス撃破時にレリックをドロップ
         TerminalManager.Instance.OnTerminalsSuccessed(1);
@@ -369,10 +402,111 @@ public class GameManager : MonoBehaviour
 
         return terminals;
     }
+    public void PlayStageBGM()
+    {
+        switch (nextStage)
+        {
+            case STAGE_TYPE.Rust:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.STAGE4,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+            case STAGE_TYPE.Industry:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.STAGE1,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+            case STAGE_TYPE.Town:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.STAGE2,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+            case STAGE_TYPE.FinalBoss:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.STAGE3,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+
+                SEManager.Instance.Play(
+                audioPath: SEPath.DEATH, //再生したいオーディオのパス
+                volumeRate: 10,                //音量の倍率
+                delay: 0,                //再生されるまでの遅延時間
+                pitch: 1,                //ピッチ
+                isLoop: false,             //ループ再生するか
+                callback: null              //再生終了後の処理
+);
+                break;
+        }
+
+
+    }
+
 
     public void PlayBossBGM()
     {
-        this.GetComponent<AudioSource>().resource = bossBGM;
-        this.GetComponent<AudioSource>().Play();
+        switch (nextStage)
+        {
+            case STAGE_TYPE.Rust:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.BOSS4,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+            case STAGE_TYPE.Industry:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.BOSS1,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+            case STAGE_TYPE.Town:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.BOSS2,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+            case STAGE_TYPE.FinalBoss:
+                BGMManager.Instance.Play(
+                audioPath: BGMPath.BOSS3,           //再生したいオーディオのパス
+                volumeRate: 1,                      //音量の倍率
+                delay: 0,                           //再生されるまでの遅延時間
+                pitch: 1,                           //ピッチ
+                isLoop: true,                       //ループ再生するか
+                allowsDuplicate: false              //他のBGMと重複して再生させるか
+                );
+                break;
+        }
+        
+
     }
 }
