@@ -62,7 +62,7 @@ namespace Shared.Interfaces.StreamingHubs
             Rust,
             Industry,
             Town,
-            Last,
+            FinalBoss,
         }
 
         /// <summary>

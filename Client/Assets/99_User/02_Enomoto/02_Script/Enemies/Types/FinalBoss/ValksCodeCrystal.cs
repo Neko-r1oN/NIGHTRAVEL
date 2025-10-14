@@ -105,6 +105,10 @@ public class ValksCodeCrystal : EnemyBase
 
     [Foldout("攻撃関連")]
     [SerializeField]
+    List<GameObject> particles = new List<GameObject>();
+
+    [Foldout("攻撃関連")]
+    [SerializeField]
     List<GameObject> damageColliders = new List<GameObject>();
 
     [Foldout("攻撃関連")]
@@ -113,6 +117,12 @@ public class ValksCodeCrystal : EnemyBase
 
     Vector2? targetPos;
     const float warpPosY = 5f;
+
+    // 落下攻撃、レーザー攻撃を発動できるまでの条件回数
+    const int attackDiveUnlockCount = 4;
+    const int attackLaserUnlockCount = 8;
+    int nonDiveAttackCount = 0;
+    int nonLaserAttackCount = 0;
     #endregion
 
     protected override void Start()
@@ -205,9 +215,8 @@ public class ValksCodeCrystal : EnemyBase
         Dictionary<DECIDE_TYPE, int> weights = new Dictionary<DECIDE_TYPE, int>();
         bool wasAttacking = nextDecide == DECIDE_TYPE.Attack_NormalCombo || nextDecide == DECIDE_TYPE.Attack_PunchCombo || nextDecide == DECIDE_TYPE.Attack_Dive || nextDecide == DECIDE_TYPE.Attack_Laser;
         bool canAttackNormal = IsNormalAttack();
-        bool canAttackSmash = hp <= maxHp / 4 && lastAttackPattern != DECIDE_TYPE.Attack_Dive;
-        bool canAttackLaser = hp <= maxHp / 2 && lastAttackPattern != DECIDE_TYPE.Attack_Laser;
-        canAttackLaser = false;
+        bool canAttackSmash = hp <= maxHp / 4 && lastAttackPattern != DECIDE_TYPE.Attack_Dive && nonDiveAttackCount >= attackDiveUnlockCount;
+        bool canAttackLaser = hp <= maxHp / 2 && lastAttackPattern != DECIDE_TYPE.Attack_Laser && nonLaserAttackCount >= attackLaserUnlockCount;
 
         // 条件を基に該当する行動パターンに重み付け
         if (canChaseTarget && !IsGround())
@@ -271,6 +280,10 @@ public class ValksCodeCrystal : EnemyBase
         {
             collider.SetActive(false);
         }
+        foreach (var ps in particles)
+        {
+            ps.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -314,6 +327,8 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackNormalCombo()
     {
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_NormalCombo);
@@ -342,6 +357,8 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackPunchCombo()
     {
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_PunchCombo);
@@ -398,6 +415,7 @@ public class ValksCodeCrystal : EnemyBase
             return;
         }
 
+        nonDiveAttackCount = 0;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Dive);
@@ -409,14 +427,20 @@ public class ValksCodeCrystal : EnemyBase
     public override void OnAttackAnim3Event()
     {
         m_rb2d.linearVelocity = Vector2.zero;
-        if (!target)
-        {
-            bool isSucsess = SelectNewTargetInBossRoom();
-            targetPos = target.transform.position;
-        }
-        var pos = (Vector2)targetPos;
-        transform.position = pos;
+        if (!target) SelectNewTargetInBossRoom();
+        if (target) targetPos = target.transform.position;
+        transform.position = (Vector2)targetPos;
         LookAtTarget();
+    }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] 一番近いターゲットのいる方向を向く
+    /// </summary>
+    public override void OnEndAttackAnim3Event()
+    {
+        var nearTarget = GetNearPlayer();
+        if (nearTarget) target = nearTarget;
+        if (target) LookAtTarget();
     }
 
     #endregion
@@ -428,6 +452,7 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackLaser()
     {
+        nonLaserAttackCount = 0;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Laser);
@@ -440,6 +465,16 @@ public class ValksCodeCrystal : EnemyBase
     {
         // ステージの中央に移動
         transform.position = stageCenterPosition;
+    }
+
+    /// <summary>
+    /// [AnimationEventから呼び出し] 一番近いターゲットのいる方向を向く
+    /// </summary>
+    public override void OnEndAttackAnim4Event()
+    {
+        var nearTarget = GetNearPlayer();
+        if(nearTarget) target = nearTarget;
+        if (target) LookAtTarget();
     }
 
     #endregion
@@ -472,15 +507,13 @@ public class ValksCodeCrystal : EnemyBase
     IEnumerator TrackingCoroutine(Action onFinished)
     {
         const float waitSec = 0.1f;
-        float trackingTime = 2f;
         bool isNormakAttack = false;
 
-        while (trackingTime > 0)
+        while (true)
         {
             // 途中でターゲットを見失う || ターゲットと最低距離まで近づいたら強制終了
             if (!target || disToTargetX <= disToTargetMin) break;
 
-            trackingTime -= waitSec;
             Tracking();
 
             if (IsNormalAttack())
@@ -495,23 +528,11 @@ public class ValksCodeCrystal : EnemyBase
         // ターゲットに追いつけなかった場合
         if (!isNormakAttack)
         {
-            bool isTarget = SelectNewTargetInBossRoom();
-            if (isTarget)
-            {
-                nextDecide = DECIDE_TYPE.Attack_Dive;
-                doOnceDecision = true;
-            }
-            else
-            {
-                NextDecision(false);
-            }
-        }
-        else
-        {
-            NextDecision(false);
+            SelectNewTargetInBossRoom();
         }
 
         onFinished?.Invoke();
+        NextDecision(false);
     }
 
     /// <summary>
