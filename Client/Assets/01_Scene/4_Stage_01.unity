@@ -59829,6 +59829,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+--- !u!114 &127008222 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4119130424243256600, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+  m_PrefabInstance: {fileID: 127008221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900682987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ce83b23c7336de4193ad1f70320f684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::atest
 --- !u!1 &128700901
 GameObject:
   m_ObjectHideFlags: 0
@@ -64328,7 +64339,7 @@ MonoBehaviour:
   spawnRange: {x: 5.45, y: 7.29}
   spawnRangeOffset: 5.7
   maxSpawnCnt: 70
-  knockTermsNum: 50
+  knockTermsNum: 30
   spawnProbability: 0.05
   stageMin: {fileID: 2032298648}
   stageMax: {fileID: 1105730915}
@@ -105497,6 +105508,7 @@ MonoBehaviour:
   - {fileID: 951236776}
   bossBGM: {fileID: 8300000, guid: e5412c7dcd9e8544887ac389900ea269, type: 3}
   normalBGM: {fileID: 8300000, guid: e307dc19eb33db54b8ba8b9ce5a7466c, type: 3}
+  colorChanger: {fileID: 127008222}
 --- !u!4 &2102152737
 Transform:
   m_ObjectHideFlags: 0

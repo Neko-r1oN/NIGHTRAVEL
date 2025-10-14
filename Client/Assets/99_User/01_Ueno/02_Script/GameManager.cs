@@ -77,6 +77,9 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    [SerializeField]
+    ColorChanger colorChanger;  // ボス撃破時の演出用
+
     SceneLoader loader;
 
     #region Instance
@@ -275,6 +278,7 @@ public class GameManager : MonoBehaviour
 
         if (enemy.IsBoss)
         {
+
             DeathBoss();
         }
     }
@@ -285,6 +289,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void DeathBoss()
     {
+        StartCoroutine(colorChanger.ColorChange());     // ボス撃破演出再生
+
         // 死んだ判定にする
         isBossDead = true;
 

@@ -1164,9 +1164,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 200
   baseDefense: 40
-  basePower: 60
+  basePower: 20
   baseJumpPower: 10
   baseMoveSpeed: 2
+  baseAttackSpeedFactor: 1
   baseHealRate: 0.001
   hp: 0
   defense: 0
@@ -1201,6 +1202,7 @@ MonoBehaviour:
   canCancelAttackOnHit: 0
   canIgnoreDeadZoneCollision: 0
   dontRemoveOnDeath: 0
+  isUseHitBlendShader: 0
   spawnGroundOffset: 1.2
   spawnWeight: 20
   checkObstacleRange: 1

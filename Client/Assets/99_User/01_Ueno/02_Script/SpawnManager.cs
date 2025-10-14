@@ -145,6 +145,9 @@ public class SpawnManager : MonoBehaviour
         // 敵生成上限の5%を取得
         fivePercentOfMaxFloor = (int)((float)maxSpawnCnt * spawnProbability);
 
+        // 参加人数に応じて条件値を変更する
+        knockTermsNum *= characterManager.PlayerObjs.Count;
+
         StartCoroutine(SpawnCoroutin(2f));
     }
 

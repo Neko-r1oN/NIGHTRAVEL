@@ -18163,6 +18163,7 @@ MonoBehaviour:
   - {fileID: 1495552286}
   bossBGM: {fileID: 8300000, guid: 6111b747d7f3c1042838054f730859d8, type: 3}
   normalBGM: {fileID: 8300000, guid: ee787657b11513e408c54a0aa0ccc67a, type: 3}
+  colorChanger: {fileID: 2017381992}
 --- !u!1 &1706296734
 GameObject:
   m_ObjectHideFlags: 0
@@ -19572,6 +19573,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6833393071811138422, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
   m_PrefabInstance: {fileID: 2017381989}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2017381992 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4119130424243256600, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+  m_PrefabInstance: {fileID: 2017381989}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017381990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ce83b23c7336de4193ad1f70320f684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::atest
 --- !u!1 &2119852862
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,7 +35,7 @@ public class ColorChanger : MonoBehaviour
         volume.profile.TryGet(out colorAdjustments);
         if (colorAdjustments == null) Debug.Log("モノクロで金");
 
-        StartCoroutine("ColorChange");
+        //StartCoroutine("ColorChange");
         //StartSlow();
     }
 
@@ -43,7 +43,7 @@ public class ColorChanger : MonoBehaviour
     /// カラー変更関数
     /// </summary>
     /// <returns></returns>
-    IEnumerator ColorChange()
+    public IEnumerator ColorChange()
     {
         for (float i = 0; i < changeTime; i += 0.1f)
         {
