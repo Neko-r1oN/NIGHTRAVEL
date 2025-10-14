@@ -959,6 +959,7 @@ abstract public class PlayerBase : CharacterBase
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
+        canAttack = true;
     }
     /// <summary>
     /// ó‘ÔˆÙíd’¼ˆ—

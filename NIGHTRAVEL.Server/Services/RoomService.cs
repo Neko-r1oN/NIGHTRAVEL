@@ -78,16 +78,16 @@ namespace NIGHTRAVEL.Server.Services
         //ルームを開始状態に
         public async UnaryResult<Room> StartRoom(string userName)
         {
-            //DBを取得
+            // DBを取得
             using var context = new GameDbContext();
 
-            //ステージのデータ格納変数を定義
+            // ステージのデータ格納変数を定義
             Room room = new Room();
 
-            //テーブルからレコードをuserNameを指定して取得
+            // テーブルからレコードをuserNameを指定して取得
             room = context.Rooms.Where(room => room.userName == userName).First();
 
-            //バリデーションチェック
+            // バリデーションチェック
             if (room == null)
             {
                 throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument,

@@ -41,6 +41,8 @@ namespace StreamingHubs
         private const int MAX_JOINABLE_PLAYERS = 3;
 
         // ステータス上限定数
+        private const float LEVEL_UP_RATE1 = 0.1f;
+        private const float LEVEL_UP_RATE2 = 0.05f;
         private const float MAX_ATTACKSPEED = 1.15f;
 
         // ターミナル関連定数 (MAXの値はRandで用いるため、上限+1の数)
@@ -397,9 +399,9 @@ namespace StreamingHubs
             // レアリティの種類
             Dictionary<RARITY_TYPE, int> raritys = new Dictionary<RARITY_TYPE, int>()
             {
-                { RARITY_TYPE.Legend, 2 },
-                { RARITY_TYPE.Unique, 6 },
-                { RARITY_TYPE.Rare, 12},
+                { RARITY_TYPE.Legend, 1 },
+                { RARITY_TYPE.Unique, 3 },
+                { RARITY_TYPE.Rare, 16},
                 { RARITY_TYPE.Uncommon, 35},
                 { RARITY_TYPE.Common, 45 },
                 { RARITY_TYPE.Boss, 45 }
@@ -1542,10 +1544,9 @@ namespace StreamingHubs
                     var playerData = this.roomContext.playerStatusDataList[user.Key].Item1;
 
                     // 各最大値を更新
-                    const float LEVEL_UP_RATE = 0.2f;
-                    playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE);
-                    playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE);
-                    playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE);
+                    playerData.hp = playerData.hp + (int)(playerData.hp * LEVEL_UP_RATE1);
+                    playerData.power = playerData.power + (int)(playerData.power * LEVEL_UP_RATE1);
+                    playerData.defence = playerData.defence + (int)(playerData.defence * LEVEL_UP_RATE2);
 
                     // ユーザー毎にレベルアップ通知
                     this.roomContext.Group.Single(user.Key).OnLevelUp(expManager.Level, expManager.nowExp, expManager.RequiredExp, playerData, optionsKey, statusOptionList);
