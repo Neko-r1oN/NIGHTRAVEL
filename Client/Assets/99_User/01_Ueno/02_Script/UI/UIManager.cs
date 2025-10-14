@@ -262,9 +262,9 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        Debug.Log("ストック：" + statusStock);
-
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
+
+        if (player.NowLv <= 1) statusStock = 0;
 
         //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
 
@@ -293,7 +293,7 @@ public class UIManager : MonoBehaviour
         isHold = false;
         isRelicGet = false;
 
-        if (statusStock > 0)
+        if (statusStock > 1)
         {
             isStatusWindow = true;
             levelUpText.enabled = true;
@@ -316,7 +316,7 @@ public class UIManager : MonoBehaviour
             playerStatus[i].SetActive(false);
         }
 
-        if(statusStock > 0)
+        if(statusStock > 1)
         {
             Debug.Log(statusStock);
             levelUpText.enabled = true;
@@ -343,11 +343,23 @@ public class UIManager : MonoBehaviour
 
         spectatingWindow.SetActive(false);
 
-        int relicCnt = 0;
+        int relicCnt = 0; // レリックの個数
 
         foreach (Image relic in relicImages)
         {
-            if(RelicManager.HaveRelicList.Count > relicCnt)
+            if (relicCnt > 0 && relicImages[relicCnt - 1].enabled == true 
+                && RelicManager.HaveRelicList.Count > relicCnt)
+            {
+                if (relicImages[relicCnt - 1].sprite ==
+                     RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1])
+                {
+                    RelicManager.Instance.CountRelic(RelicManager.HaveRelicList[relicCnt].ID);
+                    relicCnt++;
+                    return;
+                }
+            }
+
+            if (RelicManager.HaveRelicList.Count > relicCnt)
             {
                 relicImages[relicCnt].sprite =
                     RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1];
@@ -360,8 +372,8 @@ public class UIManager : MonoBehaviour
             }
         }
 
-            // キャラのジョブ毎にUIを変更
-            if (player.PlayerType == Player_Type.Sword)
+        // キャラのジョブ毎にUIを変更
+        if (player.PlayerType == Player_Type.Sword)
         {
             ChangeSkillUI("Sword");
         }
@@ -511,10 +523,15 @@ public class UIManager : MonoBehaviour
         expBar.maxValue = player.NextLvExp;
         levelText.text = "LV." + player.NowLv;
         expBar.value = (float)player.NowExp;
-        if (player.NowLv > lastLevel && lastLevel != player.NowLv)
+
+        if (lastLevel <= 0)
+        {
+            lastLevel = player.NowLv;
+        }
+        else if (player.NowLv > lastLevel)
         {
             isStatusWindow = true;
-            statusStock = player.NowLv - lastLevel;
+            statusStock += player.NowLv - lastLevel;
             levelUpStock.text = "残り強化数：" + statusStock;
 
             levelUpText.enabled = true;
@@ -978,7 +995,7 @@ public class UIManager : MonoBehaviour
     /// 取得したレリックをバナーで表示
     /// </summary>
     /// <param name="relicImg"></param>
-    private void GetRelicBanner(Sprite relicSprite)
+    public void GetRelicBanner(Sprite relicSprite)
     {
         relicImg.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         relicImg.sprite = relicSprite;
