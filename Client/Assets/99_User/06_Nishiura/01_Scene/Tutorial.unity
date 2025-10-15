@@ -15411,6 +15411,7 @@ MonoBehaviour:
   bossBGM: {fileID: 0}
   normalBGM: {fileID: 0}
   colorChanger: {fileID: 0}
+  VirtualCamera: {fileID: 0}
 --- !u!1001 &900409907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15506,6 +15507,10 @@ PrefabInstance:
     - target: {fileID: 1100257501766410643, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[8].y
       value: 10.709706
+      objectReference: {fileID: 0}
+    - target: {fileID: 1308474115593808402, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
+      propertyPath: field of view
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 2936559485827812314, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
       propertyPath: m_Name

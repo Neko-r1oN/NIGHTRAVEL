@@ -238,6 +238,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     async void OnDestroy()
     {
         DisconnectAsync();
+        instance = null;
     }
 
     #region ’Ê’m‚Ìˆ—

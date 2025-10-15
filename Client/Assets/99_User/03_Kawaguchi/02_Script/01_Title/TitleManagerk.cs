@@ -130,6 +130,7 @@ public class TitleManagerk : MonoBehaviour
 
     private void OnDisable()
     {
+        if (RoomModel.Instance == null) return;
         RoomModel.Instance.OnCreatedRoom -= OnCreatedRoom;
     }
 
@@ -213,6 +214,7 @@ public class TitleManagerk : MonoBehaviour
     public void TutorialPlayStart()
     {
         gamemode = 2;
+        Destroy(RoomModel.Instance.gameObject);
         Initiate.DoneFading();
         Initiate.Fade("Tutorial", Color.black, 1.0f);   // フェード時間1秒
     }
