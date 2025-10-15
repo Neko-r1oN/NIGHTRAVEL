@@ -471,14 +471,6 @@ public class GameManager : MonoBehaviour
                 allowsDuplicate: false              //他のBGMと重複して再生させるか
                 );
 
-                SEManager.Instance.Play(
-                audioPath: SEPath.DEATH, //再生したいオーディオのパス
-                volumeRate: 10,                //音量の倍率
-                delay: 0,                //再生されるまでの遅延時間
-                pitch: 1,                //ピッチ
-                isLoop: false,             //ループ再生するか
-                callback: null              //再生終了後の処理
-);
                 break;
         }
 
