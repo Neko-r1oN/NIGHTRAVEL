@@ -267,7 +267,7 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region プレイヤーに関する定数
-    protected const float REGENE_TIME = 1.5f;           // 自動回復間隔
+    protected const float REGENE_TIME = 2.5f;           // 自動回復間隔
     protected const float REGENE_STOP_TIME = 3.0f;      // 自動回復停止時間
     protected const float REGENE_MAGNIFICATION = 0.05f; // 自動回復倍率
     protected const float HEAL_GENERATE_TIME = 18f;     // 回復肉生成間隔
@@ -519,10 +519,12 @@ abstract public class PlayerBase : CharacterBase
             if (jumpWallDistX < -0.5f && jumpWallDistX > -1f)
             {
                 canMove = true;
+                breakTimer = 0;
             }
             else if (jumpWallDistX < -1f && jumpWallDistX >= -2f)
             {
                 canMove = true;
+                breakTimer = 0;
                 m_Rigidbody2D.linearVelocity = new Vector2(10f * transform.localScale.x, m_Rigidbody2D.linearVelocity.y);
             }
             else if (jumpWallDistX < -2f)
@@ -765,6 +767,7 @@ abstract public class PlayerBase : CharacterBase
     {
         canMove = true;
         canAttack = true;
+        breakTimer = 0;
     }
 
     /// <summary>
@@ -980,6 +983,7 @@ abstract public class PlayerBase : CharacterBase
         yield return new WaitForSeconds(time);
         canMove = true;
         canAttack = true;
+        breakTimer = 0;
     }
     /// <summary>
     /// 状態異常時硬直処理
@@ -1010,6 +1014,7 @@ abstract public class PlayerBase : CharacterBase
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
+        breakTimer = 0;
     }
     /// <summary>
     /// 壁スライド中か確認する処理
@@ -1103,6 +1108,7 @@ abstract public class PlayerBase : CharacterBase
         canAttack = true;
         isBlinking = false;
         invincible = false;
+        breakTimer = 0;
 
         // クールダウン時間
         UIManager.Instance.DisplayCoolDown(false, blinkCoolDown);
