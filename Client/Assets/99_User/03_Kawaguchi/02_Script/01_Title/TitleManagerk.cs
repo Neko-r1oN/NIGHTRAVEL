@@ -107,6 +107,7 @@ public class TitleManagerk : MonoBehaviour
 
         //ルームモデルがあるなら削除
         Destroy(GameObject.Find("RoomModel"));
+        Destroy(GameObject.Find("RoomModel(Clone)"));
 
         // 保持していた各データをリセットする
         CharacterManager.SelfPlayerStatusData = null;
