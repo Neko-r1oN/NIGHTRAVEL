@@ -56,6 +56,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text levelUpStock;                  // レベルアップストックテキスト
     [Foldout("テキスト")]                                
     [SerializeField] Text levelUpText;                   // 強化可能テキスト
+    [Foldout("テキスト")]
+    [SerializeField] Text levelUpTextObj;                // 強化可能テキストオブジェ
     [Foldout("テキスト")]                                
     [SerializeField] Text clashNumText;                  // 撃破数テキスト
     [Foldout("テキスト")]                                
@@ -158,6 +160,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image[] gunIconImages;              // 銃アイコン画像一覧
     [Foldout("ACTアイコンUI")]                           
     [SerializeField] GameObject gunSkillLockObj;         // ブリンククールダウン
+    [Foldout("ACTアイコンUI")]
+    [SerializeField] Image padStatusUp;         // ゲームパッド用ステータスアップボタン
+    [Foldout("ACTアイコンUI")]
+    [SerializeField] Image keyStatusUp;         // キーボード用ステータスアップボタン
 
     [Foldout("ステータスアイコン関連")]
     [SerializeField] List<Sprite> statusIcons;
@@ -297,6 +303,8 @@ public class UIManager : MonoBehaviour
         {
             isStatusWindow = true;
             levelUpText.enabled = true;
+            padStatusUp.enabled = true;
+            keyStatusUp.enabled = true;
 
             //statusStock = player.NowLv - lastLevel;
             levelUpStock.text = "残り強化数：" + statusStock;
@@ -305,6 +313,8 @@ public class UIManager : MonoBehaviour
         {
             isStatusWindow = false;
             levelUpText.enabled = false;
+            padStatusUp.enabled = false;
+            keyStatusUp.enabled = false;
         }
        
         bossStatus.SetActive(false);
@@ -427,6 +437,8 @@ public class UIManager : MonoBehaviour
 
         // 最初に選択状態にしたいボタンの設定
         //cube.Select();
+
+        levelUpTextObj.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 1f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
     }
 
     /// <summary>
@@ -555,6 +567,8 @@ public class UIManager : MonoBehaviour
             levelUpStock.text = "残り強化数：" + statusStock;
 
             levelUpText.enabled = true;
+            padStatusUp.enabled = true;
+            keyStatusUp.enabled = true;
             lastLevel = player.NowLv;
         }
     }
@@ -731,6 +745,8 @@ public class UIManager : MonoBehaviour
             CloseStatusWindow();
             isStatusWindow = false;
             levelUpText.enabled = false;
+            padStatusUp.enabled = false;
+            keyStatusUp.enabled = false;
         }
         else
         {
@@ -749,6 +765,8 @@ public class UIManager : MonoBehaviour
             CloseStatusWindow();
             isStatusWindow = false;
             levelUpText.enabled = false;
+            padStatusUp.enabled = false;
+            keyStatusUp.enabled = false;
         }
     }
 
@@ -1131,6 +1149,8 @@ public class UIManager : MonoBehaviour
 
         statusUpButton.SetActive(false);
         levelUpText.enabled = false;
+        padStatusUp.enabled = false;
+        keyStatusUp.enabled = false;
 
         foreach (Image relic in relicImages)
         {
