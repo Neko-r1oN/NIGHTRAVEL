@@ -396,6 +396,8 @@ public class Rifle : PlayerBase
                 tickTimer = 0f;
             }
 
+            playerImpulse.GenerateImpulseWithForce(0.05f);
+
             yield return null;
         }
 
