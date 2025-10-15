@@ -215,6 +215,13 @@ MonoBehaviour:
   baseMoveSpeed: 2.5
   baseAttackSpeedFactor: 1
   baseHealRate: 0.001
+  maxHp: 0
+  maxDefense: 0
+  maxPower: 0
+  maxJumpPower: 0
+  maxMoveSpeed: 0
+  maxAttackSpeedFactor: 0
+  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -253,8 +260,8 @@ MonoBehaviour:
   spawnWeight: 40
   checkObstacleRange: 0.6
   canDrawRay: 0
-  baseExp: 31
-  exp: 31
+  baseExp: 93
+  exp: 93
   aimTransform: {fileID: 4106505268527017184}
   nodeBulletPrefabs:
   - {fileID: 6169146074370880187, guid: d1e09ecc8d1ebb740a4c5c8eca94e049, type: 3}

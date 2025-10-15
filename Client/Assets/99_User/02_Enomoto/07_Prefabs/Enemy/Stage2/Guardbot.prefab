@@ -6305,6 +6305,13 @@ MonoBehaviour:
   baseMoveSpeed: 6
   baseAttackSpeedFactor: 1
   baseHealRate: 0.001
+  maxHp: 0
+  maxDefense: 0
+  maxPower: 0
+  maxJumpPower: 0
+  maxMoveSpeed: 0
+  maxAttackSpeedFactor: 0
+  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -6348,8 +6355,8 @@ MonoBehaviour:
   spawnWeight: 10
   checkObstacleRange: 1.45
   canDrawRay: 0
-  baseExp: 40
-  exp: 40
+  baseExp: 80
+  exp: 80
   meleeAttackCheck: {fileID: 5599692221346466547}
   meleeAttackRange: 1.2
   wallCheck: {fileID: 2828687464013453835}

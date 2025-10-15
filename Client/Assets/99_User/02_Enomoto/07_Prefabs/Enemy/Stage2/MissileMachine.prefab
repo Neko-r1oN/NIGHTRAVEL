@@ -1169,6 +1169,13 @@ MonoBehaviour:
   baseMoveSpeed: 2
   baseAttackSpeedFactor: 1
   baseHealRate: 0.001
+  maxHp: 0
+  maxDefense: 0
+  maxPower: 0
+  maxJumpPower: 0
+  maxMoveSpeed: 0
+  maxAttackSpeedFactor: 0
+  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -1207,8 +1214,8 @@ MonoBehaviour:
   spawnWeight: 20
   checkObstacleRange: 1
   canDrawRay: 0
-  baseExp: 25
-  exp: 25
+  baseExp: 50
+  exp: 50
   aimTransform: {fileID: 3212924761432693944}
   missileBulletPrefab: {fileID: 8984535176473800557, guid: 59976e335e9771a4cb2c6860845c2c56, type: 3}
   shootSpeed: 10
