@@ -430,17 +430,17 @@ public class Sword : PlayerBase
                 switch (kbPow)
                 {
                     case KB_POW.Small:
-                        playerImpulse.GenerateImpulseWithForce(0.1f);
+                        playerImpulse.GenerateImpulseWithForce(SHAKE_SMALL);
                         m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
                         break;
 
                     case KB_POW.Medium:
-                        playerImpulse.GenerateImpulseWithForce(0.5f);
+                        playerImpulse.GenerateImpulseWithForce(SHAKE_MEDIUM);
                         m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                         break;
 
                     case KB_POW.Big:
-                        playerImpulse.GenerateImpulseWithForce(1.5f);
+                        playerImpulse.GenerateImpulseWithForce(SHAKE_BIG);
                         m_Rigidbody2D.AddForce(damageDir * KB_BIG);
                         break;
 
