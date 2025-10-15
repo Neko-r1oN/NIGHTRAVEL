@@ -113,7 +113,14 @@ public class StandbyManager : MonoBehaviour
     {
         await RoomModel.Instance.LeavedAsync();
         Initiate.DoneFading();
-        Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
+        if (TitleManagerk.GameMode == 0) 
+        {//ソロ
+            Initiate.Fade("1_TitleScene", Color.black, 1.0f);   // フェード時間1秒
+        }
+        else if (TitleManagerk.GameMode == 1)
+        {//マルチプレイ
+            Initiate.Fade("2_MultiRoomScene", Color.black, 1.0f);   // フェード時間1秒
+        }
     }
 
     /// <summary>

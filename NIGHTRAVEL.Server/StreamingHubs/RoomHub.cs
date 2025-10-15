@@ -98,25 +98,32 @@ namespace StreamingHubs
                 if (this.roomContext == null)
                 { //無かったら生成
                     this.roomContext = roomContextRepository.CreateContext(roomName,pass);
-                    //DBに生成
-                    room.roomName = roomName;
-                    room.userName = userName;
-                    room.password = pass;
-                    room.is_started = false;
-                    roomService.RegistRoom(room.roomName, room.userName,room.password,gameMode);
 
+                    if(gameMode != 0)
+                    {
+                        //DBに生成
+                        room.roomName = roomName;
+                        room.userName = userName;
+                        room.password = pass;
+                        room.is_started = false;
+                        roomService.RegistRoom(room.roomName, room.userName, room.password, gameMode);
+                    }
                     this.roomContext.IsStartGame = false;
                 }
                 else if (this.roomContext.JoinedUserList.Count == 0)
                 { //ルーム情報が入ってかつ参加人数が0人の場合
                     roomContextRepository.RemoveContext(roomName);                          //ルーム情報を削除
                     this.roomContext = roomContextRepository.CreateContext(roomName,pass);  //ルームを生成
-                    //DBに生成
-                    room.roomName = roomName;
-                    room.userName = userName;
-                    room.password = pass;
-                    room.is_started = false;
-                    roomService.RegistRoom(room.roomName, room.userName, room.password,gameMode);
+
+                    if(gameMode != 0)
+                    {
+                        //DBに生成
+                        room.roomName = roomName;
+                        room.userName = userName;
+                        room.password = pass;
+                        room.is_started = false;
+                        roomService.RegistRoom(room.roomName, room.userName, room.password, gameMode);
+                    }
 
                     this.roomContext.IsStartGame = false;
                 }
