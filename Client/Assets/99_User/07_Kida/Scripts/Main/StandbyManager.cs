@@ -44,6 +44,13 @@ public class StandbyManager : MonoBehaviour
         //マスタークライアント譲渡
         RoomModel.Instance.OnChangedMasterClient += this.OnChangedMasterClient;
 
+        //ソロプレイの場合
+        if (TitleManagerk.GameMode == 0)
+        {
+            Destroy(playerIcons[1]);
+            Destroy(playerIcons[2]);
+        }
+
 
         //アイコンを更新
         Loading();
@@ -101,17 +108,11 @@ public class StandbyManager : MonoBehaviour
             i++;
         }
 
-        //ソロプレイの場合は下を行わない
-        if (TitleManagerk.GameMode == 0)
-        {
-            Destroy(playerIcons[1]);
-            Destroy(playerIcons[2]);
-            return;
-        } 
+        if (TitleManagerk.GameMode == 0) return;
 
-        if(i < 2)
+        if (i < 2)
         {
-            for(int j=1;j<3;j++)
+            for (int j = 1; j < 3; j++)
             {
                 GameObject gameObject = playerIcons[i];
 
