@@ -57,7 +57,7 @@ public class StandbyManager : MonoBehaviour
 
     private void OnDisable()
     {
-        RoomModel.Instance.OnJoinedUser -= OnJoinedUser;
+        RoomModel.Instance.OnJoinedUser -= this.OnJoinedUser;
         RoomModel.Instance.OnLeavedUser -= this.OnLeavedUser;
         RoomModel.Instance.OnReadySyn -= this.OnReadySyn;
         RoomModel.Instance.OnStartedGame -= this.OnStartedGame;
@@ -70,20 +70,18 @@ public class StandbyManager : MonoBehaviour
     /// </summary>
     public void UpdatePlayerIcon()
     {
-        foreach(var icon in playerIcons)
-        {
-            Destroy(icon);
-        }
-        playerIcons.Clear();
-        //初期化
-        //GameObject playerN = new GameObject();
-        //GameObject userN = new GameObject();
+        //foreach(var icon in playerIcons)
+        //{
+        //    Destroy(icon);
+        //}
+
+        //playerIcons.Clear();
+
         int i = 0;
 
         foreach (var joinedUser in RoomModel.Instance.joinedUserList)
         {
-            GameObject gameObject = Instantiate(playerIconPrefab);
-            gameObject.transform.parent = playerIconsZone;
+            GameObject gameObject = playerIcons[i];
 
             //子オブジェクトを探す
             GameObject playerN = gameObject.transform.Find("Number").gameObject;
@@ -102,6 +100,60 @@ public class StandbyManager : MonoBehaviour
             iconImages[i].sprite = iconCharacterImage[joinedUser.Value.CharacterID];
             i++;
         }
+
+        //ソロプレイの場合は下を行わない
+        if (TitleManagerk.GameMode == 0)
+        {
+            Destroy(playerIcons[1]);
+            Destroy(playerIcons[2]);
+            return;
+        } 
+
+        if(i < 2)
+        {
+            for(int j=1;j<3;j++)
+            {
+                GameObject gameObject = playerIcons[i];
+
+                //子オブジェクトを探す
+                GameObject playerN = gameObject.transform.Find("Number").gameObject;
+                GameObject userN = gameObject.transform.Find("name").gameObject;
+
+                Text playerNText = playerN.GetComponent<Text>();
+                Text userNText = userN.GetComponent<Text>();
+
+                i++;
+                playerNText.text = i.ToString() + "P";
+                userNText.text = "募集中";
+
+
+                playerIcons.Add(gameObject);
+                iconImages[j] = gameObject.transform.Find("IconBG").gameObject.transform.Find("Icon").gameObject.GetComponent<Image>();
+                iconImages[j].sprite = iconCharacterImage[0];
+            }
+        }
+        if (i < 3)
+        {
+            GameObject gameObject = playerIcons[i];
+
+            //子オブジェクトを探す
+            GameObject playerN = gameObject.transform.Find("Number").gameObject;
+            GameObject userN = gameObject.transform.Find("name").gameObject;
+
+            Text playerNText = playerN.GetComponent<Text>();
+            Text userNText = userN.GetComponent<Text>();
+
+
+            playerNText.text = "3P";
+            userNText.text = "検索中";
+
+
+            playerIcons.Add(gameObject);
+            iconImages[i] = gameObject.transform.Find("IconBG").gameObject.transform.Find("Icon").gameObject.GetComponent<Image>();
+            iconImages[i].sprite = iconCharacterImage[0];
+            
+        }
+
     }
 
     /// <summary>
@@ -202,10 +254,20 @@ public class StandbyManager : MonoBehaviour
     /// </summary>
     public async void Ready()
     {
-        //キャラクターを送る
-        int character = characterId;
-        readyButton.SetActive(false);
-        await RoomModel.Instance.ReadyAsync(character);
+        if(TitleManagerk.GameMode==0)
+        {//ソロプレイの場合
+            //キャラクターを送る
+            int character = characterId;
+            readyButton.SetActive(false);
+            await RoomModel.Instance.ReadyAsync(character);
+        }
+        else
+        {//マルチプレイ
+            if (RoomModel.Instance.joinedUserList.Count < 2) return;
+            int character = characterId;
+            readyButton.SetActive(false);
+            await RoomModel.Instance.ReadyAsync(character);
+        }
     }
 
 
@@ -291,7 +353,10 @@ public class StandbyManager : MonoBehaviour
 
         //アイコンを準備完了が分かるように色を変える
         playerIcons[RoomModel.Instance.joinedUserList[guid].JoinOrder-1].GetComponent<Image>().color =new Color(255.0f,183.0f,0.0f);
-        
+
+        //ソロプレイの場合下の処理をしない
+        if (TitleManagerk.GameMode == 0) return;
+
         //ログの生成
         Text gameObject = Instantiate(logTextPrefab);
         gameObject.text = RoomModel.Instance.joinedUserList[guid].UserData.Name + "準備完了！！";
