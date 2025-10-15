@@ -12,7 +12,7 @@ public class TimerDirector : MonoBehaviour
     [Header("初期設定")]
     [SerializeField] float minute;
     float second;
-    float elapsedTime = 0f; // 経過時間
+    static float elapsedTime = 0f; // 経過時間
     float initMinute;       // 初期設定(分)
 
 
@@ -77,7 +77,7 @@ public class TimerDirector : MonoBehaviour
                 // タイマー(UI)の更新
                 UpdateTimerDisplay();
 
-                if (elapsedTime > 210)
+                if (elapsedTime > 150)
                 {
                     // ゲームレベルアップリクエスト送信
 
