@@ -501,11 +501,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.9
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.6
+      value: -2.1
       objectReference: {fileID: 0}
     - target: {fileID: 5712522905003491261, guid: 8710f6db697b50049b45617bc9d607c1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -949,6 +949,7 @@ GameObject:
   m_Component:
   - component: {fileID: 354771329}
   - component: {fileID: 354771330}
+  - component: {fileID: 354771331}
   m_Layer: 0
   m_Name: UICollider
   m_TagString: Untagged
@@ -1017,6 +1018,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 5.41, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &354771331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354771328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1417340898e33a4418fe28e95136acb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUICollider
 --- !u!4 &389895798 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3846298799624557551, guid: 2d1dd1cfbfa53b64d9321a4e431de004, type: 3}
@@ -54345,7 +54358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4715384330089112299, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.00208
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4715384330089112299, guid: 27d5cef045cb0b944b1d6fc3260f1a40, type: 3}
       propertyPath: m_LocalPosition.z

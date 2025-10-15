@@ -32,7 +32,9 @@ public class UIManager : MonoBehaviour
     #region 各UI
     [Foldout("キャンバス")]
     [SerializeField] GameObject canvas;              // キャンバス
-                                                     
+
+    [Foldout("プレイヤーステータス関連")]
+    [SerializeField] List<Image> playerUIList = new List<Image>();  // 下に表示されるプレイヤーのUI
     [Foldout("プレイヤーステータス関連")]            
     [SerializeField] Slider playerHpBar;             // プレイヤーのHPバー
     [Foldout("プレイヤーステータス関連")]            
@@ -366,41 +368,7 @@ public class UIManager : MonoBehaviour
                 RelicManager.Instance.CountRelic(relic.ID - 1);
                 relicList.Add(relic.ID);
             }
-
-            //foreach (Image relicImage in relicImages)
-            //{
-            //    if (aa && relicImage.sprite == relicSprite)
-            //    {// 登録済みの場合はカウントテキスト更新
-            //        RelicManager.Instance.CountRelic(relic.ID - 1);
-            //    }
-            //    else
-            //    {// 未登録の場合は新たにスプライト設定する
-            //        relicImage.sprite = relicSprite;
-            //        RelicManager.Instance.CountRelic(relic.ID - 1);
-            //        relicList.Add(relic.ID);
-            //    }
-            //}
         }
-
-        //foreach (Image relic in relicImages)
-        //{
-        //    if (RelicManager.HaveRelicList.Count > relicCnt)
-        //    {
-        //        if (relicList.Count > 0 && relicList.Contains(RelicManager.HaveRelicList[relicCnt].ID))
-        //        {
-        //            RelicManager.Instance.CountRelic(RelicManager.HaveRelicList[relicCnt].ID - 1);
-        //        }
-        //        else
-        //        {
-        //            relicImages[relicCnt].sprite =
-        //            RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1];
-
-        //            relicList.Add(RelicManager.HaveRelicList[relicCnt].ID);
-        //        }
-
-        //        relicCnt++;
-        //    }
-        //}
 
         // キャラのジョブ毎にUIを変更
         if (player.PlayerType == Player_Type.Sword)
@@ -434,9 +402,6 @@ public class UIManager : MonoBehaviour
         }
 
         gamepad = Gamepad.current;
-
-        // 最初に選択状態にしたいボタンの設定
-        //cube.Select();
 
         levelUpTextObj.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 1f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
     }
@@ -547,6 +512,19 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 下のプレイヤーのUIを表示・非表示する
+    /// </summary>
+    /// <param name="isVisible"></param>
+    public void SetPlayerUIVisibility(bool isVisible)
+    {
+        float alpha = isVisible ? 1 : 0.1f;
+        foreach(var img in playerUIList)
+        {
+            img.color = new Color(1, 1, 1, alpha);
+        }
+    }
+
+    /// <summary>
     /// 経験値・レベル更新
     /// </summary>
     public void UpdateExperienceAndLevel()
@@ -584,11 +562,6 @@ public class UIManager : MonoBehaviour
         bossHpBar.value = boss.BaseHP;
         bossSliderText.text = "" + bossHpBar.maxValue;
         bossName.text = "" + boss.GetComponent<EnemyBase>().SelfName;
-
-        //if (boss.HP <= 0)
-        //{// ボスのHP表示がマイナスにならないようにする
-        //    bossHpBar.value = 0;
-        //}
 
         bossSliderText.text = bossHpBar.value + "/" + bossHpBar.maxValue;
 
