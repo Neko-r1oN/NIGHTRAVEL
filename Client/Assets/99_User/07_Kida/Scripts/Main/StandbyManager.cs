@@ -311,7 +311,10 @@ public class StandbyManager : MonoBehaviour
         //ゲーム開始の時の処理を書く
         //conducter.Loading();
         Debug.Log("ゲームを開始します");
-        await RoomModel.Instance.StartRoomAsync(TitleManagerk.SteamUserName);
+        if(RoomModel.Instance.IsMaster == true)
+        {//ホストのみ
+            await RoomModel.Instance.StartRoomAsync(TitleManagerk.SteamUserName);
+        }
         //SceneManager.LoadScene("4_Stage_01");
         Initiate.DoneFading();
         Initiate.Fade("4_Stage_01", Color.black, 1.0f);   // フェード時間1秒
