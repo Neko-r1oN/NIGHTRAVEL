@@ -3,12 +3,13 @@
 // Author：Kenta Nakamoto
 // 引用：https://assetstore.unity.com/packages/2d/characters/metroidvania-controller-166731
 //--------------------------------------------------------------
-using UnityEngine;
-using System.Collections;
 using Pixeye.Unity;
-using static Shared.Interfaces.StreamingHubs.EnumManager;
-using UnityEngine.UIElements;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UIElements;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class Sword : PlayerBase
 {
@@ -53,6 +54,15 @@ public class Sword : PlayerBase
 
     [Foldout("アタックエフェクト")]
     [SerializeField] private GameObject skillEffect3;   // 追加で発生させるエフェクト
+
+    [Foldout("SE")]
+    [SerializeField] private AudioClip attackSE1;   // 攻撃SE1
+
+    [Foldout("SE")]
+    [SerializeField] private AudioClip attackSE2;   // 攻撃SE2
+
+    [Foldout("SE")]
+    [SerializeField] private AudioClip skillSE;     // スキルSE
 
     private bool isAirAttack = false;   // 空中攻撃をしたかどうか
 
@@ -107,6 +117,7 @@ public class Sword : PlayerBase
             {   // 攻撃1段目
                 canAttack = false;
                 normalEffect1.Play();
+                audioSource.PlayOneShot(attackSE1);
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack1);
             }
             else if (isCombo)
@@ -116,10 +127,12 @@ public class Sword : PlayerBase
                 if (id == (int)S_ANIM_ID.Attack1)
                 {
                     normalEffect2.Play();
+                    audioSource.PlayOneShot(attackSE1);
                     animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack2);
                 }
                 if (id == (int)S_ANIM_ID.Attack2)
                 {
+                    audioSource.PlayOneShot(attackSE2);
                     animator.SetInteger("animation_id", (int)S_ANIM_ID.Attack3);
                 }
             }
@@ -130,6 +143,7 @@ public class Sword : PlayerBase
             if (canSkill && canAttack)
             {
                 //gameObject.layer = 21;
+                audioSource.PlayOneShot(skillSE);
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
                 canSkill = false;
                 plDirection = transform.localScale.x;
@@ -187,6 +201,21 @@ public class Sword : PlayerBase
         //　CircleCastのレイを可視化
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(attackCheck.position, ATTACK_RADIUS);
+    }
+
+    public void PlayAtkSE1()
+    {
+        audioSource.PlayOneShot(attackSE1);
+    }
+
+    public void PlayAtkSE2()
+    {
+        audioSource.PlayOneShot(attackSE2);
+    }
+
+    public void PlaySkillSE()
+    {
+        audioSource.PlayOneShot(skillSE);
     }
 
     #endregion
@@ -401,14 +430,17 @@ public class Sword : PlayerBase
                 switch (kbPow)
                 {
                     case KB_POW.Small:
+                        playerImpulse.GenerateImpulseWithForce(0.1f);
                         m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
                         break;
 
                     case KB_POW.Medium:
+                        playerImpulse.GenerateImpulseWithForce(0.5f);
                         m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                         break;
 
                     case KB_POW.Big:
+                        playerImpulse.GenerateImpulseWithForce(1.5f);
                         m_Rigidbody2D.AddForce(damageDir * KB_BIG);
                         break;
 

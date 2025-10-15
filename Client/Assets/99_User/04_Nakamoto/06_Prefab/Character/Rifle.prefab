@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 4652494901247269231}
   - component: {fileID: 4328776453977430880}
   - component: {fileID: 4965881809271980386}
+  - component: {fileID: 832933512700199382}
   m_Layer: 20
   m_Name: Rifle
   m_TagString: Player
@@ -124,20 +125,23 @@ MonoBehaviour:
   - {fileID: 4249578791139060025, guid: 91bcf8dfedfa76c44a5e5198cec2ebd9, type: 3}
   - {fileID: 1622727937493990531, guid: b58036db173295744ba4bb4317f15737, type: 3}
   playerEffect: {fileID: -6471036374191373445}
+  playerImpulse: {fileID: 832933512700199382}
   useZipline_SE: {fileID: 8300000, guid: 706be22f1add6204fa7048a2235fb886, type: 3}
   usingZipline_SE: {fileID: 8300000, guid: 1591dfdb138d72f468c266338897c69a, type: 3}
-  skillCoolDown: 8
+  skillCoolDown: 12
   firePoint: {fileID: 3568435395602818575}
   maxDistance: 75
-  beamRadius: 0.45
+  beamRadius: 0.85
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
   duration: 2.5
-  damageInterval: 0.4
+  damageInterval: 0.3
   bulletSpeed: 20
   bulletPrefab: {fileID: 11297972727251665, guid: 9276c139e5f7ddd4fb92a69ca2b6356d, type: 3}
   bulletSpawnObj: {fileID: 2687368310257538447}
+  shotSE: {fileID: 8300000, guid: e8bc753c01dc159428205e062ce665cf, type: 3}
+  beamSE: {fileID: 8300000, guid: ea2337aa8beeffd4396ad452e45ac4c5, type: 3}
 --- !u!114 &-6471036374191373445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,6 +429,59 @@ MonoBehaviour:
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
+--- !u!114 &832933512700199382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597312972180860245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
+  ImpulseDefinition:
+    ImpulseChannel: 1
+    ImpulseShape: 1
+    CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ImpulseDuration: 0.1
+    ImpulseType: 1
+    DissipationRate: 0.05
+    RawSignal: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    RepeatMode: 0
+    Randomize: 1
+    TimeEnvelope:
+      AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      AttackTime: 0
+      SustainTime: 0.2
+      DecayTime: 0.7
+      ScaleWithImpact: 1
+      HoldForever: 0
+    ImpactRadius: 100
+    DirectionMode: 0
+    DissipationMode: 2
+    DissipationDistance: 100
+    PropagationSpeed: 343
+  DefaultVelocity: {x: -1, y: -1, z: 0}
 --- !u!1 &2687368310257538447
 GameObject:
   m_ObjectHideFlags: 0
@@ -15341,6 +15398,14 @@ PrefabInstance:
     - target: {fileID: 400004, guid: 6e9596c19e8edaa4c8c19f15be160265, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800004, guid: 6e9596c19e8edaa4c8c19f15be160265, type: 3}
+      propertyPath: ShapeModule.angle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800004, guid: 6e9596c19e8edaa4c8c19f15be160265, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
