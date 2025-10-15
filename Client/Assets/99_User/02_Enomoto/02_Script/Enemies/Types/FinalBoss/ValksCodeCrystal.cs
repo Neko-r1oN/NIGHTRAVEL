@@ -591,7 +591,7 @@ public class ValksCodeCrystal : EnemyBase
         while (true)
         {
             // 途中でターゲットを見失う || ターゲットと最低距離まで近づいたら強制終了
-            if (!target || disToTargetX <= disToTargetMin) break;
+            if (!target || disToTargetX <= attackDist) break;
 
             Tracking();
 
