@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1989545314476609942}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.158553, y: -0.6817492, z: 0}
+  m_LocalPosition: {x: -3.0492563, y: -0.29933488, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -55,6 +55,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -76,9 +78,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -7964255901419601450, guid: ed835ed7263845844a39d9c1d01e3bbd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -172,4 +175,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 2
   openObj: {fileID: 4953184649197404857, guid: f5ec4f19536eb774ab8efd177c3527c1, type: 3}
-  openSE: {fileID: 8300000, guid: 43f30e78034fc7f46a11c09fe3bb239f, type: 3}
