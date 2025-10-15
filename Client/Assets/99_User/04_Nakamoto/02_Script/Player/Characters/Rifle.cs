@@ -54,6 +54,11 @@ public class Rifle : PlayerBase
     [Foldout("通常攻撃")]
     [SerializeField] private GameObject bulletSpawnObj;
 
+    [Foldout("SE")]
+    [SerializeField] private AudioClip shotSE;   // 攻撃SE
+    [Foldout("SE")]
+    [SerializeField] private AudioClip beamSE;   // ビームSE
+
     //--------------------------
     // メソッド
 
@@ -104,6 +109,7 @@ public class Rifle : PlayerBase
                 else
                 {
                     canAttack = false;
+                    audioSource.PlayOneShot(shotSE);
                     animator.SetInteger("animation_id", (int)GS_ANIM_ID.Attack);
                 }
             }
@@ -239,7 +245,7 @@ public class Rifle : PlayerBase
 
             // アニメーション変更
             var id = animator.GetInteger("animation_id");
-            if (position != null && id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
+            if (position != null && id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady && !isFiring) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
 
             // 回避判定
             if (LotteryRelic(RELIC_TYPE.HolographicArmor))
@@ -264,14 +270,17 @@ public class Rifle : PlayerBase
                 switch(kbPow)
                 {
                     case KB_POW.Small:
+                        playerImpulse.GenerateImpulseWithForce(0.1f);
                         m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
                         break;
 
                     case KB_POW.Medium:
+                        playerImpulse.GenerateImpulseWithForce(0.5f);
                         m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                         break;
 
                     case KB_POW.Big:
+                        playerImpulse.GenerateImpulseWithForce(1.5f);
                         m_Rigidbody2D.AddForce(damageDir * KB_BIG);
                         break;
 
@@ -349,7 +358,9 @@ public class Rifle : PlayerBase
 
         // ビームエフェクト表示
         playerEffect.BeamEffectActive(true);
-        
+
+        audioSource.PlayOneShot(beamSE);
+
         float laserTimer = 0f;   // 全体の照射時間
         float tickTimer = 0f;    // ダメージ間隔計測
 
@@ -387,6 +398,7 @@ public class Rifle : PlayerBase
         }
 
         // ビームエフェクト非表示
+        playerEffect.BeamEffectActive(false);
         isFiring = false;
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
     }

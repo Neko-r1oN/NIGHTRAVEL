@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
@@ -288,11 +289,12 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     [SerializeField] protected PlayerEffect playerEffect;
+    [SerializeField] protected CinemachineImpulseSource playerImpulse;
 
     [SerializeField] AudioClip useZipline_SE;   // ジップライン使用音
     [SerializeField] AudioClip usingZipline_SE; // ジップライン使用中音
 
-    AudioSource audioSource;
+    protected AudioSource audioSource;
 
     //--------------------
     // メソッド

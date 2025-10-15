@@ -4,7 +4,9 @@
 //----------------------------------------------------
 using JetBrains.Annotations;
 using KanKikuchi.AudioManager;
+using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
+using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -110,8 +112,10 @@ public class GameManager : MonoBehaviour
         isGameStart = false;
 
         if (!RoomModel.Instance) return;
+
         //プレイヤー待ち
-        conducter.TakeYourPlayer();
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            conducter.TakeYourPlayer();
 
     }
     #endregion
@@ -143,9 +147,6 @@ public class GameManager : MonoBehaviour
             RoomModel.Instance.OnSameStartSyn += this.StartGame;
             RoomModel.Instance.OnAdanceNextStageSyn += this.OnAdanceNextStageSyn;
             RoomModel.Instance.OnGameEndSyn += this.OnGameEnd;
-
-            //遷移完了のリクエスト (TerminalManagerにて呼び出し)
-            //await RoomModel.Instance.AdvancedStageAsync();  
         }
 
         PlayStageBGM();
@@ -385,7 +386,8 @@ public class GameManager : MonoBehaviour
         }
 
         //プレイヤー待ち解除
-        conducter.SameStartPlayers();
+        if (SceneManager.GetActiveScene().name != "Tutorial")
+            conducter.SameStartPlayers();
 
     }
 
