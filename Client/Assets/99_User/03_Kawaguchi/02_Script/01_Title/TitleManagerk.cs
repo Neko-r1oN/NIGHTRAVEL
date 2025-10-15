@@ -24,6 +24,8 @@ public class TitleManagerk : MonoBehaviour
     [SerializeField] GameObject fade;
     [SerializeField] SceneConducter conducter;
     [SerializeField] GameObject roomModelPrefab;
+    [SerializeField] GameObject license;
+    [SerializeField] GameObject exitLicense;
     // [SerializeField] GameObject menu;
 
     //steamユーザー名
@@ -65,6 +67,8 @@ public class TitleManagerk : MonoBehaviour
         fade.SetActive(true);               //フェードを有効化
       //  menu.SetActive(false);            //メニューを非表示
         isMenuFlag = false;                 //メニューフラグを無効化
+        license.SetActive(false);           //ライセンスの画面を非表示
+        exitLicense.SetActive(false);       //ライセンス画面を閉じるUIを非表示
 
         //ローカルのユーザーデータを取得
        // isSuccess = UserModel.Instance.LoadUserData();
@@ -214,6 +218,38 @@ public class TitleManagerk : MonoBehaviour
         gamemode = 2;
         Initiate.DoneFading();
         Initiate.Fade("Tutorial", Color.black, 1.0f);   // フェード時間1秒
+    }
+
+    /// <summary>
+    /// ライセンス
+    /// </summary>
+    public void License()
+    {
+        license.SetActive(true);            //ライセンス画面を表示
+        exitLicense.SetActive(true);        //ライセンス画面を閉じるUIを表示
+    }
+
+    /// <summary>
+    /// ライセンスを閉じる
+    /// </summary>
+    public void ExitLicense()
+    {
+        license.SetActive(false);          //ライセンス画面を非表示
+        exitLicense.SetActive(false);      //ライセンス画面を閉じるUIを非表示 
+    }
+
+    /// <summary>
+    /// ゲーム終了
+    /// </summary>
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        // Unityエディターでの動作
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // 実際のゲーム終了処理
+        Application.Quit();
+#endif
     }
 
     private void Loaded()
