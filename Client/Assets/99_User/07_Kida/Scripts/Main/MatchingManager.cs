@@ -39,6 +39,7 @@ public class MatchingManager : MonoBehaviour
     [SerializeField] GameObject PrivateUI;
     [SerializeField] GameObject[] ErrorUI;
     [SerializeField] GameObject fade;
+    [SerializeField] GameObject roomModelPrefab;
     #endregion
     public List<GameObject> createdRoomList; //作られたルーム
     EventSystem eventSystem;
@@ -61,28 +62,21 @@ public class MatchingManager : MonoBehaviour
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    async void Start()
+    void Start()
     {
         //実装時にはこの変数でユーザーを判断する
         //userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
 
-        #region RoomModel定義
-        await RoomModel.Instance.ConnectAsync();
-        RoomModel.Instance.OnSearchedRoom += this.OnSearchedRoom;
-        RoomModel.Instance.OnCreatedRoom += this.OnCreatedRoom;
-        RoomModel.Instance.OnFailedJoinSyn += this.OnFailedJoinSyn;
-        //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
-        RoomModel.Instance.OnJoinedUser += this.OnJoinedUser;
-        #endregion
-
         //安全動作のための初回ローディング
         conducter.Loading();
 
-        //ルーム検索
-        SerchRoom();
+        #region RoomModel定義
+        //ルームモデルがあるなら削除
+        Destroy(GameObject.Find("RoomModel"));
+        Destroy(GameObject.Find("RoomModel(Clone)"));
+        Invoke("NewRoomModel", 0.3f);
+        #endregion
 
-        //ローディング停止
-        Invoke("Loaded", 2.0f);
     }
 
     private void OnDisable()
@@ -92,6 +86,38 @@ public class MatchingManager : MonoBehaviour
         RoomModel.Instance.OnCreatedRoom -= this.OnCreatedRoom;
         RoomModel.Instance.OnFailedJoinSyn -= this.OnFailedJoinSyn;
         RoomModel.Instance.OnJoinedUser -= this.OnJoinedUser;
+    }
+
+    void NewRoomModel()
+    {
+        if (GameObject.Find("RoomModel") != null) return;
+        //ルームモデルをもう一度作成
+        Instantiate(roomModelPrefab);
+        Invoke("Connecting", 0.3f);
+
+    }
+
+    async void Connecting()
+    {
+        await RoomModel.Instance.ConnectAsync();
+        RoomModel.Instance.OnSearchedRoom += this.OnSearchedRoom;
+        RoomModel.Instance.OnCreatedRoom += this.OnCreatedRoom;
+        RoomModel.Instance.OnFailedJoinSyn += this.OnFailedJoinSyn;
+        //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
+        RoomModel.Instance.OnJoinedUser += this.OnJoinedUser;
+
+        Invoke("SarchRoom",0.1f);
+    }
+
+    void SarchRoom()
+    {
+
+        //ルーム検索
+        SerchRoom();
+
+        //ローディング停止
+        Invoke("Loaded", 2.0f);
+
     }
 
     public void ReturnTitle()
