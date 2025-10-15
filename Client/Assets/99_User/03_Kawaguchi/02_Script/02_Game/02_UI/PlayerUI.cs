@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -30,6 +31,16 @@ public class PlayerUI : MonoBehaviour
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
+
+        var players = CharacterManager.Instance.GetPlayersExceptSelf();
+
+        if (RoomModel.Instance)
+        {
+            foreach(var player in players)
+            {
+                this.target = player.transform;
+            }
+        }
 
         rectTransform.localScale = Vector3.one;
         if(arrowUI)rect_arrow = arrowUI.GetComponent<RectTransform>();
@@ -90,7 +101,6 @@ public class PlayerUI : MonoBehaviour
         }7*/
 
         rectTransform.position = Vector3.Lerp(rectTransform.position, targetUIPos, Time.deltaTime * rate_pos);
-
     }
 
     /// <summary>
@@ -164,6 +174,8 @@ public class PlayerUI : MonoBehaviour
         else
         {
             arrowUI.SetActive(false);
+
+            nameUI.GetComponentInChildren<Text>().text = TitleManagerk.SteamUserName;
             nameUI.SetActive(true);
 
             ///距離サイズ調整用(今回は2Dなので使わない)

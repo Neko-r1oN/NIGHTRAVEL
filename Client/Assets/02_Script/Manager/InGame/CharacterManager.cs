@@ -22,6 +22,7 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] List<Transform> startPoints = new List<Transform>();   // 各プレイヤーの初期位置
     [SerializeField] GameObject charaSwordPrefab;
     [SerializeField] GameObject charaGunnerPrefab;
+    [SerializeField] GameObject offScreenUIPrefab;
 
     [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
@@ -316,6 +317,10 @@ public class CharacterManager : MonoBehaviour
                     camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
                 }
             }
+
+            // 画面外UIの作成
+            var obj = GameObject.Find("OffScreenUI").transform;
+            Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
         }
     }
 
