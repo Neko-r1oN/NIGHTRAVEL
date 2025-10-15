@@ -130,8 +130,8 @@ public class ValksCodeCrystal : EnemyBase
     const float warpPosY = 5f;
 
     // 落下攻撃、レーザー攻撃を発動できるまでの条件回数
-    const int attackDiveUnlockCount = 3;
-    const int attackLaserUnlockCount = 6;
+    const int attackDiveUnlockCount = 2;
+    const int attackLaserUnlockCount = 4;
     int nonDiveAttackCount = 0;
     int nonLaserAttackCount = 0;
     #endregion
@@ -434,6 +434,7 @@ public class ValksCodeCrystal : EnemyBase
             return;
         }
 
+        nonLaserAttackCount++;
         nonDiveAttackCount = 0;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
@@ -471,6 +472,7 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackLaser()
     {
+        nonDiveAttackCount++;
         nonLaserAttackCount = 0;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;

@@ -394,6 +394,9 @@ public class SpawnManager : MonoBehaviour
             {
                 Vector2 spawnPos = (Vector2)groundPos + Vector2.up * enemyBase.SpawnGroundOffset;
 
+                if (spawnPos.x > stageMin.position.x && spawnPos.x < stageMax.position.x 
+                    && spawnPos.y > stageMin.position.y && spawnPos.y < stageMax.position.y) continue;
+
                 // áŠQ•¨‚ªd‚È‚Á‚Ä‚¢‚È‚¢ ‚©‚Â ¶¬À•W‚ªd•¡‚µ‚Ä‚¢‚È‚¢ê‡‚Í¬Œ÷
                 if (!enemyBase.IsOverlappingObstacle(spawnPos) && !enemySpawnPosList.Contains(spawnPos))
                 {

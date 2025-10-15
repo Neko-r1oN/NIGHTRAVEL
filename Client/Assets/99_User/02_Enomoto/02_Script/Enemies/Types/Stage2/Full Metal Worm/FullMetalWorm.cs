@@ -208,6 +208,7 @@ public class FullMetalWorm : EnemyBase
 
         if (doOnceDecision)
         {
+            SelectNewTargetInBossRoom();
             doOnceDecision = false;
             RemoveAndStopCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
 

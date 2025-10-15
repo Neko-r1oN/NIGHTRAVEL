@@ -374,6 +374,7 @@ public class Valcus : EnemyBase
         yield return new WaitForSeconds(time);
         isAttacking = false;
         NextDecision();
+        SelectNewTargetInBossRoom();
         onFinished?.Invoke();
     }
 
@@ -416,6 +417,8 @@ public class Valcus : EnemyBase
     /// </summary>
     void JumpToTargetPosition(float duration)
     {
+        if (RoomModel.Instance && !RoomModel.Instance.IsMaster) return;
+
         if (targetPos != null)
         {
             m_rb2d.gravityScale = 0;

@@ -667,6 +667,7 @@ public class Boxgeist : EnemyBase
         Idle();
         yield return new WaitForSeconds(time);
         isAttacking = false;
+        SelectNewTargetInBossRoom();
         NextDecision();
         onFinished?.Invoke();
     }
