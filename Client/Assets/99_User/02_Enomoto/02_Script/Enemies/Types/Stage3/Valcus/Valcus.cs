@@ -103,7 +103,7 @@ public class Valcus : EnemyBase
     #endregion
 
     #region 攻撃関連
-    
+
     List<GameObject> hitPlayers = new List<GameObject>();   // 攻撃を受けたプレイヤーのリスト
 
     #region コンボ技
@@ -315,6 +315,20 @@ public class Valcus : EnemyBase
     /// <returns></returns>
     IEnumerator MeleeAttack()
     {
+        int power = this.power;
+        KB_POW knockBackType = KB_POW.Small;
+        switch (GetAnimId())
+        {
+            case (int)ANIM_ID.Attack_Smash1:
+                power += (int)(power * 1.5f);
+                knockBackType = KB_POW.Medium;
+                break;
+            case (int)ANIM_ID.Attack_Smash2:
+                power += (int)(power * 1.8f);
+                knockBackType = KB_POW.Big;
+                break;
+        }
+
         while (true)
         {
             // 自身がエリート個体の場合、付与する状態異常の種類を取得する
@@ -326,7 +340,7 @@ public class Valcus : EnemyBase
                 if (collidersEnemies[i].gameObject.tag == "Player" && !hitPlayers.Contains(collidersEnemies[i].gameObject))
                 {
                     hitPlayers.Add(collidersEnemies[i].gameObject);
-                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
+                    collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, knockBackType, applyEffect);
                 }
             }
             yield return null;
@@ -381,6 +395,23 @@ public class Valcus : EnemyBase
     #region コンボ攻撃(前半)
 
     /// <summary>
+    /// 条件を満たしている場合、コンボ技を開始
+    /// </summary>
+    void AttackSmash1()
+    {
+        targetPos = GetGroundPointFrom(target);
+        if (targetPos == null)
+        {
+            NextDecision();
+            return;
+        }
+
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_Smash1);
+    }
+
+    /// <summary>
     /// 目標座標に向かってジャンプする
     /// </summary>
     void JumpToTargetPosition(float duration)
@@ -394,23 +425,6 @@ public class Valcus : EnemyBase
             transform.DOJump((Vector2)targetPos + addVec, jumpPower, 1, duration).SetEase(Ease.InOutQuad);
             audioWind.Play();
         }
-    }
-
-    /// <summary>
-    /// 条件を満たしている場合、コンボ技を開始
-    /// </summary>
-    void AttackSmash1()
-    {
-        targetPos = GetGroundPointFrom(target);
-        if(targetPos == null)
-        {
-            NextDecision();
-            return;
-        }
-
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_Smash1);
     }
 
     /// <summary>
