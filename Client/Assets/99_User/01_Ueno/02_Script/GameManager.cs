@@ -19,7 +19,8 @@ using static Grpc.Core.Metadata;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
-using KanKikuchi.AudioManager;
+using Unity.Cinemachine;
+using Unity.Mathematics;
 
 public class GameManager : MonoBehaviour
 {
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     ColorChanger colorChanger;  // ボス撃破時の演出用
 
+    [SerializeField] CinemachineBasicMultiChannelPerlin VirtualCamera;
     SceneLoader loader;
 
     #region Instance
@@ -302,14 +304,16 @@ public class GameManager : MonoBehaviour
         {
             ///ラスボス
             case STAGE_TYPE.Rust:  
+               
                 SEManager.Instance.Play(
                 audioPath: SEPath.DEATH, //再生したいオーディオのパス
-                volumeRate: 10,                //音量の倍率
-                delay: 0,                //再生されるまでの遅延時間
-                pitch: 1,                //ピッチ
+                volumeRate: 0.5f,                //音量の倍率
+                delay: 0.5f,                //再生されるまでの遅延時間
+                pitch: 0.8f,                //ピッチ
                 isLoop: false,             //ループ再生するか
                 callback: null              //再生終了後の処理
-);
+                );
+
                 break;
 
             ///一面
@@ -327,8 +331,29 @@ public class GameManager : MonoBehaviour
                 
 
                 break;
+
+               
         }
-       
+        ShakeCamera(1.5f);
+
+        SEManager.Instance.Play(
+                   audioPath: SEPath.KAMINARI, //再生したいオーディオのパス
+                   volumeRate: 300,                //音量の倍率
+                   delay: 0,                //再生されるまでの遅延時間
+                   pitch: 1,                //ピッチ
+                   isLoop: false,             //ループ再生するか
+                   callback: null              //再生終了後の処理
+                   );
+
+        SEManager.Instance.Play(
+                  audioPath: SEPath.GEKIHA, //再生したいオーディオのパス
+                  volumeRate: 0.6f,                //音量の倍率
+                  delay: 0,                //再生されるまでの遅延時間
+                  pitch: 1,                //ピッチ
+                  isLoop: false,             //ループ再生するか
+                  callback: null              //再生終了後の処理
+                  );
+
 
         // ボス撃破時にレリックをドロップ
         TerminalManager.Instance.OnTerminalsSuccessed(1);
@@ -409,7 +434,7 @@ public class GameManager : MonoBehaviour
             case STAGE_TYPE.Rust:
                 BGMManager.Instance.Play(
                 audioPath: BGMPath.STAGE4,           //再生したいオーディオのパス
-                volumeRate: 1,                      //音量の倍率
+                volumeRate: 0.6f,                      //音量の倍率
                 delay: 0,                           //再生されるまでの遅延時間
                 pitch: 1,                           //ピッチ
                 isLoop: true,                       //ループ再生するか
@@ -506,7 +531,20 @@ public class GameManager : MonoBehaviour
                 );
                 break;
         }
-        
 
+        ShakeCamera(2.5f);
+
+    }
+
+    private void ShakeCamera(float diffuseTime)
+    {
+        VirtualCamera.enabled = true;
+        Invoke("DiffuseShake", diffuseTime);
+    }
+
+    
+    private void DiffuseShake()
+    {
+        VirtualCamera.enabled = false;
     }
 }

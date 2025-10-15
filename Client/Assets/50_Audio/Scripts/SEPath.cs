@@ -9,6 +9,8 @@ public static class SEPath{
 	public const string BUTTON_PUSH     = "SE/50_Button/Button_Push";
 	public const string CURSOR_POWER_UP = "SE/50_Button/Cursor_PowerUp";
 	public const string DEATH           = "SE/DEATH";
+	public const string GEKIHA          = "SE/gekiha";
+	public const string KAMINARI        = "SE/kaminari";
 	public const string POWER_UP        = "SE/50_Button/PowerUp";
 	public const string SYSTEM20        = "SE/system20";
 	public const string SYSTEM23        = "SE/system23";

@@ -4,6 +4,7 @@ using UnityEngine.Rendering.Universal;
 using System.Collections;
 using System.Collections.Generic;
 using Pixeye.Unity;
+using Unity.Cinemachine;
 
 /// <summary>
 /// ƒ{ƒXŒ‚”j‰‰o
