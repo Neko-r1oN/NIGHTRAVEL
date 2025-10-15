@@ -504,7 +504,7 @@ abstract public class PlayerBase : CharacterBase
                 if (collidersWall[i].gameObject != null)
                 {
                     isBlinking = false;
-                    if (gameObject.layer != 21) m_IsWall = true;
+                    if (gameObject.layer != 30) m_IsWall = true;
                 }
             }
             prevVelocityX = m_Rigidbody2D.linearVelocity.x;

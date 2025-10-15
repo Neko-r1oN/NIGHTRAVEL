@@ -263,7 +263,7 @@ public class Rifle : PlayerBase
             Vector2 damageDir = Vector2.zero;
 
             // ノックバック処理
-            if (position != null && id != (int)GS_ANIM_ID.Skill || position != null && id != (int)GS_ANIM_ID.BeamReady)
+            if (position != null && id != (int)GS_ANIM_ID.Skill || position != null && id != (int)GS_ANIM_ID.BeamReady && !isFiring)
             {
                 damageDir = Vector3.Normalize(transform.position - (Vector3)position) * KNOCKBACK_DIR;
                 m_Rigidbody2D.linearVelocity = Vector2.zero;
@@ -309,7 +309,8 @@ public class Rifle : PlayerBase
             {   // 被ダメ硬直
                 if (position != null)
                 {
-                    StartCoroutine(Stun(STUN_TIME));
+                    if(id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady && !isFiring) StartCoroutine(Stun(STUN_TIME));
+
                     StartCoroutine(MakeInvincible(INVINCIBLE_TIME));
                 }
             }
@@ -345,6 +346,7 @@ public class Rifle : PlayerBase
     public async Task FireLaser(Vector2 direction)
     {
         if (isFiring) return;             // 多重発射防止
+        isFiring = true;
         await RoomModel.Instance.BeamEffectActiveAsync(true);
         StartCoroutine(LaserRoutine(direction.normalized));
     }
@@ -356,8 +358,6 @@ public class Rifle : PlayerBase
     /// <returns></returns>
     private IEnumerator LaserRoutine(Vector2 dir)
     {
-        isFiring = true;
-
         // ビームエフェクト表示
         playerEffect.BeamEffectActive(true);
 

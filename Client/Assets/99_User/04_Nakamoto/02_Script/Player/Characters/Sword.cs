@@ -469,7 +469,8 @@ public class Sword : PlayerBase
             {   // îÌÉ_ÉÅçdíº
                 if (position != null)
                 {
-                    StartCoroutine(Stun(STUN_TIME));
+                    if(!canAttack) StartCoroutine(Stun(STUN_TIME));
+
                     StartCoroutine(MakeInvincible(INVINCIBLE_TIME));
                 }
             }

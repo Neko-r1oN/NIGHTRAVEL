@@ -30,8 +30,8 @@ public class Jumble : TerminalBase
         if (RoomModel.Instance)
             TerminalManager.Instance.TerminalDatas[terminalID - 1].State = EnumManager.TERMINAL_STATE.Success;
 
-        // レリック生成リクエスト
-        SuccessRequest();
+        // 成功処理
+        if(RoomModel.Instance.IsMaster) SuccessRequest();
 
         // ターミナル非表示
         terminalSprite.DOFade(0, 2.5f);
