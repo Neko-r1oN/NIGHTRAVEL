@@ -1145,12 +1145,12 @@ namespace StreamingHubs
                         break;
 
                     case EnumManager.ITEM_TYPE.DataCube:    // データキューブの場合
-                        getExp = (int)(this.roomContext.ExpManager.RequiredExp * 0.05f);
+                        getExp = (int)(this.roomContext.ExpManager.RequiredExp * 0.1f);
                         this.roomContext.ExpManager.nowExp += getExp == 0 ? 1 : getExp; // 要求経験値の5%を渡す(0の場合は1を渡す)
                         break;
                     
                     case EnumManager.ITEM_TYPE.DataBox:     // データボックスの場合
-                        getExp = (int)(this.roomContext.ExpManager.RequiredExp * 0.25f);
+                        getExp = (int)(this.roomContext.ExpManager.RequiredExp * 0.4f);
                         this.roomContext.ExpManager.nowExp += getExp == 0 ? 1 : getExp; // 要求経験値の25%を渡す(0の場合は1を渡す)
                         break;
                 }

@@ -14707,6 +14707,13 @@ MonoBehaviour:
   baseMoveSpeed: 60
   baseAttackSpeedFactor: 0.8
   baseHealRate: 0.01
+  maxHp: 0
+  maxDefense: 0
+  maxPower: 0
+  maxJumpPower: 0
+  maxMoveSpeed: 0
+  maxAttackSpeedFactor: 0
+  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -15076,14 +15083,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
   ImpulseDefinition:
     ImpulseChannel: 1
-    ImpulseShape: 1
+    ImpulseShape: 2
     CustomImpulseShape:
       serializedVersion: 2
       m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    ImpulseDuration: 0.1
+    ImpulseDuration: 0.2
     ImpulseType: 1
     DissipationRate: 0.05
     RawSignal: {fileID: 0}
@@ -15114,7 +15121,7 @@ MonoBehaviour:
     DissipationMode: 2
     DissipationDistance: 100
     PropagationSpeed: 343
-  DefaultVelocity: {x: -1, y: -1, z: 0}
+  DefaultVelocity: {x: 0, y: -1, z: 0}
 --- !u!1 &2634566637861128406
 GameObject:
   m_ObjectHideFlags: 0

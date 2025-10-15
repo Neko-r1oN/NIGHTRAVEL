@@ -281,9 +281,9 @@ abstract public class PlayerBase : CharacterBase
     protected const float KB_MEDIUM = 10f;      // ノックバック力（中）
     protected const float KB_BIG = 20f;         // ノックバック力（大）
 
-    protected const float SHAKE_SMALL = 0.05f;  // カメラ揺れ（小）
-    protected const float SHAKE_MEDIUM = 0.1f;  // カメラ揺れ（中）
-    protected const float SHAKE_BIG = 0.25f;    // カメラ揺れ（大）
+    protected const float SHAKE_SMALL = 0.15f;  // カメラ揺れ（小）
+    protected const float SHAKE_MEDIUM = 0.35f;  // カメラ揺れ（中）
+    protected const float SHAKE_BIG = 0.65f;    // カメラ揺れ（大）
 
     protected const float STUN_TIME = 0.2f;        // スタン時間
     protected const float INVINCIBLE_TIME = 0.5f;  // 無敵時間
