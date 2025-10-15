@@ -186,7 +186,7 @@ public class TitleManagerk : MonoBehaviour
         await RoomModel.Instance.ConnectAsync();
         RoomModel.Instance.OnCreatedRoom += OnCreatedRoom;
         gamemode = 0;
-        await RoomModel.Instance.JoinedAsync(RoomModel.Instance.ConnectionId.ToString(), MatchingManager.UserID, SteamUserName, "404",gamemode);
+        await RoomModel.Instance.JoinedAsync(Guid.NewGuid().ToString("N"), MatchingManager.UserID, SteamUserName, "404",gamemode);
     }
 
     /// <summary>
