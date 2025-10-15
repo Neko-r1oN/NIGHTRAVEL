@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static Shared.Interfaces.StreamingHubs.EnumManager;
 
 public class ResultManager : MonoBehaviour
 {
@@ -118,8 +119,9 @@ public class ResultManager : MonoBehaviour
             }
         }
 
-        stageNumText.text = resultData.TotalClearStageCount.ToString();                                                  // 攻略ステージ数
-        arrivalLevelText.text = resultData.DifficultyLevel.ToString();                                         // 到達レベル
+        stageNumText.text = resultData.TotalClearStageCount.ToString();           // 攻略ステージ数
+        arrivalLevelText.text = 
+            LevelManager.Instance.LevelName[(DIFFICULTY_TYPE)resultData.DifficultyLevel].ToString(); // 到達レベル
         survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
         totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
         grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数

@@ -363,8 +363,9 @@ public class UIManager : MonoBehaviour
 
             if (!aa)
             {
+                relicImages[relicList.Count].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                 relicImages[relicList.Count].sprite = relicSprite;
-                RelicManager.Instance.CountRelic(relic.ID - 1);
+                RelicManager.Instance.CountRelic(relic.ID);
                 relicList.Add(relic.ID);
             }
         }
@@ -391,7 +392,7 @@ public class UIManager : MonoBehaviour
 
         foreach (var p in players)
         {
-            if (p != null && !playerStatus[count].activeSelf)
+            if (p != null && playerStatus[count].activeSelf == false)
             {
                 playerStatus[count].SetActive(true);
                 // 名前反映
@@ -438,6 +439,29 @@ public class UIManager : MonoBehaviour
                 else if (Input.GetButtonDown("Blink"))
                 {
                     statusUpButtons[2].onClick.Invoke();
+                }
+            }
+
+            if(endWindow.activeSelf == true)
+            {
+                if (Input.GetButtonDown("Jump"))
+                {
+                    EndGameButtonPush(0);
+                }
+                else if (Input.GetButtonDown("Blink"))
+                {
+                    EndGameButtonPush(1);
+                }
+            }
+            else if(nextStageWindow.activeSelf == true)
+            {
+                if (Input.GetButtonDown("Jump"))
+                {
+                    NextGameButtonPush(0);
+                }
+                else if (Input.GetButtonDown("Blink"))
+                {
+                    NextGameButtonPush(1);
                 }
             }
         }
