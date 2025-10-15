@@ -536,7 +536,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void ShakeCamera(float diffuseTime)
+    public void ShakeCamera(float diffuseTime)
     {
         VirtualCamera.enabled = true;
         Invoke("DiffuseShake", diffuseTime);
