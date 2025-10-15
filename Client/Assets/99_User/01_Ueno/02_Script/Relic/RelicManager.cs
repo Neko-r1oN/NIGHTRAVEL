@@ -62,7 +62,7 @@ public class RelicManager : MonoBehaviour
 
     private void Start()
     {
-        ApplyHaveRelicsUI();
+        //ApplyHaveRelicsUI();
 
         if (!RoomModel.Instance) return;
         RoomModel.Instance.OnDropedRelic += this.OnDropRelic;
@@ -91,17 +91,6 @@ public class RelicManager : MonoBehaviour
         }
 
         HaveRelicList.Add(relic);
-    }
-
-    /// <summary>
-    /// 現在所持しているレリックをUIに適用させる
-    /// </summary>
-    void ApplyHaveRelicsUI()
-    {
-        foreach(var relic in HaveRelicList)
-        {
-            UIManager.Instance.DisplayRelic(relicSprites[(int)relic.ID - 1], relic);
-        }
     }
 
     /// <summary>
@@ -197,7 +186,7 @@ public class RelicManager : MonoBehaviour
             }
         }
 
-        UIManager.Instance.totalRelics(relicSprites[(int)id], relicCnt);
+        UIManager.Instance.totalRelics(relicSprites[(int)id - 1], relicCnt);
     }
 
     ///// <summary>

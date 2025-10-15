@@ -343,34 +343,54 @@ public class UIManager : MonoBehaviour
 
         spectatingWindow.SetActive(false);
 
-        int relicCnt = 0; // レリックの個数
+        List<RELIC_TYPE> relicList = new List<RELIC_TYPE>();
 
-        foreach (Image relic in relicImages)
+        foreach(RelicData relic in RelicManager.HaveRelicList)
         {
-            if (relicCnt > 0 && relicImages[relicCnt - 1].enabled == true 
-                && RelicManager.HaveRelicList.Count > relicCnt)
+            bool aa = relicList.Count > 0 && relicList.Contains(relic.ID);
+            var relicSprite = RelicManager.Instance.RelicSprites[(int)relic.ID - 1];
+
+            if (!aa)
             {
-                if (relicImages[relicCnt - 1].sprite ==
-                     RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1])
-                {
-                    RelicManager.Instance.CountRelic(RelicManager.HaveRelicList[relicCnt].ID);
-                    relicCnt++;
-                    return;
-                }
+                relicImages[relicList.Count].sprite = relicSprite;
+                RelicManager.Instance.CountRelic(relic.ID - 1);
+                relicList.Add(relic.ID);
             }
 
-            if (RelicManager.HaveRelicList.Count > relicCnt)
-            {
-                relicImages[relicCnt].sprite =
-                    RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1];
-
-                relicCnt++;
-            }
-            else
-            {
-                relic.enabled = false;
-            }
+            //foreach (Image relicImage in relicImages)
+            //{
+            //    if (aa && relicImage.sprite == relicSprite)
+            //    {// 登録済みの場合はカウントテキスト更新
+            //        RelicManager.Instance.CountRelic(relic.ID - 1);
+            //    }
+            //    else
+            //    {// 未登録の場合は新たにスプライト設定する
+            //        relicImage.sprite = relicSprite;
+            //        RelicManager.Instance.CountRelic(relic.ID - 1);
+            //        relicList.Add(relic.ID);
+            //    }
+            //}
         }
+
+        //foreach (Image relic in relicImages)
+        //{
+        //    if (RelicManager.HaveRelicList.Count > relicCnt)
+        //    {
+        //        if (relicList.Count > 0 && relicList.Contains(RelicManager.HaveRelicList[relicCnt].ID))
+        //        {
+        //            RelicManager.Instance.CountRelic(RelicManager.HaveRelicList[relicCnt].ID - 1);
+        //        }
+        //        else
+        //        {
+        //            relicImages[relicCnt].sprite =
+        //            RelicManager.Instance.RelicSprites[(int)RelicManager.HaveRelicList[relicCnt].ID - 1];
+
+        //            relicList.Add(RelicManager.HaveRelicList[relicCnt].ID);
+        //        }
+
+        //        relicCnt++;
+        //    }
+        //}
 
         // キャラのジョブ毎にUIを変更
         if (player.PlayerType == Player_Type.Sword)
@@ -641,13 +661,10 @@ public class UIManager : MonoBehaviour
         {
             if (image.sprite == relicSprite)
             {
-                if (image.sprite != null)
+                if (num > 1)
                 {
-                    if (num > 1)
-                    {
-                        relicCntText[count].enabled = true;
-                        relicCntText[count].text = "×" + num;
-                    }
+                    relicCntText[count].text = "×" + num;
+                    relicCntText[count].enabled = true;
                 }
             }
             count++;
