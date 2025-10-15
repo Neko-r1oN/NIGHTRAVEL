@@ -672,8 +672,8 @@ Shader "Hidden/lilToonFur"
             #pragma skip_variants VERTEXLIGHT_ON LIGHTPROBE_SH
             #pragma skip_variants LIGHTMAP_ON DYNAMICLIGHTMAP_ON LIGHTMAP_SHADOW_MIXING SHADOWS_SHADOWMASK DIRLIGHTMAP_COMBINED _MIXED_LIGHTING_SUBTRACTIVE
             #define LIL_SRP_VERSION_MAJOR 17
-            #define LIL_SRP_VERSION_MINOR 0
-            #define LIL_SRP_VERSION_PATCH 4
+            #define LIL_SRP_VERSION_MINOR 2
+            #define LIL_SRP_VERSION_PATCH 0
 
             #pragma target 4.5
             #pragma require geometry
@@ -1064,8 +1064,8 @@ Shader "Hidden/lilToonFur"
             #pragma skip_variants VERTEXLIGHT_ON LIGHTPROBE_SH
             #pragma skip_variants LIGHTMAP_ON DYNAMICLIGHTMAP_ON LIGHTMAP_SHADOW_MIXING SHADOWS_SHADOWMASK DIRLIGHTMAP_COMBINED _MIXED_LIGHTING_SUBTRACTIVE
             #define LIL_SRP_VERSION_MAJOR 17
-            #define LIL_SRP_VERSION_MINOR 0
-            #define LIL_SRP_VERSION_PATCH 4
+            #define LIL_SRP_VERSION_MINOR 2
+            #define LIL_SRP_VERSION_PATCH 0
 
             #pragma target 4.5
             #pragma require geometry
