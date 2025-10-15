@@ -209,6 +209,7 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_FallFlag = false;
     protected float limitFallSpeed = 25f; // 落下速度の制限
     protected PlayerBase m_Player;
+    protected float breakTimer = 0; // 硬直時に強制的に動けるようににする時間
     #endregion
 
     #region エフェクト・UI
@@ -286,6 +287,7 @@ abstract public class PlayerBase : CharacterBase
 
     protected const float STUN_TIME = 0.2f;        // スタン時間
     protected const float INVINCIBLE_TIME = 0.5f;  // 無敵時間
+    protected const float BREAK_TIME = 2.0f;       // 強制硬直解除
 
     protected const float SMOKE_SCALE = 0.22f; // 土煙のスケール
 
@@ -362,6 +364,18 @@ abstract public class PlayerBase : CharacterBase
         {
             GenerateHealObject();
             healGenerateTimer = 0f;
+        }
+
+        // 強制硬直解除
+        if (!isDead && !canMove || !isDead && !canAttack)
+        {
+            breakTimer += Time.deltaTime;
+            if(breakTimer >= BREAK_TIME)
+            {
+                canMove = true;
+                canAttack = true;
+                breakTimer = 0;
+            }
         }
 
         // キャラの移動

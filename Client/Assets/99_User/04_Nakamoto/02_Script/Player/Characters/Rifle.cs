@@ -398,7 +398,7 @@ public class Rifle : PlayerBase
         }
 
         // ビームエフェクト非表示
-        playerEffect.BeamEffectActive(false);
+        StopBeamEffect();
         isFiring = false;
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.SkillAfter);
     }
