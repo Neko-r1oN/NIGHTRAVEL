@@ -680,6 +680,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async Task StartRoomAsync(string hostName)
     {
+        if (TitleManagerk.GameMode == 0) return;
         var handler = new YetAnotherHttpHandler() { Http2Only = true };
         var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
         var client = MagicOnionClient.Create<IRoomService>(channel);
