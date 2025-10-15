@@ -118,13 +118,13 @@ public class ResultManager : MonoBehaviour
             }
         }
 
-        //stageNumText.text = "3";                                                  // 攻略ステージ数
-        //arrivalLevelText.text = "ハード";                                         // 到達レベル
-        //survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
-        //totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
-        //grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数
-        //totalEarningsItemText.text = resultData.TotalGottenItem.ToString();       // 総獲得アイテム数
-        //terminalStartupNumText.text = resultData.TotalActivedTerminal.ToString(); // 合計端末起動数
-        //totalScore.text = "50000";
+        stageNumText.text = resultData.TotalClearStageCount.ToString();                                                  // 攻略ステージ数
+        arrivalLevelText.text = resultData.DifficultyLevel.ToString();                                         // 到達レベル
+        survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
+        totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
+        grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数
+        totalEarningsItemText.text = resultData.TotalGottenItem.ToString();       // 総獲得アイテム数
+        terminalStartupNumText.text = resultData.TotalActivedTerminal.ToString(); // 合計端末起動数
+        totalScore.text = resultData.TotalScore.ToString();
     }
 }
