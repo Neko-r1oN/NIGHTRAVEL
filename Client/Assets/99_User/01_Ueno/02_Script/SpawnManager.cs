@@ -394,9 +394,6 @@ public class SpawnManager : MonoBehaviour
             {
                 Vector2 spawnPos = (Vector2)groundPos + Vector2.up * enemyBase.SpawnGroundOffset;
 
-                if (spawnPos.x > stageMin.position.x && spawnPos.x < stageMax.position.x 
-                    && spawnPos.y > stageMin.position.y && spawnPos.y < stageMax.position.y) continue;
-
                 // áŠQ•¨‚ªd‚È‚Á‚Ä‚¢‚È‚¢ ‚©‚Â ¶¬À•W‚ªd•¡‚µ‚Ä‚¢‚È‚¢ê‡‚Í¬Œ÷
                 if (!enemyBase.IsOverlappingObstacle(spawnPos) && !enemySpawnPosList.Contains(spawnPos))
                 {
@@ -418,7 +415,6 @@ public class SpawnManager : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, float.MaxValue, terrainLayerMask);
 
-        //Debug.DrawRay((Vector2)rayOrigin, Vector2.down * hit.distance, Color.red);
         if(hit && hit.transform.tag != "ClearWall") return hit.point;
         else return null;
     }
