@@ -272,17 +272,17 @@ public class Rifle : PlayerBase
                 switch(kbPow)
                 {
                     case KB_POW.Small:
-                        playerImpulse.GenerateImpulseWithForce(SHAKE_SMALL);
+                        if (CharacterManager.Instance.PlayerObjSelf == this.gameObject) playerImpulse.GenerateImpulseWithForce(SHAKE_SMALL);
                         m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
                         break;
 
                     case KB_POW.Medium:
-                        playerImpulse.GenerateImpulseWithForce(SHAKE_MEDIUM);
+                        if (CharacterManager.Instance.PlayerObjSelf == this.gameObject) playerImpulse.GenerateImpulseWithForce(SHAKE_MEDIUM);
                         m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                         break;
 
                     case KB_POW.Big:
-                        playerImpulse.GenerateImpulseWithForce(SHAKE_BIG);
+                        if (CharacterManager.Instance.PlayerObjSelf == this.gameObject) playerImpulse.GenerateImpulseWithForce(SHAKE_BIG);
                         m_Rigidbody2D.AddForce(damageDir * KB_BIG);
                         break;
 
