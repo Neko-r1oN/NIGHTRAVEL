@@ -517,6 +517,7 @@ public class FullMetalWorm : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        audioMove.Stop();
         SetAnimId((int)ANIM_ID.Dead);
 
         // ‘S‚Ä‚Ì•”ˆÊ‚Ì€–Sˆ—‚ğŒÄ‚Ño‚µ
