@@ -81,7 +81,8 @@ public class Sword : PlayerBase
     public override void ResetFlag()
     {
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
         isCombo = false;
         isSkill = false;
     }
@@ -335,7 +336,8 @@ public class Sword : PlayerBase
 
         // ƒtƒ‰ƒO‚Ì‰Šú‰»
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
         isCombo = false;
 
         if (!m_Grounded) isAirAttack = true;

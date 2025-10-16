@@ -211,7 +211,9 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_FallFlag = false;
     protected float limitFallSpeed = 25f; // 落下速度の制限
     protected PlayerBase m_Player;
-    protected float breakTimer = 0; // 硬直時に強制的に動けるようににする時間
+
+    protected float mvBreakTimer = 0;  // 移動制限タイマー
+    protected float atkBreakTimer = 0; // 硬直時に強制的に動けるようににする時間
     #endregion
 
     #region エフェクト・UI
@@ -369,14 +371,26 @@ abstract public class PlayerBase : CharacterBase
         }
 
         // 強制硬直解除
-        if (!isDead && !canMove || !isDead && !canAttack)
+        if (!isDead && !canMove)
         {
-            breakTimer += Time.deltaTime;
-            if(breakTimer >= BREAK_TIME)
+            mvBreakTimer += Time.deltaTime;
+            if(mvBreakTimer >= BREAK_TIME)
             {
                 canMove = true;
                 canAttack = true;
-                breakTimer = 0;
+                mvBreakTimer = 0;
+            }
+        }
+
+        // 強制硬直解除
+        if (!isDead && !canAttack)
+        {
+            atkBreakTimer += Time.deltaTime;
+            if (atkBreakTimer >= BREAK_TIME)
+            {
+                canMove = true;
+                canAttack = true;
+                atkBreakTimer = 0;
             }
         }
 
@@ -521,12 +535,14 @@ abstract public class PlayerBase : CharacterBase
             if (jumpWallDistX < -0.5f && jumpWallDistX > -1f)
             {
                 canMove = true;
-                breakTimer = 0;
+                atkBreakTimer = 0;
+                mvBreakTimer = 0;
             }
             else if (jumpWallDistX < -1f && jumpWallDistX >= -2f)
             {
                 canMove = true;
-                breakTimer = 0;
+                atkBreakTimer = 0;
+                mvBreakTimer = 0;
                 m_Rigidbody2D.linearVelocity = new Vector2(10f * transform.localScale.x, m_Rigidbody2D.linearVelocity.y);
             }
             else if (jumpWallDistX < -2f)
@@ -769,7 +785,8 @@ abstract public class PlayerBase : CharacterBase
     {
         canMove = true;
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
     }
 
     /// <summary>
@@ -985,7 +1002,8 @@ abstract public class PlayerBase : CharacterBase
         yield return new WaitForSeconds(time);
         canMove = true;
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
     }
     /// <summary>
     /// 状態異常時硬直処理
@@ -1016,7 +1034,8 @@ abstract public class PlayerBase : CharacterBase
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
     }
     /// <summary>
     /// 壁スライド中か確認する処理
@@ -1151,7 +1170,8 @@ abstract public class PlayerBase : CharacterBase
         canAttack = true;
         isBlinking = false;
         invincible = false;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
 
         // クールダウン時間
         UIManager.Instance.DisplayCoolDown(false, blinkCoolDown);

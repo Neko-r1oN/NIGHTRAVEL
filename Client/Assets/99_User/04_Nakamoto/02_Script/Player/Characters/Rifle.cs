@@ -121,7 +121,7 @@ public class Rifle : PlayerBase
 
             isSkill = true;
             canAttack = true;
-            breakTimer = 0;
+            atkBreakTimer = 0;
             StartCoroutine(SkillCoolDown());
             canSkill = false;
             animator.SetInteger("animation_id", (int)GS_ANIM_ID.Skill);
@@ -187,7 +187,7 @@ public class Rifle : PlayerBase
     public void AttackEnd()
     {
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
 
         // Idle‚É–ß‚é
         animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
