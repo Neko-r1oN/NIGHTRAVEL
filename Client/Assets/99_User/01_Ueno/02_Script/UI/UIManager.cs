@@ -402,6 +402,8 @@ public class UIManager : MonoBehaviour
             {
                 playerStatus[count].SetActive(true);
                 // 名前反映
+                
+
                 playerStatus[count].transform.Find("Text(Name)").GetComponent<Text>().text
                     = TitleManagerk.SteamUserName;
             }
