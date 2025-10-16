@@ -87,13 +87,13 @@ abstract public class CharacterBase : MonoBehaviour
     #endregion
         
     #region 現在のステータスの上限値関連
-    public int maxHp;
-    public int maxDefense;
-    public int maxPower;
-    public float maxJumpPower;
-    public float maxMoveSpeed;
-    public float maxAttackSpeedFactor;
-    public float maxHealRate;
+    protected int maxHp;
+    protected int maxDefense;
+    protected int maxPower;
+    protected float maxJumpPower;
+    protected float maxMoveSpeed;
+    protected float maxAttackSpeedFactor;
+    protected float maxHealRate;
     #endregion
 
     #region 現在のステータスの上限値外部参照用プロパティ
