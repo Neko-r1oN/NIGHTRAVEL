@@ -437,20 +437,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beacad8221ae3f24dae996443f75ea2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHp: 180
-  baseDefense: 10
-  basePower: 80
+  baseHp: 540
+  baseDefense: 30
+  basePower: 160
   baseJumpPower: 20
   baseMoveSpeed: 2.5
   baseAttackSpeedFactor: 1
   baseHealRate: 0.001
-  maxHp: 0
-  maxDefense: 0
-  maxPower: 0
-  maxJumpPower: 0
-  maxMoveSpeed: 0
-  maxAttackSpeedFactor: 0
-  maxHealRate: 0
   hp: 0
   defense: 0
   power: 0
@@ -499,8 +492,8 @@ MonoBehaviour:
   spawnWeight: 50
   checkObstacleRange: 0.6
   canDrawRay: 0
-  baseExp: 81
-  exp: 81
+  baseExp: 243
+  exp: 243
   meleeAttackCheck: {fileID: 2705632039561035241}
   meleeAttackRange: 0.7
   wallCheck: {fileID: 7224352700501539797}
