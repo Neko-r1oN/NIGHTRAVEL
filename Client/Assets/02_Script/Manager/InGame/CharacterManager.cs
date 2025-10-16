@@ -28,6 +28,9 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
 
+    Dictionary<Guid,GameObject> playerUIObjs = new Dictionary<Guid, GameObject>();
+    public Dictionary<Guid, GameObject> PlayerUIObjs {  get { return playerUIObjs; } }
+
     /// <summary>
     /// 自身のキャラクターデータ(シーン遷移したときの引継ぎ用)
     /// </summary>
@@ -63,6 +66,8 @@ public class CharacterManager : MonoBehaviour
     #region カメラ関連
     [SerializeField] GameObject camera;
     [SerializeField] CinemachineTargetGroup cinemachineTargetGroup;
+
+    [SerializeField] RenderTexture[] playerUIList;
     #endregion
 
     const float updateSec = 0.1f;
@@ -289,6 +294,8 @@ public class CharacterManager : MonoBehaviour
     /// </summary>
     void GenerateCharacters()
     {
+        int count = 0;
+
         foreach (var joinduser in RoomModel.Instance.joinedUserList)
         {
             var point = startPoints[0];
@@ -302,28 +309,35 @@ public class CharacterManager : MonoBehaviour
             {
                 playerObjSelf = playerObj;
 
-                if (cinemachineTargetGroup)
-                {
-                    var newTarget = new CinemachineTargetGroup.Target
-                    {
-                        Object = playerObjSelf.transform,
-                        Radius = 1f,
-                        Weight = 1f
-                    };
-                    cinemachineTargetGroup.Targets.Add(newTarget);
-                }
-                else
-                {
-                    var target = new CameraTarget();
-                    target.TrackingTarget = playerObjSelf.transform;
-                    target.LookAtTarget = playerObjSelf.transform;
-                    camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
-                }
+                var target = new CameraTarget();
+                target.TrackingTarget = playerObjSelf.transform;
+                target.LookAtTarget = playerObjSelf.transform;
+                camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
             }
 
+            if (cinemachineTargetGroup)
+            {
+                var newTarget = new CinemachineTargetGroup.Target
+                {
+                    Object = playerObjSelf.transform,
+                    Radius = 1f,
+                    Weight = 1f
+                };
+                cinemachineTargetGroup.Targets.Add(newTarget);
+            }
+
+            playerObj.transform.FindChild("Camera").GetComponent<Camera>().targetTexture = playerUIList[count];
+
             // 画面外UIの作成
-            //var obj = GameObject.Find("OffScreenUI").transform;
-            //Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
+            var obj = GameObject.Find("OffScreenUI").transform;
+            var playerUI = Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
+            playerUI.transform.FindChild("▲/Image/RawImage").GetComponent<RawImage>().texture 
+                = playerUIList[count];
+            playerUI.GetComponent<PlayerUI>().target = playerObj.transform;
+
+            playerUIObjs.Add(joinduser.Value.ConnectionId, playerUI);
+
+            count++;
         }
     }
 
@@ -625,6 +639,8 @@ public class CharacterManager : MonoBehaviour
     void OnPlayerDead(Guid uniqueId)
     {
         playerObjs[uniqueId].GetComponent<PlayerBase>().OnDead();
+
+        Destroy(playerUIObjs[uniqueId]);
     }
 
     /// <summary>

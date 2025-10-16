@@ -86015,10 +86015,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -86196,6 +86196,10 @@ MonoBehaviour:
   - {fileID: 3308511046266845085, guid: 0fbdc292197eff840be2f0d176346030, type: 3}
   camera: {fileID: 1900682987}
   cinemachineTargetGroup: {fileID: 0}
+  playerUIList:
+  - {fileID: 8400000, guid: 6e818bec0bbcf0f42a884ba7613831e8, type: 2}
+  - {fileID: 8400000, guid: f76b40814cb44a6419844175dce69be8, type: 2}
+  - {fileID: 8400000, guid: c5abfbff628da70499232cc10dacb8e2, type: 2}
 --- !u!1001 &1545473336
 PrefabInstance:
   m_ObjectHideFlags: 0

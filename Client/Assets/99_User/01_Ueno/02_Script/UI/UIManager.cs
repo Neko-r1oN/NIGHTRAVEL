@@ -21,6 +21,7 @@ using Cysharp.Threading.Tasks.Triggers;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 public class UIManager : MonoBehaviour
 {
@@ -188,6 +189,9 @@ public class UIManager : MonoBehaviour
     // 定数
     private const float pushIconScale = 0.98f; // キー押下時のアイコン縮小率
     private const float pushIconColor = 0.8f;  // キー押下時のアイコン色変化率
+
+    Dictionary<int, GameObject> playerObjs = new Dictionary<int, GameObject>();
+    int followKey = 0;
 
     int windowCnt = 0;          // ウィンドウが表示できるカウント(一度だけ使う)
     int lastLevel = 0;          // レベルアップ前のレベル
@@ -386,6 +390,8 @@ public class UIManager : MonoBehaviour
             tmText.GetComponent<Transform>().parent.gameObject.SetActive(false);
         }
 
+        
+
         // 自分以外のプレイヤーのステータスを表示
         int count = 0;
         var players = CharacterManager.Instance.GetPlayersExceptSelf();
@@ -399,11 +405,20 @@ public class UIManager : MonoBehaviour
                 playerStatus[count].transform.Find("Text(Name)").GetComponent<Text>().text
                     = TitleManagerk.SteamUserName;
             }
+            count++;
         }
 
         gamepad = Gamepad.current;
 
         levelUpTextObj.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 1f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+
+        int key = 0;
+        foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
+        {
+            playerObjs.Add(key, obj);
+
+            key++;
+        }
     }
 
     /// <summary>
@@ -1141,7 +1156,7 @@ public class UIManager : MonoBehaviour
     public void DisplaySpectatingPlayer()
     {
         spectatingWindow.SetActive(true);
-        spectatingNameText.text = "player2";
+        spectatingNameText.text = TitleManagerk.SteamUserName;
 
         statusUpButton.SetActive(false);
         levelUpText.enabled = false;
@@ -1152,6 +1167,32 @@ public class UIManager : MonoBehaviour
         {
             relic.enabled = false;
         }
+    }
+
+    public void PushNextPlayerButton()
+    {
+        SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
+
+        //GameObject cmr = GameObject.Find("Main Camera");
+
+        //foreach (var player in playerObjs)
+        //{
+        //    if (player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
+        //    {
+        //        continue;
+        //    }
+
+        //    if (player.Value != CharacterManager.Instance.PlayerObjSelf && followKey != player.Key)
+        //    {
+        //        followKey = player.Key;
+
+        //        cmr.GetComponent<CinemachineCamera>().Target.TrackingTarget
+        //            = player.Value.transform;
+
+        //        ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
+        //        break;
+        //    }
+        //}
     }
 
     public void OnDeadPlayer()
