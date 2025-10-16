@@ -446,7 +446,7 @@ public class GameManager : MonoBehaviour
             case STAGE_TYPE.Industry:
                 BGMManager.Instance.Play(
                 audioPath: BGMPath.STAGE1,           //再生したいオーディオのパス
-                volumeRate: 1,                      //音量の倍率
+                volumeRate: 0.6f,                      //音量の倍率
                 delay: 0,                           //再生されるまでの遅延時間
                 pitch: 1,                           //ピッチ
                 isLoop: true,                       //ループ再生するか
@@ -456,7 +456,7 @@ public class GameManager : MonoBehaviour
             case STAGE_TYPE.Town:
                 BGMManager.Instance.Play(
                 audioPath: BGMPath.STAGE2,           //再生したいオーディオのパス
-                volumeRate: 1,                      //音量の倍率
+                volumeRate: 0.6f,                      //音量の倍率
                 delay: 0,                           //再生されるまでの遅延時間
                 pitch: 1,                           //ピッチ
                 isLoop: true,                       //ループ再生するか
@@ -466,7 +466,7 @@ public class GameManager : MonoBehaviour
             case STAGE_TYPE.FinalBoss:
                 BGMManager.Instance.Play(
                 audioPath: BGMPath.STAGE3,           //再生したいオーディオのパス
-                volumeRate: 1,                      //音量の倍率
+                volumeRate: 0.6f,                      //音量の倍率
                 delay: 0,                           //再生されるまでの遅延時間
                 pitch: 1,                           //ピッチ
                 isLoop: true,                       //ループ再生するか
