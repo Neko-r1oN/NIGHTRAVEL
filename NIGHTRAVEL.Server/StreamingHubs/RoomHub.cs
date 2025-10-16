@@ -242,6 +242,23 @@ namespace StreamingHubs
                 // ルームデータから自身のデータを削除
                 roomContext.characterDataList.Remove(this.ConnectionId);;
 
+                // 全滅判定変数
+                bool isAllDead = true;
+
+                foreach (var player in this.roomContext.characterDataList)
+                {
+                    if (player.Value.IsDead == false) // もし誰かが生きていた場合
+                    {
+                        isAllDead = false;
+                        break;
+                    }
+                }
+
+                // 全滅した場合、ゲーム終了通知を全員に出す
+                if (isAllDead)
+                {
+                    Result();
+                }
             }
         }
 
