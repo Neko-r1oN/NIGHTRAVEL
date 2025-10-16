@@ -32,11 +32,11 @@ public class SpectatorModeManager : MonoBehaviour
         }
     }
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
         int key = 0;
-        foreach(var obj in CharacterManager.Instance.PlayerObjs.Values)
+        foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
         {
             players.Add(key, obj);
 
@@ -72,6 +72,17 @@ public class SpectatorModeManager : MonoBehaviour
                 UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
                 break;
             }
+        }
+
+        List<GameObject> list = new List<GameObject>();
+        foreach (var obj in CharacterManager.Instance.PlayerUIObjs)
+        {
+            list.Add(obj.Value);
+        }
+
+        foreach (var obj in list)
+        {
+            Destroy(obj);
         }
     }
 }

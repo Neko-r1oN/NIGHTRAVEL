@@ -7,6 +7,7 @@ using DG.Tweening;
 using MessagePack;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Pixeye.Unity;
+using Rewired;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -19,6 +20,7 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 abstract public class PlayerBase : CharacterBase
 {
@@ -1042,7 +1044,7 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     protected IEnumerator WaitToDead()
     {
-        if (isDead) yield break ;
+        if (isDead) yield break;
         isDead = true;
         if (CharacterManager.Instance.PlayerObjSelf == gameObject)
         {
@@ -1076,8 +1078,41 @@ abstract public class PlayerBase : CharacterBase
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
 
-        if (CharacterManager.Instance.PlayerObjSelf) SpectatorModeManager.Instance.FocusCameraOnAlivePlayer(); 
-        
+        //if (CharacterManager.Instance.PlayerObjSelf)
+        //{
+        //    GameObject cmr = GameObject.Find("Main Camera");
+
+        //    foreach (var player in CharacterManager.Instance.PlayerObjs)
+        //    {
+        //        if (player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
+        //        {
+        //            continue;
+        //        }
+
+        //        if (player.Value != CharacterManager.Instance.PlayerObjSelf)
+        //        {
+        //            cmr.GetComponent<CinemachineCamera>().Target.TrackingTarget
+        //                = player.Value.transform;
+
+        //            UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
+        //            break;
+        //        }
+        //    }
+
+        //    List<GameObject> list = new List<GameObject>();
+        //    foreach (var obj in CharacterManager.Instance.PlayerUIObjs)
+        //    {
+        //        list.Add(obj.Value);
+        //    }
+
+        //    foreach (var obj in list)
+        //    {
+        //        Destroy(obj);
+        //    }
+        //}
+
+        SpectatorModeManager.Instance.FocusCameraOnAlivePlayer(); 
+
         this.gameObject.SetActive(false);
     }
 
@@ -1089,6 +1124,14 @@ abstract public class PlayerBase : CharacterBase
         animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
         canMove = false;
         invincible = true;
+
+        //if(CharacterManager.Instance.PlayerUIObjs.Count > 1)
+        //{
+        //    foreach(var obj in CharacterManager.Instance.PlayerUIObjs)
+        //    {
+        //        Destroy(obj.Value);
+        //    }
+        //}
     }
 
     /// <summary>

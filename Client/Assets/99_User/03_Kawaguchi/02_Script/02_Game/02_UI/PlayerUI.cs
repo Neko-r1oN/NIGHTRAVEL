@@ -32,23 +32,13 @@ public class PlayerUI : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
 
-        var players = CharacterManager.Instance.GetPlayersExceptSelf();
-
-        if (RoomModel.Instance)
-        {
-            foreach(var player in players)
-            {
-                this.target = player.transform;
-            }
-        }
-
         rectTransform.localScale = Vector3.one;
-        if(arrowUI)rect_arrow = arrowUI.GetComponent<RectTransform>();
+        if (arrowUI) rect_arrow = arrowUI.GetComponent<RectTransform>();
     }
     private void Update()
     {
         ///----------------オフセット(画面外余白)処理---------------------------
-        
+        if (target == null) return;
         Vector3 screenPos = Camera.main.WorldToScreenPoint(target.position);
 
         if(screenPos.z < 0f)
