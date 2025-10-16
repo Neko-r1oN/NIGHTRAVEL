@@ -397,7 +397,7 @@ public class UIManager : MonoBehaviour
                 playerStatus[count].SetActive(true);
                 // 名前反映
                 playerStatus[count].transform.Find("Text(Name)").GetComponent<Text>().text
-                    = "player" + count; // 仮
+                    = TitleManagerk.SteamUserName;
             }
         }
 
