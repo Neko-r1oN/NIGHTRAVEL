@@ -593,6 +593,7 @@ public class Boxgeist : EnemyBase
     IEnumerator AttackFakkBlockCoroutine(Action onFinished)
     {
         const float targetDist = 0.5f;
+        const float waitSec = 0.1f;
         float currentSec = 0;
         while (disToTargetX > targetDist && currentSec <= maxMoveTime)
         {
@@ -605,6 +606,7 @@ public class Boxgeist : EnemyBase
 
             CloseIn();
             yield return null;
+            currentSec += waitSec;
         }
 
         // UŒ‚ŠJŽn
