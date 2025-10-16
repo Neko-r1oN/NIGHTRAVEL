@@ -1,5 +1,5 @@
 //**************************************************
-//  ���݂��Ă���L�����N�^�[�̊Ǘ����s��
+//  存在しているキャラクターの管理を行う
 //  Author:r-enomoto
 //**************************************************
 using System;
@@ -15,56 +15,55 @@ using Unity.VisualScripting.FullSerializer;
 using Unity.Cinemachine;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
-using System.Xml;
 using UnityEngine.UI;
 
 public class CharacterManager : MonoBehaviour
 {
-    #region �v���C���[�֘A
-    [SerializeField] List<Transform> startPoints = new List<Transform>();   // �e�v���C���[�̏����ʒu
+    #region プレイヤー関連
+    [SerializeField] List<Transform> startPoints = new List<Transform>();   // 各プレイヤーの初期位置
     [SerializeField] GameObject charaSwordPrefab;
     [SerializeField] GameObject charaGunnerPrefab;
     [SerializeField] GameObject offScreenUIPrefab;
 
-    [SerializeField] GameObject playerObjSelf;  // ���[�J���p�ɑ����t�^
+    [SerializeField] GameObject playerObjSelf;  // ローカル用に属性付与
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
 
     Dictionary<Guid,GameObject> playerUIObjs = new Dictionary<Guid, GameObject>();
     public Dictionary<Guid, GameObject> PlayerUIObjs {  get { return playerUIObjs; } }
 
     /// <summary>
-    /// ���g�̃L�����N�^�[�f�[�^(�V�[���J�ڂ����Ƃ��̈��p���p)
+    /// 自身のキャラクターデータ(シーン遷移したときの引継ぎ用)
     /// </summary>
     static public PlayerStatusData SelfPlayerStatusData { get; set; } = null;
 
     /// <summary>
-    /// �����̑���L����
+    /// 自分の操作キャラ
     /// </summary>
     public GameObject PlayerObjSelf { get { return playerObjSelf; } }
 
     /// <summary>
-    /// �v���C���[�̃��X�g
+    /// プレイヤーのリスト
     /// </summary>
     public Dictionary<Guid, GameObject> PlayerObjs { get { return playerObjs; } }
     #endregion
 
-    #region �G�֘A
+    #region 敵関連
     Dictionary<string, SpawnedEnemy> enemies = new Dictionary<string, SpawnedEnemy>();
 
     /// <summary>
-    /// ���݂̃X�e�[�W�Ő��������G�̃��X�g
+    /// 現在のステージで生成した敵のリスト
     /// </summary>
     public Dictionary<string, SpawnedEnemy> Enemies { get { return enemies; } }
     #endregion
 
-    #region ���˕��֘A
+    #region 発射物関連
     [SerializeField]
     List<GameObject> projectilePrefabs = new List<GameObject>();
 
     Dictionary<PROJECTILE_TYPE, GameObject> projectilePrefabsByType = new Dictionary<PROJECTILE_TYPE, GameObject>();
     #endregion
 
-    #region �J�����֘A
+    #region カメラ関連
     [SerializeField] GameObject camera;
     [SerializeField] CinemachineTargetGroup cinemachineTargetGroup;
 
@@ -92,20 +91,20 @@ public class CharacterManager : MonoBehaviour
         }
         else
         {
-            // �C���X�^���X���������݂��Ȃ��悤�ɁA���ɑ��݂��Ă����玩�g����������
+            // インスタンスが複数存在しないように、既に存在していたら自身を消去する
             Destroy(gameObject);
         }
 
-        // �I�t���C���p
+        // オフライン用
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             if (!playerObjSelf)
             {
-                Debug.LogError("playerObjSelf���ݒ肳��Ă��Ȃ�");
+                Debug.LogError("playerObjSelfが設定されていない");
             }
             playerObjs.Add(Guid.Empty, playerObjSelf);
 
-            // �v���C���[�̃X�e�[�^�X���p���ݒ�
+            // プレイヤーのステータス引継ぎ設定
             if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
             else ApplySelfPlayerStatusData();
 
@@ -123,15 +122,15 @@ public class CharacterManager : MonoBehaviour
             return;
         }
 
-        // ���ɃX�e�[�W�ɔz�u����Ă���v���C���[���폜���A�Q���l�����v���C���[����
+        // 既にステージに配置されているプレイヤーを削除し、参加人数分プレイヤー生成
         DestroyExistingPlayer();
         GenerateCharacters();
 
-        // �v���C���[�̃X�e�[�^�X���p���ݒ�
+        // プレイヤーのステータス引継ぎ設定
         if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
         else ApplySelfPlayerStatusData();
 
-        // �ʒm������o�^
+        // 通知処理を登録
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser += this.OnLeave;
@@ -142,7 +141,6 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn += this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived += this.OnBeamEffectActived;
-        RoomModel.Instance.OnDeleteEnemySyn += this.OnDeleteEnemy;
     }
 
     private void Start()
@@ -157,7 +155,7 @@ public class CharacterManager : MonoBehaviour
         if (!RoomModel.Instance) return;
         StopAllCoroutines();
 
-        // �V�[���J�ڂ����Ƃ��ɓo�^�����ʒm����������
+        // シーン遷移したときに登録した通知処理を解除
         RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser -= this.OnLeave;
@@ -168,13 +166,12 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn -= this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived -= this.OnBeamEffectActived;
-        RoomModel.Instance.OnDeleteEnemySyn -= this.OnDeleteEnemy;
     }
 
-    #region �L�����N�^�[�֘A
+    #region キャラクター関連
 
     /// <summary>
-    /// �}�l�[�W���[�ŕێ����Ă���v���C���[�̃X�e�[�^�X�f�[�^���X�V����
+    /// マネージャーで保持しているプレイヤーのステータスデータを更新する
     /// </summary>
     public void UpdateSelfSelfPlayerStatusData()
     {
@@ -189,7 +186,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �}�l�[�W���[�ŕێ����Ă���v���C���[�̃X�e�[�^�X�f�[�^��K�p������
+    /// マネージャーで保持しているプレイヤーのステータスデータを適用させる
     /// </summary>
     public void ApplySelfPlayerStatusData()
     {
@@ -202,7 +199,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �L�����N�^�[�̏��X�V�Ăяo���p�R���[�`��
+    /// キャラクターの情報更新呼び出し用コルーチン
     /// </summary>
     /// <returns></returns>
     public IEnumerator UpdateCoroutine()
@@ -219,7 +216,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �L�����N�^�[�̏����X�V����
+    /// キャラクターの情報を更新する
     /// </summary>
     /// <param name="characterData"></param>
     /// <param name="character"></param>
@@ -231,7 +228,7 @@ public class CharacterManager : MonoBehaviour
         List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All };
         if (character.gameObject.tag == "Enemy")
         {
-            // �G�̏ꍇ��HP�ȊO���X�V����
+            // 敵の場合はHP以外を更新する
             addStatusTypes = new List<STATUS_TYPE>() {
                 STATUS_TYPE.Defense,
                 STATUS_TYPE.Power,
@@ -257,7 +254,7 @@ public class CharacterManager : MonoBehaviour
 
         if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
-        // ����L�����ȊO�̃v���C���[�I�u�W�F�N�g���k���Ȃ��悤�ɂ���
+        // 操作キャラ以外のプレイヤーオブジェクトが震えないようにする
         if (character.tag == "Player" && character.gameObject != playerObjSelf)
         {
             character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
@@ -265,10 +262,10 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    #region �v���C���[�֘A
+    #region プレイヤー関連
 
     /// <summary>
-    /// �w�肵������L�����̐����m�F
+    /// 指定した操作キャラの生存確認
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -278,11 +275,11 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ���ɃV�[����ɑ��݂��Ă���v���C���[��j������
+    /// 既にシーン上に存在しているプレイヤーを破棄する
     /// </summary>
     void DestroyExistingPlayer()
     {
-        // ���ɃV�[����ɑ��݂��Ă��鑀��L�������폜����
+        // 既にシーン上に存在している操作キャラを削除する
         var players = FindObjectsByType<PlayerBase>(FindObjectsSortMode.None);
         foreach (var player in players)
         {
@@ -291,7 +288,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �Q�����Ă��郆�[�U�[�������ɁA�v���C���[�𐶐�����
+    /// 参加しているユーザー情報を元に、プレイヤーを生成する
     /// </summary>
     void GenerateCharacters()
     {
@@ -329,10 +326,10 @@ public class CharacterManager : MonoBehaviour
 
             playerObj.transform.Find("Camera").GetComponent<Camera>().targetTexture = playerUIList[count];
 
-            // ��ʊOUI�̍쐬
+            // 画面外UIの作成
             var obj = GameObject.Find("OffScreenUI").transform;
             var playerUI = Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
-            playerUI.transform.Find("��/Image/RawImage").GetComponent<RawImage>().texture 
+            playerUI.transform.Find("Arow/Image/RawImage").GetComponent<RawImage>().texture 
                 = playerUIList[count];
             playerUI.GetComponent<PlayerUI>().target = playerObj.transform;
 
@@ -343,7 +340,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ���g�ȊO�̃v���C���[��List�ɂ��ĕԂ�
+    /// 自身以外のプレイヤーをListにして返す
     /// </summary>
     /// <returns></returns>
     public List<PlayerBase> GetPlayersExceptSelf()
@@ -361,7 +358,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �v���C���[���擾
+    /// プレイヤー情報取得
     /// </summary>
     /// <returns></returns>
     PlayerData GetPlayerData()
@@ -396,14 +393,14 @@ public class CharacterManager : MonoBehaviour
             AnimationId = player.GetAnimId(),
             DebuffList = statusEffectController.GetAppliedStatusEffects(),
 
-            // �ȉ��͐�p�ϐ�
+            // 以下は専用変数
             ConnectionId = RoomModel.Instance.ConnectionId,
             IsDead = player.IsDead
         };
     }
 
     /// <summary>
-    /// �ʒm���������L�����̃r�[���G�t�F�N�g��ON/OFF
+    /// 通知があったキャラのビームエフェクトのON/OFF
     /// </summary>
     /// <param name="conID"></param>
     /// <param name="isActive"></param>
@@ -418,10 +415,10 @@ public class CharacterManager : MonoBehaviour
 
     #endregion
 
-    #region �G�֘A
+    #region 敵関連
 
     /// <summary>
-    /// ��Փx����ɑS�Ă̓G�̃X�e�[�^�X���㏸������
+    /// 難易度を基に全ての敵のステータスを上昇させる
     /// </summary>
     public void ApplyDifficultyToAllEnemies()
     {
@@ -432,7 +429,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �V���ȓG�����X�g�ɒǉ�����
+    /// 新たな敵をリストに追加する
     /// </summary>
     /// <param name="newEnemies"></param>
     public void AddEnemiesToList(params SpawnedEnemy[] newEnemies)
@@ -444,7 +441,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ���X�g����G���폜
+    /// リストから敵を削除
     /// </summary>
     public void RemoveEnemyFromList(string uniqueId)
     {
@@ -452,13 +449,13 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// SPAWN_ENEMY_TYPE�̒l�ɊY������G�����Ԃ�
+    /// SPAWN_ENEMY_TYPEの値に該当する敵だけ返す
     /// </summary>
     /// <param name="spawnType"></param>
     /// <returns></returns>
     public List<GameObject> GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE spawnType)
     {
-        List<GameObject> result = new List<GameObject>();   // �Ԃ��G�̃��X�g
+        List<GameObject> result = new List<GameObject>();   // 返す敵のリスト
         foreach (var data in enemies)
         {
             if (data.Value.SpawnType == spawnType && data.Value.Enemy.HP > 0) result.Add(data.Value.Object);
@@ -468,13 +465,13 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �w�肵���[��ID�ɕR�Â��G��Ԃ�
+    /// 指定した端末IDに紐づく敵を返す
     /// </summary>
     /// <param name="terminalID"></param>
     /// <returns></returns>
     public List<GameObject> GetEnemysByTerminalID(int terminalID)
     {
-        List<GameObject> result = new List<GameObject>();   // �Ԃ��G�̃��X�g
+        List<GameObject> result = new List<GameObject>();   // 返す敵のリスト
         foreach (var data in enemies)
         {
             if (data.Value.TerminalID == terminalID && data.Value.Enemy.HP > 0) result.Add(data.Value.Object);
@@ -483,24 +480,24 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �w��[���ɕR�Â��G�̍폜
+    /// 指定端末に紐づく敵の削除
     /// </summary>
     /// <param name="termID"></param>
     public void DeleteTerminalEnemy(int termID)
     {
-        // �폜�Ώۂ̃L�[���ꎞ�I�ɕۑ����郊�X�g
+        // 削除対象のキーを一時的に保存するリスト
         var removeKeys = new List<string>();
 
         foreach (var data in enemies)
         {
             if (data.Value.TerminalID == termID && data.Value.Enemy.HP > 0)
             {
-                Destroy(data.Value.Object); // �Q�[���I�u�W�F�N�g���폜
-                removeKeys.Add(data.Key);   // ��������폜����L�[��ǉ�
+                Destroy(data.Value.Object); // ゲームオブジェクトを削除
+                removeKeys.Add(data.Key);   // 辞書から削除するキーを追加
             }
         }
 
-        // ���[�v���I����Ă���܂Ƃ߂č폜
+        // ループが終わってからまとめて削除
         foreach (var key in removeKeys)
         {
             enemies.Remove(key);
@@ -508,7 +505,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �G�̏��擾
+    /// 敵の情報取得
     /// </summary>
     /// <returns></returns>
     List<EnemyData> GetEnemyDatas()
@@ -526,7 +523,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �{�X��Ԃ�����
+    /// ボスを返す処理
     /// </summary>
     /// <returns></returns>
     public EnemyBase GetBossObject()
@@ -546,10 +543,10 @@ public class CharacterManager : MonoBehaviour
 
     #endregion
 
-    #region ���˕��֘A
+    #region 発射物関連
 
     /// <summary>
-    /// ���˕��̃v���t�@�u���^�C�v���ɂ܂Ƃ߂�
+    /// 発射物のプレファブをタイプ事にまとめる
     /// </summary>
     public void SetProjectilePrefabsByType()
     {
@@ -561,10 +558,10 @@ public class CharacterManager : MonoBehaviour
 
     #endregion
 
-    #region ���������֘A
+    #region 同期処理関連
 
     /// <summary>
-    /// �ގ��ʒm
+    /// 退室通知
     /// </summary>
     /// <param name="joinedUser"></param>
     void OnLeave(JoinedUser joinedUser)
@@ -575,7 +572,7 @@ public class CharacterManager : MonoBehaviour
             playerObjs.Remove(joinedUser.ConnectionId);
             Destroy(player);
 
-            // �G�������Ă���v���C���[�̃��X�g���X�V
+            // 敵が持っているプレイヤーのリストを更新
             foreach (var enemy in enemies.Values)
             {
                 if (enemy.Enemy.Target == player) enemy.Enemy.GetNearPlayer(enemy.Enemy.transform.position);
@@ -584,7 +581,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �}�X�^�̌��������n���ꂽ�Ƃ��ɁA�S�Ă̓G�̃X�N���v�g���A�N�e�B�u�ɂ���
+    /// マスタの権限が譲渡されたときに、全ての敵のスクリプトをアクティブにする
     /// </summary>
     void ActivateAllEnemies()
     {
@@ -594,10 +591,10 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    #region ���N�G�X�g�֘A
+    #region リクエスト関連
 
     /// <summary>
-    /// �}�X�^�[�N���C�A���g�p�̏��X�V
+    /// マスタークライアント用の情報更新
     /// </summary>
     async void UpdateMasterDataRequest()
     {
@@ -612,29 +609,29 @@ public class CharacterManager : MonoBehaviour
             TerminalDatas = TerminalManager.Instance.TerminalDatas
         };
 
-        // �Q�[���^�C�}�[�X�V
+        // ゲームタイマー更新
         TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
 
-        // �}�X�^�N���C�A���g���X�V���N�G�X�g
+        // マスタクライアント情報更新リクエスト
         await RoomModel.Instance.UpdateMasterClientAsync(masterClientData);
     }
 
     /// <summary>
-    /// �v���C���[�̏��X�V
+    /// プレイヤーの情報更新
     /// </summary>
     async void UpdatePlayerDataRequest()
     {
         var playerData = GetPlayerData();
 
-        // �v���C���[���X�V���N�G�X�g
+        // プレイヤー情報更新リクエスト
         await RoomModel.Instance.UpdatePlayerAsync(playerData);
     }
     #endregion
 
-    #region �ʒm�����֘A
+    #region 通知処理関連
 
     /// <summary>
-    /// �v���C���[���S����
+    /// プレイヤー死亡同期
     /// </summary>
     /// <param name="uniqueId"></param>
     void OnPlayerDead(Guid uniqueId)
@@ -645,7 +642,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �v���C���[�̃X�e�[�^�X�X�V�ʒm
+    /// プレイヤーのステータス更新通知
     /// </summary>
     void OnUpdatePlayerStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData)
     {
@@ -657,20 +654,20 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �v���C���[�̍X�V�̒ʒm
+    /// プレイヤーの更新の通知
     /// </summary>
     /// <param name="playerData"></param>
     void OnUpdatePlayer(PlayerData playerData)
     {
         if (!playerObjs.ContainsKey(playerData.ConnectionId) || !RoomModel.Instance) return;
 
-        // �v���C���[�̏��X�V
+        // プレイヤーの情報更新
         var player = playerObjs[playerData.ConnectionId].GetComponent<PlayerBase>();
         UpdateCharacter(playerData, player);
     }
 
     /// <summary>
-    /// �}�X�^�[�N���C�A���g�̍X�V�ʒm
+    /// マスタークライアントの更新通知
     /// </summary>
     /// <param name="masterClientData"></param>
     void OnUpdateMasterClient(MasterClientData masterClientData)
@@ -678,12 +675,12 @@ public class CharacterManager : MonoBehaviour
         if (RoomModel.Instance.IsMaster) return;
         if (!playerObjs.ContainsKey(masterClientData.PlayerData.ConnectionId)) return;
 
-        // �v���C���[�̏��X�V
+        // プレイヤーの情報更新
         var player = playerObjs[masterClientData.PlayerData.ConnectionId].GetComponent<PlayerBase>();
-        if (player == null) Debug.Log("�f�[�^�������Ă��܂���");
+        if (player == null) Debug.Log("データが入っていません");
         UpdateCharacter(masterClientData.PlayerData, player);
 
-        // �G�̏��X�V
+        // 敵の情報更新
         foreach (var enemyData in masterClientData.EnemyDatas)
         {
             bool isEnemy = enemies.ContainsKey(enemyData.UniqueId);
@@ -694,18 +691,18 @@ public class CharacterManager : MonoBehaviour
             enemy.UpdateEnemy(enemyData);
         }
 
-        // �M�~�b�N�̏��X�V
+        // ギミックの情報更新
         GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
 
-        // �Q�[���^�C�}�[�X�V
+        // ゲームタイマー更新
         TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
 
-        // �[�����̍X�V
+        // 端末情報の更新
         TerminalManager.Instance.OnUpdateTerminal(masterClientData.TerminalDatas);
     }
 
     /// <summary>
-    /// �G�̔�_���ʒm����
+    /// 敵の被ダメ通知処理
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
@@ -718,14 +715,14 @@ public class CharacterManager : MonoBehaviour
 
             if (isAttackerAlive)
             {
-                // �U�R�G�̂Ƃ������m�b�N�o�b�N������
+                // ザコ敵のときだけノックバックさせる
                 isKnockback = !enemy.IsBoss && enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
                 attacker = playerObjs[damageData.AttackerId];
             }
             enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, attacker, isKnockback, true, damageData.DebuffList.ToArray());
 
             if (isAttackerAlive && RoomModel.Instance.ConnectionId == damageData.AttackerId)
-            {   // �����b�N�u���Q�C���R�[�h�v���L���A�^�_���[�W�̈ꕔ��HP��
+            {   // レリック「リゲインコード」所有時、与ダメージの一部をHP回復
                 var plBase = playerObjSelf.GetComponent<PlayerBase>();
 
                 if (plBase.DmgHealRate > 0)
@@ -745,7 +742,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �e�̔��˒ʒm
+    /// 弾の発射通知
     /// </summary>
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>
@@ -761,7 +758,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ���x���A�b�v�ʒm
+    /// レベルアップ通知
     /// </summary>
     /// <param name="level"></param>
     /// <param name="nowExp"></param>
@@ -780,19 +777,6 @@ public class CharacterManager : MonoBehaviour
             if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
         }
         LevelManager.Options.Add(optionsKey, statusOptionList);
-    }
-
-    /// <summary>
-    /// �G�̍폜�ʒm
-    /// </summary>
-    /// <param name="enemId"></param>
-    void OnDeleteEnemy(string enemId)
-    {
-        if(enemies.ContainsKey(enemId))
-        {
-            Destroy(enemies[enemId].Enemy.gameObject);
-            RemoveEnemyFromList(enemId);
-        }
     }
 
     #endregion
