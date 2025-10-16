@@ -322,8 +322,8 @@ public class CharacterManager : MonoBehaviour
             }
 
             // âÊñ äOUIÇÃçÏê¨
-            var obj = GameObject.Find("OffScreenUI").transform;
-            Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
+            //var obj = GameObject.Find("OffScreenUI").transform;
+            //Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
         }
     }
 
