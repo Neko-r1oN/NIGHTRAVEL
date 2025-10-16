@@ -130,6 +130,13 @@ namespace Shared.Interfaces.StreamingHubs
         Task ApplyDamageToEnemyAsync(string enemID, int dmgAmount);
 
         /// <summary>
+        /// 指定した敵を削除する
+        /// </summary>
+        /// <param name="enemId"></param>
+        /// <returns></returns>
+        Task DeleteEnemyAsync(string enemId);
+
+        /// <summary>
         /// ステータス強化選択
         /// </summary>
         /// <param name="conID">接続ID</param>

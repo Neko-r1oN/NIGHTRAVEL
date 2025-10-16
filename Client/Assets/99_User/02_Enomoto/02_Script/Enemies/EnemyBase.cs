@@ -814,13 +814,20 @@ abstract public class EnemyBase : CharacterBase
     /// トリガー接触判定
     /// </summary>
     /// <param name="collision"></param>
-    private void OnTriggerEnter2D(Collider2D collision)
+    private async void OnTriggerEnter2D(Collider2D collision)
     {
         // 範囲外にでたら破棄する
         if (!canIgnoreDeadZoneCollision && collision.gameObject.tag == "Gimmick/Abyss")
         {
-            CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
-            Destroy(gameObject);
+            if (RoomModel.Instance && RoomModel.Instance.IsMaster)
+            {
+                await RoomModel.Instance.DeleteEnemyAsync(uniqueId);
+            }
+            else
+            {
+                CharacterManager.Instance.RemoveEnemyFromList(uniqueId);
+                Destroy(gameObject);
+            }
         }
     }
 

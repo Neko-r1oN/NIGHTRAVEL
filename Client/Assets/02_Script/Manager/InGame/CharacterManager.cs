@@ -15,6 +15,7 @@ using Unity.VisualScripting.FullSerializer;
 using Unity.Cinemachine;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
+using System.Xml;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -134,6 +135,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn += this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived += this.OnBeamEffectActived;
+        RoomModel.Instance.OnDeleteEnemySyn += this.OnDeleteEnemy;
     }
 
     private void Start()
@@ -159,6 +161,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn -= this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived -= this.OnBeamEffectActived;
+        RoomModel.Instance.OnDeleteEnemySyn -= this.OnDeleteEnemy;
     }
 
     #region キャラクター関連
@@ -755,6 +758,19 @@ public class CharacterManager : MonoBehaviour
             if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
         }
         LevelManager.Options.Add(optionsKey, statusOptionList);
+    }
+
+    /// <summary>
+    /// 敵の削除通知
+    /// </summary>
+    /// <param name="enemId"></param>
+    void OnDeleteEnemy(string enemId)
+    {
+        if(enemies.ContainsKey(enemId))
+        {
+            Destroy(enemies[enemId].Enemy.gameObject);
+            RemoveEnemyFromList(enemId);
+        }
     }
 
     #endregion

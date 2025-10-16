@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 9207136420313239124}
   - component: {fileID: 7178489085277108187}
   - component: {fileID: 5949251019882078576}
+  - component: {fileID: 8157734367451167582}
   m_Layer: 12
   m_Name: "A(\xD73)"
   m_TagString: Gimmick/Scaffold
@@ -371,3 +372,19 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!208 &8157734367451167582
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9155987005726821882}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.55, y: 0.3, z: 2.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

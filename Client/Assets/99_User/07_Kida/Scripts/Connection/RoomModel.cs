@@ -121,6 +121,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //敵体力増減通知
     public Action<EnemyDamegeData> OnEnemyHealthSyn { get; set; }
 
+    //敵削除通知
+    public Action<string> OnDeleteEnemySyn { get; set; }
+
 
     #endregion
 
@@ -449,6 +452,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnEnemyHealth(EnemyDamegeData enemyDamegeData)
     {
         OnEnemyHealthSyn(enemyDamegeData);
+    }
+
+    /// <summary>
+    /// 指定した敵を削除する通知
+    /// </summary>
+    /// <param name="enemId"></param>
+    public void OnDeleteEnemy(string enemId)
+    {
+        OnDeleteEnemySyn(enemId);
     }
 
     /// <summary>
@@ -807,6 +819,17 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         await roomHub.ChooseUpgrade(optionsKey, upgradeOpt);
     }
+
+    /// <summary>
+    /// 指定した敵を削除する
+    /// </summary>
+    /// <param name="enemId"></param>
+    /// <returns></returns>
+    public async UniTask DeleteEnemyAsync(string enemId)
+    {
+        await roomHub.DeleteEnemyAsync(enemId);
+    }
+
     #endregion
 
     #region レリック関連

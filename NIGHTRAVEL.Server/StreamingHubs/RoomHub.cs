@@ -853,6 +853,17 @@ namespace StreamingHubs
         }
 
         /// <summary>
+        /// 指定した敵の削除リクエスト
+        /// </summary>
+        /// <param name="enemId"></param>
+        /// <returns></returns>
+        public async Task DeleteEnemyAsync(string enemId)
+        {
+            DeleteEnemyData(enemId);
+            this.roomContext.Group.All.OnDeleteEnemy(enemId);
+        }
+
+        /// <summary>
         /// 指定された敵の除外
         /// </summary>
         /// <param name="uniqueId"></param>

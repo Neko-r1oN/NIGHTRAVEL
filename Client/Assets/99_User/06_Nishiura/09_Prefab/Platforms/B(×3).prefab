@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 9207136420313239124}
   - component: {fileID: 3945601055267385547}
   - component: {fileID: 538595437630595309}
+  - component: {fileID: 8902180298702489702}
   m_Layer: 12
   m_Name: "B(\xD73)"
   m_TagString: Gimmick/Scaffold
@@ -371,3 +372,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.5821438, y: 0.10890913}
   m_EdgeRadius: 0
+--- !u!208 &8902180298702489702
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9155987005726821882}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.55, y: 0.3, z: 2.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

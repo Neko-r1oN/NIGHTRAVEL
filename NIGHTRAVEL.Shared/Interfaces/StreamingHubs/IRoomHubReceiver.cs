@@ -139,6 +139,13 @@ namespace Shared.Interfaces.StreamingHubs
         /// </summary>
         /// <param name="enemDmgData">敵被弾データ</param>
         void OnEnemyHealth(EnemyDamegeData enemDmgData);
+
+        /// <summary>
+        /// 指定した敵の情報削除通知
+        /// </summary>
+        /// <param name="enemId"></param>
+        void OnDeleteEnemy(string enemId);
+
         #endregion
         #region レリック関連
 
