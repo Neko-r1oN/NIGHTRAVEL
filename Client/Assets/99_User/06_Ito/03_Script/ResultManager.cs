@@ -99,8 +99,19 @@ public class ResultManager : MonoBehaviour
     /// </summary>
     public void DisplayResultData(ResultData resultData)
     {
-        jobText.text = resultData.PlayerClass.ToString();                         // プレイヤーの情報
-        levelText.text = resultData.DifficultyLevel.ToString();                   // ゲームの難易度
+        jobText.text = resultData.PlayerClass.ToString();   // プレイヤーの情報
+        //levelText.text = resultData.DifficultyLevel.ToString();  
+
+        // ゲームの難易度
+        if (resultData.DifficultyLevel <= 5)
+        {
+            levelText.text =
+                LevelManager.Instance.LevelName[(DIFFICULTY_TYPE)resultData.DifficultyLevel].ToString();
+        }
+        else
+        {
+            levelText.text = LevelManager.Instance.LevelName[DIFFICULTY_TYPE.Hell].ToString();
+        }
 
         List<EnumManager.RELIC_TYPE> relics = new List<EnumManager.RELIC_TYPE>();
 
@@ -120,8 +131,8 @@ public class ResultManager : MonoBehaviour
         }
 
         stageNumText.text = resultData.TotalClearStageCount.ToString();           // 攻略ステージ数
-        arrivalLevelText.text = 
-            LevelManager.Instance.LevelName[(DIFFICULTY_TYPE)resultData.DifficultyLevel].ToString(); // 到達レベル
+        arrivalLevelText.text
+            = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>().NowLv.ToString();
         survivalTimeText.text = resultData.AliveTime.ToString(@"mm\:ss");         // 生存時間
         totalExterminationText.text = resultData.EnemyKillCount.ToString();       // 総討伐数
         grantDamageText.text = resultData.TotalGaveDamage.ToString();             // 総付与ダメージ数

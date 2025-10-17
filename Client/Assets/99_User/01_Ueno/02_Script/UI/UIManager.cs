@@ -22,6 +22,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
+using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 
 public class UIManager : MonoBehaviour
 {
@@ -396,18 +397,30 @@ public class UIManager : MonoBehaviour
         int count = 0;
         var players = CharacterManager.Instance.GetPlayersExceptSelf();
 
-        foreach (var p in players)
+        foreach(var p in players)
         {
-            if (p != null && playerStatus[count].activeSelf == false)
+            if(p !=  null)
             {
                 playerStatus[count].SetActive(true);
-                // 名前反映
-                
-
-                playerStatus[count].transform.Find("Text(Name)").GetComponent<Text>().text
-                    = TitleManagerk.SteamUserName;
+                count++;
             }
-            count++;
+        }
+
+        List<JoinedUser> list = RoomModel.Instance.joinedUserList.Values.ToList();
+
+        int playerCnt = 0;
+        foreach(var user in  list)
+        {
+            if (playerStatus[playerCnt].activeSelf == true)
+            {
+                if (RoomModel.Instance.ConnectionId != user.ConnectionId)
+                {
+                    // 名前反映
+                    playerStatus[playerCnt].transform.Find("Text(Name)").GetComponent<Text>().text
+                        = user.UserData.Name;
+                    count++;
+                }
+            }
         }
 
         gamepad = Gamepad.current;
