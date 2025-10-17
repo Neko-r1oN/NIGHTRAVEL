@@ -329,9 +329,13 @@ public class CharacterManager : MonoBehaviour
             // 画面外UIの作成
             var obj = GameObject.Find("OffScreenUI").transform;
             var playerUI = Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
+            playerUI.gameObject.name = "player" + count + 1; 
             playerUI.transform.Find("Arow/Image/RawImage").GetComponent<RawImage>().texture 
                 = playerUIList[count];
             playerUI.GetComponent<PlayerUI>().target = playerObj.transform;
+
+            playerUI.GetComponentInChildren<Text>().text
+                = joinduser.Value.UserData.Name;
 
             playerUIObjs.Add(joinduser.Value.ConnectionId, playerUI);
 
@@ -609,9 +613,6 @@ public class CharacterManager : MonoBehaviour
             TerminalDatas = TerminalManager.Instance.TerminalDatas
         };
 
-        // ゲームタイマー更新
-        TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
-
         // マスタクライアント情報更新リクエスト
         await RoomModel.Instance.UpdateMasterClientAsync(masterClientData);
     }
@@ -693,9 +694,6 @@ public class CharacterManager : MonoBehaviour
 
         // ギミックの情報更新
         GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
-
-        // ゲームタイマー更新
-        TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
 
         // 端末情報の更新
         TerminalManager.Instance.OnUpdateTerminal(masterClientData.TerminalDatas);
