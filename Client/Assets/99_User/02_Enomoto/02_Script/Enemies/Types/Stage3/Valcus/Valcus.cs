@@ -136,8 +136,6 @@ public class Valcus : EnemyBase
     {
         base.Start();
         isAttacking = false;
-        doOnceDecision = true;
-        NextDecision();
     }
 
     /// <summary>
@@ -727,6 +725,8 @@ public class Valcus : EnemyBase
     public override void OnEndSpawnAnimEvent()
     {
         base.OnEndSpawnAnimEvent();
+        doOnceDecision = true;
+        NextDecision();
         ApplyStun(0.5f, false);
     }
 

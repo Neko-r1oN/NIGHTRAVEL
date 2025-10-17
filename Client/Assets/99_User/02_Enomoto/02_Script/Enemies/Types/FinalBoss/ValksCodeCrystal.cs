@@ -152,8 +152,6 @@ public class ValksCodeCrystal : EnemyBase
     {
         base.Start();
         isAttacking = false;
-        doOnceDecision = true;
-        NextDecision();
     }
 
     /// <summary>
@@ -218,11 +216,9 @@ public class ValksCodeCrystal : EnemyBase
 
         // 実行していなければ、行動の抽選のコルーチンを開始
         string key = COROUTINE.NextDecision.ToString();
-        if (!ContaintsManagedCoroutine(key))
-        {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
-            managedCoroutines.Add(key, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(key);
+        Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
+        managedCoroutines.Add(key, coroutine);
     }
 
     /// <summary>
@@ -251,7 +247,7 @@ public class ValksCodeCrystal : EnemyBase
         }
         else if (canAttackNormal || canAttackSmash || canAttackLaser)
         {
-            if (!IsBackFall() && nextDecide != DECIDE_TYPE.Tracking && nextDecide != DECIDE_TYPE.BackOff) weights[DECIDE_TYPE.BackOff] = wasAttacking ? 15 : 5;
+            if (!IsBackFall() && nextDecide != DECIDE_TYPE.Tracking && nextDecide != DECIDE_TYPE.BackOff) weights[DECIDE_TYPE.BackOff] = 100;
 
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_NormalCombo] = wasAttacking ? 5 : 15;
             if (canAttackNormal) weights[DECIDE_TYPE.Attack_PunchCombo] = wasAttacking ? 5 : 15;
@@ -330,6 +326,7 @@ public class ValksCodeCrystal : EnemyBase
     /// <returns></returns>
     IEnumerator AttackCooldown(float time, Action onFinished)
     {
+        if (UIManager.Instance) UIManager.Instance.SetPlayerUIVisibility(true);
         RemoveTargetGroup();
         DisableAllDamageColliders();
         isAttacking = true;
@@ -401,12 +398,6 @@ public class ValksCodeCrystal : EnemyBase
         nonLaserAttackCount++;
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
-
-        nonDiveAttackCount++;
-        nonLaserAttackCount++;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_PunchCombo);
     }
 
@@ -415,7 +406,6 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAttackAnim2Event()
     {
-
         m_rb2d.linearVelocity = Vector2.zero;
         if (!IsNormalAttack())
         {
@@ -424,20 +414,6 @@ public class ValksCodeCrystal : EnemyBase
         }
 
         LookAtTarget();
-        SEManager.Instance.Play(
-              audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
-              volumeRate: 1.0f,                //音量の倍率
-              delay: 0.0f,                //再生されるまでの遅延時間
-              pitch: 1.0f,                //ピッチ
-              isLoop: false,             //ループ再生するか
-              callback: null              //再生終了後の処理
-              );
-
-        nonDiveAttackCount++;
-        nonLaserAttackCount++;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         Vector2 vec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed * 2, 0f);
         m_rb2d.AddForce(vec, ForceMode2D.Impulse);
     }
@@ -456,11 +432,6 @@ public class ValksCodeCrystal : EnemyBase
               callback: null              //再生終了後の処理
               );
 
-        nonDiveAttackCount++;
-        nonLaserAttackCount++;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         m_rb2d.linearVelocity = Vector2.zero;
         if (!IsNormalAttack())
         {
@@ -543,20 +514,8 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackLaser()
     {
-        SEManager.Instance.Play(
-              audioPath: SEPath.RIFLE_LASER, //再生したいオーディオのパス
-              volumeRate: 1.0f,                //音量の倍率
-              delay: 0.0f,                //再生されるまでの遅延時間
-              pitch: 1.0f,                //ピッチ
-              isLoop: false,             //ループ再生するか
-              callback: null              //再生終了後の処理
-              );
+        if (UIManager.Instance) UIManager.Instance.SetPlayerUIVisibility(false);
 
-        nonDiveAttackCount++;
-        nonLaserAttackCount++;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         nonDiveAttackCount++;
         nonLaserAttackCount = 0;
         isAttacking = true;
@@ -592,20 +551,6 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAnimEventOption1()
     {
-        SEManager.Instance.Play(
-              audioPath: SEPath.FINAL_BOSS_SKILL, //再生したいオーディオのパス
-              volumeRate: 1.0f,                //音量の倍率
-              delay: 0.0f,                //再生されるまでの遅延時間
-              pitch: 1.0f,                //ピッチ
-              isLoop: false,             //ループ再生するか
-              callback: null              //再生終了後の処理
-              );
-
-        nonDiveAttackCount++;
-        nonLaserAttackCount++;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         Vector2 point = new Vector2(iceRockPsPoints[0].position.x, iceRockPsPointsY[0]);
         var iceRock = Instantiate(iceRockPsPrefabs[1], point, iceRockPsPrefabs[1].transform.rotation);
 
@@ -618,20 +563,6 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAnimEventOption2()
     {
-        SEManager.Instance.Play(
-              audioPath: SEPath.FINAL_BOSS_SKILL, //再生したいオーディオのパス
-              volumeRate: 1.0f,                //音量の倍率
-              delay: 0.0f,                //再生されるまでの遅延時間
-              pitch: 1.0f,                //ピッチ
-              isLoop: false,             //ループ再生するか
-              callback: null              //再生終了後の処理
-              );
-
-        nonDiveAttackCount++;
-        nonLaserAttackCount++;
-        isAttacking = true;
-        m_rb2d.linearVelocity = Vector2.zero;
-        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         Vector2 point = new Vector2(iceRockPsPoints[0].position.x, iceRockPsPointsY[0]);
         Instantiate(iceRockPsPrefabs[0], point, iceRockPsPrefabs[0].transform.rotation);
 
@@ -850,6 +781,8 @@ public class ValksCodeCrystal : EnemyBase
     {
         base.OnEndSpawnAnimEvent();
         ApplyStun(0.5f, false);
+        doOnceDecision = true;
+        NextDecision();
     }
 
     #endregion

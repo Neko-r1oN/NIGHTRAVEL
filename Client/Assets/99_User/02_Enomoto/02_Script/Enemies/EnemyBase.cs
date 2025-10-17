@@ -265,7 +265,7 @@ abstract public class EnemyBase : CharacterBase
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
         // ターゲットが存在しない || 現在のターゲットが死亡している場合
-        if (!target || target && target.GetComponent<PlayerBase>().IsDead)
+        if (target == null || target && target.GetComponent<PlayerBase>().IsDead)
         {
             // 新しくターゲットを探す
             if (!isBoss) target = sightChecker.GetTargetInSight();
