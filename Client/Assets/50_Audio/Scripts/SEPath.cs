@@ -5,10 +5,13 @@
 /// </summary>
 public static class SEPath{
 
+	public const string BEAM             = "SE/beam";
+	public const string BOSS_HANIATK     = "SE/06_Boss/boss_haniatk";
 	public const string BUTTON_FOCUS     = "SE/50_Button/Button_Focus";
 	public const string BUTTON_PUSH      = "SE/50_Button/Button_Push";
 	public const string CURSOR_POWER_UP  = "SE/50_Button/Cursor_PowerUp";
 	public const string DANBO_ATK        = "SE/02_Hit/danbo_atk";
+	public const string DRONE_SHOT       = "SE/drone_Shot";
 	public const string FINAL_BOSS_ATK   = "SE/06_Boss/Last/FinalBoss_atk";
 	public const string FINAL_BOSS_SKILL = "SE/06_Boss/Last/FinalBoss_Skill";
 	public const string GEKIHA           = "SE/gekiha";
@@ -16,10 +19,13 @@ public static class SEPath{
 	public const string IRON_HIT         = "SE/02_Hit/iron_hit";
 	public const string KAMINARI         = "SE/kaminari";
 	public const string LAST_DEATH       = "SE/02_Hit/last_death";
+	public const string LEVEL_UP         = "SE/LEVEL_UP";
+	public const string MISSILE_HASSYA   = "SE/missile_hassya";
 	public const string MOB_DEATH        = "SE/02_Hit/mob_death";
 	public const string MOB_HIT          = "SE/02_Hit/mob_hit";
 	public const string OBJ_HIT          = "SE/02_Hit/obj_hit";
 	public const string POWER_UP         = "SE/50_Button/PowerUp";
+	public const string RERIKKU_GET      = "SE/rerikku_Get";
 	public const string RIFLE_CHANGE     = "SE/04_Rifle/rifle_change";
 	public const string RIFLE_LASER      = "SE/04_Rifle/Rifle_laser";
 	public const string RIFLE_SKILL1     = "SE/04_Rifle/rifle_skill1";

@@ -136,8 +136,6 @@ public class Valcus : EnemyBase
     {
         base.Start();
         isAttacking = false;
-        doOnceDecision = true;
-        NextDecision();
     }
 
     /// <summary>
@@ -200,11 +198,9 @@ public class Valcus : EnemyBase
 
         // 実行していなければ、行動の抽選のコルーチンを開始
         string key = COROUTINE.NextDecision.ToString();
-        if (!ContaintsManagedCoroutine(key))
-        {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
-            managedCoroutines.Add(key, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(key);
+        Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
+        managedCoroutines.Add(key, coroutine);
     }
 
     /// <summary>
@@ -310,11 +306,9 @@ public class Valcus : EnemyBase
 
         // 実行していなければ、攻撃の判定を繰り返すコルーチンを開始
         string attackKey = COROUTINE.MeleeAttack.ToString();
-        if (!ContaintsManagedCoroutine(attackKey))
-        {
-            Coroutine coroutine = StartCoroutine(MeleeAttack());
-            managedCoroutines.Add(attackKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(attackKey);
+        Coroutine coroutine = StartCoroutine(MeleeAttack());
+        managedCoroutines.Add(attackKey, coroutine);
     }
 
     /// <summary>
@@ -370,13 +364,11 @@ public class Valcus : EnemyBase
     {
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -561,13 +553,11 @@ public class Valcus : EnemyBase
     void StartTracking()
     {
         string cooldownKey = COROUTINE.Tracking.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(TrackingCoroutine(() => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(TrackingCoroutine(() => {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -648,13 +638,11 @@ public class Valcus : EnemyBase
         float coroutineTime = 0.3f;
 
         string cooldownKey = COROUTINE.BackOff.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(BackOffCoroutine(coroutineTime, () => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(BackOffCoroutine(coroutineTime, () => {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -692,7 +680,7 @@ public class Valcus : EnemyBase
         else
         {
             float distToPlayer = target.transform.position.x - this.transform.position.x;
-            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -2, m_rb2d.linearVelocity.y);
+            speedVec = new Vector2(distToPlayer / Mathf.Abs(distToPlayer) * moveSpeed * -5, m_rb2d.linearVelocity.y);
         }
         m_rb2d.linearVelocity = speedVec;
     }
@@ -727,6 +715,8 @@ public class Valcus : EnemyBase
     public override void OnEndSpawnAnimEvent()
     {
         base.OnEndSpawnAnimEvent();
+        doOnceDecision = true;
+        NextDecision();
         ApplyStun(0.5f, false);
     }
 

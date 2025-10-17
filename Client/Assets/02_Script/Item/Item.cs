@@ -1,3 +1,4 @@
+using KanKikuchi.AudioManager;
 using Shared.Interfaces.StreamingHubs;
 using UnityEngine;
 
@@ -20,5 +21,14 @@ public class Item : MonoBehaviour
         // 獲得時のパーティクル生成
         // Instantiate();
         Destroy(gameObject);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.RERIKKU_GET, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 }
