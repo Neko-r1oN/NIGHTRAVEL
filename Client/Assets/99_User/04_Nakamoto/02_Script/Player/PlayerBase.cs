@@ -1089,7 +1089,8 @@ abstract public class PlayerBase : CharacterBase
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
 
-        SpectatorModeManager.Instance.FocusCameraOnAlivePlayer(); 
+        SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
+        UIManager.Instance.DisplaySpectatingPlayer();
 
         this.gameObject.SetActive(false);
     }

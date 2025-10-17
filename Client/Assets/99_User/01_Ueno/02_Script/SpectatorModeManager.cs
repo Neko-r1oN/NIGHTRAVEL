@@ -36,12 +36,12 @@ public class SpectatorModeManager : MonoBehaviour
     void Start()
     {
         int key = 0;
-        foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
-        {
-            players.Add(key, obj);
+        //foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
+        //{
+        //    players.Add(key, obj);
 
-            key++;
-        }
+        //    key++;
+        //}
 
         camera = GameObject.Find("Main Camera");
     }
@@ -55,7 +55,18 @@ public class SpectatorModeManager : MonoBehaviour
     [ContextMenu("FocusCameraOnAlivePlayer")]
     public void FocusCameraOnAlivePlayer()
     {
-        foreach(var player in players)
+        if (players == null)
+        {
+            int key = 0;
+            foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
+            {
+                players.Add(key, obj);
+
+                key++;
+            }
+        }
+
+        foreach (var player in players)
         {
             if(player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
             {
