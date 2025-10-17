@@ -1180,6 +1180,7 @@ MonoBehaviour:
   enemyTypeId: 11
   uniqueId: 
   selfName: "\u30DF\u30B5\u30A4\u30EB\u30DE\u30B7\u30F3"
+  target: {fileID: 0}
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 7245635556140295198}
@@ -1207,8 +1208,8 @@ MonoBehaviour:
   spawnWeight: 20
   checkObstacleRange: 1
   canDrawRay: 0
-  baseExp: 150
-  exp: 150
+  baseExp: 300
+  exp: 300
   aimTransform: {fileID: 3212924761432693944}
   missileBulletPrefab: {fileID: 8984535176473800557, guid: 59976e335e9771a4cb2c6860845c2c56, type: 3}
   shootSpeed: 10

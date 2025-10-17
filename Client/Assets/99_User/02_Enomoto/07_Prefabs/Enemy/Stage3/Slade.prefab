@@ -123220,7 +123220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 550
   baseDefense: 60
-  basePower: 230
+  basePower: 460
   baseJumpPower: 10
   baseMoveSpeed: 50
   baseAttackSpeedFactor: 1
@@ -123236,6 +123236,7 @@ MonoBehaviour:
   enemyTypeId: 18
   uniqueId: 
   selfName: "\u30B9\u30EC\u30A4\u30C9"
+  target: {fileID: 0}
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 8111079912193473430}
@@ -123265,8 +123266,8 @@ MonoBehaviour:
   spawnWeight: 3
   checkObstacleRange: 1.6
   canDrawRay: 0
-  baseExp: 1170
-  exp: 1170
+  baseExp: 2340
+  exp: 2340
   meleeAttackCheck: {fileID: 4066523943036003898}
   meleeAttackRange: 1.6
   wallCheck: {fileID: 5550355178020488396}

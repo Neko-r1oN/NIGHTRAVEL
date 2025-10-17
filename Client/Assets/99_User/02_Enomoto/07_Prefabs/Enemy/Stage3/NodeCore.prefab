@@ -210,7 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHp: 150
   baseDefense: 120
-  basePower: 60
+  basePower: 120
   baseJumpPower: 10
   baseMoveSpeed: 2.5
   baseAttackSpeedFactor: 1
@@ -226,6 +226,7 @@ MonoBehaviour:
   enemyTypeId: 17
   uniqueId: 
   selfName: "\u30CE\u30FC\u30C9\u30FB\u30B3\u30A2"
+  target: {fileID: 0}
   destroyWaitSec: 1
   spriteRenderers:
   - {fileID: 4527119475634867735}
@@ -253,8 +254,8 @@ MonoBehaviour:
   spawnWeight: 40
   checkObstacleRange: 0.6
   canDrawRay: 0
-  baseExp: 279
-  exp: 279
+  baseExp: 558
+  exp: 558
   aimTransform: {fileID: 4106505268527017184}
   nodeBulletPrefabs:
   - {fileID: 6169146074370880187, guid: d1e09ecc8d1ebb740a4c5c8eca94e049, type: 3}
