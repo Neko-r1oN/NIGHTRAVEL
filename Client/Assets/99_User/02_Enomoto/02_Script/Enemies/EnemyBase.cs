@@ -34,7 +34,7 @@ abstract public class EnemyBase : CharacterBase
 
     #region プレイヤー・ターゲット
     [Header("プレイヤー・ターゲット")]
-    protected GameObject target;
+    public GameObject target;
     public GameObject Target { get { return target; } set { target = value; } }
 
     protected CharacterManager characterManager;
@@ -261,20 +261,7 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void FixedUpdate()
     {
-        if(isBoss && !target) SelectNewTargetInBossRoom();
-
-        if (target)
-        {
-            // ターゲットとの距離を取得する
-            disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
-            disToTargetX = MathF.Abs(target.transform.position.x - transform.position.x);
-        }
-        else
-        {
-            disToTarget = float.MaxValue;
-            disToTargetX = float.MaxValue;
-        }
-
+        CalculateDistanceToTarget();
         if (isSpawn || isStun || isAttacking || isInvincible || hp <= 0 || !sightChecker) return;
 
         // ターゲットが存在しない || 現在のターゲットが死亡している場合
@@ -407,6 +394,24 @@ abstract public class EnemyBase : CharacterBase
     #region プレイヤー・ターゲット関連
 
     /// <summary>
+    /// ターゲットとの距離を計測する
+    /// </summary>
+    protected void CalculateDistanceToTarget()
+    {
+        if (target)
+        {
+            // ターゲットとの距離を取得する
+            disToTarget = Vector3.Distance(target.transform.position, this.transform.position);
+            disToTargetX = MathF.Abs(target.transform.position.x - transform.position.x);
+        }
+        else
+        {
+            disToTarget = float.MaxValue;
+            disToTargetX = float.MaxValue;
+        }
+    }
+
+    /// <summary>
     /// ボス部屋にいるプレイヤーの中から新しくターゲットを決める
     /// </summary>
     protected bool SelectNewTargetInBossRoom()
@@ -418,7 +423,7 @@ abstract public class EnemyBase : CharacterBase
         foreach (var player in players)
         {
             var playerBase = player.GetComponent<PlayerBase>();
-            if (player && playerBase.IsDead && playerBase.HP > 0 && playerBase.IsBossArea)
+            if (player && !playerBase.IsDead && playerBase.HP > 0 && playerBase.IsBossArea)
             {
                 target = player;
                 isSucsess = true;
