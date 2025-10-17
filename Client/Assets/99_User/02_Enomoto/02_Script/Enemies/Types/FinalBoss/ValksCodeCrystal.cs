@@ -311,13 +311,11 @@ public class ValksCodeCrystal : EnemyBase
     {
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () => {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -615,13 +613,11 @@ public class ValksCodeCrystal : EnemyBase
     {
         m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
         string cooldownKey = COROUTINE.Tracking.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(TrackingCoroutine(() => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(TrackingCoroutine(() => {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -687,13 +683,11 @@ public class ValksCodeCrystal : EnemyBase
         const float coroutineTime = 1.2f;
         m_rb2d.linearVelocity = new Vector2(0, m_rb2d.linearVelocity.y);
         string cooldownKey = COROUTINE.BackOff.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
-        {
-            Coroutine coroutine = StartCoroutine(BackOffCoroutine(coroutineTime, () => {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(BackOffCoroutine(coroutineTime, () => {
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>

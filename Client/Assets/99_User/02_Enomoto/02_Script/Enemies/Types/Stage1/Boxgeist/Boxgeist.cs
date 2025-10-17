@@ -203,11 +203,9 @@ public class Boxgeist : EnemyBase
 
         // 実行していなければ、行動の抽選のコルーチンを開始
         string key = COROUTINE.NextDecision.ToString();
-        if (!ContaintsManagedCoroutine(key))
-        {
-            Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
-            managedCoroutines.Add(key, coroutine);
-        }
+        RemoveAndStopCoroutineByKey(key);
+        Coroutine coroutine = StartCoroutine(NextDecisionCoroutine(time, () => { RemoveAndStopCoroutineByKey(key); }));
+        managedCoroutines.Add(key, coroutine);
     }
 
     /// <summary>
@@ -304,14 +302,12 @@ public class Boxgeist : EnemyBase
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackRange.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackRangeCoroutine(() =>
         {
-            Coroutine coroutine = StartCoroutine(AttackRangeCoroutine(() =>
-            {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -395,14 +391,12 @@ public class Boxgeist : EnemyBase
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackShotgun.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackShotgunCoroutine(() =>
         {
-            Coroutine coroutine = StartCoroutine(AttackShotgunCoroutine(() =>
-            {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -502,14 +496,12 @@ public class Boxgeist : EnemyBase
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackGolem.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackGolemCoroutine(() =>
         {
-            Coroutine coroutine = StartCoroutine(AttackGolemCoroutine(() =>
-            {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -578,14 +570,12 @@ public class Boxgeist : EnemyBase
 
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackFallBlock.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackFakkBlockCoroutine(() =>
         {
-            Coroutine coroutine = StartCoroutine(AttackFakkBlockCoroutine(() =>
-            {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
@@ -644,14 +634,12 @@ public class Boxgeist : EnemyBase
     {
         // 実行していなければ、クールダウンのコルーチンを開始
         string cooldownKey = COROUTINE.AttackCooldown.ToString();
-        if (!ContaintsManagedCoroutine(cooldownKey))
+        RemoveAndStopCoroutineByKey(cooldownKey);
+        Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () =>
         {
-            Coroutine coroutine = StartCoroutine(AttackCooldown(attackCoolTime, () =>
-            {
-                RemoveAndStopCoroutineByKey(cooldownKey);
-            }));
-            managedCoroutines.Add(cooldownKey, coroutine);
-        }
+            RemoveAndStopCoroutineByKey(cooldownKey);
+        }));
+        managedCoroutines.Add(cooldownKey, coroutine);
     }
 
     /// <summary>
