@@ -96,6 +96,7 @@ public class Valcus : EnemyBase
     float decisionTimeMax = 2f;
     float randomDecision;
     bool endDecision;
+    DECIDE_TYPE lastAttack = DECIDE_TYPE.Waiting;
     #endregion
 
     #region í«è]ä÷òA
@@ -158,9 +159,11 @@ public class Valcus : EnemyBase
                     break;
                 case DECIDE_TYPE.Attack_Normal:
                     AttackNormal();
+                    lastAttack = DECIDE_TYPE.Attack_Normal;
                     break;
                 case DECIDE_TYPE.Attack_SmashCombo:
                     AttackSmash1();
+                    lastAttack = DECIDE_TYPE.Attack_SmashCombo;
                     break;
                 case DECIDE_TYPE.Tracking:
                     StartTracking();
@@ -237,8 +240,18 @@ public class Valcus : EnemyBase
         {
             if(!IsBackFall()) weights[DECIDE_TYPE.BackOff] = wasAttacking ? 15 : 5;
 
-            if (canAttackNormal) weights[DECIDE_TYPE.Attack_Normal] = wasAttacking ? 5 : 15;
-            else if(canAttackSmashCombo) weights[DECIDE_TYPE.Attack_SmashCombo] = wasAttacking ? 5 : 15;
+            if (wasAttacking)
+            {
+                if (canAttackNormal) weights[DECIDE_TYPE.Attack_Normal] = 5;
+                if (canAttackSmashCombo) weights[DECIDE_TYPE.Attack_SmashCombo] = 5;
+            }
+            else
+            {
+                if (canAttackNormal) 
+                    weights[DECIDE_TYPE.Attack_Normal] = lastAttack == DECIDE_TYPE.Attack_Normal ? 15 : 20;
+                if (canAttackSmashCombo) 
+                    weights[DECIDE_TYPE.Attack_SmashCombo] = lastAttack == DECIDE_TYPE.Attack_SmashCombo ? 10 : 30;
+            }
         }
         else if (canChaseTarget && target)
         {
