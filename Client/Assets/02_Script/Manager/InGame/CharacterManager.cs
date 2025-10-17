@@ -161,6 +161,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn += this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived += this.OnBeamEffectActived;
+        RoomModel.Instance.OnDeleteEnemySyn += this.OnDestroyEnemy;
     }
 
     private void Start()
@@ -186,6 +187,7 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn -= this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived -= this.OnBeamEffectActived;
+        RoomModel.Instance.OnDeleteEnemySyn -= this.OnDestroyEnemy;
     }
 
     #region キャラクター関連
@@ -844,6 +846,20 @@ public class CharacterManager : MonoBehaviour
             if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
         }
         LevelManager.Options.Add(optionsKey, statusOptionList);
+    }
+
+
+    /// <summary>
+    /// 敵の削除通知
+    /// </summary>
+    /// <param name="enemId"></param>
+    void OnDestroyEnemy(string enemId)
+    {
+        if (enemies.ContainsKey(enemId))
+        {
+            Destroy(enemies[enemId].Enemy.gameObject);
+            enemies.Remove(enemId);
+        }
     }
 
     #endregion
