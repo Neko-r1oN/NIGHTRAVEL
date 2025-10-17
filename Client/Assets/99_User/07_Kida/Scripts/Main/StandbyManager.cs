@@ -4,6 +4,7 @@ using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
@@ -105,6 +106,15 @@ public class StandbyManager : MonoBehaviour
             playerIcons.Add(gameObject);
             iconImages[i] = gameObject.transform.Find("IconBG").gameObject.transform.Find("Icon").gameObject.GetComponent<Image>();
             iconImages[i].sprite = iconCharacterImage[joinedUser.Value.CharacterID];
+            //準備完了に合わせてアイコンの色を初期化する
+            if(joinedUser.Value.IsReady == true)
+            {//準備完了
+                playerIcons[joinedUser.Value.JoinOrder - 1].GetComponent<Image>().color = new Color(255.0f, 183.0f, 0.0f);
+            }
+            else
+            {//準備完了していない
+                playerIcons[joinedUser.Value.JoinOrder - 1].GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f);
+            }
             i++;
         }
 
@@ -131,6 +141,7 @@ public class StandbyManager : MonoBehaviour
                 playerIcons.Add(gameObject);
                 iconImages[j] = gameObject.transform.Find("IconBG").gameObject.transform.Find("Icon").gameObject.GetComponent<Image>();
                 iconImages[j].sprite = iconCharacterImage[0];
+                playerIcons[j].GetComponent<Image>().color = new Color(165.0f, 165.0f, 165.0f);
             }
         }
         if (i < 3)
@@ -152,7 +163,7 @@ public class StandbyManager : MonoBehaviour
             playerIcons.Add(gameObject);
             iconImages[i] = gameObject.transform.Find("IconBG").gameObject.transform.Find("Icon").gameObject.GetComponent<Image>();
             iconImages[i].sprite = iconCharacterImage[0];
-            
+            playerIcons[i].GetComponent<Image>().color = new Color(165.0f, 165.0f, 165.0f);
         }
 
     }

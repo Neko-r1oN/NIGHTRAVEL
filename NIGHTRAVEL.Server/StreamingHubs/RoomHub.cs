@@ -8,6 +8,7 @@ using Grpc.Core;
 using MagicOnion.Server.Hubs;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NIGHTRAVEL.Server.Model.Context;
 using NIGHTRAVEL.Server.Services;
 using NIGHTRAVEL.Server.StreamingHubs;
@@ -200,6 +201,7 @@ namespace StreamingHubs
             {
                 // Nullチェック入れる
                 if (this.roomContext==null) return;
+                if (!this.roomContext.JoinedUserList.ContainsKey(this.ConnectionId)) return;
 
                 GameDbContext context = new GameDbContext();
 
@@ -241,6 +243,9 @@ namespace StreamingHubs
 
                 // ルームデータから自身のデータを削除
                 roomContext.characterDataList.Remove(this.ConnectionId);;
+
+                //ゲームが始まっていないなら実行しない
+                if (roomContext.IsStartGame == false) return;
 
                 // 全滅判定変数
                 bool isAllDead = true;
@@ -1597,6 +1602,7 @@ namespace StreamingHubs
         /// <returns></returns>
         public async void Result()
         {
+            if (this.roomContext.characterDataList.Count == 0) return;
             foreach (var conectionId in this.roomContext.JoinedUserList.Keys)
             {   
                 var playerData = this.roomContext.characterDataList[conectionId];

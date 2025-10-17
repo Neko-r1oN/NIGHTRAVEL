@@ -54,6 +54,14 @@ public class MatchingManager : MonoBehaviour
     string roomSerchName;
     int errorId;
 
+    //入室か生成の判別用
+    private static string joinMode;
+
+    public static string JoinMode
+    {
+        get { return joinMode; }
+    }
+
     //新マッチング用のユーザーID
     private static int userId;
     public static int UserID
@@ -67,8 +75,8 @@ public class MatchingManager : MonoBehaviour
         //実装時にはこの変数でユーザーを判断する
         //userModel = GameObject.Find("UserModel").GetComponent<UserModel>();
 
-        //安全動作のための初回ローディング
-        conducter.Loading();
+        ////安全動作のための初回ローディング
+        //conducter.Loading();
 
         #region RoomModel定義
         //ルームモデルがあるなら削除
@@ -106,19 +114,19 @@ public class MatchingManager : MonoBehaviour
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録
         RoomModel.Instance.OnJoinedUser += this.OnJoinedUser;
 
-        Invoke("SarchRoom",0.1f);
+        Invoke("SerchRoom",0.1f);
     }
 
-    void SarchRoom()
-    {
+    //void SarchRoom()
+    //{
 
-        //ルーム検索
-        SerchRoom();
+    //    //ルーム検索
+    //    SerchRoom();
 
-        //ローディング停止
-        Invoke("Loaded", 2.0f);
+    //    //ローディング停止
+    //    Invoke("Loaded", 2.0f);
 
-    }
+    //}
 
     public void ReturnTitle()
     {
@@ -129,6 +137,8 @@ public class MatchingManager : MonoBehaviour
     public void ErrorClose()
     {
         ErrorUI[errorId].SetActive(false);
+        //部屋再検索
+        SerchRoom();
     }
 
     public async void SerchRoom()
@@ -159,11 +169,12 @@ public class MatchingManager : MonoBehaviour
             if (roomNameText.text == "")
             {
                 errorId = 2;
-                ErrorUI[errorId].SetActive(true);
+                OnFailedJoinSyn(errorId);
                 Invoke("Loaded", 1.0f);
             }
             else
             {
+                joinMode = "create";
                 await RoomModel.Instance.JoinedAsync(roomNameText.text, userId, TitleManagerk.SteamUserName, passText.text,TitleManagerk.GameMode);
             }
         }
@@ -184,6 +195,7 @@ public class MatchingManager : MonoBehaviour
         }
         else
         {
+            joinMode = "join";
             conducter.Loading();
             await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, "",TitleManagerk.GameMode);
         }
@@ -195,6 +207,7 @@ public class MatchingManager : MonoBehaviour
     /// </summary>
     public async void PrivateRoomJoin()
     {
+        joinMode = "join";
         conducter.Loading();
         string pass = inputFieldPassWord.text;
         await RoomModel.Instance.JoinedAsync(joinRoomName, userId,TitleManagerk.SteamUserName, pass,TitleManagerk.GameMode);
@@ -236,6 +249,7 @@ public class MatchingManager : MonoBehaviour
             //ルームを表示させる
             GameObject newGamaObj = Instantiate(roomPrefab);
             newGamaObj.transform.parent = rooms;
+            newGamaObj.transform.localScale = new Vector3 (1, 1, 1);
 
             //子オブジェクトを探す
             GameObject roomN = newGamaObj.transform.Find("RoomName").gameObject;
@@ -271,16 +285,32 @@ public class MatchingManager : MonoBehaviour
         Invoke("Loaded", 1.0f);
     }
 
+    /// <summary>
+    /// 入室失敗通知
+    /// </summary>
+    /// <param name="errorId"></param>
     public void OnFailedJoinSyn(int errorId)
     {
         this.errorId = errorId;
         if(this.errorId == 0) 
-        {
+        {//参加可能人数超過
             ErrorUI[this.errorId].SetActive(true);
             conducter.Loaded();
         }
         if(this.errorId == 1)
-        {
+        {//パスワードが違う場合
+            PrivateUI.SetActive(false);
+            ErrorUI[this.errorId].SetActive(true);
+            conducter.Loaded();
+        }
+        if(this.errorId == 2)
+        {//部屋名未入力
+            PrivateUI.SetActive(false);
+            ErrorUI[this.errorId].SetActive(true);
+            conducter.Loaded();
+        }
+        if(this.errorId == 3)
+        {//部屋が存在しない
             PrivateUI.SetActive(false);
             ErrorUI[this.errorId].SetActive(true);
             conducter.Loaded();
