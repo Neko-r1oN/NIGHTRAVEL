@@ -55,7 +55,7 @@ public class SpectatorModeManager : MonoBehaviour
     [ContextMenu("FocusCameraOnAlivePlayer")]
     public void FocusCameraOnAlivePlayer()
     {
-        if (players == null)
+        if (players.Count == 0)
         {
             int key = 0;
             foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
