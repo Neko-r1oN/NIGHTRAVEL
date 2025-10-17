@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
 
 public class Hakonov : EnemyBase
 {
@@ -136,6 +137,15 @@ public class Hakonov : EnemyBase
 
     public override void OnAttackAnimEvent()
     {
+        SEManager.Instance.Play(
+               audioPath: SEPath.DANBO_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
         // 前に飛び出す
         Vector2 jumpVec = new Vector2(moveSpeed * 2.3f * TransformUtils.GetFacingDirection(transform), jumpPower);
         m_rb2d.linearVelocity = jumpVec;
@@ -251,6 +261,15 @@ public class Hakonov : EnemyBase
     /// </summary>
     protected override void OnHit()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.DANBO_ATK, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
     }
@@ -261,6 +280,14 @@ public class Hakonov : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
         SetAnimId((int)ANIM_ID.Dead);
     }
 

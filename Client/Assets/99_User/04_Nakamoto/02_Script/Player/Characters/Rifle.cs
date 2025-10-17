@@ -11,6 +11,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
+
 
 public class Rifle : PlayerBase
 {
@@ -245,6 +247,17 @@ public class Rifle : PlayerBase
             // ステータス更新
             UIManager.Instance.UpdatePlayerStatus();
 
+            SEManager.Instance.Play(
+                audioPath: SEPath.MOB_HIT, //再生したいオーディオのパス
+                volumeRate: 1.0f,                //音量の倍率
+                delay: 0.0f,                //再生されるまでの遅延時間
+                pitch: 1.0f,                //ピッチ
+                isLoop: false,             //ループ再生するか
+                callback: null              //再生終了後の処理
+                );
+
+           
+
             // アニメーション変更
             var id = animator.GetInteger("animation_id");
             if (position != null && id != (int)GS_ANIM_ID.Skill && id != (int)GS_ANIM_ID.BeamReady && !isFiring) animator.SetInteger("animation_id", (int)ANIM_ID.Hit);
@@ -326,6 +339,34 @@ public class Rifle : PlayerBase
     /// </summary>
     public void SkillEnd()
     {
+        SEManager.Instance.Play(
+               audioPath: SEPath.RIFLE_SKILL1, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
+        SEManager.Instance.Play(
+              audioPath: SEPath.RIFLE_SKILL2, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        SEManager.Instance.Play(
+              audioPath: SEPath.RIFLE_SKILL3, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+
         // 発射準備へ
         animator.SetInteger("animation_id", (int)GS_ANIM_ID.BeamReady);
     }
@@ -335,6 +376,14 @@ public class Rifle : PlayerBase
     /// </summary>
     public void ReadyToFire()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.RIFLE_CHANGE, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
         isSkill = false;
         isRailgun = true;
     }
@@ -362,6 +411,15 @@ public class Rifle : PlayerBase
         playerEffect.BeamEffectActive(true);
 
         audioSource.PlayOneShot(beamSE);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.RIFLE_LASER, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
 
         float laserTimer = 0f;   // 全体の照射時間
         float tickTimer = 0f;    // ダメージ間隔計測

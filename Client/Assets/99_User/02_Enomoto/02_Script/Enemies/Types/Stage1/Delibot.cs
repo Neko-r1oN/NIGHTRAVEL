@@ -11,6 +11,8 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
+
 public class Delibot : EnemyBase
 {
     /// <summary>
@@ -276,6 +278,15 @@ public class Delibot : EnemyBase
             return;
         }
 
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
         targetPos = target.transform.position;
         doOnceDecision = false;
         isAttacking = true;
@@ -364,6 +375,14 @@ public class Delibot : EnemyBase
     /// </summary>
     protected override void OnHit()
     {
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
         if (hp > 0) NextDecision();
@@ -375,6 +394,15 @@ public class Delibot : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
         SetAnimId((int)ANIM_ID.Dead);
     }
 

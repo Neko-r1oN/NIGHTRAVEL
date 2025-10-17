@@ -11,6 +11,7 @@ using System.Linq;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
 using Unity.Cinemachine;
+using KanKikuchi.AudioManager;
 
 public class ValksCodeCrystal : EnemyBase
 {
@@ -346,6 +347,15 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackNormalCombo()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
         nonDiveAttackCount++;
         nonLaserAttackCount++;
         isAttacking = true;
@@ -376,6 +386,21 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackPunchCombo()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
+
         nonDiveAttackCount++;
         nonLaserAttackCount++;
         isAttacking = true;
@@ -388,14 +413,29 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAttackAnim2Event()
     {
+
         m_rb2d.linearVelocity = Vector2.zero;
         if (!IsNormalAttack())
         {
             var nearTarget = GetNearPlayer();
             if (!nearTarget) target = nearTarget;
         }
-        LookAtTarget();
 
+        LookAtTarget();
+        SEManager.Instance.Play(
+              audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         Vector2 vec = new Vector2(TransformUtils.GetFacingDirection(transform) * moveSpeed * 2, 0f);
         m_rb2d.AddForce(vec, ForceMode2D.Impulse);
     }
@@ -405,6 +445,20 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnEndAttackAnim2Event()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         m_rb2d.linearVelocity = Vector2.zero;
         if (!IsNormalAttack())
         {
@@ -426,6 +480,21 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackDive()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.OBJ_HIT, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
+
         // 目標座標をキープしておく
         targetPos = GetGroundPointFrom(target);
         if (targetPos == null)
@@ -472,6 +541,20 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     void AttackLaser()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.RIFLE_LASER, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         nonDiveAttackCount++;
         nonLaserAttackCount = 0;
         isAttacking = true;
@@ -507,6 +590,20 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAnimEventOption1()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.FINAL_BOSS_SKILL, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         Vector2 point = new Vector2(iceRockPsPoints[0].position.x, iceRockPsPointsY[0]);
         var iceRock = Instantiate(iceRockPsPrefabs[1], point, iceRockPsPrefabs[1].transform.rotation);
 
@@ -519,6 +616,20 @@ public class ValksCodeCrystal : EnemyBase
     /// </summary>
     public override void OnAnimEventOption2()
     {
+        SEManager.Instance.Play(
+              audioPath: SEPath.FINAL_BOSS_SKILL, //再生したいオーディオのパス
+              volumeRate: 1.0f,                //音量の倍率
+              delay: 0.0f,                //再生されるまでの遅延時間
+              pitch: 1.0f,                //ピッチ
+              isLoop: false,             //ループ再生するか
+              callback: null              //再生終了後の処理
+              );
+
+        nonDiveAttackCount++;
+        nonLaserAttackCount++;
+        isAttacking = true;
+        m_rb2d.linearVelocity = Vector2.zero;
+        SetAnimId((int)ANIM_ID.Attack_NormalCombo);
         Vector2 point = new Vector2(iceRockPsPoints[0].position.x, iceRockPsPointsY[0]);
         Instantiate(iceRockPsPrefabs[0], point, iceRockPsPrefabs[0].transform.rotation);
 

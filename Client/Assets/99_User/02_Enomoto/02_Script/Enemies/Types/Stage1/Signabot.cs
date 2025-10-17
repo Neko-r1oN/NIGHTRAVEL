@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
 
 public class Signabot : EnemyBase
 {
@@ -141,12 +142,15 @@ public class Signabot : EnemyBase
     {
         while (true)
         {
+           
+
             // 自身がエリート個体の場合、付与する状態異常の種類を取得する
             DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
 
             Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(meleeAttackCheck.position, meleeAttackRange);
             for (int i = 0; i < collidersEnemies.Length; i++)
             {
+
                 if (collidersEnemies[i].gameObject.tag == "Player")
                 {
                     collidersEnemies[i].gameObject.GetComponent<PlayerBase>().ApplyDamage(power, transform.position, KB_POW.Medium, applyEffect);
@@ -201,6 +205,14 @@ public class Signabot : EnemyBase
     /// </summary>
     protected override void OnHit()
     {
+        SEManager.Instance.Play(
+             audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+             volumeRate: 1.0f,                //音量の倍率
+             delay: 0.0f,                //再生されるまでの遅延時間
+             pitch: 1.0f,                //ピッチ
+             isLoop: false,             //ループ再生するか
+             callback: null              //再生終了後の処理
+             );
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
     }
@@ -211,6 +223,14 @@ public class Signabot : EnemyBase
     /// <returns></returns>
     protected override void OnDead()
     {
+        SEManager.Instance.Play(
+             audioPath: SEPath.IRON_DEATH, //再生したいオーディオのパス
+             volumeRate: 1.0f,                //音量の倍率
+             delay: 0.0f,                //再生されるまでの遅延時間
+             pitch: 1.0f,                //ピッチ
+             isLoop: false,             //ループ再生するか
+             callback: null              //再生終了後の処理
+             );
         SetAnimId((int)ANIM_ID.Dead);
     }
 

@@ -4,7 +4,6 @@
 //----------------------------------------------------
 using JetBrains.Annotations;
 using KanKikuchi.AudioManager;
-using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using NUnit.Framework;
 using Shared.Interfaces.StreamingHubs;
@@ -307,7 +306,7 @@ public class GameManager : MonoBehaviour
             case STAGE_TYPE.Rust:  
                
                 SEManager.Instance.Play(
-                audioPath: SEPath.DEATH, //再生したいオーディオのパス
+                audioPath: SEPath.LAST_DEATH, //再生したいオーディオのパス
                 volumeRate: 0.5f,                //音量の倍率
                 delay: 0.5f,                //再生されるまでの遅延時間
                 pitch: 0.8f,                //ピッチ
@@ -319,18 +318,60 @@ public class GameManager : MonoBehaviour
 
             ///一面
             case STAGE_TYPE.Industry:
-                
+
+                SEManager.Instance.Play(
+               audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
                 break;
 
             ///二面
             case STAGE_TYPE.Town:
-                
+
+                SEManager.Instance.Play(
+                audioPath: SEPath.WORM_DEATH, //再生したいオーディオのパス
+                volumeRate: 1.0f,                //音量の倍率
+                delay: 0.0f,                //再生されるまでの遅延時間
+                pitch: 1.0f,                //ピッチ
+                isLoop: false,             //ループ再生するか
+                callback: null              //再生終了後の処理
+                );
+
+                SEManager.Instance.Play(
+               audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
                 break;
 
             ///三面
             case STAGE_TYPE.FinalBoss:
-                
 
+                SEManager.Instance.Play(
+                audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+                volumeRate: 1.0f,                //音量の倍率
+                delay: 0.0f,                //再生されるまでの遅延時間
+                pitch: 1.0f,                //ピッチ
+                isLoop: false,             //ループ再生するか
+                callback: null              //再生終了後の処理
+                );
+
+                SEManager.Instance.Play(
+               audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
                 break;
 
                
