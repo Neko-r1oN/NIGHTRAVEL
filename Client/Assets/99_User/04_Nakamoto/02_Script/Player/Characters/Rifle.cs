@@ -414,6 +414,7 @@ public class Rifle : PlayerBase
     private IEnumerator SkillCoolDown()
     {
         UIManager.Instance.DisplayCoolDown(true, skillCoolDown);
+        canMove = true;
 
         // クールダウン時間待機
         yield return new WaitForSeconds(skillCoolDown);
@@ -428,6 +429,7 @@ public class Rifle : PlayerBase
     {
         ResetFlag();
         playerEffect.BeamEffectActive(false);
+        canMove = true;
         animator.SetInteger("animation_id", (int)ANIM_ID.Idle);
     }
 

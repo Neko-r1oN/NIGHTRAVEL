@@ -562,7 +562,7 @@ abstract public class PlayerBase : CharacterBase
 
         if (Ladder())
         {
-            if (Input.GetKey(KeyCode.W) && canBlink && canSkill && canAttack || Input.GetAxisRaw("Vertical") >= STICK_DEAD_ZONE && canBlink && canSkill && canAttack)
+            if (Input.GetKey(KeyCode.W) && canBlink && canAttack || Input.GetAxisRaw("Vertical") >= STICK_DEAD_ZONE && canBlink && canAttack)
             {
                 if (!m_IsZipline)
                 {
@@ -1097,39 +1097,6 @@ abstract public class PlayerBase : CharacterBase
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
 
-        //if (CharacterManager.Instance.PlayerObjSelf)
-        //{
-        //    GameObject cmr = GameObject.Find("Main Camera");
-
-        //    foreach (var player in CharacterManager.Instance.PlayerObjs)
-        //    {
-        //        if (player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
-        //        {
-        //            continue;
-        //        }
-
-        //        if (player.Value != CharacterManager.Instance.PlayerObjSelf)
-        //        {
-        //            cmr.GetComponent<CinemachineCamera>().Target.TrackingTarget
-        //                = player.Value.transform;
-
-        //            UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
-        //            break;
-        //        }
-        //    }
-
-        //    List<GameObject> list = new List<GameObject>();
-        //    foreach (var obj in CharacterManager.Instance.PlayerUIObjs)
-        //    {
-        //        list.Add(obj.Value);
-        //    }
-
-        //    foreach (var obj in list)
-        //    {
-        //        Destroy(obj);
-        //    }
-        //}
-
         SpectatorModeManager.Instance.FocusCameraOnAlivePlayer(); 
 
         this.gameObject.SetActive(false);
@@ -1143,14 +1110,6 @@ abstract public class PlayerBase : CharacterBase
         animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
         canMove = false;
         invincible = true;
-
-        //if(CharacterManager.Instance.PlayerUIObjs.Count > 1)
-        //{
-        //    foreach(var obj in CharacterManager.Instance.PlayerUIObjs)
-        //    {
-        //        Destroy(obj.Value);
-        //    }
-        //}
     }
 
     /// <summary>

@@ -650,6 +650,7 @@ public class CharacterManager : MonoBehaviour
         {
             playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatus,STATUS_TYPE.All);
             playerObjSelf.GetComponent<PlayerBase>().ChangeRelicStatusData(prsData);
+            UIManager.Instance.UpdatePlayerStatus();
         }
     }
 

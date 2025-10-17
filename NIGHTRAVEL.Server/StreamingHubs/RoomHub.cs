@@ -41,7 +41,7 @@ namespace StreamingHubs
         private const int MAX_JOINABLE_PLAYERS = 3;
 
         // ステータス上限定数
-        private const float LVUP_HP = 0.1f;
+        private const float LVUP_HP = 0.07f;
         private const float LVUP_POW = 0.05f;
         private const float LVUP_DEF = 0.01f;
         private const float MAX_ATTACKSPEED = 1.15f;
