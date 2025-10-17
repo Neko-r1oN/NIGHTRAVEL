@@ -1,5 +1,5 @@
 //**************************************************
-//  ‘¶İ‚µ‚Ä‚¢‚éƒLƒƒƒ‰ƒNƒ^[‚ÌŠÇ—‚ğs‚¤
+//  å­˜åœ¨ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ç®¡ç†ã‚’è¡Œã†
 //  Author:r-enomoto
 //**************************************************
 using System;
@@ -15,54 +15,59 @@ using Unity.VisualScripting.FullSerializer;
 using Unity.Cinemachine;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
-using System.Xml;
+using UnityEngine.UI;
 
 public class CharacterManager : MonoBehaviour
 {
-    #region ƒvƒŒƒCƒ„[ŠÖ˜A
-    [SerializeField] List<Transform> startPoints = new List<Transform>();   // ŠeƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’u
+    #region ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é–¢é€£
+    [SerializeField] List<Transform> startPoints = new List<Transform>();   // å„ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸä½ç½®
     [SerializeField] GameObject charaSwordPrefab;
     [SerializeField] GameObject charaGunnerPrefab;
     [SerializeField] GameObject offScreenUIPrefab;
 
-    [SerializeField] GameObject playerObjSelf;  // ƒ[ƒJƒ‹—p‚É‘®«•t—^
+    [SerializeField] GameObject playerObjSelf;  // ãƒ­ãƒ¼ã‚«ãƒ«ç”¨ã«å±æ€§ä»˜ä¸
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
 
+    Dictionary<Guid,GameObject> playerUIObjs = new Dictionary<Guid, GameObject>();
+    public Dictionary<Guid, GameObject> PlayerUIObjs {  get { return playerUIObjs; } }
+
     /// <summary>
-    /// ©g‚ÌƒLƒƒƒ‰ƒNƒ^[ƒf[ƒ^(ƒV[ƒ“‘JˆÚ‚µ‚½‚Æ‚«‚ÌˆøŒp‚¬—p)
+    /// è‡ªèº«ã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ãƒ‡ãƒ¼ã‚¿(ã‚·ãƒ¼ãƒ³é·ç§»ã—ãŸã¨ãã®å¼•ç¶™ãç”¨)
     /// </summary>
     static public PlayerStatusData SelfPlayerStatusData { get; set; } = null;
 
     /// <summary>
-    /// ©•ª‚Ì‘€ìƒLƒƒƒ‰
+    /// è‡ªåˆ†ã®æ“ä½œã‚­ãƒ£ãƒ©
     /// </summary>
     public GameObject PlayerObjSelf { get { return playerObjSelf; } }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚ÌƒŠƒXƒg
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒªã‚¹ãƒˆ
     /// </summary>
     public Dictionary<Guid, GameObject> PlayerObjs { get { return playerObjs; } }
     #endregion
 
-    #region “GŠÖ˜A
+    #region æ•µé–¢é€£
     Dictionary<string, SpawnedEnemy> enemies = new Dictionary<string, SpawnedEnemy>();
 
     /// <summary>
-    /// Œ»İ‚ÌƒXƒe[ƒW‚Å¶¬‚µ‚½“G‚ÌƒŠƒXƒg
+    /// ç¾åœ¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã§ç”Ÿæˆã—ãŸæ•µã®ãƒªã‚¹ãƒˆ
     /// </summary>
     public Dictionary<string, SpawnedEnemy> Enemies { get { return enemies; } }
     #endregion
 
-    #region ”­Ë•¨ŠÖ˜A
+    #region ç™ºå°„ç‰©é–¢é€£
     [SerializeField]
     List<GameObject> projectilePrefabs = new List<GameObject>();
 
     Dictionary<PROJECTILE_TYPE, GameObject> projectilePrefabsByType = new Dictionary<PROJECTILE_TYPE, GameObject>();
     #endregion
 
-    #region ƒJƒƒ‰ŠÖ˜A
+    #region ã‚«ãƒ¡ãƒ©é–¢é€£
     [SerializeField] GameObject camera;
     [SerializeField] CinemachineTargetGroup cinemachineTargetGroup;
+
+    [SerializeField] RenderTexture[] playerUIList;
     #endregion
 
     const float updateSec = 0.1f;
@@ -86,20 +91,20 @@ public class CharacterManager : MonoBehaviour
         }
         else
         {
-            // ƒCƒ“ƒXƒ^ƒ“ƒX‚ª•¡”‘¶İ‚µ‚È‚¢‚æ‚¤‚ÉAŠù‚É‘¶İ‚µ‚Ä‚¢‚½‚ç©g‚ğÁ‹‚·‚é
+            // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒè¤‡æ•°å­˜åœ¨ã—ãªã„ã‚ˆã†ã«ã€æ—¢ã«å­˜åœ¨ã—ã¦ã„ãŸã‚‰è‡ªèº«ã‚’æ¶ˆå»ã™ã‚‹
             Destroy(gameObject);
         }
 
-        // ƒIƒtƒ‰ƒCƒ“—p
+        // ã‚ªãƒ•ãƒ©ã‚¤ãƒ³ç”¨
         if (!RoomModel.Instance || RoomModel.Instance.ConnectionId == Guid.Empty)
         {
             if (!playerObjSelf)
             {
-                Debug.LogError("playerObjSelf‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢");
+                Debug.LogError("playerObjSelfãŒè¨­å®šã•ã‚Œã¦ã„ãªã„");
             }
             playerObjs.Add(Guid.Empty, playerObjSelf);
 
-            // ƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒ^ƒXˆøŒp‚¬İ’è
+            // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼•ç¶™ãè¨­å®š
             if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
             else ApplySelfPlayerStatusData();
 
@@ -117,15 +122,15 @@ public class CharacterManager : MonoBehaviour
             return;
         }
 
-        // Šù‚ÉƒXƒe[ƒW‚É”z’u‚³‚ê‚Ä‚¢‚éƒvƒŒƒCƒ„[‚ğíœ‚µAQ‰Ál”•ªƒvƒŒƒCƒ„[¶¬
+        // æ—¢ã«ã‚¹ãƒ†ãƒ¼ã‚¸ã«é…ç½®ã•ã‚Œã¦ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å‰Šé™¤ã—ã€å‚åŠ äººæ•°åˆ†ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç”Ÿæˆ
         DestroyExistingPlayer();
         GenerateCharacters();
 
-        // ƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒ^ƒXˆøŒp‚¬İ’è
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å¼•ç¶™ãè¨­å®š
         if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
         else ApplySelfPlayerStatusData();
 
-        // ’Ê’mˆ—‚ğ“o˜^
+        // é€šçŸ¥å‡¦ç†ã‚’ç™»éŒ²
         RoomModel.Instance.OnUpdatePlayerSyn += this.OnUpdatePlayer;
         RoomModel.Instance.OnUpdateMasterClientSyn += this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser += this.OnLeave;
@@ -136,7 +141,6 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn += this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn += this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived += this.OnBeamEffectActived;
-        RoomModel.Instance.OnDeleteEnemySyn += this.OnDeleteEnemy;
     }
 
     private void Start()
@@ -151,7 +155,7 @@ public class CharacterManager : MonoBehaviour
         if (!RoomModel.Instance) return;
         StopAllCoroutines();
 
-        // ƒV[ƒ“‘JˆÚ‚µ‚½‚Æ‚«‚É“o˜^‚µ‚½’Ê’mˆ—‚ğ‰ğœ
+        // ã‚·ãƒ¼ãƒ³é·ç§»ã—ãŸã¨ãã«ç™»éŒ²ã—ãŸé€šçŸ¥å‡¦ç†ã‚’è§£é™¤
         RoomModel.Instance.OnUpdatePlayerSyn -= this.OnUpdatePlayer;
         RoomModel.Instance.OnUpdateMasterClientSyn -= this.OnUpdateMasterClient;
         RoomModel.Instance.OnLeavedUser -= this.OnLeave;
@@ -162,13 +166,12 @@ public class CharacterManager : MonoBehaviour
         RoomModel.Instance.OnLevelUpSyn -= this.OnLevelup;
         RoomModel.Instance.OnPlayerDeadSyn -= this.OnPlayerDead;
         RoomModel.Instance.OnBeamEffectActived -= this.OnBeamEffectActived;
-        RoomModel.Instance.OnDeleteEnemySyn -= this.OnDeleteEnemy;
     }
 
-    #region ƒLƒƒƒ‰ƒNƒ^[ŠÖ˜A
+    #region ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼é–¢é€£
 
     /// <summary>
-    /// ƒ}ƒl[ƒWƒƒ[‚Å•Û‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒ^ƒXƒf[ƒ^‚ğXV‚·‚é
+    /// ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã§ä¿æŒã—ã¦ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°ã™ã‚‹
     /// </summary>
     public void UpdateSelfSelfPlayerStatusData()
     {
@@ -183,7 +186,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ}ƒl[ƒWƒƒ[‚Å•Û‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒ^ƒXƒf[ƒ^‚ğ“K—p‚³‚¹‚é
+    /// ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã§ä¿æŒã—ã¦ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ‡ãƒ¼ã‚¿ã‚’é©ç”¨ã•ã›ã‚‹
     /// </summary>
     public void ApplySelfPlayerStatusData()
     {
@@ -196,7 +199,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒLƒƒƒ‰ƒNƒ^[‚Ìî•ñXVŒÄ‚Ño‚µ—pƒRƒ‹[ƒ`ƒ“
+    /// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®æƒ…å ±æ›´æ–°å‘¼ã³å‡ºã—ç”¨ã‚³ãƒ«ãƒ¼ãƒãƒ³
     /// </summary>
     /// <returns></returns>
     public IEnumerator UpdateCoroutine()
@@ -213,7 +216,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒLƒƒƒ‰ƒNƒ^[‚Ìî•ñ‚ğXV‚·‚é
+    /// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®æƒ…å ±ã‚’æ›´æ–°ã™ã‚‹
     /// </summary>
     /// <param name="characterData"></param>
     /// <param name="character"></param>
@@ -225,7 +228,7 @@ public class CharacterManager : MonoBehaviour
         List<STATUS_TYPE> addStatusTypes = new List<STATUS_TYPE>() { STATUS_TYPE.All };
         if (character.gameObject.tag == "Enemy")
         {
-            // “G‚Ìê‡‚ÍHPˆÈŠO‚ğXV‚·‚é
+            // æ•µã®å ´åˆã¯HPä»¥å¤–ã‚’æ›´æ–°ã™ã‚‹
             addStatusTypes = new List<STATUS_TYPE>() {
                 STATUS_TYPE.Defense,
                 STATUS_TYPE.Power,
@@ -251,7 +254,7 @@ public class CharacterManager : MonoBehaviour
 
         if (character.tag == "Enemy" && !character.GetComponent<EnemyBase>().IsStartComp) character.GetComponent<EnemyBase>().LoadStart();
 
-        // ‘€ìƒLƒƒƒ‰ˆÈŠO‚ÌƒvƒŒƒCƒ„[ƒIƒuƒWƒFƒNƒg‚ªk‚¦‚È‚¢‚æ‚¤‚É‚·‚é
+        // æ“ä½œã‚­ãƒ£ãƒ©ä»¥å¤–ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒéœ‡ãˆãªã„ã‚ˆã†ã«ã™ã‚‹
         if (character.tag == "Player" && character.gameObject != playerObjSelf)
         {
             character.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
@@ -259,10 +262,10 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    #region ƒvƒŒƒCƒ„[ŠÖ˜A
+    #region ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é–¢é€£
 
     /// <summary>
-    /// w’è‚µ‚½‘€ìƒLƒƒƒ‰‚Ì¶‘¶Šm”F
+    /// æŒ‡å®šã—ãŸæ“ä½œã‚­ãƒ£ãƒ©ã®ç”Ÿå­˜ç¢ºèª
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -272,11 +275,11 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Šù‚ÉƒV[ƒ“ã‚É‘¶İ‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[‚ğ”jŠü‚·‚é
+    /// æ—¢ã«ã‚·ãƒ¼ãƒ³ä¸Šã«å­˜åœ¨ã—ã¦ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç ´æ£„ã™ã‚‹
     /// </summary>
     void DestroyExistingPlayer()
     {
-        // Šù‚ÉƒV[ƒ“ã‚É‘¶İ‚µ‚Ä‚¢‚é‘€ìƒLƒƒƒ‰‚ğíœ‚·‚é
+        // æ—¢ã«ã‚·ãƒ¼ãƒ³ä¸Šã«å­˜åœ¨ã—ã¦ã„ã‚‹æ“ä½œã‚­ãƒ£ãƒ©ã‚’å‰Šé™¤ã™ã‚‹
         var players = FindObjectsByType<PlayerBase>(FindObjectsSortMode.None);
         foreach (var player in players)
         {
@@ -285,10 +288,12 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Q‰Á‚µ‚Ä‚¢‚éƒ†[ƒU[î•ñ‚ğŒ³‚ÉAƒvƒŒƒCƒ„[‚ğ¶¬‚·‚é
+    /// å‚åŠ ã—ã¦ã„ã‚‹ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã‚’å…ƒã«ã€ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹
     /// </summary>
     void GenerateCharacters()
     {
+        int count = 0;
+
         foreach (var joinduser in RoomModel.Instance.joinedUserList)
         {
             var point = startPoints[0];
@@ -302,33 +307,40 @@ public class CharacterManager : MonoBehaviour
             {
                 playerObjSelf = playerObj;
 
-                if (cinemachineTargetGroup)
-                {
-                    var newTarget = new CinemachineTargetGroup.Target
-                    {
-                        Object = playerObjSelf.transform,
-                        Radius = 1f,
-                        Weight = 1f
-                    };
-                    cinemachineTargetGroup.Targets.Add(newTarget);
-                }
-                else
-                {
-                    var target = new CameraTarget();
-                    target.TrackingTarget = playerObjSelf.transform;
-                    target.LookAtTarget = playerObjSelf.transform;
-                    camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
-                }
+                var target = new CameraTarget();
+                target.TrackingTarget = playerObjSelf.transform;
+                target.LookAtTarget = playerObjSelf.transform;
+                camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
             }
 
-            // ‰æ–ÊŠOUI‚Ìì¬
-            //var obj = GameObject.Find("OffScreenUI").transform;
-            //Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
+            if (cinemachineTargetGroup)
+            {
+                var newTarget = new CinemachineTargetGroup.Target
+                {
+                    Object = playerObjSelf.transform,
+                    Radius = 1f,
+                    Weight = 1f
+                };
+                cinemachineTargetGroup.Targets.Add(newTarget);
+            }
+
+            playerObj.transform.Find("Camera").GetComponent<Camera>().targetTexture = playerUIList[count];
+
+            // ç”»é¢å¤–UIã®ä½œæˆ
+            var obj = GameObject.Find("OffScreenUI").transform;
+            var playerUI = Instantiate(offScreenUIPrefab, Vector3.zero, Quaternion.identity, obj);
+            playerUI.transform.Find("Arow/Image/RawImage").GetComponent<RawImage>().texture 
+                = playerUIList[count];
+            playerUI.GetComponent<PlayerUI>().target = playerObj.transform;
+
+            playerUIObjs.Add(joinduser.Value.ConnectionId, playerUI);
+
+            count++;
         }
     }
 
     /// <summary>
-    /// ©gˆÈŠO‚ÌƒvƒŒƒCƒ„[‚ğList‚É‚µ‚Ä•Ô‚·
+    /// è‡ªèº«ä»¥å¤–ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’Listã«ã—ã¦è¿”ã™
     /// </summary>
     /// <returns></returns>
     public List<PlayerBase> GetPlayersExceptSelf()
@@ -346,7 +358,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[î•ñæ“¾
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æƒ…å ±å–å¾—
     /// </summary>
     /// <returns></returns>
     PlayerData GetPlayerData()
@@ -381,14 +393,14 @@ public class CharacterManager : MonoBehaviour
             AnimationId = player.GetAnimId(),
             DebuffList = statusEffectController.GetAppliedStatusEffects(),
 
-            // ˆÈ‰º‚Íê—p•Ï”
+            // ä»¥ä¸‹ã¯å°‚ç”¨å¤‰æ•°
             ConnectionId = RoomModel.Instance.ConnectionId,
             IsDead = player.IsDead
         };
     }
 
     /// <summary>
-    /// ’Ê’m‚ª‚ ‚Á‚½ƒLƒƒƒ‰‚Ìƒr[ƒ€ƒGƒtƒFƒNƒg‚ÌON/OFF
+    /// é€šçŸ¥ãŒã‚ã£ãŸã‚­ãƒ£ãƒ©ã®ãƒ“ãƒ¼ãƒ ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ON/OFF
     /// </summary>
     /// <param name="conID"></param>
     /// <param name="isActive"></param>
@@ -403,10 +415,10 @@ public class CharacterManager : MonoBehaviour
 
     #endregion
 
-    #region “GŠÖ˜A
+    #region æ•µé–¢é€£
 
     /// <summary>
-    /// “ïˆÕ“x‚ğŠî‚É‘S‚Ä‚Ì“G‚ÌƒXƒe[ƒ^ƒX‚ğã¸‚³‚¹‚é
+    /// é›£æ˜“åº¦ã‚’åŸºã«å…¨ã¦ã®æ•µã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šæ˜‡ã•ã›ã‚‹
     /// </summary>
     public void ApplyDifficultyToAllEnemies()
     {
@@ -417,7 +429,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// V‚½‚È“G‚ğƒŠƒXƒg‚É’Ç‰Á‚·‚é
+    /// æ–°ãŸãªæ•µã‚’ãƒªã‚¹ãƒˆã«è¿½åŠ ã™ã‚‹
     /// </summary>
     /// <param name="newEnemies"></param>
     public void AddEnemiesToList(params SpawnedEnemy[] newEnemies)
@@ -429,7 +441,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒŠƒXƒg‚©‚ç“G‚ğíœ
+    /// ãƒªã‚¹ãƒˆã‹ã‚‰æ•µã‚’å‰Šé™¤
     /// </summary>
     public void RemoveEnemyFromList(string uniqueId)
     {
@@ -437,13 +449,13 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// SPAWN_ENEMY_TYPE‚Ì’l‚ÉŠY“–‚·‚é“G‚¾‚¯•Ô‚·
+    /// SPAWN_ENEMY_TYPEã®å€¤ã«è©²å½“ã™ã‚‹æ•µã ã‘è¿”ã™
     /// </summary>
     /// <param name="spawnType"></param>
     /// <returns></returns>
     public List<GameObject> GetEnemiesBySpawnType(SPAWN_ENEMY_TYPE spawnType)
     {
-        List<GameObject> result = new List<GameObject>();   // •Ô‚·“G‚ÌƒŠƒXƒg
+        List<GameObject> result = new List<GameObject>();   // è¿”ã™æ•µã®ãƒªã‚¹ãƒˆ
         foreach (var data in enemies)
         {
             if (data.Value.SpawnType == spawnType && data.Value.Enemy.HP > 0) result.Add(data.Value.Object);
@@ -453,13 +465,13 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// w’è‚µ‚½’[––ID‚É•R‚Ã‚­“G‚ğ•Ô‚·
+    /// æŒ‡å®šã—ãŸç«¯æœ«IDã«ç´ã¥ãæ•µã‚’è¿”ã™
     /// </summary>
     /// <param name="terminalID"></param>
     /// <returns></returns>
     public List<GameObject> GetEnemysByTerminalID(int terminalID)
     {
-        List<GameObject> result = new List<GameObject>();   // •Ô‚·“G‚ÌƒŠƒXƒg
+        List<GameObject> result = new List<GameObject>();   // è¿”ã™æ•µã®ãƒªã‚¹ãƒˆ
         foreach (var data in enemies)
         {
             if (data.Value.TerminalID == terminalID && data.Value.Enemy.HP > 0) result.Add(data.Value.Object);
@@ -468,24 +480,24 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// w’è’[––‚É•R‚Ã‚­“G‚Ìíœ
+    /// æŒ‡å®šç«¯æœ«ã«ç´ã¥ãæ•µã®å‰Šé™¤
     /// </summary>
     /// <param name="termID"></param>
     public void DeleteTerminalEnemy(int termID)
     {
-        // íœ‘ÎÛ‚ÌƒL[‚ğˆê“I‚É•Û‘¶‚·‚éƒŠƒXƒg
+        // å‰Šé™¤å¯¾è±¡ã®ã‚­ãƒ¼ã‚’ä¸€æ™‚çš„ã«ä¿å­˜ã™ã‚‹ãƒªã‚¹ãƒˆ
         var removeKeys = new List<string>();
 
         foreach (var data in enemies)
         {
             if (data.Value.TerminalID == termID && data.Value.Enemy.HP > 0)
             {
-                Destroy(data.Value.Object); // ƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ğíœ
-                removeKeys.Add(data.Key);   // «‘‚©‚çíœ‚·‚éƒL[‚ğ’Ç‰Á
+                Destroy(data.Value.Object); // ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+                removeKeys.Add(data.Key);   // è¾æ›¸ã‹ã‚‰å‰Šé™¤ã™ã‚‹ã‚­ãƒ¼ã‚’è¿½åŠ 
             }
         }
 
-        // ƒ‹[ƒv‚ªI‚í‚Á‚Ä‚©‚ç‚Ü‚Æ‚ß‚Äíœ
+        // ãƒ«ãƒ¼ãƒ—ãŒçµ‚ã‚ã£ã¦ã‹ã‚‰ã¾ã¨ã‚ã¦å‰Šé™¤
         foreach (var key in removeKeys)
         {
             enemies.Remove(key);
@@ -493,7 +505,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// “G‚Ìî•ñæ“¾
+    /// æ•µã®æƒ…å ±å–å¾—
     /// </summary>
     /// <returns></returns>
     List<EnemyData> GetEnemyDatas()
@@ -511,7 +523,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ{ƒX‚ğ•Ô‚·ˆ—
+    /// ãƒœã‚¹ã‚’è¿”ã™å‡¦ç†
     /// </summary>
     /// <returns></returns>
     public EnemyBase GetBossObject()
@@ -531,10 +543,10 @@ public class CharacterManager : MonoBehaviour
 
     #endregion
 
-    #region ”­Ë•¨ŠÖ˜A
+    #region ç™ºå°„ç‰©é–¢é€£
 
     /// <summary>
-    /// ”­Ë•¨‚ÌƒvƒŒƒtƒ@ƒu‚ğƒ^ƒCƒv–‚É‚Ü‚Æ‚ß‚é
+    /// ç™ºå°„ç‰©ã®ãƒ—ãƒ¬ãƒ•ã‚¡ãƒ–ã‚’ã‚¿ã‚¤ãƒ—äº‹ã«ã¾ã¨ã‚ã‚‹
     /// </summary>
     public void SetProjectilePrefabsByType()
     {
@@ -546,10 +558,10 @@ public class CharacterManager : MonoBehaviour
 
     #endregion
 
-    #region “¯Šúˆ—ŠÖ˜A
+    #region åŒæœŸå‡¦ç†é–¢é€£
 
     /// <summary>
-    /// ‘Şº’Ê’m
+    /// é€€å®¤é€šçŸ¥
     /// </summary>
     /// <param name="joinedUser"></param>
     void OnLeave(JoinedUser joinedUser)
@@ -560,7 +572,7 @@ public class CharacterManager : MonoBehaviour
             playerObjs.Remove(joinedUser.ConnectionId);
             Destroy(player);
 
-            // “G‚ª‚Á‚Ä‚¢‚éƒvƒŒƒCƒ„[‚ÌƒŠƒXƒg‚ğXV
+            // æ•µãŒæŒã£ã¦ã„ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒªã‚¹ãƒˆã‚’æ›´æ–°
             foreach (var enemy in enemies.Values)
             {
                 if (enemy.Enemy.Target == player) enemy.Enemy.GetNearPlayer(enemy.Enemy.transform.position);
@@ -569,7 +581,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ}ƒXƒ^‚ÌŒ ŒÀ‚ª÷“n‚³‚ê‚½‚Æ‚«‚ÉA‘S‚Ä‚Ì“G‚ÌƒXƒNƒŠƒvƒg‚ğƒAƒNƒeƒBƒu‚É‚·‚é
+    /// ãƒã‚¹ã‚¿ã®æ¨©é™ãŒè­²æ¸¡ã•ã‚ŒãŸã¨ãã«ã€å…¨ã¦ã®æ•µã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
     /// </summary>
     void ActivateAllEnemies()
     {
@@ -579,10 +591,10 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    #region ƒŠƒNƒGƒXƒgŠÖ˜A
+    #region ãƒªã‚¯ã‚¨ã‚¹ãƒˆé–¢é€£
 
     /// <summary>
-    /// ƒ}ƒXƒ^[ƒNƒ‰ƒCƒAƒ“ƒg—p‚Ìî•ñXV
+    /// ãƒã‚¹ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆç”¨ã®æƒ…å ±æ›´æ–°
     /// </summary>
     async void UpdateMasterDataRequest()
     {
@@ -597,38 +609,40 @@ public class CharacterManager : MonoBehaviour
             TerminalDatas = TerminalManager.Instance.TerminalDatas
         };
 
-        // ƒQ[ƒ€ƒ^ƒCƒ}[XV
+        // ã‚²ãƒ¼ãƒ ã‚¿ã‚¤ãƒãƒ¼æ›´æ–°
         TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
 
-        // ƒ}ƒXƒ^ƒNƒ‰ƒCƒAƒ“ƒgî•ñXVƒŠƒNƒGƒXƒg
+        // ãƒã‚¹ã‚¿ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆæƒ…å ±æ›´æ–°ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
         await RoomModel.Instance.UpdateMasterClientAsync(masterClientData);
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚Ìî•ñXV
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æƒ…å ±æ›´æ–°
     /// </summary>
     async void UpdatePlayerDataRequest()
     {
         var playerData = GetPlayerData();
 
-        // ƒvƒŒƒCƒ„[î•ñXVƒŠƒNƒGƒXƒg
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æƒ…å ±æ›´æ–°ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
         await RoomModel.Instance.UpdatePlayerAsync(playerData);
     }
     #endregion
 
-    #region ’Ê’mˆ—ŠÖ˜A
+    #region é€šçŸ¥å‡¦ç†é–¢é€£
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[€–S“¯Šú
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ­»äº¡åŒæœŸ
     /// </summary>
     /// <param name="uniqueId"></param>
     void OnPlayerDead(Guid uniqueId)
     {
         playerObjs[uniqueId].GetComponent<PlayerBase>().OnDead();
+
+        Destroy(playerUIObjs[uniqueId]);
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒ^ƒXXV’Ê’m
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ›´æ–°é€šçŸ¥
     /// </summary>
     void OnUpdatePlayerStatus(CharacterStatusData characterStatus, PlayerRelicStatusData prsData)
     {
@@ -640,20 +654,20 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚ÌXV‚Ì’Ê’m
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ›´æ–°ã®é€šçŸ¥
     /// </summary>
     /// <param name="playerData"></param>
     void OnUpdatePlayer(PlayerData playerData)
     {
         if (!playerObjs.ContainsKey(playerData.ConnectionId) || !RoomModel.Instance) return;
 
-        // ƒvƒŒƒCƒ„[‚Ìî•ñXV
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æƒ…å ±æ›´æ–°
         var player = playerObjs[playerData.ConnectionId].GetComponent<PlayerBase>();
         UpdateCharacter(playerData, player);
     }
 
     /// <summary>
-    /// ƒ}ƒXƒ^[ƒNƒ‰ƒCƒAƒ“ƒg‚ÌXV’Ê’m
+    /// ãƒã‚¹ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®æ›´æ–°é€šçŸ¥
     /// </summary>
     /// <param name="masterClientData"></param>
     void OnUpdateMasterClient(MasterClientData masterClientData)
@@ -661,12 +675,12 @@ public class CharacterManager : MonoBehaviour
         if (RoomModel.Instance.IsMaster) return;
         if (!playerObjs.ContainsKey(masterClientData.PlayerData.ConnectionId)) return;
 
-        // ƒvƒŒƒCƒ„[‚Ìî•ñXV
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æƒ…å ±æ›´æ–°
         var player = playerObjs[masterClientData.PlayerData.ConnectionId].GetComponent<PlayerBase>();
-        if (player == null) Debug.Log("ƒf[ƒ^‚ª“ü‚Á‚Ä‚¢‚Ü‚¹‚ñ");
+        if (player == null) Debug.Log("ãƒ‡ãƒ¼ã‚¿ãŒå…¥ã£ã¦ã„ã¾ã›ã‚“");
         UpdateCharacter(masterClientData.PlayerData, player);
 
-        // “G‚Ìî•ñXV
+        // æ•µã®æƒ…å ±æ›´æ–°
         foreach (var enemyData in masterClientData.EnemyDatas)
         {
             bool isEnemy = enemies.ContainsKey(enemyData.UniqueId);
@@ -677,18 +691,18 @@ public class CharacterManager : MonoBehaviour
             enemy.UpdateEnemy(enemyData);
         }
 
-        // ƒMƒ~ƒbƒN‚Ìî•ñXV
+        // ã‚®ãƒŸãƒƒã‚¯ã®æƒ…å ±æ›´æ–°
         GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
 
-        // ƒQ[ƒ€ƒ^ƒCƒ}[XV
+        // ã‚²ãƒ¼ãƒ ã‚¿ã‚¤ãƒãƒ¼æ›´æ–°
         TimerDirector.Instance.OnUpdateTimer(masterClientData.GameTimer);
 
-        // ’[––î•ñ‚ÌXV
+        // ç«¯æœ«æƒ…å ±ã®æ›´æ–°
         TerminalManager.Instance.OnUpdateTerminal(masterClientData.TerminalDatas);
     }
 
     /// <summary>
-    /// “G‚Ì”íƒ_ƒ’Ê’mˆ—
+    /// æ•µã®è¢«ãƒ€ãƒ¡é€šçŸ¥å‡¦ç†
     /// </summary>
     void OnHitEnemy(EnemyDamegeData damageData)
     {
@@ -701,14 +715,14 @@ public class CharacterManager : MonoBehaviour
 
             if (isAttackerAlive)
             {
-                // ƒUƒR“G‚Ì‚Æ‚«‚¾‚¯ƒmƒbƒNƒoƒbƒN‚³‚¹‚é
+                // ã‚¶ã‚³æ•µã®ã¨ãã ã‘ãƒãƒƒã‚¯ãƒãƒƒã‚¯ã•ã›ã‚‹
                 isKnockback = !enemy.IsBoss && enemy.EnemyTypeId != ENEMY_TYPE.MetalBody;
                 attacker = playerObjs[damageData.AttackerId];
             }
             enemy.ApplyDamage(damageData.Damage, damageData.RemainingHp, attacker, isKnockback, true, damageData.DebuffList.ToArray());
 
             if (isAttackerAlive && RoomModel.Instance.ConnectionId == damageData.AttackerId)
-            {   // ƒŒƒŠƒbƒNuƒŠƒQƒCƒ“ƒR[ƒhvŠ—LA—^ƒ_ƒ[ƒW‚Ìˆê•”‚ğHP‰ñ•œ
+            {   // ãƒ¬ãƒªãƒƒã‚¯ã€Œãƒªã‚²ã‚¤ãƒ³ã‚³ãƒ¼ãƒ‰ã€æ‰€æœ‰æ™‚ã€ä¸ãƒ€ãƒ¡ãƒ¼ã‚¸ã®ä¸€éƒ¨ã‚’HPå›å¾©
                 var plBase = playerObjSelf.GetComponent<PlayerBase>();
 
                 if (plBase.DmgHealRate > 0)
@@ -728,7 +742,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ’e‚Ì”­Ë’Ê’m
+    /// å¼¾ã®ç™ºå°„é€šçŸ¥
     /// </summary>
     /// <param name="type"></param>
     /// <param name="spawnPos"></param>
@@ -744,7 +758,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒŒƒxƒ‹ƒAƒbƒv’Ê’m
+    /// ãƒ¬ãƒ™ãƒ«ã‚¢ãƒƒãƒ—é€šçŸ¥
     /// </summary>
     /// <param name="level"></param>
     /// <param name="nowExp"></param>
@@ -763,19 +777,6 @@ public class CharacterManager : MonoBehaviour
             if (UIManager.Instance) UIManager.Instance.UpdateExperienceAndLevel();
         }
         LevelManager.Options.Add(optionsKey, statusOptionList);
-    }
-
-    /// <summary>
-    /// “G‚Ìíœ’Ê’m
-    /// </summary>
-    /// <param name="enemId"></param>
-    void OnDeleteEnemy(string enemId)
-    {
-        if(enemies.ContainsKey(enemId))
-        {
-            Destroy(enemies[enemId].Enemy.gameObject);
-            RemoveEnemyFromList(enemId);
-        }
     }
 
     #endregion

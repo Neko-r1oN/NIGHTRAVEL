@@ -81,7 +81,8 @@ public class Sword : PlayerBase
     public override void ResetFlag()
     {
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
         isCombo = false;
         isSkill = false;
     }
@@ -144,6 +145,7 @@ public class Sword : PlayerBase
             if (canSkill && canAttack)
             {
                 //gameObject.layer = 21;
+                ziplineSpark.SetActive(false);
                 audioSource.PlayOneShot(skillSE);
                 animator.SetInteger("animation_id", (int)S_ANIM_ID.Skill);
                 canSkill = false;
@@ -334,7 +336,8 @@ public class Sword : PlayerBase
 
         // ÉtÉâÉOÇÃèâä˙âª
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
         isCombo = false;
 
         if (!m_Grounded) isAirAttack = true;
@@ -432,17 +435,17 @@ public class Sword : PlayerBase
                 switch (kbPow)
                 {
                     case KB_POW.Small:
-                        playerImpulse.GenerateImpulseWithForce(SHAKE_SMALL);
+                        if(CharacterManager.Instance.PlayerObjSelf == this.gameObject) playerImpulse.GenerateImpulseWithForce(SHAKE_SMALL);
                         m_Rigidbody2D.AddForce(damageDir * KB_SMALL);
                         break;
 
                     case KB_POW.Medium:
-                        playerImpulse.GenerateImpulseWithForce(SHAKE_MEDIUM);
+                        if (CharacterManager.Instance.PlayerObjSelf == this.gameObject) playerImpulse.GenerateImpulseWithForce(SHAKE_MEDIUM);
                         m_Rigidbody2D.AddForce(damageDir * KB_MEDIUM);
                         break;
 
                     case KB_POW.Big:
-                        playerImpulse.GenerateImpulseWithForce(SHAKE_BIG);
+                        if (CharacterManager.Instance.PlayerObjSelf == this.gameObject) playerImpulse.GenerateImpulseWithForce(SHAKE_BIG);
                         m_Rigidbody2D.AddForce(damageDir * KB_BIG);
                         break;
 

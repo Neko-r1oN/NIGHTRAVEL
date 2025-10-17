@@ -7,6 +7,7 @@ using DG.Tweening;
 using MessagePack;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Pixeye.Unity;
+using Rewired;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using System.Collections;
@@ -19,6 +20,7 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 abstract public class PlayerBase : CharacterBase
 {
@@ -209,7 +211,9 @@ abstract public class PlayerBase : CharacterBase
     protected bool m_FallFlag = false;
     protected float limitFallSpeed = 25f; // 落下速度の制限
     protected PlayerBase m_Player;
-    protected float breakTimer = 0; // 硬直時に強制的に動けるようににする時間
+
+    protected float mvBreakTimer = 0;  // 移動制限タイマー
+    protected float atkBreakTimer = 0; // 硬直時に強制的に動けるようににする時間
     #endregion
 
     #region エフェクト・UI
@@ -367,14 +371,26 @@ abstract public class PlayerBase : CharacterBase
         }
 
         // 強制硬直解除
-        if (!isDead && !canMove || !isDead && !canAttack)
+        if (!isDead && !canMove)
         {
-            breakTimer += Time.deltaTime;
-            if(breakTimer >= BREAK_TIME)
+            mvBreakTimer += Time.deltaTime;
+            if(mvBreakTimer >= BREAK_TIME)
             {
                 canMove = true;
                 canAttack = true;
-                breakTimer = 0;
+                mvBreakTimer = 0;
+            }
+        }
+
+        // 強制硬直解除
+        if (!isDead && !canAttack)
+        {
+            atkBreakTimer += Time.deltaTime;
+            if (atkBreakTimer >= BREAK_TIME)
+            {
+                canMove = true;
+                canAttack = true;
+                atkBreakTimer = 0;
             }
         }
 
@@ -519,12 +535,14 @@ abstract public class PlayerBase : CharacterBase
             if (jumpWallDistX < -0.5f && jumpWallDistX > -1f)
             {
                 canMove = true;
-                breakTimer = 0;
+                atkBreakTimer = 0;
+                mvBreakTimer = 0;
             }
             else if (jumpWallDistX < -1f && jumpWallDistX >= -2f)
             {
                 canMove = true;
-                breakTimer = 0;
+                atkBreakTimer = 0;
+                mvBreakTimer = 0;
                 m_Rigidbody2D.linearVelocity = new Vector2(10f * transform.localScale.x, m_Rigidbody2D.linearVelocity.y);
             }
             else if (jumpWallDistX < -2f)
@@ -767,7 +785,8 @@ abstract public class PlayerBase : CharacterBase
     {
         canMove = true;
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
     }
 
     /// <summary>
@@ -983,7 +1002,8 @@ abstract public class PlayerBase : CharacterBase
         yield return new WaitForSeconds(time);
         canMove = true;
         canAttack = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
     }
     /// <summary>
     /// 状態異常時硬直処理
@@ -1014,7 +1034,8 @@ abstract public class PlayerBase : CharacterBase
         canMove = false;
         yield return new WaitForSeconds(time);
         canMove = true;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
     }
     /// <summary>
     /// 壁スライド中か確認する処理
@@ -1042,7 +1063,7 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     protected IEnumerator WaitToDead()
     {
-        if (isDead) yield break ;
+        if (isDead) yield break;
         isDead = true;
         if (CharacterManager.Instance.PlayerObjSelf == gameObject)
         {
@@ -1076,8 +1097,41 @@ abstract public class PlayerBase : CharacterBase
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
 
-        if (CharacterManager.Instance.PlayerObjSelf) SpectatorModeManager.Instance.FocusCameraOnAlivePlayer(); 
-        
+        //if (CharacterManager.Instance.PlayerObjSelf)
+        //{
+        //    GameObject cmr = GameObject.Find("Main Camera");
+
+        //    foreach (var player in CharacterManager.Instance.PlayerObjs)
+        //    {
+        //        if (player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
+        //        {
+        //            continue;
+        //        }
+
+        //        if (player.Value != CharacterManager.Instance.PlayerObjSelf)
+        //        {
+        //            cmr.GetComponent<CinemachineCamera>().Target.TrackingTarget
+        //                = player.Value.transform;
+
+        //            UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
+        //            break;
+        //        }
+        //    }
+
+        //    List<GameObject> list = new List<GameObject>();
+        //    foreach (var obj in CharacterManager.Instance.PlayerUIObjs)
+        //    {
+        //        list.Add(obj.Value);
+        //    }
+
+        //    foreach (var obj in list)
+        //    {
+        //        Destroy(obj);
+        //    }
+        //}
+
+        SpectatorModeManager.Instance.FocusCameraOnAlivePlayer(); 
+
         this.gameObject.SetActive(false);
     }
 
@@ -1089,6 +1143,14 @@ abstract public class PlayerBase : CharacterBase
         animator.SetInteger("animation_id", (int)ANIM_ID.Dead);
         canMove = false;
         invincible = true;
+
+        //if(CharacterManager.Instance.PlayerUIObjs.Count > 1)
+        //{
+        //    foreach(var obj in CharacterManager.Instance.PlayerUIObjs)
+        //    {
+        //        Destroy(obj.Value);
+        //    }
+        //}
     }
 
     /// <summary>
@@ -1108,7 +1170,8 @@ abstract public class PlayerBase : CharacterBase
         canAttack = true;
         isBlinking = false;
         invincible = false;
-        breakTimer = 0;
+        atkBreakTimer = 0;
+        mvBreakTimer = 0;
 
         // クールダウン時間
         UIManager.Instance.DisplayCoolDown(false, blinkCoolDown);
