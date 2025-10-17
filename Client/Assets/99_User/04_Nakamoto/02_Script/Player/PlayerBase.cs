@@ -1076,11 +1076,13 @@ abstract public class PlayerBase : CharacterBase
                     StartCoroutine(MakeInvincible(1.5f)); // –³“GŽžŠÔ
                     yield break;
                 }
-                else
-                {
-                    SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
-                    UIManager.Instance.DisplaySpectatingPlayer();
-                }
+                //else
+                //{
+                //    
+                //}
+
+                SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
+                UIManager.Instance.DisplaySpectatingPlayer();
             }
             // ƒIƒtƒ‰ƒCƒ“Žž‚Ìˆ—
             if (!RoomModel.Instance && buckupHDMICnt > 0)

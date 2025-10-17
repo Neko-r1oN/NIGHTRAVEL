@@ -71,8 +71,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject otherDmgText;            // その他ダメージ表記
     [Foldout("テキスト")]                                
     [SerializeField] Text diffText;                      // 難易度テキスト
-    [Foldout("テキスト")]                                
-    [SerializeField] Text spectatingNameText;            // 観戦中プレイヤー名テキスト
     [Foldout("テキスト")]
     [SerializeField] Text getExpText;                    // 取得した経験値テキスト
     [Foldout("テキスト")]                                
@@ -1161,8 +1159,6 @@ public class UIManager : MonoBehaviour
     public void DisplaySpectatingPlayer()
     {
         spectatingWindow.SetActive(true);
-        spectatingNameText.enabled = false;
-        //spectatingNameText.text = TitleManagerk.SteamUserName;
 
         statusUpButton.SetActive(false);
         levelUpText.enabled = false;

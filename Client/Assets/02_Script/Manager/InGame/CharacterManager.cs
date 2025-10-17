@@ -29,7 +29,7 @@ public class CharacterManager : MonoBehaviour
     Dictionary<Guid, GameObject> playerObjs = new Dictionary<Guid, GameObject>();
 
     Dictionary<Guid,GameObject> playerUIObjs = new Dictionary<Guid, GameObject>();
-    public Dictionary<Guid, GameObject> PlayerUIObjs {  get { return playerUIObjs; } }
+    public Dictionary<Guid, GameObject> PlayerUIObjs {  get { return playerUIObjs; } set { playerUIObjs = value; } }
 
     /// <summary>
     /// 自身のキャラクターデータ(シーン遷移したときの引継ぎ用)
