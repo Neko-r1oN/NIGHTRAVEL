@@ -213,6 +213,9 @@ public class Valcus : EnemyBase
     {
         yield return new WaitForSeconds(time);
 
+        bool isNewTarget = SelectNewTargetInBossRoom();
+        CalculateDistanceToTarget();
+
         #region 各行動パターンの重み付け
         Dictionary<DECIDE_TYPE, int> weights = new Dictionary<DECIDE_TYPE, int>();
         bool wasAttacking = nextDecide == DECIDE_TYPE.Attack_Normal || nextDecide == DECIDE_TYPE.Attack_SmashCombo;
@@ -222,7 +225,7 @@ public class Valcus : EnemyBase
         bool canAttackSmashCombo = false;
         if (canAttack && nextDecide != DECIDE_TYPE.Attack_SmashCombo)
         {
-            canAttackSmashCombo = SelectNewTargetInBossRoom();
+            canAttackSmashCombo = isNewTarget;
         }
 
         // 条件を基に該当する行動パターンに重み付け

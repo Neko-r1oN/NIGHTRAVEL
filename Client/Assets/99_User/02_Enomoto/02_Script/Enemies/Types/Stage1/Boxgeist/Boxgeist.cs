@@ -219,6 +219,9 @@ public class Boxgeist : EnemyBase
     {
         yield return new WaitForSeconds(time);
 
+        SelectNewTargetInBossRoom();
+        CalculateDistanceToTarget();
+
         #region 各行動パターンの重み付け
 
         Dictionary<DECIDE_TYPE, int> weights = new Dictionary<DECIDE_TYPE, int>();
@@ -669,7 +672,6 @@ public class Boxgeist : EnemyBase
         Idle();
         yield return new WaitForSeconds(time);
         isAttacking = false;
-        SelectNewTargetInBossRoom();
         NextDecision();
         onFinished?.Invoke();
     }

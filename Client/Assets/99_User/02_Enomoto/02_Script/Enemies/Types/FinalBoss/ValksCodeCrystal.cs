@@ -233,6 +233,9 @@ public class ValksCodeCrystal : EnemyBase
     {
         yield return new WaitForSeconds(time);
 
+        SelectNewTargetInBossRoom();
+        CalculateDistanceToTarget();
+
         #region 各行動パターンの重み付け
         Dictionary<DECIDE_TYPE, int> weights = new Dictionary<DECIDE_TYPE, int>();
         bool wasAttacking = nextDecide == DECIDE_TYPE.Attack_NormalCombo || nextDecide == DECIDE_TYPE.Attack_PunchCombo || nextDecide == DECIDE_TYPE.Attack_Dive || nextDecide == DECIDE_TYPE.Attack_Laser;
@@ -331,7 +334,6 @@ public class ValksCodeCrystal : EnemyBase
         isAttacking = true;
         Idle();
         yield return new WaitForSeconds(time);
-        SelectNewTargetInBossRoom();
         isAttacking = false;
         NextDecision();
         onFinished?.Invoke();

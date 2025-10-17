@@ -63,7 +63,7 @@ public class FullMetalWorm : EnemyBase
 
     [Foldout("ステータス")]
     [SerializeField]
-    float moveSpeedMin = 2.5f;    // 最小移動速度
+    float moveSpeedMin = 4f;    // 最小移動速度
     #endregion
 
     #region チェック判定
@@ -208,7 +208,6 @@ public class FullMetalWorm : EnemyBase
 
         if (doOnceDecision)
         {
-            SelectNewTargetInBossRoom();
             doOnceDecision = false;
             RemoveAndStopCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
 
@@ -320,6 +319,9 @@ public class FullMetalWorm : EnemyBase
     {
         if (time == null) time = Mathf.Floor(UnityEngine.Random.Range(decisionTimeMin, decisionTimeMax));
         doOnceDecision = false;
+
+        SelectNewTargetInBossRoom();
+        CalculateDistanceToTarget();
         MoveGradually();
         yield return new WaitForSeconds((float)time);
 
@@ -477,13 +479,18 @@ public class FullMetalWorm : EnemyBase
         SetNextTargetPosition(isTargetLottery);
         while (true)
         {
+            if (CharacterManager.Instance.GetAlivePlayers().Count() == 0) break;
             if (!isTargetLottery)
             {
                 // プレイヤーとの距離がかけ離れている場合は、プレイヤーの座標に向かって移動
-                float distToNearPlayer = Vector2.Distance(GetNearPlayer().transform.position, transform.position);
-                if (Mathf.Abs(distToNearPlayer) > playerCheckRange * 1.5f)
+                var nearPlayer = GetNearPlayer();
+                if (nearPlayer)
                 {
-                    SetNextTargetPosition(true);
+                    float distToNearPlayer = Vector2.Distance(GetNearPlayer().transform.position, transform.position);
+                    if (Mathf.Abs(distToNearPlayer) > playerCheckRange * 1.5f)
+                    {
+                        SetNextTargetPosition(true);
+                    }
                 }
             }
 
@@ -492,7 +499,12 @@ public class FullMetalWorm : EnemyBase
             float disToTargetPos = Mathf.Abs(Vector3.Distance(targetPos, this.transform.position));
             if (disToTargetPos <= disToTargetPosMin)
             {
-                SetNextTargetPosition(isTargetLottery);
+                // ターゲットとの距離が近すぎる場合はランダムな座標を目標座標に設定する
+                bool lottery = isTargetLottery;
+                CalculateDistanceToTarget();
+                if (isTargetLottery && disToTarget <= disToTargetPosMin) lottery = false;
+
+                SetNextTargetPosition(lottery);
             }
             yield return null;
 
@@ -500,11 +512,13 @@ public class FullMetalWorm : EnemyBase
             if (transform.position.x < minPos.x || transform.position.x > maxPos.x
                 || transform.position.y < minPos.y || transform.position.y > maxPos.y)
             {
-                Move();
-                RemoveAndStopCoroutineByKey(COROUTINE.NextDecision.ToString());
-                RemoveAndStopCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
+                break;
             }
         }
+
+        Move();
+        RemoveAndStopCoroutineByKey(COROUTINE.NextDecision.ToString());
+        RemoveAndStopCoroutineByKey(COROUTINE.MoveGraduallyCoroutine.ToString());
     }
 
     #endregion

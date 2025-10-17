@@ -102,7 +102,16 @@ public class CharacterManager : MonoBehaviour
             {
                 Debug.LogError("playerObjSelfが設定されていない");
             }
+
+            // ステージ上の全てのプレイヤーオブジェクトをリストに登録
             playerObjs.Add(Guid.Empty, playerObjSelf);
+            foreach (var player in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (playerObjSelf != player)
+                {
+                    playerObjs.Add(Guid.NewGuid(), player);
+                }
+            }
 
             // プレイヤーのステータス引継ぎ設定
             if (SelfPlayerStatusData == null) UpdateSelfSelfPlayerStatusData();
@@ -263,6 +272,20 @@ public class CharacterManager : MonoBehaviour
     }
 
     #region プレイヤー関連
+
+    /// <summary>
+    /// 生存しているプレイヤーをリストにまとめて返す
+    /// </summary>
+    /// <returns></returns>
+    public List<GameObject> GetAlivePlayers()
+    {
+        List<GameObject> result = new List<GameObject>();
+        foreach(var player in PlayerObjs)
+        {
+            if(IsPlayerAlive(player.Key)) result.Add(player.Value);
+        }
+        return result;
+    }
 
     /// <summary>
     /// 指定した操作キャラの生存確認
