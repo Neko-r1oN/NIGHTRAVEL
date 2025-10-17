@@ -12,6 +12,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
 
 public class Carcass : EnemyBase
 {
@@ -175,6 +176,15 @@ public class Carcass : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
 
+        SEManager.Instance.Play(
+               audioPath: SEPath.DANBO_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
         switch (attackType)
         {
             case DECIDE_TYPE.RotationAttack:
@@ -226,6 +236,15 @@ public class Carcass : EnemyBase
         Vector2 jumpVec = new Vector2(moveSpeed * 1.5f * TransformUtils.GetFacingDirection(transform), jumpPower / 3);
         m_rb2d.linearVelocity = jumpVec;
         hitPlayers.Clear();
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.BOSS_HANIATK, //再生したいオーディオのパス
+               volumeRate: 0.4f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
 
         // 実行していなければ、近接攻撃のコルーチンを開始
         string cooldownKey = COROUTINE.MeleeAttack.ToString();
@@ -412,6 +431,16 @@ public class Carcass : EnemyBase
         isRotationAttacking = false;
         SetAnimId((int)ANIM_ID.Hit);
         m_rb2d.bodyType = RigidbodyType2D.Dynamic;
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
     }
 
     /// <summary>
@@ -421,6 +450,15 @@ public class Carcass : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     #endregion

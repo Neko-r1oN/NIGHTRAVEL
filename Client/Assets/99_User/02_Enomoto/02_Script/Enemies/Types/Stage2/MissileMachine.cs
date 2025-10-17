@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
 
 public class MissileMachine : EnemyBase
 {
@@ -135,6 +136,9 @@ public class MissileMachine : EnemyBase
     {
         isAttacking = true;
         SetAnimId((int)ANIM_ID.Attack);
+
+       
+
     }
 
     /// <summary>
@@ -179,6 +183,15 @@ public class MissileMachine : EnemyBase
             missile.GetComponent<ProjectileBase>().Init(debuffs, power);
             missile.GetComponent<ProjectileBase>().Shoot(shootVec);
         }
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MISSILE_HASSYA, //再生したいオーディオのパス
+               volumeRate: 0.9f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -265,6 +278,16 @@ public class MissileMachine : EnemyBase
     {
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
     }
 
     /// <summary>
@@ -274,6 +297,15 @@ public class MissileMachine : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     #endregion
