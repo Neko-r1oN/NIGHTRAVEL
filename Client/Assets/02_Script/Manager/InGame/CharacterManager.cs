@@ -730,6 +730,7 @@ public class CharacterManager : MonoBehaviour
         // プレイヤーの情報更新
         var player = playerObjs[playerData.ConnectionId].GetComponent<PlayerBase>();
         UpdateCharacter(playerData, player);
+        UIManager.Instance.UpdatePlayerStatus();
     }
 
     /// <summary>
