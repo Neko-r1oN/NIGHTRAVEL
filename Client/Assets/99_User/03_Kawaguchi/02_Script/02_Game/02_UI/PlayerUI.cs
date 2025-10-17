@@ -165,7 +165,7 @@ public class PlayerUI : MonoBehaviour
         {
             arrowUI.SetActive(false);
 
-            nameUI.GetComponentInChildren<Text>().text = TitleManagerk.SteamUserName;
+            //nameUI.GetComponentInChildren<Text>().text = TitleManagerk.SteamUserName;
             nameUI.SetActive(true);
 
             ///距離サイズ調整用(今回は2Dなので使わない)

@@ -10733,8 +10733,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minute: 10
-  timerObj: {fileID: 1130021903}
-  timer: {fileID: 2048806844}
 --- !u!4 &733826743
 Transform:
   m_ObjectHideFlags: 0
@@ -10747,7 +10745,8 @@ Transform:
   m_LocalPosition: {x: -83.29178, y: -180.6425, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 781647404}
   m_Father: {fileID: 1697871402}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &737675227
@@ -11061,11 +11060,11 @@ Transform:
   m_GameObject: {fileID: 781647403}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -117.29325, y: -177.91982, z: -0.9584998}
+  m_LocalPosition: {x: -34.001472, y: 2.7226868, z: -0.9584998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1697871402}
+  m_Father: {fileID: 733826743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &781647405
 MonoBehaviour:
@@ -12502,8 +12501,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u30DC\u30B9\u6761\u4EF6\uFF1A5\u5206\u9593\u751F\u304D\u6B8B\u308B or
-    \u6575100\u4F53\u5012\u305B"
+  m_Text: "\u30DC\u30B9\u6761\u4EF6\uFF1A\u6575100\u4F53\u5012\u305B"
 --- !u!1 &860678672
 GameObject:
   m_ObjectHideFlags: 0
@@ -16363,7 +16361,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1130021904
 Transform:
   m_ObjectHideFlags: 0
@@ -23574,7 +23572,6 @@ Transform:
   - {fileID: 1851967820}
   - {fileID: 1289168968}
   - {fileID: 733826743}
-  - {fileID: 781647404}
   - {fileID: 1996792048}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -341,8 +341,7 @@ public class UIManager : MonoBehaviour
 
         clashNumText.text = "条件:0/" + SpawnManager.Instance.KnockTermsNum;
 
-        tmText.text = "クリア条件：10分間生き残る or 敵"
-            + SpawnManager.Instance.KnockTermsNum + "体倒せ";
+        tmText.text = "敵" + SpawnManager.Instance.KnockTermsNum + "体倒せ";
 
         level = LevelManager.Instance;
         int gameLevel = Mathf.Clamp(LevelManager.GameLevel, 0, level.LevelName.Count - 1);
@@ -1162,7 +1161,6 @@ public class UIManager : MonoBehaviour
     public void DisplayTimeInstructions()
     {
         terminalExplanationObj.SetActive(false);
-        TimerDirector.Instance.TimerObj.transform.GetChild(0).GetComponent<Text>().text = " 敵衛システム復旧まで";
     }
 
     /// <summary>
