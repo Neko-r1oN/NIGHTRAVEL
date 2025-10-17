@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using Unity.Cinemachine;
+using Rewired;
 
 public class SpectatorModeManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class SpectatorModeManager : MonoBehaviour
 
     private static SpectatorModeManager instance;
 
-    GameObject camera;
+    [SerializeField] CinemachineCamera camera;
 
     public static SpectatorModeManager Instance
     {
@@ -35,26 +36,6 @@ public class SpectatorModeManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        int key = 0;
-        //foreach (var obj in CharacterManager.Instance.PlayerObjs.Values)
-        //{
-        //    players.Add(key, obj);
-
-        //    key++;
-        //}
-
-        camera = GameObject.Find("Main Camera");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    [ContextMenu("FocusCameraOnAlivePlayer")]
-    public void FocusCameraOnAlivePlayer()
-    {
         if (players.Count == 0)
         {
             int key = 0;
@@ -62,10 +43,16 @@ public class SpectatorModeManager : MonoBehaviour
             {
                 players.Add(key, obj);
 
+                if (obj == CharacterManager.Instance.PlayerObjSelf) followKey = key;
+
                 key++;
             }
         }
+    }
 
+    [ContextMenu("FocusCameraOnAlivePlayer")]
+    public void FocusCameraOnAlivePlayer()
+    {
         foreach (var player in players)
         {
             if(player.Value == null || player.Value.GetComponent<PlayerBase>().IsDead)
@@ -77,23 +64,18 @@ public class SpectatorModeManager : MonoBehaviour
             {
                 followKey = player.Key;
 
-                camera.GetComponent<CinemachineCamera>().Target.TrackingTarget 
-                    = player.Value.transform;
+                camera.Target.TrackingTarget = player.Value.transform;
 
                 UIManager.Instance.ChangeStatusToTargetPlayer(player.Value.GetComponent<PlayerBase>());
                 break;
             }
         }
 
-        List<GameObject> list = new List<GameObject>();
-        foreach (var obj in CharacterManager.Instance.PlayerUIObjs)
-        {
-            list.Add(obj.Value);
-        }
-
+        List<GameObject> list = new List<GameObject>(CharacterManager.Instance.PlayerUIObjs.Values);
         foreach (var obj in list)
         {
             Destroy(obj);
         }
+        CharacterManager.Instance.PlayerUIObjs = new Dictionary<Guid, GameObject>();
     }
 }

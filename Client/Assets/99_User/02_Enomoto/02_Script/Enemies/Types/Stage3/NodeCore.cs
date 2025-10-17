@@ -2,6 +2,7 @@
 //  [敵] ノード・コアのクラス
 //  Author:r-enomoto
 //**************************************************
+using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using Shared.Interfaces.StreamingHubs;
@@ -429,6 +430,15 @@ public class NodeCore : EnemyBase
         chaseAI.Stop();
         StopPatorol();
         SetAnimId((int)ANIM_ID.Hit);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -438,6 +448,15 @@ public class NodeCore : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     #endregion

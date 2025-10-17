@@ -2,6 +2,7 @@
 //  [敵] スレイドのクラス
 //  Author:r-enomoto
 //**************************************************
+using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.Model.Entity;
 using Pixeye.Unity;
 using System;
@@ -253,6 +254,15 @@ public class Slade : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Rounding_Up);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.SWORD_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -263,6 +273,15 @@ public class Slade : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Rounding_Down);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.SWORD_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -299,6 +318,15 @@ public class Slade : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Charge);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.DANBO_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -370,6 +398,15 @@ public class Slade : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Combo);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.SWORD_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -539,6 +576,15 @@ public class Slade : EnemyBase
     {
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -548,6 +594,15 @@ public class Slade : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     #endregion

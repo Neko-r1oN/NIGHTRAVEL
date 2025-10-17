@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using KanKikuchi.AudioManager;
 using NIGHTRAVEL.Shared.Interfaces.StreamingHubs;
 using Pixeye.Unity;
 using System;
@@ -832,6 +833,15 @@ abstract public class PlayerBase : CharacterBase
 
             // レベルアップによるステータス変化
             LevelUpStatusChange();
+
+            SEManager.Instance.Play(
+               audioPath: SEPath.LEVEL_UP, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
         }
     }
 
@@ -1076,11 +1086,13 @@ abstract public class PlayerBase : CharacterBase
                     StartCoroutine(MakeInvincible(1.5f)); // 無敵時間
                     yield break;
                 }
-                else
-                {
-                    SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
-                    UIManager.Instance.DisplaySpectatingPlayer();
-                }
+                //else
+                //{
+                //    
+                //}
+
+                SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
+                UIManager.Instance.DisplaySpectatingPlayer();
             }
             // オフライン時の処理
             if (!RoomModel.Instance && buckupHDMICnt > 0)

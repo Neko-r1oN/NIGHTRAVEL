@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using KanKikuchi.AudioManager;
 
 public class Drone : EnemyBase
 {
@@ -321,6 +322,15 @@ public class Drone : EnemyBase
             {
                 Vector3 direction = (target.transform.position - transform.position).normalized;
                 projectileChecker.RotateAimTransform(direction);
+
+                SEManager.Instance.Play(
+               audioPath: SEPath.DRONE_SHOT, //再生したいオーディオのパス
+               volumeRate: 0.5f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
             }
             yield return new WaitForSeconds(waitSec);
             time += waitSec;
@@ -444,6 +454,16 @@ public class Drone : EnemyBase
     {
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
         gunPsController.StopShooting();
         if (hp > 0) NextDecision();
     }
@@ -456,6 +476,15 @@ public class Drone : EnemyBase
     {
         gunPsController.StopShooting();
         SetAnimId((int)ANIM_ID.Dead);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.IRON_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     #endregion
