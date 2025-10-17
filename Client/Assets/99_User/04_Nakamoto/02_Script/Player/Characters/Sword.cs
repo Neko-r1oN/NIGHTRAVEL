@@ -405,8 +405,6 @@ public class Sword : PlayerBase
 
             // ダメージ表記
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
-            // ステータス更新
-            UIManager.Instance.UpdatePlayerStatus();
 
             // アニメーション変更
             var id = animator.GetInteger("animation_id");
@@ -422,6 +420,9 @@ public class Sword : PlayerBase
                 // HP減少
                 hp -= damage - (int)(damage * firewallRate);
             }
+
+            // ステータス更新
+            UIManager.Instance.UpdatePlayerStatus();
 
             Vector2 damageDir = Vector2.zero;
 
