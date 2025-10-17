@@ -12,6 +12,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
 
 public class FullMetalWorm : EnemyBase
 {
@@ -547,6 +548,15 @@ public class FullMetalWorm : EnemyBase
         }
 
         PlayHitBlendShader(false, 2f, 0.5f);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.WORM_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>

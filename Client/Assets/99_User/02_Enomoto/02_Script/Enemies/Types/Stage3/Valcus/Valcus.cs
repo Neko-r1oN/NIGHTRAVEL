@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
-
+using KanKikuchi.AudioManager;
 public class Valcus : EnemyBase
 {
     /// <summary>
@@ -403,6 +403,14 @@ public class Valcus : EnemyBase
     /// </summary>
     void AttackNormal()
     {
+        SEManager.Instance.Play(
+               audioPath: SEPath.OBJ_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Normal);
@@ -426,6 +434,15 @@ public class Valcus : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Smash1);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -455,6 +472,14 @@ public class Valcus : EnemyBase
         var endValue = GetGroundPointFrom(target);
         if (endValue != null) targetPos = endValue;
         JumpToTargetPosition(duration);
+        SEManager.Instance.Play(
+               audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -494,6 +519,15 @@ public class Valcus : EnemyBase
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Smash2);
         LookAtTarget();
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.FINAL_BOSS_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -501,6 +535,14 @@ public class Valcus : EnemyBase
     /// </summary>
     public override void OnAttackAnim4Event()
     {
+        SEManager.Instance.Play(
+               audioPath: SEPath.FINAL_BOSS_SKILL, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
         const float duration = 0.6f;
         var endValue = GetGroundPointFrom(target);
         if (endValue != null) targetPos = endValue;

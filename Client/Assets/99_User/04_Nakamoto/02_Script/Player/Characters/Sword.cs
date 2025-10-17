@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UIElements;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
 
 public class Sword : PlayerBase
 {
@@ -245,6 +246,24 @@ public class Sword : PlayerBase
                 // 敵にダメージを与える
                 int attackPower = 0;    // 最終攻撃力
 
+                SEManager.Instance.Play(
+               audioPath: SEPath.SWORD_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
+                SEManager.Instance.Play(
+               audioPath: SEPath.SWORD_ATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
                 // 攻撃力を設定
                 switch (animID)
                 {
@@ -310,6 +329,15 @@ public class Sword : PlayerBase
         {
             if (collidersEnemies[i].gameObject.tag == "Object")
             {
+                SEManager.Instance.Play(
+               audioPath: SEPath.OBJ_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
+
                 var objectComponent = collidersEnemies[i].gameObject.GetComponent<ObjectBase>();
                 if (objectComponent != null)
                 {
@@ -405,6 +433,15 @@ public class Sword : PlayerBase
 
             // ダメージ表記
             UIManager.Instance.PopDamageUI(damage, transform.position, true);
+
+            SEManager.Instance.Play(
+               audioPath: SEPath.MOB_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
 
             // アニメーション変更
             var id = animator.GetInteger("animation_id");
