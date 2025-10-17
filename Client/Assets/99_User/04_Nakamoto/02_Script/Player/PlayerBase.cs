@@ -271,7 +271,7 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region ƒvƒŒƒCƒ„[‚ÉŠÖ‚·‚é’è”
-    protected const float REGENE_TIME = 2.5f;           // ©“®‰ñ•œŠÔŠu
+    protected const float REGENE_TIME = 2.0f;             // ©“®‰ñ•œŠÔŠu
     protected const float REGENE_STOP_TIME = 3.0f;      // ©“®‰ñ•œ’â~ŠÔ
     protected const float REGENE_MAGNIFICATION = 0.05f; // ©“®‰ñ•œ”{—¦
     protected const float HEAL_GENERATE_TIME = 18f;     // ‰ñ•œ“÷¶¬ŠÔŠu
@@ -341,6 +341,8 @@ abstract public class PlayerBase : CharacterBase
     /// </summary>
     virtual protected void Update()
     {
+        if(isDead) return;
+
         regeneTimer += Time.deltaTime;
         healGenerateTimer += Time.deltaTime;
 
@@ -396,6 +398,8 @@ abstract public class PlayerBase : CharacterBase
 
         // ƒLƒƒƒ‰‚ÌˆÚ“®
         if (!canMove) return;
+
+        if(UIManager.Instance.IsOpenStatusWindow) m_Rigidbody2D.linearVelocity = Vector2.zero;
 
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         verticalMove = Input.GetAxisRaw("Vertical") * moveSpeed;
