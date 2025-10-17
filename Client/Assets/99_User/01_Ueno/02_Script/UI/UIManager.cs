@@ -1161,7 +1161,8 @@ public class UIManager : MonoBehaviour
     public void DisplaySpectatingPlayer()
     {
         spectatingWindow.SetActive(true);
-        spectatingNameText.text = TitleManagerk.SteamUserName;
+        spectatingNameText.enabled = false;
+        //spectatingNameText.text = TitleManagerk.SteamUserName;
 
         statusUpButton.SetActive(false);
         levelUpText.enabled = false;

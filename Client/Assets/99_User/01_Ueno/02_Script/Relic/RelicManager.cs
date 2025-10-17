@@ -186,6 +186,7 @@ public class RelicManager : MonoBehaviour
             }
         }
 
+        UIManager.Instance.GetRelicBanner(relicSprites[(int)id - 1]);
         UIManager.Instance.totalRelics(relicSprites[(int)id - 1], relicCnt);
     }
 

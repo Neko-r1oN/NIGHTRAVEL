@@ -1076,6 +1076,11 @@ abstract public class PlayerBase : CharacterBase
                     StartCoroutine(MakeInvincible(1.5f)); // –³“GŽžŠÔ
                     yield break;
                 }
+                else
+                {
+                    SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
+                    UIManager.Instance.DisplaySpectatingPlayer();
+                }
             }
             // ƒIƒtƒ‰ƒCƒ“Žž‚Ìˆ—
             if (!RoomModel.Instance && buckupHDMICnt > 0)
@@ -1086,15 +1091,15 @@ abstract public class PlayerBase : CharacterBase
                 StartCoroutine(MakeInvincible(1.5f)); // –³“GŽžŠÔ
                 yield break;
             }
+
+            
         }
+
         if (!RoomModel.Instance) UIManager.Instance.OnDeadPlayer();
         OnDead();
         yield return new WaitForSeconds(0.4f);
         m_Rigidbody2D.linearVelocity = new Vector2(0, m_Rigidbody2D.linearVelocity.y);
         yield return new WaitForSeconds(1.1f);
-
-        SpectatorModeManager.Instance.FocusCameraOnAlivePlayer();
-        UIManager.Instance.DisplaySpectatingPlayer();
 
         this.gameObject.SetActive(false);
     }

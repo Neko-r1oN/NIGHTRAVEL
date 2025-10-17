@@ -449,7 +449,18 @@ public class Rifle : PlayerBase
                 {
                     if (hit.collider == null) continue;
 
-                    hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamageRequest((int)(Power * BEAM_MAG), gameObject);
+                    if (!hit.collider.gameObject.GetComponent<EnemyBase>().IsBoss)
+                    {
+                        hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamageRequest((int)(Power * BEAM_MAG), gameObject);
+                    }
+                    else
+                    {
+                        // ボスの場合はボスエリアに入っているか確認
+                        if (isBossArea)
+                        {
+                            hit.collider.gameObject.GetComponent<EnemyBase>().ApplyDamageRequest((int)(Power * BEAM_MAG), gameObject);
+                        }
+                    }
                 }
 
                 tickTimer = 0f;
