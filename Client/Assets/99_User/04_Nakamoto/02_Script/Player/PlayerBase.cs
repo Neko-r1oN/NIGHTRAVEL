@@ -144,7 +144,7 @@ abstract public class PlayerBase : CharacterBase
     /// <summary>
     /// ボスエリア侵入フラグ
     /// </summary>
-    public bool IsBossArea { get { return isBossArea; } }
+    public bool IsBossArea { get { return isBossArea; } set { isBossArea = value; } }
     #endregion
 
     #region レリック外部参照用プロパティ
@@ -889,8 +889,6 @@ abstract public class PlayerBase : CharacterBase
             MoveCheckPoint();
         }
 
-        if (collision.gameObject.tag == "BossArea") isBossArea = true;
-
         // インタラクトオブジェ接触判定
         if (collision.gameObject.tag == "Interact")
         {   // インタラクトUI表示
@@ -909,8 +907,6 @@ abstract public class PlayerBase : CharacterBase
     /// <param name="collision"></param>
     protected void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "BossArea") isBossArea = false;
-
         // インタラクトオブジェ接触判定
         if (collision.gameObject.tag == "Interact")
         {   // インタラクトUI非表示

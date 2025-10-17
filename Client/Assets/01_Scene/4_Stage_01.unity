@@ -79750,6 +79750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 786884363}
   - component: {fileID: 786884364}
+  - component: {fileID: 786884365}
   m_Layer: 8
   m_Name: Boss Area
   m_TagString: BossArea
@@ -79818,6 +79819,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 35.1566, y: 15}
   m_EdgeRadius: 0
+--- !u!114 &786884365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 786884362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4076644487eb0d4c896d6b1faa47932, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossArea
 --- !u!1 &806899492
 GameObject:
   m_ObjectHideFlags: 0
