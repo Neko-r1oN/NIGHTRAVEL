@@ -11,6 +11,8 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Shared.Interfaces.StreamingHubs.EnumManager;
+using KanKikuchi.AudioManager;
+
 
 public class Blaze : EnemyBase
 {
@@ -276,6 +278,15 @@ public class Blaze : EnemyBase
         isAttacking = true;
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Punch);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.BOSS_HANIATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -283,7 +294,14 @@ public class Blaze : EnemyBase
     /// </summary>
     public override void OnAttackAnim2Event()
     {
-        audioPunch.Play();
+        SEManager.Instance.Play(
+               audioPath: SEPath.BOSS_HANIATK, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
 
         // 自身がエリート個体の場合、付与する状態異常の種類を取得する
         DEBUFF_TYPE? applyEffect = GetStatusEffectToApply();
@@ -311,7 +329,14 @@ public class Blaze : EnemyBase
         m_rb2d.linearVelocity = Vector2.zero;
         SetAnimId((int)ANIM_ID.Attack_Laser);
 
-        audioFlash.Play();
+        SEManager.Instance.Play(
+                audioPath: SEPath.BEAM, //再生したいオーディオのパス
+                volumeRate: 1.0f,                //音量の倍率
+                delay: 0.0f,                //再生されるまでの遅延時間
+                pitch: 1.0f,                //ピッチ
+                isLoop: false,             //ループ再生するか
+                callback: null              //再生終了後の処理
+                );
     }
 
     /// <summary>
@@ -467,6 +492,15 @@ public class Blaze : EnemyBase
     {
         base.OnHit();
         SetAnimId((int)ANIM_ID.Hit);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_HIT, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     /// <summary>
@@ -476,6 +510,15 @@ public class Blaze : EnemyBase
     protected override void OnDead()
     {
         SetAnimId((int)ANIM_ID.Dead);
+
+        SEManager.Instance.Play(
+               audioPath: SEPath.MOB_DEATH, //再生したいオーディオのパス
+               volumeRate: 1.0f,                //音量の倍率
+               delay: 0.0f,                //再生されるまでの遅延時間
+               pitch: 1.0f,                //ピッチ
+               isLoop: false,             //ループ再生するか
+               callback: null              //再生終了後の処理
+               );
     }
 
     #endregion
