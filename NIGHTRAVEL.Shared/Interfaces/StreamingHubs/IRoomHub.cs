@@ -137,6 +137,13 @@ namespace Shared.Interfaces.StreamingHubs
         Task DeleteEnemyAsync(string enemId);
 
         /// <summary>
+        /// 未選択のステータス強化選択のリスト取得
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        //Task<Dictionary<Guid, List<StatusUpgrateOptionData>>> GetUpgradeGroupsAsync();
+
+        /// <summary>
         /// ステータス強化選択
         /// </summary>
         /// <param name="conID">接続ID</param>

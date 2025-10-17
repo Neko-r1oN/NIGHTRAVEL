@@ -1201,6 +1201,24 @@ namespace StreamingHubs
             }
         }
 
+        ///// <summary>
+        ///// 未選択のステータス強化選択のリスト取得
+        ///// </summary>
+        ///// <param name="userId"></param>
+        ///// <returns></returns>
+        //public async Task<Dictionary<Guid, List<StatusUpgrateOptionData>>> GetUpgradeGroupsAsync()
+        //{
+        //    lock (roomContextRepository)
+        //    {
+        //        Dictionary<Guid, List <StatusUpgrateOptionData>> result = new Dictionary<Guid, List<StatusUpgrateOptionData>>();
+        //        if (this.roomContext.statusOptionList.ContainsKey(this.ConnectionId))
+        //        {
+        //            result = this.roomContext.statusOptionList[this.ConnectionId];
+        //        }
+        //        return result;
+        //    }
+        //}
+
         /// <summary>
         /// ステータス強化選択
         /// </summary>

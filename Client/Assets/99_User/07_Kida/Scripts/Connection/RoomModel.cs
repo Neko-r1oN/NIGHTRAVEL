@@ -810,6 +810,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
 
     /// <summary>
+    /// 未選択のステータス強化選択肢取得する
+    /// </summary>
+    /// <returns></returns>
+    //public async UniTask<Dictionary<Guid, List<StatusUpgrateOptionData>>> GetUpgradeGroupsAsync()
+    //{
+    //    return await roomHub.GetUpgradeGroupsAsync();
+    //}
+
+    /// <summary>
     /// ステータス強化選択
     /// </summary>
     /// <param name="conID">接続ID</param>
