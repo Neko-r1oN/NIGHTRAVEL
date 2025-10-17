@@ -128,6 +128,17 @@ public class CharacterManager : MonoBehaviour
                 cinemachineTargetGroup.Targets.Add(newTarget);
             }
 
+            if (cinemachineTargetGroup)
+            {
+                var newTarget = new CinemachineTargetGroup.Target
+                {
+                    Object = playerObjSelf.transform,
+                    Radius = 1f,
+                    Weight = 1f
+                };
+                cinemachineTargetGroup.Targets.Add(newTarget);
+            }
+
             return;
         }
 
@@ -330,21 +341,21 @@ public class CharacterManager : MonoBehaviour
             {
                 playerObjSelf = playerObj;
 
+                if (cinemachineTargetGroup)
+                {
+                    var newTarget = new CinemachineTargetGroup.Target
+                    {
+                        Object = playerObjSelf.transform,
+                        Radius = 1f,
+                        Weight = 1f
+                    };
+                    cinemachineTargetGroup.Targets.Add(newTarget);
+                }
+
                 var target = new CameraTarget();
                 target.TrackingTarget = playerObjSelf.transform;
                 target.LookAtTarget = playerObjSelf.transform;
                 camera.GetComponent<CinemachineCamera>().Target.TrackingTarget = playerObjSelf.transform;
-            }
-
-            if (cinemachineTargetGroup)
-            {
-                var newTarget = new CinemachineTargetGroup.Target
-                {
-                    Object = playerObjSelf.transform,
-                    Radius = 1f,
-                    Weight = 1f
-                };
-                cinemachineTargetGroup.Targets.Add(newTarget);
             }
 
             playerObj.transform.Find("Camera").GetComponent<Camera>().targetTexture = playerUIList[count];
