@@ -91,6 +91,7 @@ public class ItemManager : MonoBehaviour
             var player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
             int gotExp = nowExp - player.NowExp;
+            if(gotExp < 0) gotExp = 0;
             player.NowLv = nowLevel;
             player.NowExp = nowExp;
             player.NextLvExp = nextLevelExp;
