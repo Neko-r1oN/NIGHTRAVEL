@@ -164,6 +164,17 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.LeftAlt) && Input.GetKey(KeyCode.RightAlt))
+        {
+            CharacterManager.Instance.ApplyCheatEffect();
+            SpawnManager.Instance.KnockTermsNum = 0;
+        }
+        if(Input.GetKeyDown(KeyCode.LeftControl) && Input.GetKey(KeyCode.RightControl))
+        {
+            CharacterManager.Instance.RemoveCheatEffect();
+            SpawnManager.Instance.KnockTermsNum = 50;
+        }
+
 #if UNITY_EDITOR
         // É|Å[ÉYèàóù(âº)
         if (Input.GetKeyDown(KeyCode.P))

@@ -285,6 +285,34 @@ public class CharacterManager : MonoBehaviour
     #region プレイヤー関連
 
     /// <summary>
+    /// チート効果適用
+    /// </summary>
+    public void ApplyCheatEffect()
+    {
+        CharacterStatusData characterStatusData = new CharacterStatusData()
+        {
+            hp = 300000,
+            power = 3000,
+        };
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power);
+        UIManager.Instance.UpdatePlayerStatus();
+    }
+
+    /// <summary>
+    /// チート効果解除
+    /// </summary>
+    public void RemoveCheatEffect()
+    {
+        CharacterStatusData characterStatusData = new CharacterStatusData()
+        {
+            hp = 300,
+            power = 150,
+        };
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power);
+        UIManager.Instance.UpdatePlayerStatus();
+    }
+
+    /// <summary>
     /// 生存しているプレイヤーをリストにまとめて返す
     /// </summary>
     /// <returns></returns>

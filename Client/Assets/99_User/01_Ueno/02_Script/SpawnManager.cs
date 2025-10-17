@@ -34,7 +34,7 @@ public class SpawnManager : MonoBehaviour
     [Foldout("敵の生成関連")]
     [Tooltip("ボスを生成するための条件数(敵を撃破する度にカウント)")]
     [SerializeField] int knockTermsNum;
-    public int KnockTermsNum { get { return knockTermsNum; } }
+    public int KnockTermsNum { get { return knockTermsNum; } set { knockTermsNum = 0; } }
 
     [Foldout("敵の生成関連")]
     [Tooltip("生成する敵がエリート個体になる確率")]
