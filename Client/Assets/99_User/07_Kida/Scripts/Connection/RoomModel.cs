@@ -640,20 +640,20 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     /// <returns></returns>
     public async UniTask JoinedAsync(string roomName, int userId, string userName, string pass,int gameMode)
     {
-        if(MatchingManager.JoinMode != "create")
-        {
-            var handler = new YetAnotherHttpHandler() { Http2Only = true };
-            var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
-            var client = MagicOnionClient.Create<IRoomService>(channel);
+        //if(MatchingManager.JoinMode != "create")
+        //{
+        //    var handler = new YetAnotherHttpHandler() { Http2Only = true };
+        //    var channel = GrpcChannel.ForAddress(ServerURL, new GrpcChannelOptions() { HttpHandler = handler });
+        //    var client = MagicOnionClient.Create<IRoomService>(channel);
 
-            var roomData = await client.GetRoom(userName);
-            if (roomData == null)
-            {
-                OnFailedJoinSyn(3);
-                return;
-            }
+        //    var roomData = await client.GetRoom(userName);
+        //    if (roomData == null)
+        //    {
+        //        OnFailedJoinSyn(3);
+        //        return;
+        //    }
 
-        }
+        //}
 
         joinedUserList = await roomHub.JoinedAsync(roomName, userId, userName, pass,gameMode);
         if (joinedUserList == null) return;
