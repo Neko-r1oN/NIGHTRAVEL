@@ -263,7 +263,7 @@ abstract public class PlayerBase : CharacterBase
     #endregion
 
     #region ƒvƒŒƒCƒ„[‚ÉŠÖ‚·‚é’è”
-    protected const float REGENE_TIME = 2.0f;             // ©“®‰ñ•œŠÔŠu
+    protected const float REGENE_TIME = 1.8f;             // ©“®‰ñ•œŠÔŠu
     protected const float REGENE_STOP_TIME = 3.0f;      // ©“®‰ñ•œ’â~ŠÔ
     protected const float REGENE_MAGNIFICATION = 0.05f; // ©“®‰ñ•œ”{—¦
     protected const float HEAL_GENERATE_TIME = 18f;     // ‰ñ•œ“÷¶¬ŠÔŠu
@@ -1221,6 +1221,8 @@ abstract public class PlayerBase : CharacterBase
     /// <returns></returns>
     protected IEnumerator RegeneStop()
     {
+        if(!isRegene) yield break;
+
         isRegene = false;
 
         yield return new WaitForSeconds(REGENE_STOP_TIME);
