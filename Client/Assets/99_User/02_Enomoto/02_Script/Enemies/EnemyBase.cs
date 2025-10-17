@@ -1221,7 +1221,7 @@ abstract public class EnemyBase : CharacterBase
     /// <returns></returns>
     public bool IsOverlappingObstacle(Vector2 point)
     {
-        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Gimmick") | LayerMask.GetMask("Scaffold");
+        terrainLayerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("SpawnWall") | LayerMask.GetMask("Gimmick") | LayerMask.GetMask("Scaffold");
         return Physics2D.OverlapCircle(point, checkObstacleRange, terrainLayerMask);
     }
 
