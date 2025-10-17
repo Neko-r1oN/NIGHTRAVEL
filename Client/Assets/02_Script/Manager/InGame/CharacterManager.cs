@@ -293,8 +293,9 @@ public class CharacterManager : MonoBehaviour
         {
             hp = 300000,
             power = 3000,
+            moveSpeed = 100,
         };
-        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power);
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.MoveSpeed);
         UIManager.Instance.UpdatePlayerStatus();
     }
 
@@ -307,8 +308,9 @@ public class CharacterManager : MonoBehaviour
         {
             hp = 300,
             power = 150,
+            moveSpeed = 60,
         };
-        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power);
+        playerObjSelf.GetComponent<CharacterBase>().OverridMaxStatus(characterStatusData, STATUS_TYPE.HP, STATUS_TYPE.Power, STATUS_TYPE.MoveSpeed);
         UIManager.Instance.UpdatePlayerStatus();
     }
 
