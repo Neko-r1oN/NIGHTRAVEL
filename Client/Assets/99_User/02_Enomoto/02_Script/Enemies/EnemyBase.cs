@@ -261,6 +261,8 @@ abstract public class EnemyBase : CharacterBase
 
     protected virtual void FixedUpdate()
     {
+        if(isBoss && !target) SelectNewTargetInBossRoom();
+
         if (target)
         {
             // ターゲットとの距離を取得する
@@ -415,7 +417,8 @@ abstract public class EnemyBase : CharacterBase
 
         foreach (var player in players)
         {
-            if (player && player.GetComponent<PlayerBase>().HP > 0 && player.GetComponent<PlayerBase>().IsBossArea)
+            var playerBase = player.GetComponent<PlayerBase>();
+            if (player && playerBase.IsDead && playerBase.HP > 0 && playerBase.IsBossArea)
             {
                 target = player;
                 isSucsess = true;
