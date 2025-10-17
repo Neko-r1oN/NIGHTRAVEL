@@ -727,6 +727,9 @@ public class CharacterManager : MonoBehaviour
             enemy.UpdateEnemy(enemyData);
         }
 
+        // ゲーム内の時間同期
+        TimerDirector.Instance.Second = masterClientData.GameTimer;
+
         // ギミックの情報更新
         GimmickManager.Instance.UpdateGimmicks(masterClientData.GimmickDatas);
 

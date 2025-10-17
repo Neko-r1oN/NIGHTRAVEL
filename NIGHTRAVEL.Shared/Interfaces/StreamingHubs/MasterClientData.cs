@@ -36,7 +36,7 @@ namespace Shared.Interfaces.StreamingHubs
         public List<GimmickData> GimmickDatas { get; set; }
 
         /// <summary>
-        /// ボスが出現するまでのゲームタイマー
+        /// ゲーム内タイマー
         /// </summary>
         [Key(3)]
         public float GameTimer { get; set; }

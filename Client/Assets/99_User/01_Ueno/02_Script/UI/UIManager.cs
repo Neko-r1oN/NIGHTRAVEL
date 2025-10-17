@@ -196,7 +196,6 @@ public class UIManager : MonoBehaviour
 
     int windowCnt = 0;          // ウィンドウが表示できるカウント(一度だけ使う)
     int lastLevel = 0;          // レベルアップ前のレベル
-    static int statusStock = 0; // レベルアップストック数
     bool isStatusWindow;        // ステータスウィンドウが開けるかどうか
     bool isHold;                // ステータスウィンドウロック用
     string colorCode;           // カラーコード
@@ -276,10 +275,6 @@ public class UIManager : MonoBehaviour
     {
         player = CharacterManager.Instance.PlayerObjSelf.GetComponent<PlayerBase>();
 
-        if (player.NowLv <= 1) statusStock = 0;
-
-        //player = GameManager.Instance.Players.GetComponent<PlayerBase>();
-
         playerHpBar.maxValue = player.MaxHP;
         playerSliderText.text = "" + playerHpBar.maxValue;
         expBar.maxValue = player.NextLvExp;
@@ -305,15 +300,14 @@ public class UIManager : MonoBehaviour
         isHold = false;
         isRelicGet = false;
 
-        if (statusStock > 1)
+        if (LevelManager.Options.Count > 1)
         {
             isStatusWindow = true;
             levelUpText.enabled = true;
             padStatusUp.enabled = true;
             keyStatusUp.enabled = true;
 
-            //statusStock = player.NowLv - lastLevel;
-            levelUpStock.text = "残り強化数：" + statusStock;
+            levelUpStock.text = "残り強化数：" + LevelManager.Options.Count;
         }
         else
         {
@@ -332,9 +326,8 @@ public class UIManager : MonoBehaviour
             playerStatus[i].SetActive(false);
         }
 
-        if(statusStock > 1)
+        if(LevelManager.Options.Count > 1)
         {
-            Debug.Log(statusStock);
             levelUpText.enabled = true;
             isStatusWindow = true;
         }
@@ -405,19 +398,23 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        List<JoinedUser> list = RoomModel.Instance.joinedUserList.Values.ToList();
-
-        int playerCnt = 0;
-        foreach(var user in  list)
+        // マルチプレイ時に他ユーザーの名前表示
+        if (RoomModel.Instance)
         {
-            if (playerStatus[playerCnt].activeSelf == true)
+            List<JoinedUser> list = RoomModel.Instance.joinedUserList.Values.ToList();
+
+            int playerCnt = 0;
+            foreach (var user in list)
             {
-                if (RoomModel.Instance.ConnectionId != user.ConnectionId)
+                if (playerStatus[playerCnt].activeSelf == true)
                 {
-                    // 名前反映
-                    playerStatus[playerCnt].transform.Find("Text(Name)").GetComponent<Text>().text
-                        = user.UserData.Name;
-                    count++;
+                    if (RoomModel.Instance.ConnectionId != user.ConnectionId)
+                    {
+                        // 名前反映
+                        playerStatus[playerCnt].transform.Find("Text(Name)").GetComponent<Text>().text
+                            = user.UserData.Name;
+                        count++;
+                    }
                 }
             }
         }
@@ -593,8 +590,7 @@ public class UIManager : MonoBehaviour
         else if (player.NowLv > lastLevel)
         {
             isStatusWindow = true;
-            statusStock += player.NowLv - lastLevel;
-            levelUpStock.text = "残り強化数：" + statusStock;
+            levelUpStock.text = "残り強化数：" + LevelManager.Options.Count;
 
             levelUpText.enabled = true;
             padStatusUp.enabled = true;
@@ -779,13 +775,9 @@ public class UIManager : MonoBehaviour
             ChangeUpStatusText();
         }
 
-        // ステータス強化回数の減少
-        statusStock--;
-        Debug.Log(statusStock);
+        levelUpStock.text = "残り強化数：" + LevelManager.Options.Count;
 
-        levelUpStock.text = "残り強化数：" + statusStock;
-
-        if (statusStock <= 0)
+        if (LevelManager.Options.Count <= 0)
         {// 強化ストックが0の場合
             CloseStatusWindow();
             isStatusWindow = false;
